@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Dashboard from "./pages/Dashboard";
+
+import useModal from "./hooks/useModal";
+import LoginModal from "./components/Account/UserLogin";
+import SignupModal from "./components/Account/UserSignup";
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Custom modal hook for handling popup visibility
+  const login = useModal();
+  const signup = useModal();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      {/* Popup Modals */}
+      <LoginModal open={login.open} closeModal={login.closeModal} />
+      <SignupModal open={signup.open} closeModal={signup.closeModal} />
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home
+              openLogin={login.openModal}
+              openSignup={signup.openModal}
+            />
+          }
+        />
+
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
