@@ -1,5 +1,5 @@
 """
-URL configuration for HMS project.
+URL configuration for Hospital_Project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("auth/", include("users.urls")),
 ]
