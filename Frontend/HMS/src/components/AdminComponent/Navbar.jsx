@@ -2,7 +2,7 @@ import React from "react";
 
  function Navbar() {
   return (
-    <header className="flex items-center justify-between bg-white px-6 py-3 shadow-sm">
+    <header className="flex items-center justify-between bg-white px-6 py-4 shadow-sm">
       <div className="flex items-center gap-4">
         <button className="md:hidden p-2 rounded bg-gray-100">☰</button>
         <div className="text-lg font-semibold">MediLab Hospital</div>

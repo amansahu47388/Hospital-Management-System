@@ -1,11 +1,11 @@
 import React from "react";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import StatsCard from "../components/StatsCard";
-import PatientsChart from "../components/PatientsChart";
-import SimpleTable from "../components/SimpleTable";
-import AppointmentList from "../components/AppointmentList";
-import { useFetchData } from "../hooks/useFetchData";
+import Sidebar from "../../components/CommonComponent/Sidebar";
+import Navbar from "../../components/AdminComponent/Navbar";
+import StatsCard from "../../components/AdminComponent/StatsCard";
+import PatientsChart from "../../components/AdminComponent/PatientsChart";
+import SimpleTable from "../../components/AdminComponent/SimpleTable";
+import AppointmentList from "../../components/AdminComponent/AppointmentList";
+import { useFetchData } from "../../hooks/useFetchData";
 
  function DashboardPage() {
   const { loading, data } = useFetchData();

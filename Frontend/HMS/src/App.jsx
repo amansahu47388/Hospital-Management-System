@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/HomeModule/Home";
+import About from "./pages/HomeModule/About";
+import Contact from "./pages/HomeModule/Contact";
+import Dashboard from "./pages/AdminModule/Dashboard";
 
 import useModal from "./hooks/useModal";
 import LoginModal from "./components/Account/UserLogin";
