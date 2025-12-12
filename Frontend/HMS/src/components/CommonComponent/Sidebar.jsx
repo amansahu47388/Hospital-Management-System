@@ -33,7 +33,7 @@ import {
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
-  { to: "/staff", label: "Staff", Icon: Users },
+ 
   { to: "/lab", label: "Lab", Icon: FlaskConical },
   { to: "/ward", label: "Ward", Icon: Bed },
   { to: "/treatment", label: "Treatment", Icon: Stethoscope },

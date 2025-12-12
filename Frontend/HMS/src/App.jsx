@@ -5,11 +5,11 @@ import Home from "./pages/HomeModule/Home";
 import About from "./pages/HomeModule/About";
 import Contact from "./pages/HomeModule/Contact";
 import Dashboard from "./pages/AdminModule/Dashboard";
-
+import PatientDashboard from "./pages/PatientModule/patientDashboard";
 import useModal from "./hooks/useModal";
 import LoginModal from "./components/Account/UserLogin";
 import SignupModal from "./components/Account/UserSignup";
-
+import PatientDetail from "./pages/PatientModule/patientDetail";
 function App() {
   // Custom modal hook for handling popup visibility
   const login = useModal();
@@ -35,7 +35,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        
+         <Route path="/patient" element={<PatientDashboard />} />
+         <Route path="/patients" element={<PatientDetail />} />
       </Routes>
     </BrowserRouter>
   );
