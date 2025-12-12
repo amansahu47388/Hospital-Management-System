@@ -12,22 +12,48 @@ import SignupModal from "./components/Account/UserSignup";
 import PatientDetail from "./pages/PatientModule/patientDetail";
 function App() {
   // Custom modal hook for handling popup visibility
-  const login = useModal();
-  const signup = useModal();
+  const userlogin = useModal();
+  const usersignup = useModal();
+  const adminSignup = useModal();
+  const adminLogin = useModal();
 
   return (
     <BrowserRouter>
       {/* Popup Modals */}
-      <LoginModal open={login.open} closeModal={login.closeModal} />
-      <SignupModal open={signup.open} closeModal={signup.closeModal} />
+      <UserLogin
+        open={userlogin.open}
+        closeModal={userlogin.closeModal}
+        openAdminLogin={adminLogin.openModal}
+        openAdminSignup={adminSignup.openModal}
+      />
+      <UserSignup
+        open={usersignup.open}
+        closeModal={usersignup.closeModal}
+        openAdminSignup={adminSignup.openModal}
+        openAdminLogin={adminLogin.openModal}
+      />
+      <AdminSignup
+        open={adminSignup.open}
+        closeModal={adminSignup.closeModal}
+        openUserSignup={usersignup.openModal}
+        openUserLogin={userlogin.openModal}
+      />
+      <AdminLogin
+        open={adminLogin.open}
+        closeModal={adminLogin.closeModal}
+        openUserSignup={usersignup.openModal}
+        openUserLogin={userlogin.openModal}
+      />
 
       <Routes>
         <Route
           path="/"
           element={
             <Home
-              openLogin={login.openModal}
-              openSignup={signup.openModal}
+              openLogin={userlogin.openModal}
+              openSignup={usersignup.openModal}
+              openAdminSignup={adminSignup.openModal}
+              openAdminLogin={adminLogin.openModal}
             />
           }
         />
