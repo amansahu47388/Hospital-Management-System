@@ -62,7 +62,7 @@ function AdminLogin({ open, closeModal, openUserSignup, openUserLogin }) {
             required
           />
 
-          <button type="submit" className="w-full py-3 bg-purple-600 text-white rounded-lg mb-3" disabled={loading}>
+          <button type="submit" className="w-full py-3 bg-purple-600 text-gray-600 rounded-lg mb-3" disabled={loading}>
             {loading ? "Signing in..." : "Login"}
           </button>
         </form>

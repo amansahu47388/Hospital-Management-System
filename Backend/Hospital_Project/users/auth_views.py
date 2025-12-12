@@ -9,7 +9,7 @@ from .models import User
 from django.contrib.auth import authenticate
 
 COOKIE_NAME = "refresh_token"
-COOKIE_PATH = "/auth/"  # cookie path matches URLs in users/urls.py
+COOKIE_PATH = "/auth/" 
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
