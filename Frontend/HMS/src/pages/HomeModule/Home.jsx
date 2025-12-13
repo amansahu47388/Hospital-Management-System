@@ -8,7 +8,7 @@ import HomeNavbar from "../../components/HomeComponent/HomeNavbar";
   return (
     <div>
 
-      <HomeNavbar onLogin={openLogin} onSignup={openSignup} />
+      <HomeNavbar/>
 
       <Hero />
 

@@ -51,7 +51,7 @@ API.interceptors.response.use(
 );
 
 export const userRegister = (data) =>
-  API.post("/auth/register/user/", data);
+  API.post("/auth/register/", data);
 
 export const adminRegister = (data) =>
   API.post("/auth/register/admin/", data);

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserRegisterSerializer, AdminRegisterSerializer
 from .models import User
 from django.contrib.auth import authenticate
 
@@ -112,3 +112,45 @@ class LogoutView(APIView):
         resp = Response({"detail": "Logged out"}, status=status.HTTP_200_OK)
         resp.delete_cookie(COOKIE_NAME, path=COOKIE_PATH)
         return resp
+
+class RegisterUserView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = UserRegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Optionally create tokens and return them on register
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        data = {
+            "user": UserSerializer(user).data,
+            "access": str(access),
+            "refresh": str(refresh)
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
+class RegisterAdminView(APIView):
+    permission_classes = [permissions.IsAuthenticated]  # restrict as needed
+
+    def post(self, request):
+        # Only allow superuser or staff to create additional admin accounts
+        if not request.user.is_superuser and not request.user.is_staff:
+            return Response({"detail": "You do not have permission to create admin users."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        serializer = AdminRegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+        data = {
+            "user": UserSerializer(user).data,
+            "access": str(access),
+            "refresh": str(refresh)
+        }
+        return Response(data, status=status.HTTP_201_CREATED)

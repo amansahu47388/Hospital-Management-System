@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
-import AddPatientModal from "../../components/PatientModal/AddPatientModal";
+import AddPatient from "../../components/PatientComponent/AddPatient";
 import { useState } from "react";
 import { MoreVertical, Menu } from "lucide-react";
 
@@ -125,7 +125,7 @@ function PatientDashboard() {
       ))}
     </tbody>
   </table>
-  <AddPatientModal open={openAdd} onClose={() => setOpenAdd(false)} />
+  <AddPatient open={openAdd} onClose={() => setOpenAdd(false)} />
 
 </div>
 

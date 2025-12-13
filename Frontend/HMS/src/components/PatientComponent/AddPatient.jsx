@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function AddPatientModal({ open, onClose }) {
+export default function AddPatient({ open, onClose }) {
   if (!open) return null;
 
   return (
