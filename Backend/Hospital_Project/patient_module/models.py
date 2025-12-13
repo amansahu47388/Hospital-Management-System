@@ -37,7 +37,6 @@ class Patient(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=150)
-    age = models.IntegerField()
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     dob = models.DateField()
     age = models.IntegerField()
@@ -55,4 +54,4 @@ class Patient(models.Model):
     national_identification_number = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.full_name
