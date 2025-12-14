@@ -25,7 +25,7 @@ function HomeNavbar({ onLogin, onSignup }) {
     } catch (e) { /* ignore */ }
     finally {
       logout();
-      navigate("/login");
+      navigate("/");
       window.location.reload();
     }
   };
