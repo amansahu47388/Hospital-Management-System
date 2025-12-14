@@ -1,4 +1,3 @@
-// src/components/AdminSignup.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { adminRegister } from "../../api/authApi";
@@ -155,11 +154,13 @@ export default function AdminSignup() {
         className="fixed inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+
+      {/* THEME GRADIENT OVERLAY (removed black) */}
+      <div className="fixed inset-0  backdrop-blur-sm" />
 
       <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-md bg-white/90 backdrop-blur rounded-2xl shadow-2xl px-8 py-10">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl px-6 py-8 sm:px-8 sm:py-10">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-center">
             Admin Signup
           </h2>
 
@@ -167,101 +168,126 @@ export default function AdminSignup() {
             {/* Full Name */}
             <label className="block text-sm text-gray-700">
               Full Name
-            <input
-              name="full_name"
-              value={form.full_name}
-              onChange={handleChange}
-              placeholder="Full Name"
-              className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                  errors.full_name ? "border-red-500" : ""
-              }`}
-            />
-            {errors.full_name && (
-              <p className="text-xs text-red-600">{errors.full_name}</p>
-            )}
+              <input
+                name="full_name"
+                value={form.full_name}
+                onChange={handleChange}
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
+                placeholder="Admin full name"
+                required
+              />
             </label>
 
             {/* Email */}
             <label className="block text-sm text-gray-700">
               Email
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                  errors.email ? "border-red-500" : ""
-              }`}
-            />
-            {errors.email && (
-              <p className="text-xs text-red-600">{errors.email}</p>
-            )}
+              <input
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
+                placeholder="admin@example.com"
+                required
+              />
             </label>
 
             {/* Phone */}
             <label className="block text-sm text-gray-700">
               Phone
-            <input
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              placeholder="Phone (optional)"
-             className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                  errors.phone ? "border-red-500" : ""
-              }`}
-            />
-            {errors.phone && (
-              <p className="text-xs text-red-600">{errors.phone}</p>
-            )}
+              <input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
+                placeholder="Phone number"
+              />
             </label>
 
             {/* Role */}
             <label className="block text-sm text-gray-700">
               Role
-            <select
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              className="w-full px-3 py-2 mt-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
-            >
-              {roles.map((r) => (
-                <option key={r} value={r}>
-                  {r.charAt(0).toUpperCase() + r.slice(1)}
-                </option>
-              ))}
-            </select>
+              <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
+              >
+                {roles.map((role) => (
+                  <option key={role} value={role}>
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                  </option>
+                ))}
+              </select>
             </label>
 
             {/* Password */}
             <label className="block text-sm text-gray-700">
               Password
-            <input
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                errors.password ? "border-red-500" : ""
-              }`}
-            />
-            {errors.password && (
-              <p className="text-xs text-red-600">{errors.password}</p>
-            )}
+              <input
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
+                placeholder="Create password"
+                minLength={8}
+                required
+              />
             </label>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-gray-600 font-semibold transition disabled:opacity-60"
+              className="
+                mt-2 w-full py-2 rounded-md text-white font-medium
+                bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                hover:opacity-90
+                focus:ring-2 focus:ring-[#8A63D2]
+                transition
+              "
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
 
             <p className="text-sm text-center text-gray-600">
               Already an admin?{" "}
-              <Link to="/admin/login" className="text-purple-600 hover:underline">
+              <Link to="/admin/login" className="text-[#6046B5] hover:underline">
                 Sign in
               </Link>
             </p>

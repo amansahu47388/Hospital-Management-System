@@ -69,7 +69,7 @@ function Sidebar() {
       {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute top-6 -right-6 z-50  p-1 cursor-pointer"
+        className="absolute top-2 -right-20 z-50  p-1 cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -86,7 +86,7 @@ function Sidebar() {
           />
         </svg>
       </button>
-
+     
       {/* SIDEBAR */}
       <aside
         className={`${

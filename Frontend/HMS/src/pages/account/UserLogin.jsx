@@ -1,4 +1,3 @@
-// src/components/LoginModal.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../../api/authApi";
@@ -14,6 +13,8 @@ export default function UserLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     if (!email || email.trim() === "") {
@@ -114,11 +115,11 @@ export default function UserLogin() {
     } finally {
       setLoading(false);
     }
+    setLoading(false);
   };
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden">
-      
       {/* Background image */}
       <div
         className="fixed inset-0 bg-cover bg-center"
@@ -126,18 +127,18 @@ export default function UserLogin() {
         aria-hidden="true"
       />
 
-      {/* Blur + dark overlay */}
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+      {/* THEME GRADIENT OVERLAY (removed black) */}
+      <div className="fixed inset-0   backdrop-blur-sm" />
 
       {/* Centered content */}
       <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-md bg-white/90 backdrop-blur rounded-2xl shadow-2xl px-8 py-10">
-
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
             User Login
           </h2>
 
           <form onSubmit={submit} className="space-y-4">
+            {/* EMAIL */}
             <label className="block text-sm text-gray-700">
               Email
               <input
@@ -145,16 +146,23 @@ export default function UserLogin() {
                 type="email"
                 value={form.email}
                 onChange={handleChange}
-                className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                  errors.email ? "border-red-500" : ""
-                }`}
                 placeholder="you@example.com"
+                required
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
               />
               {errors.email && (
                 <p className="text-xs text-red-600 mt-1">{errors.email}</p>
               )}
             </label>
 
+            {/* PASSWORD */}
             <label className="block text-sm text-gray-700">
               Password
               <input
@@ -162,10 +170,16 @@ export default function UserLogin() {
                 type="password"
                 value={form.password}
                 onChange={handleChange}
-                className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                  errors.password ? "border-red-500" : ""
-                }`}
                 placeholder="Your password"
+                required
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
               />
               {errors.password && (
                 <p className="text-xs text-red-600 mt-1">{errors.password}</p>
@@ -175,23 +189,30 @@ export default function UserLogin() {
             <div className="text-sm text-right">
               <Link
                 to="/forgot-password"
-                className="text-purple-600 hover:underline"
+                className="text-[#6046B5] hover:underline"
               >
                 Forgot password?
               </Link>
             </div>
 
+            {/* LOGIN BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full px-3 py-2 border rounded-md bg-purple-600  focus:ring-purple-500 "
+              className="
+                mt-2 w-full py-2 rounded-md text-white font-medium
+                bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                hover:opacity-90
+                focus:ring-2 focus:ring-[#8A63D2]
+                transition
+              "
             >
               {loading ? "Signing in..." : "Login"}
             </button>
 
             <p className="text-sm text-center text-gray-600">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-purple-600 hover:underline">
+              <Link to="/signup" className="text-[#6046B5] hover:underline">
                 Sign up
               </Link>
             </p>

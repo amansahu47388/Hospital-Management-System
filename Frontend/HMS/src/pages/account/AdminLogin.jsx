@@ -1,4 +1,3 @@
-// src/components/AdminLogin.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../../api/authApi";
@@ -118,7 +117,6 @@ export default function AdminLogin() {
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden">
-      
       {/* Background */}
       <div
         className="fixed inset-0 bg-cover bg-center"
@@ -126,13 +124,12 @@ export default function AdminLogin() {
         aria-hidden="true"
       />
 
-      {/* Dark + blur overlay */}
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+      {/* THEME GRADIENT OVERLAY (removed black) */}
+      <div className="fixed inset-0 backdrop-blur-sm" />
 
       {/* Centered card */}
       <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-md bg-white/90 backdrop-blur rounded-2xl shadow-2xl px-8 py-10">
-
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
             Admin Login
           </h2>
@@ -145,9 +142,14 @@ export default function AdminLogin() {
                 type="email"
                 value={form.email}
                 onChange={handleChange}
-                className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                  errors.email ? "border-red-500" : ""
-                }`}
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
                 placeholder="admin@example.com"
               />
               {errors.email && (
@@ -162,9 +164,14 @@ export default function AdminLogin() {
                 type="password"
                 value={form.password}
                 onChange={handleChange}
-                className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
-                  errors.password ? "border-red-500" : ""
-                }`}
+                className="
+                  mt-2 w-full px-3 py-2 rounded-md
+                  border border-gray-300
+                  focus:border-[#6046B5]
+                  focus:ring-2 focus:ring-[#8A63D2]
+                  outline-none
+                  transition
+                "
                 placeholder="Your password"
               />
               {errors.password && (
@@ -173,7 +180,10 @@ export default function AdminLogin() {
             </label>
 
             <div className="text-sm text-right">
-              <Link to="/forgot-password" className="text-purple-600 hover:underline">
+              <Link
+                to="/forgot-password"
+                className="text-[#6046B5] hover:underline"
+              >
                 Forgot password?
               </Link>
             </div>
@@ -181,14 +191,20 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg text-gray-600 bg-purple-600 hover:bg-purple-700  font-semibold transition duration-200 disabled:opacity-60"
+              className="
+                mt-2 w-full py-2 rounded-md text-white font-medium
+                bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                hover:opacity-90
+                focus:ring-2 focus:ring-[#8A63D2]
+                transition
+              "
             >
               {loading ? "Signing in..." : "Login"}
             </button>
 
             <p className="text-sm text-center text-gray-600">
               Don’t have an account?{" "}
-              <Link to="/admin/signup" className="text-purple-600 hover:underline">
+              <Link to="/admin/signup" className="text-[#6046B5] hover:underline">
                 Sign up
               </Link>
             </p>
@@ -196,7 +212,10 @@ export default function AdminLogin() {
 
           {/* Switch to User Login */}
           <div className="mt-6 text-center">
-            <Link to="/login" className="text-sm text-gray-500 hover:underline">
+            <Link
+              to="/login"
+              className="text-sm text-gray-500 hover:underline"
+            >
               User Login
             </Link>
           </div>
