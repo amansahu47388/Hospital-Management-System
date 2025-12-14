@@ -3,42 +3,114 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../../api/authApi";
 import { useAuth } from "../../context/AuthContext";
+import { useNotify } from "../../context/NotificationContext";
 import bgImage from "../../assets/hospital-management-system.jpg";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const notify = useNotify();
 
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
+  const validateEmail = (email) => {
+    if (!email || email.trim() === "") {
+      return "Email is required";
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password || password.trim() === "") {
+      return "Password is required";
+    }
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+    return "";
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      email: validateEmail(form.email),
+      password: validatePassword(form.password),
+    };
+    setErrors(newErrors);
+    return !newErrors.email && !newErrors.password;
   };
 
   const submit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    if (!form.email || !form.password) {
-      setError("Please enter your email and password.");
-      setLoading(false);
+    
+    const emailError = validateEmail(form.email);
+    const passwordError = validatePassword(form.password);
+    
+    if (emailError || passwordError) {
+      setErrors({ email: emailError, password: passwordError });
+      notify("error", emailError || passwordError);
       return;
     }
 
+    setLoading(true);
     try {
-      const res = await userLogin(form); // backend must verify admin role
+      const res = await userLogin(form); 
       if (res?.data?.access) {
+        // Save login data first
         login(res.data);
-        navigate("/dashboard"); // admin dashboard
+        
+        // Check user role to determine navigation - try multiple sources
+        const user = res.data.user;
+        let userRole = user?.role;
+        
+        // Fallback: try to get from localStorage if not in response
+        if (!userRole) {
+          try {
+            const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+            userRole = storedUser?.role;
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+        
+        // Admin roles that should go to dashboard
+        const adminRoles = ["admin", "doctor", "pharmacist", "pathologist", "radiologist", "accountant", "receptionist", "staff"];
+        
+        // Use setTimeout to ensure state updates complete before navigation
+        if (userRole && adminRoles.includes(userRole.toLowerCase())) {
+          notify("success", "Admin logged in successfully!");
+          setTimeout(() => {
+            navigate("/admin/dashboard", { replace: true });
+          }, 100);
+        } else {
+          notify("success", "Logged in successfully!");
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 100);
+        }
       } else {
-        setError("Login failed: no token returned");
+        notify("error", "Login failed. Please try again.");
       }
     } catch (err) {
-      setError(err.response?.data?.detail || "Login failed");
+      const detail = err.response?.data?.detail || 
+                    Object.values(err.response?.data || {}).flat().join(" ") || 
+                    "Login failed. Please check your credentials and try again.";
+      notify("error", detail);
+      setErrors({ email: "", password: detail });
     } finally {
       setLoading(false);
     }
@@ -65,12 +137,6 @@ export default function AdminLogin() {
             Admin Login
           </h2>
 
-          {error && (
-            <div className="text-sm text-red-600 mb-4 text-center">
-              {error}
-            </div>
-          )}
-
           <form onSubmit={submit} className="space-y-4">
             <label className="block text-sm text-gray-700">
               Email
@@ -79,10 +145,14 @@ export default function AdminLogin() {
                 type="email"
                 value={form.email}
                 onChange={handleChange}
-                className="mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
+                  errors.email ? "border-red-500" : ""
+                }`}
                 placeholder="admin@example.com"
-                required
               />
+              {errors.email && (
+                <p className="text-xs text-red-600 mt-1">{errors.email}</p>
+              )}
             </label>
 
             <label className="block text-sm text-gray-700">
@@ -92,10 +162,14 @@ export default function AdminLogin() {
                 type="password"
                 value={form.password}
                 onChange={handleChange}
-                className="mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`mt-2 w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 outline-none ${
+                  errors.password ? "border-red-500" : ""
+                }`}
                 placeholder="Your password"
-                required
               />
+              {errors.password && (
+                <p className="text-xs text-red-600 mt-1">{errors.password}</p>
+              )}
             </label>
 
             <div className="text-sm text-right">
