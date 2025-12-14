@@ -62,14 +62,22 @@ const navItems = [
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleToggle = () => {
+    if (window.innerWidth < 700) {
+      setMobileOpen(!mobileOpen);
+    } else {
+      setCollapsed(!collapsed);
+    }
+  };
 
   return (
     <div className="relative">
-      
       {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
       <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute top-2 -right-20 z-50  p-1 cursor-pointer"
+        onClick={handleToggle}
+        className="absolute top-2 -right-20 z-50 p-1 cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +85,7 @@ function Sidebar() {
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
-          className="w-8 h-8"
+          className="w-5 h-5"
         >
           <path
             strokeLinecap="round"
@@ -89,20 +97,20 @@ function Sidebar() {
      
       {/* SIDEBAR */}
       <aside
-        className={`${
+        className={`fixed md:relative top-0 left-0 z-40 ${
           collapsed ? "w-20" : "w-64"
-        } h-screen overflow-y-auto hidden md:block
+        } h-screen overflow-y-auto
         text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-        transition-all duration-300`}
+        transition-transform duration-500 md:transition-all md:duration-200
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        <div className="p-6">
-          
+        <div className="flex flex-col h-full p-5 justify-even">
           {/* Logo */}
           <div className="text-xl font-bold mb-10 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
+            {/* <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
               ML
             </div>
-            {!collapsed && <span>MediLab Hospital</span>}
+            {!collapsed && <span>MediLab Hospital</span>} */}
           </div>
 
           {/* NAVIGATION */}
