@@ -28,7 +28,6 @@ import {
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
- 
   { to: "/lab", label: "Lab", Icon: FlaskConical },
   { to: "/ward", label: "Ward", Icon: Bed },
   { to: "/treatment", label: "Treatment", Icon: Stethoscope },
@@ -62,47 +61,54 @@ const navItems = [
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="relative">
-      
-      {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
+    <>
+      {/* MOBILE HAMBURGER */}
       <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute top-6 -right-6 z-50  p-1 cursor-pointer"
+        onClick={() => setMobileOpen(true)}
+        className="md:hidden fixed  left-4 z-50 bg-[#6046B5] text-white p-2 rounded-md"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="w-8 h-8"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-          />
-        </svg>
+        ☰
       </button>
+
+      {/* MOBILE OVERLAY */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
 
       {/* SIDEBAR */}
       <aside
-        className={`${
-          collapsed ? "w-20" : "w-64"
-        } h-screen overflow-y-auto hidden md:block
-        text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-        transition-all duration-300`}
+        className={`
+          fixed md:relative z-50
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          ${collapsed ? "md:w-20" : "md:w-64"}
+          w-64 h-screen overflow-y-auto
+          text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+          transition-all duration-300
+        `}
       >
         <div className="p-6">
-          
-          {/* Logo */}
+
+          {/* LOGO + DESKTOP COLLAPSE */}
           <div className="text-xl font-bold mb-10 flex items-center gap-3">
             <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
               ML
             </div>
+
             {!collapsed && <span>MediLab Hospital</span>}
+
+            {/* DESKTOP COLLAPSE BUTTON */}
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="hidden md:flex ml-auto bg-white/20 hover:bg-white/30  rounded-md transition"
+            >
+              ☰
+            </button>
           </div>
 
           {/* NAVIGATION */}
@@ -112,6 +118,7 @@ function Sidebar() {
                 key={to}
                 to={to}
                 end
+                onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   `w-full flex items-center gap-4 py-2 px-2 transition no-underline
                   ${
@@ -122,15 +129,13 @@ function Sidebar() {
                 }
               >
                 <Icon size={20} className="flex-shrink-0" />
-                <span className={`${collapsed ? "hidden" : "block"}`}>
-                  {label}
-                </span>
+                {!collapsed && <span>{label}</span>}
               </NavLink>
             ))}
           </nav>
         </div>
       </aside>
-    </div>
+    </>
   );
 }
 
