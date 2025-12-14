@@ -2,29 +2,118 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../../api/authApi";
 import { useAuth } from "../../context/AuthContext";
+import { useNotify } from "../../context/NotificationContext";
 import bgImage from "../../assets/hospital-management-system.jpg";
 
 export default function UserLogin() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const notify = useNotify();
+
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    if (!email || email.trim() === "") {
+      return "Email is required";
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password || password.trim() === "") {
+      return "Password is required";
+    }
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+    return "";
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((p) => ({ ...p, [name]: value }));
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      email: validateEmail(form.email),
+      password: validatePassword(form.password),
+    };
+    setErrors(newErrors);
+    return !newErrors.email && !newErrors.password;
   };
 
   const submit = async (e) => {
     e.preventDefault();
+    
+    const emailError = validateEmail(form.email);
+    const passwordError = validatePassword(form.password);
+    
+    if (emailError || passwordError) {
+      setErrors({ email: emailError, password: passwordError });
+      notify("error", emailError || passwordError);
+      return;
+    }
+
     setLoading(true);
-    setError("");
     try {
-      await userLogin(form);
-      login();
-      navigate("/patient/dashboard"); // Assuming patient dashboard route
+      const res = await userLogin(form);
+      if (res?.data?.access) {
+        // Save login data first
+        login(res.data);
+        
+        // Check user role to determine navigation - try multiple sources
+        const user = res.data.user;
+        let userRole = user?.role;
+        
+        // Fallback: try to get from localStorage if not in response
+        if (!userRole) {
+          try {
+            const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+            userRole = storedUser?.role;
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+        
+        // Admin roles that should go to dashboard
+        const adminRoles = ["admin", "doctor", "pharmacist", "pathologist", "radiologist", "accountant", "receptionist", "staff"];
+        
+        // Use setTimeout to ensure state updates complete before navigation
+        if (userRole && adminRoles.includes(userRole.toLowerCase())) {
+          notify("success", "Admin logged in successfully!");
+          setTimeout(() => {
+            navigate("/admin/dashboard", { replace: true });
+          }, 100);
+        } else {
+          notify("success", "Logged in successfully!");
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 100);
+        }
+      } else {
+        notify("error", "Login failed. Please try again.");
+      }
     } catch (err) {
-      setError(err.message || "Login failed");
+      const detail = err.response?.data?.detail || 
+                    Object.values(err.response?.data || {}).flat().join(" ") || 
+                    "Login failed. Please check your credentials and try again.";
+      notify("error", detail);
+      setErrors({ email: "", password: detail });
+    } finally {
+      setLoading(false);
     }
     setLoading(false);
   };
@@ -48,12 +137,6 @@ export default function UserLogin() {
             User Login
           </h2>
 
-          {error && (
-            <div className="text-sm text-red-600 mb-4 text-center">
-              {error}
-            </div>
-          )}
-
           <form onSubmit={submit} className="space-y-4">
             {/* EMAIL */}
             <label className="block text-sm text-gray-700">
@@ -74,6 +157,9 @@ export default function UserLogin() {
                   transition
                 "
               />
+              {errors.email && (
+                <p className="text-xs text-red-600 mt-1">{errors.email}</p>
+              )}
             </label>
 
             {/* PASSWORD */}
@@ -95,6 +181,9 @@ export default function UserLogin() {
                   transition
                 "
               />
+              {errors.password && (
+                <p className="text-xs text-red-600 mt-1">{errors.password}</p>
+              )}
             </label>
 
             <div className="text-sm text-right">

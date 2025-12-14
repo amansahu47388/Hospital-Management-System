@@ -134,17 +134,33 @@ class RegisterUserView(APIView):
 
 
 class RegisterAdminView(APIView):
-    permission_classes = [permissions.IsAuthenticated]  # restrict as needed
+    # Allow anyone to POST, but enforce server-side rules: if a superuser exists,
+    # only a superuser may create additional admin accounts. If no superuser
+    # exists yet, allow the first admin to be created (bootstrap case).
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        # Only allow superuser or staff to create additional admin accounts
-        if not request.user.is_superuser and not request.user.is_staff:
-            return Response({"detail": "You do not have permission to create admin users."},
-                            status=status.HTTP_403_FORBIDDEN)
+        # If a superuser already exists, require the requester to be a superuser
+        if User.objects.filter(is_superuser=True).exists():
+            if not (request.user and getattr(request.user, "is_superuser", False)):
+                return Response({"detail": "You do not have permission to create admin users."}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = AdminRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+
+        # Determine whether the created admin should be a superuser.
+        role = serializer.validated_data.get('role', 'admin')
+        # By default do not grant superuser. Grant only in two cases:
+        # 1) No superuser exists yet (bootstrap)
+        # 2) The requester is an existing superuser
+        can_be_super = False
+        if not User.objects.filter(is_superuser=True).exists():
+            can_be_super = True
+        elif request.user and getattr(request.user, 'is_superuser', False):
+            can_be_super = True
+
+        is_super = True if (role == 'admin' and can_be_super) else False
+        user = serializer.save(is_staff=True, is_superuser=is_super)
 
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token

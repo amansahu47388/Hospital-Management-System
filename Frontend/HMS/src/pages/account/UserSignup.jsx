@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userRegister } from "../../api/authApi";
+import { useNotify } from "../../context/NotificationContext";
 import bgImage from "../../assets/hospital-management-system.jpg";
 
 export default function UserSignup() {
   const navigate = useNavigate();
+  const notify = useNotify();
 
   const [form, setForm] = useState({
     full_name: "",
@@ -12,12 +14,85 @@ export default function UserSignup() {
     phone: "",
     password: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(false);
 
+  const validateFullName = (name) => {
+    if (!name || name.trim() === "") {
+      return "Full name is required";
+    }
+    if (name.trim().length < 2) {
+      return "Full name must be at least 2 characters";
+    }
+    if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+      return "Full name should only contain letters and spaces";
+    }
+    return "";
+  };
+
+  const validateEmail = (email) => {
+    if (!email || email.trim() === "") {
+      return "Email is required";
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    return "";
+  };
+
+  const validatePhone = (phone) => {
+    if (phone && phone.trim() !== "") {
+      const phoneRegex = /^[0-9]{10,15}$/;
+      if (!phoneRegex.test(phone.replace(/\s+/g, ""))) {
+        return "Please enter a valid phone number (10-15 digits)";
+      }
+    }
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password || password.trim() === "") {
+      return "Password is required";
+    }
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    if (!/(?=.*[a-z])/.test(password)) {
+      return "Password must contain at least one lowercase letter";
+    }
+    if (!/(?=.*[A-Z])/.test(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+    if (!/(?=.*[0-9])/.test(password)) {
+      return "Password must contain at least one number";
+    }
+    return "";
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      full_name: validateFullName(form.full_name),
+      email: validateEmail(form.email),
+      phone: validatePhone(form.phone),
+      password: validatePassword(form.password),
+    };
+    setErrors(newErrors);
+    return !newErrors.full_name && !newErrors.email && !newErrors.phone && !newErrors.password;
   };
 
   const parseServerError = (err) => {
@@ -40,14 +115,53 @@ export default function UserSignup() {
 
   const submit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    
+    const fullNameError = validateFullName(form.full_name);
+    const emailError = validateEmail(form.email);
+    const phoneError = validatePhone(form.phone);
+    const passwordError = validatePassword(form.password);
+    
+    if (fullNameError || emailError || phoneError || passwordError) {
+      setErrors({
+        full_name: fullNameError,
+        email: emailError,
+        phone: phoneError,
+        password: passwordError,
+      });
+      notify("error", fullNameError || emailError || phoneError || passwordError);
+      return;
+    }
 
+    setLoading(true);
     try {
-      await userRegister(form);
-      navigate("/login");
+      const res = await userRegister(form);
+      
+      // Check if registration was successful
+      if (res?.status === 201 || res?.status === 200 || res?.data) {
+        notify("success", "Account created successfully! Please login.");
+        // Use setTimeout to ensure state updates complete before navigation
+        setTimeout(() => {
+          navigate("/login", { replace: true });
+        }, 100);
+      } else {
+        notify("error", "Registration failed. Please try again.");
+      }
     } catch (err) {
-      setError(parseServerError(err));
+      const errorMsg = parseServerError(err);
+      notify("error", errorMsg);
+      // Set general error or field-specific errors
+      if (err.response?.data) {
+        const serverErrors = err.response.data;
+        const newErrors = { ...errors };
+        Object.keys(serverErrors).forEach((key) => {
+          if (newErrors.hasOwnProperty(key)) {
+            newErrors[key] = Array.isArray(serverErrors[key]) 
+              ? serverErrors[key][0] 
+              : serverErrors[key];
+          }
+        });
+        setErrors(newErrors);
+      }
     } finally {
       setLoading(false);
     }
@@ -72,12 +186,6 @@ export default function UserSignup() {
             User Signup
           </h2>
 
-          {error && (
-            <div className="text-sm text-red-600 mb-4 text-center">
-              {error}
-            </div>
-          )}
-
           <form onSubmit={submit} className="space-y-4">
             <label className="block text-sm text-gray-700">
               Full Name
@@ -94,8 +202,10 @@ export default function UserSignup() {
                   transition
                 "
                 placeholder="Your full name"
-                required
               />
+              {errors.full_name && (
+                <p className="text-xs text-red-600 mt-1">{errors.full_name}</p>
+              )}
             </label>
 
             <label className="block text-sm text-gray-700">
@@ -114,8 +224,10 @@ export default function UserSignup() {
                   transition
                 "
                 placeholder="you@example.com"
-                required
               />
+              {errors.email && (
+                <p className="text-xs text-red-600 mt-1">{errors.email}</p>
+              )}
             </label>
 
             <label className="block text-sm text-gray-700">
@@ -134,6 +246,9 @@ export default function UserSignup() {
                 "
                 placeholder="Phone number"
               />
+              {errors.phone && (
+                <p className="text-xs text-red-600 mt-1">{errors.phone}</p>
+              )}
             </label>
 
             <label className="block text-sm text-gray-700">
@@ -152,8 +267,10 @@ export default function UserSignup() {
                   transition
                 "
                 placeholder="Create a password"
-                required
               />
+              {errors.password && (
+                <p className="text-xs text-red-600 mt-1">{errors.password}</p>
+              )}
             </label>
 
             <button

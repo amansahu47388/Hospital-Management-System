@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { adminRegister } from "../../api/authApi";
+import { useNotify } from "../../context/NotificationContext";
 import bgImage from "../../assets/hospital-management-system.jpg";
 
 export default function AdminSignup() {
   const navigate = useNavigate();
+  const notify = useNotify();
 
   const [form, setForm] = useState({
     full_name: "",
@@ -14,7 +16,14 @@ export default function AdminSignup() {
     role: "admin",
   });
 
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({
+    full_name: "",
+    email: "",
+    password: "",
+    phone: "",
+    role: "",
+  });
+
   const [loading, setLoading] = useState(false);
 
   const roles = [
@@ -28,29 +37,115 @@ export default function AdminSignup() {
     "staff",
   ];
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
+  /* ===================== VALIDATIONS ===================== */
+
+  const validateFullName = (name) => {
+    if (!name.trim()) return "Full name is required";
+    if (name.trim().length < 2) return "At least 2 characters required";
+    if (!/^[a-zA-Z\s]+$/.test(name.trim()))
+      return "Only letters and spaces allowed";
+    return "";
   };
+
+  const validateEmail = (email) => {
+    if (!email.trim()) return "Email is required";
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(email)) return "Invalid email address";
+    return "";
+  };
+
+  const validatePhone = (phone) => {
+    if (!phone) return "";
+    const re = /^[0-9]{10,15}$/;
+    if (!re.test(phone)) return "Phone must be 10–15 digits";
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password) return "Password is required";
+    if (password.length < 8) return "Minimum 8 characters required";
+    if (!/(?=.*[a-z])/.test(password))
+      return "Must contain a lowercase letter";
+    if (!/(?=.*[A-Z])/.test(password))
+      return "Must contain an uppercase letter";
+    if (!/(?=.*[0-9])/.test(password))
+      return "Must contain a number";
+    return "";
+  };
+
+  /* ===================== HANDLERS ===================== */
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const parseServerError = (err) => {
+    if (!err?.response?.data) return "Registration failed";
+    const data = err.response.data;
+
+    if (typeof data === "string") return data;
+
+    if (typeof data === "object") {
+      return Object.entries(data)
+        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v[0] : v}`)
+        .join(" | ");
+    }
+
+    return "Registration failed";
+  };
+
+  /* ===================== SUBMIT ===================== */
 
   const submit = async (e) => {
     e.preventDefault();
-    setError("");
+
+    const newErrors = {
+      full_name: validateFullName(form.full_name),
+      email: validateEmail(form.email),
+      phone: validatePhone(form.phone),
+      password: validatePassword(form.password),
+      role: form.role ? "" : "Role is required",
+    };
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some(Boolean)) {
+      notify("error", "Please fix the form errors");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await adminRegister(form);
-      navigate("/admin/login");
+      const res = await adminRegister(form);
+
+      if (res?.status === 201 || res?.status === 200 || res?.data) {
+        notify("success", "Admin account created successfully! Please login.");
+        // Use setTimeout to ensure state updates complete before navigation
+        setTimeout(() => {
+          navigate("/admin/login", { replace: true });
+        }, 100);
+      } else {
+        notify("error", "Registration failed. Please try again.");
+      }
     } catch (err) {
-      setError(
-        err.response?.data?.detail ||
-          Object.values(err.response?.data || {})[0]?.[0] ||
-          "Registration failed"
-      );
+      notify("error", parseServerError(err));
+
+      if (err.response?.data && typeof err.response.data === "object") {
+        const backendErrors = {};
+        Object.entries(err.response.data).forEach(([key, val]) => {
+          backendErrors[key] = Array.isArray(val) ? val[0] : val;
+        });
+        setErrors((prev) => ({ ...prev, ...backendErrors }));
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  /* ===================== UI ===================== */
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden">
@@ -58,26 +153,19 @@ export default function AdminSignup() {
       <div
         className="fixed inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
-        aria-hidden="true"
       />
 
       {/* THEME GRADIENT OVERLAY (removed black) */}
       <div className="fixed inset-0  backdrop-blur-sm" />
 
-      {/* Centered card */}
       <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl px-6 py-8 sm:px-8 sm:py-10">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-center">
             Admin Signup
           </h2>
 
-          {error && (
-            <div className="text-sm text-red-600 mb-4 text-center">
-              {error}
-            </div>
-          )}
-
           <form onSubmit={submit} className="space-y-4">
+            {/* Full Name */}
             <label className="block text-sm text-gray-700">
               Full Name
               <input
@@ -97,6 +185,7 @@ export default function AdminSignup() {
               />
             </label>
 
+            {/* Email */}
             <label className="block text-sm text-gray-700">
               Email
               <input
@@ -117,6 +206,7 @@ export default function AdminSignup() {
               />
             </label>
 
+            {/* Phone */}
             <label className="block text-sm text-gray-700">
               Phone
               <input
@@ -135,6 +225,7 @@ export default function AdminSignup() {
               />
             </label>
 
+            {/* Role */}
             <label className="block text-sm text-gray-700">
               Role
               <select
@@ -158,6 +249,7 @@ export default function AdminSignup() {
               </select>
             </label>
 
+            {/* Password */}
             <label className="block text-sm text-gray-700">
               Password
               <input
