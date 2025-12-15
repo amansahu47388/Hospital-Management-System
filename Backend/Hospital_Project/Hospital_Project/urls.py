@@ -19,6 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('users.urls')),  # ensure /auth/ maps
-    path('api/', include('patient_module.urls')),  # keep patient routes
+    path('auth/', include('users.urls')),
+    path('patients/', include('patient_module.urls')),
+    # ...other urls...
 ]

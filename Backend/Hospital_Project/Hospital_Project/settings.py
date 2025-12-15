@@ -53,9 +53,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'users',
-    'patient_module',
     'admin_module',
     'doctor_module',
+    'patient_module',
     'appointment_module',
     
 ]

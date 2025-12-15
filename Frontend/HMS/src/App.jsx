@@ -12,6 +12,7 @@ import UserLogin from "./pages/account/UserLogin";
 import UserSignup from "./pages/account/UserSignup";
 import AdminSignup from "./pages/account/AdminSignup";
 import AdminLogin from "./pages/account/AdminLogin";
+import AddPatient from "./components/PatientComponent/AddPatient";
 
 function App() {
   return (
@@ -19,18 +20,23 @@ function App() {
       <NotificationProvider>
         <BrowserRouter>
           <Routes>
+            {/* Home Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin/dashboard" element={<Dashboard />} />
-            <Route path="/patient" element={<PatientDashboard />} />
-            <Route path="/patients" element={<PatientDashboard />} />
-            <Route path="/patients/:id" element={<PatientDetail />} />
 
+            {/* Auth Routes */}
             <Route path="/login" element={<UserLogin />} />
             <Route path="/signup" element={<UserSignup />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/signup" element={<AdminSignup />} />
+
+            {/* Patient Routes */}
+            <Route path="/patients" element={<PatientDashboard />} />
+            <Route path="/patients/add" element={<AddPatient />} />
+            <Route path="/patients/:id" element={<PatientDetail />} />
+
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
