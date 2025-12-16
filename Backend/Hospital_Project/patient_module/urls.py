@@ -3,9 +3,9 @@ from .views import (
     PatientListView,
     PatientDetailView,
     PatientCreateView,
-    PatientSearchView,
     PatientUpdateView,
     PatientDeleteView,
+    PatientSearchView,
 )
 
 app_name = 'patient_module'
