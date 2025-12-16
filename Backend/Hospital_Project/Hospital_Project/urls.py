@@ -16,9 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('users.urls')),  # ensure /auth/ maps
-    path('api/', include('patient_module.urls')),  # keep patient routes
+    path('auth/', include('users.urls')),
+    path('api/patients/', include('patient_module.urls')),
+    # path('api/admins/', include('admin_module.urls')),
+    # path('api/doctors/', include('doctor_module.urls')),
+    # path('api/appointments/', include('appointment_module.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -48,10 +48,17 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             validated_data['phone'] = None
 
         password = validated_data.pop('password')
-        validated_data['role'] = 'patient'
-        user = User.objects.create_user(**validated_data)
-        user.set_password(password)
-        user.save()
+        email = validated_data['email']
+        full_name = validated_data['full_name']
+        phone = validated_data.get('phone')
+        
+        user = User.objects.create_user(
+            email=email,
+            full_name=full_name,
+            password=password,
+            phone=phone,
+            role='patient'
+        )
         return user
 
 class AdminRegisterSerializer(serializers.ModelSerializer):
@@ -83,12 +90,21 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
 
         password = validated_data.pop('password')
         role = validated_data.get('role', 'admin')
+        email = validated_data['email']
+        full_name = validated_data['full_name']
+        phone = validated_data.get('phone')
+        
         # allow callers (views) to override is_staff/is_superuser via kwargs
         is_staff = validated_data.pop('is_staff', True)
         is_superuser = validated_data.pop('is_superuser', True if role == 'admin' else False)
-        validated_data['is_staff'] = is_staff
-        validated_data['is_superuser'] = is_superuser
-        user = User.objects.create_user(**validated_data)
-        user.set_password(password)
-        user.save()
+        
+        user = User.objects.create_user(
+            email=email,
+            full_name=full_name,
+            password=password,
+            phone=phone,
+            role=role,
+            is_staff=is_staff,
+            is_superuser=is_superuser
+        )
         return user

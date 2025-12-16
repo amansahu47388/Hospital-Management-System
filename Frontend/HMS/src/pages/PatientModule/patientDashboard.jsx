@@ -1,134 +1,272 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getPatientList,
+  deletePatient,
+  searchPatient,
+} from "../../api/patientApi";
+import { useNotify } from "../../context/NotificationContext";
+import { useAuth } from "../../context/AuthContext";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import AddPatient from "../../components/PatientComponent/AddPatient";
-import { useState } from "react";
-import { MoreVertical, Menu } from "lucide-react";
-
-const samplePatients = [
-  { id: 1, name: "Olivier Thomas", age: "41 Year, 7 Month, 5 Day", gender: "Male", phone: "7896541230", guardian: "Edward Thomas", address: "482 Kingsway, Brooklyn West, CA", dead: "No" },
-  { id: 2, name: "John Marshall", age: "30 Year, 10 Month, 4 Day", gender: "Male", phone: "9856475632", guardian: "Smith Marshall", address: "Blackstone Park, Brooklyn North, CA", dead: "No" },
-  { id: 3, name: "Maria Taylor", age: "14 Year, 10 Month, 5 Day", gender: "Female", phone: "7488548942", guardian: "Jonson", address: "CA,USA", dead: "No" },
-];
+import { Menu } from "lucide-react";
 
 function PatientDashboard() {
   const [openAdd, setOpenAdd] = useState(false);
+  const navigate = useNavigate();
+  const notify = useNotify();
+  const { user } = useAuth();
+
+  const [patients, setPatients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // selection
+  const [selectedPatients, setSelectedPatients] = useState([]);
+  const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(null);
+
+  const isAdmin = user?.is_staff;
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
+  const fetchPatients = async () => {
+    setLoading(true);
+    try {
+      const response = await getPatientList();
+      setPatients(Array.isArray(response.data) ? response.data : []);
+    } catch {
+      notify("error", "Failed to load patients");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (!value.trim()) {
+      fetchPatients();
+      return;
+    }
+
+    try {
+      const response = await searchPatient(value);
+      setPatients(Array.isArray(response.data) ? response.data : []);
+    } catch {
+      notify("error", "Search failed");
+    }
+  };
+
+  // checkbox handlers
+  const toggleSelectPatient = (id) => {
+    setSelectedPatients((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedPatients.length === patients.length) {
+      setSelectedPatients([]);
+    } else {
+      setSelectedPatients(patients.map((p) => p.id));
+    }
+  };
+
+  // single delete (unchanged)
+  const handleDelete = async (patientId, patientName) => {
+    if (!window.confirm(`Delete ${patientName}?`)) return;
+
+    setDeleteLoading(patientId);
+    try {
+      await deletePatient(patientId);
+      notify("success", "Patient deleted");
+      setPatients((prev) => prev.filter((p) => p.id !== patientId));
+    } catch {
+      notify("error", "Delete failed");
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+
+  // bulk delete (unchanged)
+  const handleDeleteSelected = async () => {
+    if (selectedPatients.length === 0) {
+      notify("error", "No patients selected");
+      return;
+    }
+
+    if (
+      !window.confirm(
+        `Delete ${selectedPatients.length} selected patients?`
+      )
+    ) {
+      return;
+    }
+
+    setBulkDeleteLoading(true);
+    try {
+      for (const id of selectedPatients) {
+        await deletePatient(id);
+      }
+
+      notify("success", "Selected patients deleted");
+      setPatients((prev) =>
+        prev.filter((p) => !selectedPatients.includes(p.id))
+      );
+      setSelectedPatients([]);
+    } catch {
+      notify("error", "Bulk delete failed");
+      fetchPatients();
+    } finally {
+      setBulkDeleteLoading(false);
+    }
+  };
 
   return (
     <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Right side */}
       <div className="flex flex-col flex-1 h-full overflow-hidden">
+        <Navbar />
 
-        {/* Navbar */}
-        <div className="sticky top-0 z-20 w-full">
-          <Navbar />
-        </div>
-
-        {/* Main content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">
+            {/* HEADER */}
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Patients List ({patients.length})
+              </h2>
 
-            {/* Header row */}
-            <div className="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
-              <h1 className="text-lg font-semibold text-gray-800">Patient List</h1>
+              <div className="flex gap-3">
+                {isAdmin && (
+                  <button
+                    onClick={handleDeleteSelected}
+                    // disabled={selectedPatients.length === 0 || bulkDeleteLoading}
+                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                               text-white text-sm px-4 py-2 rounded
+                               hover:shadow-lg transition disabled:opacity-60"
+                  >
+                    {bulkDeleteLoading
+                      ? "Deleting..."
+                      : `Delete Selected (${selectedPatients.length})`}
+                  </button>
+                )}
 
-              <div className="flex flex-wrap items-center gap-3">
-               <button
-               onClick={() => setOpenAdd(true)}
-              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm px-3 py-1 rounded"
-        >
-        + Add New Patient
-      </button>
-
-                <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm px-3 py-1 rounded">
-                  Import Patient
-                </button>
-                <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm px-3 py-1 rounded">
-                  Disabled Patient List
-                </button>
+                {isAdmin && (
+                  <button
+                    onClick={() => setOpenAdd(true)}
+                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                               text-white text-sm px-4 py-2 rounded
+                               hover:shadow-lg transition"
+                  >
+                    + Add Patient
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Search + Filters */}
+            {/* SEARCH */}
             <div className="px-6 py-4">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="border rounded px-3 py-2 text-sm w-full md:w-64 focus:ring-2 focus:ring-blue-200"
-                />
+              <input
+                type="text"
+                placeholder="Search by patient name"
+                className="border rounded px-3 py-2 text-sm w-full md:w-64
+                           focus:ring-2 focus:ring-[#6046B5] outline-none"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+            </div>
 
-                <div className="flex items-center gap-3">
-                  <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm px-3 py-1 rounded">
-                    Delete Selected
-                  </button>
+            <AddPatient
+              open={openAdd}
+              onClose={() => {
+                setOpenAdd(false);
+                fetchPatients();
+              }}
+            />
 
-                  <select className="border rounded px-2 py-1 text-sm">
-                    <option>100</option>
-                    <option>50</option>
-                    <option>25</option>
-                  </select>
-                </div>
-              </div>
+            {/* TABLE */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-100 border-b">
+                    <th className="px-6 py-4">
+                      <input
+                        type="checkbox"
+                        checked={
+                          patients.length > 0 &&
+                          selectedPatients.length === patients.length
+                        }
+                        onChange={toggleSelectAll}
+                        className="accent-[#6046B5]"
+                      />
+                    </th>
+                    <th className="px-6 py-4">ID</th>
+                    <th className="px-6 py-4">Name</th>
+                    <th className="px-6 py-4">Email</th>
+                    <th className="px-6 py-4">Gender</th>
+                    <th className="px-6 py-4">Phone</th>
+                    <th className="px-6 py-4">DOB</th>
+                    <th className="px-6 py-4">Age</th>
+                    <th className="px-6 py-4">Blood Group</th>
+                    <th className="px-6 py-4">Actions</th>
+                  </tr>
+                </thead>
 
-              {/* Responsive Table */}
-              <div className="overflow-x-auto mt-4">
-  <table className="w-full text-sm border-separate border-spacing-0">
-    <thead className="bg-gray-50 border-y">
-      <tr>
-        <th className="px-4 py-2 text-left"><input type="checkbox" /></th>
-        <th className="px-4 py-2 text-left"># Patient Name</th>
-        <th className="px-4 py-2 text-left">Age</th>
-        <th className="px-4 py-2 text-left">Gender</th>
-        <th className="px-4 py-2 text-left">Phone</th>
-        <th className="px-4 py-2 text-left">Guardian Name</th>
-        <th className="px-4 py-2 text-left">Address</th>
-        <th className="px-4 py-2 text-left">Dead</th>
-        <th className="px-4 py-2 text-left">Action</th>
-      </tr>
-    </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {patients.map((patient) => (
+                    <tr key={patient.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedPatients.includes(patient.id)}
+                          onChange={() => toggleSelectPatient(patient.id)}
+                          className="accent-[#6046B5]"
+                        />
+                      </td>
+                      <td className="px-6 py-4">{patient.id}</td>
+                      <td
+                        className="px-6 py-4 text-blue-600 cursor-pointer hover:underline"
+                        onClick={() => navigate(`/patients/${patient.id}`)}
+                      >
+                        {patient.full_name}
+                      </td>
+                      <td className="px-6 py-4">{patient.email}</td>
+                      <td className="px-6 py-4">{patient.gender}</td>
+                      <td className="px-6 py-4">{patient.phone}</td>
+                      <td className="px-6 py-4">
+                        {new Date(
+                          patient.date_of_birth
+                        ).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 font-semibold">
+                        {patient.age} yrs
+                      </td>
+                      <td className="px-6 py-4 font-semibold">
+                        {patient.blood_group}
+                      </td>
 
-    <tbody className="divide-y divide-gray-200">
-      {samplePatients.map((p) => (
-        <tr key={p.id} className="hover:bg-gray-50">
-          <td className="px-4 py-3"><input type="checkbox" /></td>
-          <td className="px-4 py-3 text-blue-600">
-            {p.name}
-            <span className="text-xs text-gray-400"> ({p.id})</span>
-          </td>
-          <td className="px-4 py-3">{p.age}</td>
-          <td className="px-4 py-3">{p.gender}</td>
-          <td className="px-4 py-3">{p.phone}</td>
-          <td className="px-4 py-3">{p.guardian}</td>
-          <td className="px-4 py-3">{p.address}</td>
-          <td className="px-4 py-3">{p.dead}</td>
-          <td className="px-4 py-3">
-          <td className="px-4 py-3">
-  <div className="flex gap-3">
-  <button className="p-2 border rounded hover:bg-gray-100">
-    <MoreVertical size={20} />
-  </button>
-
-  <button className="p-2 border rounded hover:bg-gray-100">
-    <Menu size={20} />
-  </button>
-</div>
-
-</td>
-
-
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-  <AddPatient open={openAdd} onClose={() => setOpenAdd(false)} />
-
-</div>
-
+                      {/* ACTIONS → DIRECT NAVIGATION */}
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() =>
+                            navigate(`/patients/${patient.id}`)
+                          }
+                          className="text-2xl text-gray-600 hover:text-gray-900"
+                          title="View Patient Details"
+                        >
+                          <Menu />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </main>
