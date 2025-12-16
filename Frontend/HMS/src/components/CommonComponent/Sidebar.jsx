@@ -27,14 +27,14 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { to: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
+  { to: "/Admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
  
   { to: "/lab", label: "Lab", Icon: FlaskConical },
   { to: "/ward", label: "Ward", Icon: Bed },
   { to: "/treatment", label: "Treatment", Icon: Stethoscope },
   { to: "/pharmacy", label: "Pharmacy", Icon: Pill },
-  { to: "/patient", label: "Patient", Icon: UserRound },
-  { to: "/Appointment", label: "Appointment", Icon: Calendar },
+  { to: "/Admin/patient", label: "Patient", Icon: UserRound },
+  { to: "/Admin/appointment", label: "Appointment", Icon: Calendar },
   { to: "/OPD-Out Patient", label: "OPD-Out patient", Icon: Hospital },
   { to: "/IPD-In Patient", label: "IPD-In Patient", Icon: Bed },
   { to: "/pathology", label: "Pathology", Icon: FlaskConical },

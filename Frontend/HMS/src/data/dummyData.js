@@ -34,3 +34,44 @@ export const appointments = [
   { id: 4, name: "Phillip Bator", date: "04.12.2023", status: "pending" },
   { id: 5, name: "Emerson Stanton", date: "04.12.2023", status: "accepted" },
 ];
+
+
+// Existing data...
+
+export const appointments_data= [
+  {
+    patient_name: "John Doe",
+    appointment_no: "APP001",
+    created_by: "Admin",
+    appointment_date: "2023-10-01",
+    phone: "1234567890",
+    gender: "Male",
+    doctor: "Dr. Smith",
+    source: "Online",
+    priority: "High",
+    live_consultant: "Yes",
+    alternate_address: "123 Main St",
+    fees: 100,
+    discount: 10,
+    paid: 90,
+    status: "Confirmed",
+  },
+  {
+    patient_name: "Jane Smith",
+    appointment_no: "APP002",
+    created_by: "Receptionist",
+    appointment_date: "2023-10-02",
+    phone: "0987654321",
+    gender: "Female",
+    doctor: "Dr. Johnson",
+    source: "Walk-in",
+    priority: "Medium",
+    live_consultant: "No",
+    alternate_address: "456 Elm St",
+    fees: 150,
+    discount: 0,
+    paid: 150,
+    status: "Pending",
+  },
+  // Add more as needed
+];

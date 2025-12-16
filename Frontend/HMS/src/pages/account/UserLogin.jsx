@@ -13,8 +13,7 @@ export default function UserLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+ 
 
   const validateEmail = (email) => {
     if (!email || email.trim() === "") {

@@ -12,7 +12,7 @@ import UserLogin from "./pages/account/UserLogin";
 import UserSignup from "./pages/account/UserSignup";
 import AdminSignup from "./pages/account/AdminSignup";
 import AdminLogin from "./pages/account/AdminLogin";
-
+import Appointment from "./pages/AppointmentModule/Appointment";
 function App() {
   return (
     <AuthProvider>
@@ -23,7 +23,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin/dashboard" element={<Dashboard />} />
-            <Route path="/patient" element={<PatientDashboard />} />
+            <Route path="Admin/patient" element={<PatientDashboard />} />
             <Route path="/patients" element={<PatientDashboard />} />
             <Route path="/patients/:id" element={<PatientDetail />} />
 
@@ -31,6 +31,7 @@ function App() {
             <Route path="/signup" element={<UserSignup />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/signup" element={<AdminSignup />} />
+            <Route path="/admin/appointment" element={<Appointment />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
