@@ -10,27 +10,37 @@ const patientAPI = axios.create({
 });
 
 // Add token to requests
-patientAPI.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+patientAPI.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('📤 API Request:', config.method.toUpperCase(), config.url);
+    console.log('📦 Data:', config.data);
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+);
 
 // Handle responses
-patientAPI.interceptors.response.use((response) => {
-  return response;
-}, (error) => {
-  if (error.response?.status === 401) {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    window.location.href = '/login';
+patientAPI.interceptors.response.use(
+  (response) => {
+    console.log('📥 API Response:', response.status, response.data);
+    return response;
+  },
+  (error) => {
+    console.error('❌ API Error:', error.response?.status, error.response?.data);
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      window.location.href = '/admin/login';
+    }
+    return Promise.reject(error);
   }
-  return Promise.reject(error);
-});
+);
 
 export const getPatientList = async () => {
   try {
@@ -52,9 +62,12 @@ export const getPatientDetail = async (patientId) => {
 
 export const createPatient = async (patientData) => {
   try {
+    console.log('🆕 Creating patient with data:', patientData);
     const response = await patientAPI.post('/create/', patientData);
+    console.log('✅ Patient created successfully:', response.data);
     return response;
   } catch (error) {
+    console.error('❌ Create patient error:', error.response?.data);
     throw error;
   }
 };

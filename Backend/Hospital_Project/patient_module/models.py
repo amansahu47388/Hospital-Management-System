@@ -1,59 +1,91 @@
 from django.db import models
 from users.models import User
-from django.utils import timezone
 import uuid
+from datetime import date
 
 
 class Patient(models.Model):
-    GENDER_CHOICES = (
-        ("male", "Male"),
-        ("female", "Female"),
-        ("other", "Other")
-    )
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+    
+    BLOOD_GROUP_CHOICES = [
+        ('O+', 'O+'),
+        ('O-', 'O-'),
+        ('A+', 'A+'),
+        ('A-', 'A-'),
+        ('B+', 'B+'),
+        ('B-', 'B-'),
+        ('AB+', 'AB+'),
+        ('AB-', 'AB-'),
+    ]
 
-    MATERIAL_STATUS_CHOICES = (
-        ("single", "Single"),
-        ("married", "Married"),
-        ("divorced", "Divorced"),
-        ("widowed", "Widowed")
-    )
-
-    BLOOD_GROUP_CHOICES = (
-        ("A+", "A+"),
-        ("A-", "A-"),
-        ("B+", "B+"),
-        ("B-", "B-"),
-        ("AB+", "AB+"),
-        ("AB-", "AB-"),
-        ("O+", "O+"),
-        ("O-", "O-"),
-    )
-    TPA_CHOICES = (
-        ("heath life insurance", "Heath Life Insurance"),
-        ("star heath insurance", "Star Heath Insurance"),
-        ("IDBI federal", "IDBI Federal"),
-        ("cghs", "CGHS"),
-    )
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=150)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
-    date_of_birth = models.DateField()
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile', null=True, blank=True   )
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, blank=True, null=True)
-    age = models.IntegerField()
-    address = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
-    marital_status = models.CharField(max_length=10, choices=MATERIAL_STATUS_CHOICES)
-    guardian_name = models.CharField(max_length=150, blank=True, null=True)
+    phone = models.CharField(max_length=20)
     photo = models.ImageField(upload_to='patient_photos/', blank=True, null=True)
-    allergies = models.TextField(blank=True, null=True)
-    remark = models.TextField(blank=True, null=True)
-    tpa = models.CharField(max_length=50, choices=TPA_CHOICES, blank=True, null=True)
-    tpa_id = models.CharField(max_length=100, blank=True, null=True)
-    tpa_validity = models.DateField(blank=True, null=True)
-    national_identification_number = models.CharField(max_length=100, blank=True, null=True)
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=10)
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
+    medical_history = models.TextField(blank=True)
+    allergies = models.TextField(blank=True)
+    emergency_contact_name = models.CharField(max_length=100)
+    emergency_contact_phone = models.CharField(max_length=20)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='patients_created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Patient'
+        verbose_name_plural = 'Patients'
 
     def __str__(self):
-        return self.full_name
+        return f"{self.first_name} {self.last_name}"
+
+    @property
+    def full_name(self):
+        """Return full name of patient"""
+        return f"{self.first_name} {self.last_name}".strip()
+
+    @property
+    def age(self):
+        """Calculate age from date of birth"""
+        if not self.date_of_birth:
+            return 0
+        
+        today = date.today()
+        try:
+            # Calculate exact age
+            age = today.year - self.date_of_birth.year
+            
+            # Adjust if birthday hasn't occurred this year
+            if (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day):
+                age -= 1
+            
+            return max(0, age)  # Return 0 if negative
+        except (ValueError, TypeError):
+            return 0
+
+    def get_gender_display_value(self):
+        """Get gender display value"""
+        gender_map = {
+            'M': 'Male',
+            'F': 'Female',
+            'O': 'Other',
+        }
+        return gender_map.get(self.gender, self.gender)
+
+    def get_blood_group_display_value(self):
+        """Get blood group display value"""
+        return self.blood_group

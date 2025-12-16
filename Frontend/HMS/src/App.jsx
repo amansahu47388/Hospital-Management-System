@@ -33,9 +33,9 @@ function App() {
             <Route path="/admin/signup" element={<AdminSignup />} />
 
             {/* Patient Routes */}
-            <Route path="/patients" element={<PatientDashboard />} />
-            <Route path="/patients/add" element={<AddPatient />} />
-            <Route path="/patients/:id" element={<PatientDetail />} />
+            <Route path="/admin/patients" element={<PatientDashboard />} />
+            <Route path="/admin/patients/add" element={<AddPatient />} />
+            <Route path="/admin/patients/:id" element={<PatientDetail />} />
 
           </Routes>
         </BrowserRouter>
