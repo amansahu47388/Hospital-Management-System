@@ -13,6 +13,8 @@ import UserSignup from "./pages/account/UserSignup";
 import AdminSignup from "./pages/account/AdminSignup";
 import AdminLogin from "./pages/account/AdminLogin";
 import Appointment from "./pages/AppointmentModule/Appointment";
+import DoctorWiseAppointment from "./pages/AppointmentModule/DoctorWiseAppointment";
+import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 import AddPatient from "./components/PatientComponent/AddPatient";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 
@@ -42,7 +44,8 @@ function App() {
             
             {/* Appointment Routes */}
             <Route path="/admin/appointment" element={<Appointment />} />
-
+            <Route path="/admin/appointment/doctor-wise-appointment" element={<DoctorWiseAppointment />} />
+            <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
