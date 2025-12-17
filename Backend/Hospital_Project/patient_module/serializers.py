@@ -1,13 +1,16 @@
 import logging
+import os
 from rest_framework import serializers
 from .models import Patient
 from datetime import date
+BACKEND_URL = os.environ.get("BACKEND_URL")
 
 logger = logging.getLogger(__name__)
 
 class PatientSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
     created_by_name = serializers.CharField(
         source='created_by.get_full_name', 
         read_only=True, 
@@ -25,7 +28,6 @@ class PatientSerializer(serializers.ModelSerializer):
             'full_name',
             'email',
             'phone',
-            'photo',
             'address',
             'city',
             'state',
@@ -38,6 +40,7 @@ class PatientSerializer(serializers.ModelSerializer):
             'allergies',
             'emergency_contact_name',
             'emergency_contact_phone',
+            'photo',
             'created_by_name',
             'created_at',
             'updated_at',
@@ -74,7 +77,22 @@ class PatientSerializer(serializers.ModelSerializer):
         except (ValueError, TypeError):
             return 0
 
+    def get_photo(self, obj):
+        """Return full URL for photo"""
+        if obj.photo:
+            request = self.context.get('request')
+            if request:
+                photo_url = request.build_absolute_uri(obj.photo.url)
+                print(f"✅ Photo URL built: {photo_url}")
+                return photo_url
+            else:
+                # Fallback if no request context
+                  return f"{BACKEND_URL}{obj.photo.url}"
+        return None
+
 class PatientCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating patients"""
+    
     class Meta:
         model = Patient
         fields = [
@@ -82,7 +100,6 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'phone',
-            'photo',
             'address',
             'city',
             'state',
@@ -94,6 +111,7 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
             'allergies',
             'emergency_contact_name',
             'emergency_contact_phone',
+            'photo',
         ]
 
     def validate_first_name(self, value):
@@ -113,11 +131,12 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         value = value.lower().strip()
         
         if self.instance is None:
-            if Patient.objects.filter(email=value).exists():
+            if Patient.objects.filter(email=value, is_active=True).exists():
                 raise serializers.ValidationError("Patient with this email already exists.")
         else:
-            if Patient.objects.filter(email=value).exclude(pk=self.instance.pk).exists():
+            if Patient.objects.filter(email=value, is_active=True).exclude(pk=self.instance.pk).exists():
                 raise serializers.ValidationError("Patient with this email already exists.")
+        
         return value
 
     def validate_phone(self, value):
@@ -169,16 +188,13 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         
         today = date.today()
         
-        # Check if date is in future
         if value > today:
             raise serializers.ValidationError("Date of birth cannot be in the future.")
         
-        # Calculate age
         age = today.year - value.year
         if (today.month, today.day) < (value.month, value.day):
             age -= 1
         
-        # Check reasonable age range
         if age > 150:
             raise serializers.ValidationError("Please enter a valid date of birth.")
         if age < 0:
@@ -197,21 +213,41 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Invalid blood group choice.")
         return value
 
+    def validate_photo(self, value):
+        """Validate photo file"""
+        if value:
+            # Check file size (max 5MB)
+            if value.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError("Image size must be less than 5MB.")
+            
+            # Check file type
+            if not value.content_type.startswith('image/'):
+                raise serializers.ValidationError("File must be an image.")
+        
+        return value
+
     def create(self, validated_data):
-        logger.info(f"Creating patient with validated data: {validated_data}")
+        """Create a new patient"""
+        logger.info(f"Creating new patient")
         try:
             validated_data['created_by'] = self.context['request'].user
             patient = Patient.objects.create(**validated_data)
-            logger.info(f"Patient created: {patient.id} - Age: {patient.age}")
+            logger.info(f"✅ Patient created: ID={patient.id}, Name={patient.full_name}")
             return patient
         except Exception as e:
-            logger.error(f"Error creating patient: {str(e)}", exc_info=True)
-            raise
+            logger.error(f"❌ Error creating patient: {str(e)}", exc_info=True)
+            raise serializers.ValidationError(f"Error creating patient: {str(e)}")
 
     def update(self, instance, validated_data):
-        logger.info(f"Updating patient {instance.id}")
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        logger.info(f"Patient {instance.id} updated - Age: {instance.age}")
-        return instance
+        """Update an existing patient"""
+        logger.info(f"Updating patient ID={instance.id}")
+        try:
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            
+            instance.save()
+            logger.info(f"✅ Patient updated: ID={instance.id}")
+            return instance
+        except Exception as e:
+            logger.error(f"❌ Error updating patient: {str(e)}", exc_info=True)
+            raise serializers.ValidationError(f"Error updating patient: {str(e)}")

@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { createPatient } from "../../api/patientApi";
 import { useNotify } from "../../context/NotificationContext";
-import { Form } from "react-router-dom";
+import { X, Loader } from "lucide-react";
 
-export default function AddPatient({ open, onClose }) {
+function AddPatient({ open, onClose }) {
   const notify = useNotify();
-  const [loading, setLoading] = useState(false);
 
+  // Initialize formData with default empty values
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     phone: "",
-    photo: null,
     address: "",
     city: "",
     state: "",
@@ -24,25 +23,62 @@ export default function AddPatient({ open, onClose }) {
     allergies: "",
     emergency_contact_name: "",
     emergency_contact_phone: "",
+    photo: null,
   });
 
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [photoPreview, setPhotoPreview] = useState(null);
 
-  if (!open) return null;
-
+  // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    const { name, value, files } = e.target;
+
+    if (name === "photo" && files && files[0]) {
+      const file = files[0];
+
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        notify("error", "Please select a valid image file");
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        notify("error", "Image size must be less than 5MB");
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, photo: file }));
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
+  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.first_name.trim()) {
+    if (!formData.first_name?.trim()) {
       newErrors.first_name = "First name is required";
     }
-    if (!formData.last_name.trim()) {
+    if (!formData.last_name?.trim()) {
       newErrors.last_name = "Last name is required";
     }
 
@@ -51,8 +87,7 @@ export default function AddPatient({ open, onClose }) {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Invalid email format";
     }
-
-    if (!formData.phone.trim()) {
+    if (!formData.phone?.trim()) {
       newErrors.phone = "Phone is required";
     } else if (formData.phone.length < 10) {
       newErrors.phone = "Phone must be at least 10 digits";
@@ -98,71 +133,130 @@ export default function AddPatient({ open, onClose }) {
     e.preventDefault();
 
     if (!validateForm()) {
-      notify("error", "Please fix all required fields");
+      console.log("❌ Form validation failed");
+      notify("error", "Please fix the validation errors");
       return;
     }
 
     setLoading(true);
+    console.log("📤 Submitting patient form");
+
     try {
-      const response = await createPatient(formData);
-      if (response?.data?.id) {
-        notify("success", "Patient added successfully!");
-        setFormData({
-          first_name: "",
-          last_name: "",
-          email: "",
-          phone: "",
-          photo: null,
-          address: "",
-          city: "",
-          state: "",
-          zip_code: "",
-          date_of_birth: "",
-          gender: "M",
-          blood_group: "O+",
-          medical_history: "",
-          allergies: "",
-          emergency_contact_name: "",
-          emergency_contact_phone: "",
-        });
-        onClose();
+      // Create FormData for file upload
+      const submitData = new FormData();
+      submitData.append("first_name", formData.first_name);
+      submitData.append("last_name", formData.last_name);
+      submitData.append("email", formData.email);
+      submitData.append("phone", formData.phone);
+      submitData.append("address", formData.address);
+      submitData.append("city", formData.city);
+      submitData.append("state", formData.state);
+      submitData.append("zip_code", formData.zip_code);
+      submitData.append("date_of_birth", formData.date_of_birth);
+      submitData.append("gender", formData.gender);
+      submitData.append("blood_group", formData.blood_group);
+      submitData.append("medical_history", formData.medical_history || "");
+      submitData.append("allergies", formData.allergies || "");
+      submitData.append("emergency_contact_name", formData.emergency_contact_name);
+      submitData.append("emergency_contact_phone", formData.emergency_contact_phone);
+
+      if (formData.photo) {
+        submitData.append("photo", formData.photo);
       }
+
+      const response = await createPatient(submitData);
+
+      console.log("✅ Patient created successfully:", response.data);
+      notify("success", "Patient added successfully");
+
+      // Reset form
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        address: "",
+        city: "",
+        state: "",
+        zip_code: "",
+        date_of_birth: "",
+        gender: "M",
+        blood_group: "O+",
+        medical_history: "",
+        allergies: "",
+        emergency_contact_name: "",
+        emergency_contact_phone: "",
+        photo: null,
+      });
+      setPhotoPreview(null);
+      setErrors({});
+
+      // Close modal after brief delay
+      setTimeout(() => {
+        onClose();
+      }, 500);
     } catch (err) {
-      console.error("Error:", err);
-      const errorData = err.response?.data;
-      
-      if (typeof errorData === 'object') {
-        // Handle validation errors from backend
-        const errorMessages = [];
-        Object.entries(errorData).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            errorMessages.push(`${key}: ${value[0]}`);
-          } else {
-            errorMessages.push(`${key}: ${value}`);
-          }
-        });
-        notify("error", errorMessages[0] || "Failed to add patient");
+      console.error("❌ Error creating patient:", err);
+
+      // Handle validation errors from backend
+      if (err.response?.data) {
+        const backendErrors = err.response.data;
+        if (typeof backendErrors === "object") {
+          setErrors(backendErrors);
+          const firstError = Object.values(backendErrors)[0];
+          const message = Array.isArray(firstError) ? firstError[0] : firstError;
+          notify("error", message || "Failed to add patient");
+        } else {
+          notify("error", backendErrors.detail || "Failed to add patient");
+        }
       } else {
-        notify("error", errorData?.detail || "Failed to add patient. Please try again.");
+        notify("error", "Failed to add patient");
       }
     } finally {
       setLoading(false);
     }
   };
 
+  // Reset on close
+  const handleClose = () => {
+    setFormData({
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      zip_code: "",
+      date_of_birth: "",
+      gender: "M",
+      blood_group: "O+",
+      medical_history: "",
+      allergies: "",
+      emergency_contact_name: "",
+      emergency_contact_phone: "",
+      photo: null,
+    });
+    setPhotoPreview(null);
+    setErrors({});
+    onClose();
+  };
+
+  if (!open) return null;
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white w-[98%] md:w-[90%] lg:w-[80%] rounded-lg shadow-lg overflow-y-auto max-h-[90vh] mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
+        <div className="flex justify-between items-center px-6 py-4 sticky top-0 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
           <h2 className="text-lg font-semibold">Add Patient</h2>
           <button onClick={onClose} className="text-2xl font-bold hover:opacity-80">
             ×
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
             {/* PERSONAL INFO */}
             <div>
@@ -184,7 +278,7 @@ export default function AddPatient({ open, onClose }) {
                   value={formData.last_name}
                   onChange={handleChange}
                   error={errors.last_name}
-                  required
+                  
                 />
               </div>
 
@@ -205,19 +299,7 @@ export default function AddPatient({ open, onClose }) {
                   value={formData.phone}
                   onChange={handleChange}
                   error={errors.phone}
-                  required
                 />
-                <FormField
-                  label="Photo"
-                  name="photo"
-                  type="file"
-                  value={formData.photo}
-                  onChange={handleChange}
-                  error={errors.photo}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <FormField
                   label="Date of Birth"
                   name="date_of_birth"
@@ -225,13 +307,16 @@ export default function AddPatient({ open, onClose }) {
                   value={formData.date_of_birth}
                   onChange={handleChange}
                   error={errors.date_of_birth}
-                  required
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <SelectField
                   label="Gender"
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
+                  error={errors.gender}
                   options={[
                     { value: "M", label: "Male" },
                     { value: "F", label: "Female" },
@@ -243,6 +328,7 @@ export default function AddPatient({ open, onClose }) {
                   name="blood_group"
                   value={formData.blood_group}
                   onChange={handleChange}
+                  error={errors.blood_group}
                   options={[
                     { value: "O+", label: "O+" },
                     { value: "O-", label: "O-" },
@@ -254,6 +340,25 @@ export default function AddPatient({ open, onClose }) {
                     { value: "AB-", label: "AB-" },
                   ]}
                 />
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    📷 Photo
+                  </label>
+                  <input
+                    type="file"
+                    name="photo"
+                    accept="image/*"
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-300 px-3 py-2 rounded focus:border-purple-500 outline-none transition"
+                  />
+                  {photoPreview && (
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      className="mt-2 w-16 h-16 object-cover rounded"
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -268,7 +373,6 @@ export default function AddPatient({ open, onClose }) {
                 value={formData.address}
                 onChange={handleChange}
                 error={errors.address}
-                required
               />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
@@ -278,7 +382,6 @@ export default function AddPatient({ open, onClose }) {
                   value={formData.city}
                   onChange={handleChange}
                   error={errors.city}
-                  required
                 />
                 <FormField
                   label="State"
@@ -286,7 +389,6 @@ export default function AddPatient({ open, onClose }) {
                   value={formData.state}
                   onChange={handleChange}
                   error={errors.state}
-                  required
                 />
                 <FormField
                   label="Zip Code"
@@ -294,7 +396,6 @@ export default function AddPatient({ open, onClose }) {
                   value={formData.zip_code}
                   onChange={handleChange}
                   error={errors.zip_code}
-                  required
                 />
               </div>
             </div>
@@ -329,21 +430,18 @@ export default function AddPatient({ open, onClose }) {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
-                  label="Contact Name"
+                  label="Guardian Name"
                   name="emergency_contact_name"
                   value={formData.emergency_contact_name}
                   onChange={handleChange}
                   error={errors.emergency_contact_name}
-                  required
                 />
                 <FormField
-                  label="Contact Phone"
+                  label="Guardian Phone"
                   name="emergency_contact_phone"
-                  type="tel"
                   value={formData.emergency_contact_phone}
                   onChange={handleChange}
                   error={errors.emergency_contact_phone}
-                  required
                 />
               </div>
             </div>
@@ -358,6 +456,7 @@ export default function AddPatient({ open, onClose }) {
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={loading}
@@ -426,3 +525,5 @@ function TextAreaField({ label, name, value, onChange, rows = "3" }) {
     </div>
   );
 }
+
+export default AddPatient;

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getPatientList,
-  deletePatient,
-  searchPatient,
-} from "../../api/patientApi";
+import {getPatientList,deletePatient,searchPatient} from "../../api/patientApi";
 import { useNotify } from "../../context/NotificationContext";
 import { useAuth } from "../../context/AuthContext";
 import Sidebar from "../../components/CommonComponent/Sidebar";
@@ -77,21 +73,21 @@ function PatientDashboard() {
     }
   };
 
-  // single delete (unchanged)
-  const handleDelete = async (patientId, patientName) => {
-    if (!window.confirm(`Delete ${patientName}?`)) return;
+  // // single delete (unchanged)
+  // const handleDelete = async (patientId, patientName) => {
+  //   if (!window.confirm(`Delete ${patientName}?`)) return;
 
-    setDeleteLoading(patientId);
-    try {
-      await deletePatient(patientId);
-      notify("success", "Patient deleted");
-      setPatients((prev) => prev.filter((p) => p.id !== patientId));
-    } catch {
-      notify("error", "Delete failed");
-    } finally {
-      setDeleteLoading(null);
-    }
-  };
+  //   setDeleteLoading(patientId);
+  //   try {
+  //     await deletePatient(patientId);
+  //     notify("success", "Patient deleted");
+  //     setPatients((prev) => prev.filter((p) => p.id !== patientId));
+  //   } catch {
+  //     notify("error", "Delete failed");
+  //   } finally {
+  //     setDeleteLoading(null);
+  //   }
+  // };
 
   // bulk delete (unchanged)
   const handleDeleteSelected = async () => {
@@ -212,7 +208,7 @@ function PatientDashboard() {
                     <th className="px-6 py-4">Gender</th>
                     <th className="px-6 py-4">Phone</th>
                     <th className="px-6 py-4">DOB</th>
-                    <th className="px-6 py-4">Age</th>
+                    <th className="px-6 py-4">Age(Years)</th>
                     <th className="px-6 py-4">Blood Group</th>
                     <th className="px-6 py-4">Actions</th>
                   </tr>
@@ -232,7 +228,7 @@ function PatientDashboard() {
                       <td className="px-6 py-4">{patient.id}</td>
                       <td
                         className="px-6 py-4 text-blue-600 cursor-pointer hover:underline"
-                        onClick={() => navigate(`/patients/${patient.id}`)}
+                        onClick={() => navigate(`/admin/patients/${patient.id}`)}
                       >
                         {patient.full_name}
                       </td>
@@ -245,7 +241,7 @@ function PatientDashboard() {
                         ).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 font-semibold">
-                        {patient.age} yrs
+                        {patient.age || "N/A"}
                       </td>
                       <td className="px-6 py-4 font-semibold">
                         {patient.blood_group}
@@ -255,9 +251,9 @@ function PatientDashboard() {
                       <td className="px-6 py-4">
                         <button
                           onClick={() =>
-                            navigate(`/patients/${patient.id}`)
+                            navigate(`/admin/patients/${patient.id}`)
                           }
-                          className="text-2xl text-gray-600 hover:text-gray-900"
+                          className="text-xl text-gray-600 hover:text-gray-900"
                           title="View Patient Details"
                         >
                           <Menu />
