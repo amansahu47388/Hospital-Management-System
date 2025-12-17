@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-from patient_module.models import Patient
+# from patient_module.models import Patient
 from admin_module.models import AdminProfile
 from django.conf import settings
 

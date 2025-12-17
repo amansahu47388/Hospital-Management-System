@@ -134,9 +134,7 @@ class RegisterUserView(APIView):
 
 
 class RegisterAdminView(APIView):
-    # Allow anyone to POST, but enforce server-side rules: if a superuser exists,
-    # only a superuser may create additional admin accounts. If no superuser
-    # exists yet, allow the first admin to be created (bootstrap case).
+   
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -148,11 +146,8 @@ class RegisterAdminView(APIView):
         serializer = AdminRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Determine whether the created admin should be a superuser.
         role = serializer.validated_data.get('role', 'admin')
-        # By default do not grant superuser. Grant only in two cases:
-        # 1) No superuser exists yet (bootstrap)
-        # 2) The requester is an existing superuser
+    
         can_be_super = False
         if not User.objects.filter(is_superuser=True).exists():
             can_be_super = True
