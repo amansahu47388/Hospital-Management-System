@@ -13,6 +13,8 @@ import UserSignup from "./pages/account/UserSignup";
 import AdminSignup from "./pages/account/AdminSignup";
 import AdminLogin from "./pages/account/AdminLogin";
 import Appointment from "./pages/AppointmentModule/Appointment";
+import DoctorWiseAppointment from "./pages/AppointmentModule/DoctorWiseAppointment";
+import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 function App() {
   return (
     <AuthProvider>
@@ -32,6 +34,8 @@ function App() {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/signup" element={<AdminSignup />} />
             <Route path="/admin/appointment" element={<Appointment />} />
+            <Route path="/admin/appointment/doctor-wise-appointment" element={<DoctorWiseAppointment />} />
+            <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
