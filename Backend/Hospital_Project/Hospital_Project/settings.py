@@ -34,9 +34,32 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
 CORS_ALLOW_ALL_ORIGINS = False   
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://127.0.0.1:5173"
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
+
+
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 
 # Application definition
@@ -53,9 +76,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'users',
-    'patient_module',
     'admin_module',
     'doctor_module',
+    'patient_module',
     'appointment_module',
     
 ]
@@ -170,3 +193,8 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
