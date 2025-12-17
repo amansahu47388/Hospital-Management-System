@@ -14,6 +14,7 @@ import AdminSignup from "./pages/account/AdminSignup";
 import AdminLogin from "./pages/account/AdminLogin";
 import Appointment from "./pages/AppointmentModule/Appointment";
 import AddPatient from "./components/PatientComponent/AddPatient";
+import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 
 function App() {
   return (
@@ -31,12 +32,13 @@ function App() {
             <Route path="/login" element={<UserLogin />} />
             <Route path="/signup" element={<UserSignup />} />
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/signup" element={<AdminSignup />} 
+            <Route path="/admin/signup" element={<AdminSignup />} />
 
             {/* Patient Routes */}
             <Route path="/admin/patients" element={<PatientDashboard />} />
             <Route path="/admin/patients/add" element={<AddPatient />} />
             <Route path="/admin/patients/:id" element={<PatientDetail />} />
+            <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
             
             {/* Appointment Routes */}
             <Route path="/admin/appointment" element={<Appointment />} />
