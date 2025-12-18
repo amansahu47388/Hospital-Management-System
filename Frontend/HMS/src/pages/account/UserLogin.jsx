@@ -65,55 +65,85 @@ export default function UserLogin() {
       return;
     }
 
+    // setLoading(true);
+    // try {
+    //   const res = await userLogin(form);
+    //   if (res?.data?.access) {
+    //     // Save login data first
+    //     login(res.data);
+        
+    //     // Check user role to determine navigation - try multiple sources
+    //     const user = res.data.user;
+    //     let userRole = user?.role;
+        
+    //     // Fallback: try to get from localStorage if not in response
+    //     if (!userRole) {
+    //       try {
+    //         const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    //         userRole = storedUser?.role;
+    //       } catch (e) {
+    //         // Ignore parse errors
+    //       }
+    //     }
+        
+    //     // Admin roles that should go to dashboard
+    //     const adminRoles = ["admin", "doctor", "pharmacist", "pathologist", "radiologist", "accountant", "receptionist", "staff"];
+        
+    //     // Use setTimeout to ensure state updates complete before navigation
+    //     if (userRole && adminRoles.includes(userRole.toLowerCase())) {
+    //       notify("success", "Admin logged in successfully!");
+    //       setTimeout(() => {
+    //         navigate("/admin/dashboard", { replace: true });
+    //       }, 100);
+    //     } else {
+    //       notify("success", "Logged in successfully!");
+    //       setTimeout(() => {
+    //         navigate("/", { replace: true });
+    //       }, 100);
+    //     }
+    //   } else {
+    //     notify("error", "Login failed. Please try again.");
+    //   }
+    // } catch (err) {
+    //   const detail = err.response?.data?.detail || 
+    //                 Object.values(err.response?.data || {}).flat().join(" ") || 
+    //                 "Login failed. Please check your credentials and try again.";
+    //   notify("error", detail);
+    //   setErrors({ email: "", password: detail });
+    // } finally {
+    //   setLoading(false);
+    // }
+    // setLoading(false);
+
     setLoading(true);
     try {
       const res = await userLogin(form);
       if (res?.data?.access) {
-        // Save login data first
+        // persist auth first
         login(res.data);
-        
-        // Check user role to determine navigation - try multiple sources
-        const user = res.data.user;
-        let userRole = user?.role;
-        
-        // Fallback: try to get from localStorage if not in response
-        if (!userRole) {
-          try {
-            const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-            userRole = storedUser?.role;
-          } catch (e) {
-            // Ignore parse errors
-          }
-        }
-        
-        // Admin roles that should go to dashboard
-        const adminRoles = ["admin", "doctor", "pharmacist", "pathologist", "radiologist", "accountant", "receptionist", "staff"];
-        
-        // Use setTimeout to ensure state updates complete before navigation
-        if (userRole && adminRoles.includes(userRole.toLowerCase())) {
-          notify("success", "Admin logged in successfully!");
-          setTimeout(() => {
-            navigate("/admin/dashboard", { replace: true });
-          }, 100);
-        } else {
-          notify("success", "Logged in successfully!");
-          setTimeout(() => {
-            navigate("/", { replace: true });
-          }, 100);
-        }
+
+        const user = res.data.user || JSON.parse(localStorage.getItem("user") || "{}");
+        const role = (user?.role || "").toLowerCase();
+        const adminRoles = ["admin","doctor","pharmacist","pathologist","radiologist","accountant","receptionist","staff"];
+        const isAdmin = adminRoles.includes(role);
+
+        notify("success", isAdmin ? "Admin logged in successfully!" : "Logged in successfully!");
+        // small delay to ensure state/notifications flush before navigation
+        setTimeout(() => {
+          navigate(isAdmin ? "/admin/dashboard" : "/", { replace: true });
+        }, 100);
       } else {
         notify("error", "Login failed. Please try again.");
       }
     } catch (err) {
-      const detail = err.response?.data?.detail || 
-                    Object.values(err.response?.data || {}).flat().join(" ") || 
-                    "Login failed. Please check your credentials and try again.";
+      const detail = err.response?.data?.detail ||
+        Object.values(err.response?.data || {}).flat().join(" ") ||
+        "Login failed. Please check your credentials and try again.";
       notify("error", detail);
       setErrors({ email: "", password: detail });
     } finally {
       setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

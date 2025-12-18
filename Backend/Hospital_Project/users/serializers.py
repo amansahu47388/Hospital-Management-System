@@ -65,46 +65,44 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all(), message="A user with this email already exists")]
     )
-    password = serializers.CharField(write_only=True, min_length=8)
+    password = serializers.CharField(write_only=True, min_length=6)
+    role = serializers.ChoiceField(
+        choices=['admin', 'doctor', 'accountant', 'pharmacist','receptionist', 'pathologist', 'radiologist', 'staff'],
+        default='staff'
+    )
+
 
     class Meta:
         model = User
-        fields = ('full_name', 'email', 'phone', 'password', 'role')
+        fields = ['full_name', 'email', 'phone', 'password', 'role']
 
-    def validate_password(self, value):
-        try:
-            validate_password(value)
-            return value
-        except DjangoValidationError as e:
-            raise serializers.ValidationError(list(e.messages))
+    def validate_email(self, value):
+        """Check if email already exists"""
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already registered")
+        return value.lower()
 
-    def validate_role(self, value):
-        valid_roles = [choice[0] for choice in User.ROLE_CHOICES]
-        if value not in valid_roles:
-            raise serializers.ValidationError("Invalid role")
+    def validate_phone(self, value):
+        """Validate phone number"""
+        if not value or len(value.strip()) < 10:
+            raise serializers.ValidationError("Phone must have at least 10 digits")
         return value
 
     def create(self, validated_data):
-        if 'phone' in validated_data and not validated_data['phone']:
-            validated_data['phone'] = None
-
+        """Create admin user with specified role"""
         password = validated_data.pop('password')
-        role = validated_data.get('role', 'admin')
-        email = validated_data['email']
-        full_name = validated_data['full_name']
-        phone = validated_data.get('phone')
+        role = validated_data.pop('role', 'admin')
         
-        # allow callers (views) to override is_staff/is_superuser via kwargs
-        is_staff = validated_data.pop('is_staff', True)
-        is_superuser = validated_data.pop('is_superuser', True if role == 'admin' else False)
-        
+        # Create user
         user = User.objects.create_user(
-            email=email,
-            full_name=full_name,
+            email=validated_data['email'],
             password=password,
-            phone=phone,
+            full_name=validated_data['full_name'],
+            phone=validated_data['phone'],
             role=role,
-            is_staff=is_staff,
-            is_superuser=is_superuser
+            is_staff=True,  # All admins are staff
+            is_superuser=False  # None are superuser by default
         )
+        
+        print(f"✅ Admin user created: {user.email}, Role: {role}")
         return user

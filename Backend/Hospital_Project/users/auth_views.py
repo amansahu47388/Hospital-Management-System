@@ -138,9 +138,12 @@ class RegisterAdminView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        # If a superuser already exists, require the requester to be a superuser
-        if User.objects.filter(is_superuser=True).exists():
-            if not (request.user and getattr(request.user, "is_superuser", False)):
+        # Only require authentication if a superuser already exists
+        superuser_exists = User.objects.filter(is_superuser=True).exists()
+        
+        if superuser_exists:
+            # Check if user is authenticated and is a superuser
+            if not (request.user and request.user.is_authenticated and getattr(request.user, "is_superuser", False)):
                 return Response({"detail": "You do not have permission to create admin users."}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = AdminRegisterSerializer(data=request.data)
@@ -148,13 +151,8 @@ class RegisterAdminView(APIView):
 
         role = serializer.validated_data.get('role', 'admin')
     
-        can_be_super = False
-        if not User.objects.filter(is_superuser=True).exists():
-            can_be_super = True
-        elif request.user and getattr(request.user, 'is_superuser', False):
-            can_be_super = True
-
-        is_super = True if (role == 'admin' and can_be_super) else False
+        # Only the first admin (if no superuser exists) can be a superuser
+        is_super = not superuser_exists and role == 'admin'
         user = serializer.save(is_staff=True, is_superuser=is_super)
 
         refresh = RefreshToken.for_user(user)
