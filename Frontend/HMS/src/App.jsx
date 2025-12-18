@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import Home from "./pages/HomeModule/Home";
-import About from "./pages/HomeModule/About";
+
 import Contact from "./pages/HomeModule/Contact";
 import Dashboard from "./pages/AdminModule/Dashboard";
 import PatientDashboard from "./pages/PatientModule/patientDashboard";
@@ -18,6 +18,8 @@ import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 import AddPatient from "./components/PatientComponent/AddPatient";
 import OpdPatient from "./pages/OPD/OpdPatient";
 import IpdPatient from "./pages/IPD/IpdPatient";
+import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
+
 function App() {
   return (
     <AuthProvider>
@@ -26,7 +28,7 @@ function App() {
           <Routes>
             {/* Home Routes */}
             <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
+            
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin/dashboard" element={<Dashboard />} />
 
@@ -40,6 +42,7 @@ function App() {
             <Route path="/admin/patients" element={<PatientDashboard />} />
             <Route path="/admin/patients/add" element={<AddPatient />} />
             <Route path="/admin/patients/:id" element={<PatientDetail />} />
+            <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
             
             {/* Appointment Routes */}
             <Route path="/admin/appointment" element={<Appointment />} />

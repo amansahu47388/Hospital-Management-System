@@ -49,6 +49,11 @@ class Patient(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Patient'
         verbose_name_plural = 'Patients'
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['phone']),
+            models.Index(fields=['is_active']),
+        ]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -66,10 +71,8 @@ class Patient(models.Model):
         
         today = date.today()
         try:
-            # Calculate exact age
             age = today.year - self.date_of_birth.year
             
-            # Adjust if birthday hasn't occurred this year
             if (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day):
                 age -= 1
             
