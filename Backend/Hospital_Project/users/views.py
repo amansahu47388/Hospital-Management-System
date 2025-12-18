@@ -60,9 +60,6 @@ class RegisterAdminView(APIView):
         superuser_exists = User.objects.filter(is_superuser=True).exists()
         print(f"Superuser exists: {superuser_exists}")
         
-        # If superuser exists and user is not authenticated/superuser, allow registration
-        # (remove the authentication check - allow all to register)
-        
         serializer = AdminRegisterSerializer(data=request.data)
         if not serializer.is_valid():
             print(f"❌ Validation errors: {serializer.errors}")

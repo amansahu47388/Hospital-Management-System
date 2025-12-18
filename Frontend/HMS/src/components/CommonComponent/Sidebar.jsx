@@ -27,19 +27,20 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { to: "/Admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
- 
+  { to: "/admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
+  { to: "/admin/patients", label: "Patient", Icon: UserRound },
+  { to: "/admin/appointments", label: "Appointment", Icon: Calendar },
+
+  { to: "/admin/opd-out patients", label: "OPD-Out patient", Icon: Hospital },
+  { to: "/admin/ipd-in patients", label: "IPD-In Patient", Icon: Bed },
+  { to: "/pharmacy", label: "Pharmacy", Icon: Pill },
+  { to: "/pathology", label: "Pathology", Icon: FlaskConical },
+  { to: "/Radiology", label: "Radiology", Icon: FolderGit2 },
   { to: "/lab", label: "Lab", Icon: FlaskConical },
   { to: "/ward", label: "Ward", Icon: Bed },
-  { to: "/treatment", label: "Treatment", Icon: Stethoscope },
-  { to: "/pharmacy", label: "Pharmacy", Icon: Pill },
-  { to: "/Admin/patient", label: "Patient", Icon: UserRound },
-  { to: "/Admin/appointment", label: "Appointment", Icon: Calendar },
-  { to: "/OPD-Out Patient", label: "OPD-Out patient", Icon: Hospital },
-  { to: "/IPD-In Patient", label: "IPD-In Patient", Icon: Bed },
-  { to: "/pathology", label: "Pathology", Icon: FlaskConical },
   { to: "/blood-bank", label: "Blood Bank", Icon: Droplet },
-  { to: "/Radiology", label: "Radiology", Icon: FolderGit2 },
+  { to: "/treatment", label: "Treatment", Icon: Stethoscope },
+ 
   { to: "/Ambulance", label: "Ambulance", Icon: Ambulance },
   { to: "/front-office", label: "Front Office", Icon: ClipboardList },
   { to: "/Birth-Death-Record", label: "Birth & Death Record", Icon: FileBadge },
