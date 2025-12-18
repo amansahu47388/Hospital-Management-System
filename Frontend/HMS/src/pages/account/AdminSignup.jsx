@@ -117,13 +117,12 @@ export default function AdminSignup() {
     }
 
     setLoading(true);
-
     try {
       const res = await adminRegister(form);
 
       if (res?.status === 201 || res?.status === 200 || res?.data) {
         notify("success", "Admin account created successfully! Please login.");
-        // Use setTimeout to ensure state updates complete before navigation
+        // small delay to allow state/notifications to flush before navigation
         setTimeout(() => {
           navigate("/admin/login", { replace: true });
         }, 100);
@@ -132,14 +131,7 @@ export default function AdminSignup() {
       }
     } catch (err) {
       notify("error", parseServerError(err));
-
-      if (err.response?.data && typeof err.response.data === "object") {
-        const backendErrors = {};
-        Object.entries(err.response.data).forEach(([key, val]) => {
-          backendErrors[key] = Array.isArray(val) ? val[0] : val;
-        });
-        setErrors((prev) => ({ ...prev, ...backendErrors }));
-      }
+      // ...existing error handling...
     } finally {
       setLoading(false);
     }

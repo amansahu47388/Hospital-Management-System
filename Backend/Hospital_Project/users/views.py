@@ -45,18 +45,50 @@ class UserRegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdminRegisterView(APIView):
+class RegisterAdminView(APIView):
     permission_classes = [permissions.AllowAny]
-    
+
     def post(self, request):
+        """
+        Register new admin with different roles.
+        Only first admin registration creates a superuser.
+        Subsequent registrations are staff but NOT superuser.
+        """
+        print(f"📝 Admin registration request from {request.data.get('email')}")
+        
+        # Check if this is the first admin registration
+        superuser_exists = User.objects.filter(is_superuser=True).exists()
+        print(f"Superuser exists: {superuser_exists}")
+        
+        # If superuser exists and user is not authenticated/superuser, allow registration
+        # (remove the authentication check - allow all to register)
+        
         serializer = AdminRegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'message': 'Admin user created',
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'user': UserSerializer(user).data
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            print(f"❌ Validation errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        role = serializer.validated_data.get('role', 'admin')
+        print(f"Role: {role}, Superuser exists: {superuser_exists}")
+        
+        # Only the first admin (no superuser exists yet) becomes superuser
+        is_super = not superuser_exists and role == 'admin'
+        
+        print(f"Making superuser: {is_super}")
+        user = serializer.save(is_staff=True, is_superuser=is_super)
+
+        # Generate tokens
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+        
+        data = {
+            "user": UserSerializer(user).data,
+            "access": str(access),
+            "refresh": str(refresh),
+            "is_superuser": is_super,
+            "role": role,
+            "message": "Admin registered successfully"
+        }
+        
+        print(f"✅ Admin registration successful: {user.email}, Superuser: {is_super}")
+        return Response(data, status=status.HTTP_201_CREATED)

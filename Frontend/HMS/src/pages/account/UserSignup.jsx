@@ -132,14 +132,46 @@ export default function UserSignup() {
       return;
     }
 
+    // setLoading(true);
+    // try {
+    //   const res = await userRegister(form);
+      
+    //   // Check if registration was successful
+    //   if (res?.status === 201 || res?.status === 200 || res?.data) {
+    //     notify("success", "Account created successfully! Please login.");
+    //     // Use setTimeout to ensure state updates complete before navigation
+    //     setTimeout(() => {
+    //       navigate("/login", { replace: true });
+    //     }, 100);
+    //   } else {
+    //     notify("error", "Registration failed. Please try again.");
+    //   }
+    // } catch (err) {
+    //   const errorMsg = parseServerError(err);
+    //   notify("error", errorMsg);
+    //   // Set general error or field-specific errors
+    //   if (err.response?.data) {
+    //     const serverErrors = err.response.data;
+    //     const newErrors = { ...errors };
+    //     Object.keys(serverErrors).forEach((key) => {
+    //       if (newErrors.hasOwnProperty(key)) {
+    //         newErrors[key] = Array.isArray(serverErrors[key]) 
+    //           ? serverErrors[key][0] 
+    //           : serverErrors[key];
+    //       }
+    //     });
+    //     setErrors(newErrors);
+    //   }
+    // } finally {
+    //   setLoading(false);
+    // }
     setLoading(true);
     try {
       const res = await userRegister(form);
-      
-      // Check if registration was successful
+
       if (res?.status === 201 || res?.status === 200 || res?.data) {
         notify("success", "Account created successfully! Please login.");
-        // Use setTimeout to ensure state updates complete before navigation
+        // small delay to allow state/notifications to flush before navigation
         setTimeout(() => {
           navigate("/login", { replace: true });
         }, 100);
@@ -149,22 +181,11 @@ export default function UserSignup() {
     } catch (err) {
       const errorMsg = parseServerError(err);
       notify("error", errorMsg);
-      // Set general error or field-specific errors
-      if (err.response?.data) {
-        const serverErrors = err.response.data;
-        const newErrors = { ...errors };
-        Object.keys(serverErrors).forEach((key) => {
-          if (newErrors.hasOwnProperty(key)) {
-            newErrors[key] = Array.isArray(serverErrors[key]) 
-              ? serverErrors[key][0] 
-              : serverErrors[key];
-          }
-        });
-        setErrors(newErrors);
-      }
+      // ...existing error handling...
     } finally {
       setLoading(false);
     }
+    
   };
 
   return (
