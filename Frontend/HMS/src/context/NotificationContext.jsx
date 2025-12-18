@@ -20,7 +20,7 @@ export function NotificationProvider({ children }) {
   return (
     <NotificationContext.Provider value={{ notify }}>
       {children}
-      <div style={{ position: "fixed", top: 14, right: 14, zIndex: 9999 }}>
+      <div style={{ position: 'absolute', top: 14, right: 14, zIndex: 9999 }}>
         {toasts.map((t) => (
           <div key={t.id} style={{ marginBottom: 10, minWidth: 260 }}>
             <div
@@ -46,4 +46,10 @@ export function NotificationProvider({ children }) {
   );
 }
 
-export const useNotify = () => useContext(NotificationContext);
+export const useNotify = () => {
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error("useNotify must be used within a NotificationProvider");
+  }
+  return context.notify;
+};

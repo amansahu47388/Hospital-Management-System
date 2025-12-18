@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
@@ -24,18 +23,18 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <BrowserRouter>
-          <Routes>
-            {/* Home Routes */}
-            <Route path="/" element={<Home />} />
-            
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Routes>
+          {/* Home Routes */}
+          <Route path="/" element={<Home />} /> 
+          
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
 
-            {/* Auth Routes */}
-            <Route path="/login" element={<UserLogin />} />
-            <Route path="/signup" element={<UserSignup />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/signup" element={<AdminSignup />} />
+          {/* Auth Routes */}
+          <Route path="/login" element={<UserLogin />} />
+          <Route path="/signup" element={<UserSignup />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/signup" element={<AdminSignup />} />
 
             {/* Patient Routes */}
             <Route path="/admin/patients" element={<PatientDashboard />} />
@@ -44,11 +43,13 @@ function App() {
             <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
             
             {/* Appointment Routes */}
-            <Route path="/admin/appointment" element={<Appointment />} />
-            <Route path="/admin/appointment/doctor-wise-appointment" element={<DoctorWiseAppointment />} />
-            <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
-            <Route path="/admin/opd-patient" element={<OpdPatient />} />
-            <Route path="/admin/IPD-In Patient" element={<IpdPatient />} />
+            <Route path="/admin/appointments" element={<Appointment />} />
+            <Route path="/admin/appointment/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
+            <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
+            
+            {/* OPD/IPD Routes */}
+            <Route path="/admin/opd-patients" element={<OpdPatient />} />
+            <Route path="/admin/IPD-In Patients" element={<IpdPatient />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>

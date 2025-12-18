@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { adminRegister } from "../../api/authApi";
-import { useNotify } from "../../context/NotificationContext";
 import bgImage from "../../assets/hospital-management-system.jpg";
 
 export default function AdminSignup() {
   const navigate = useNavigate();
-  const notify = useNotify();
 
   const [form, setForm] = useState({
     full_name: "",
@@ -112,7 +110,6 @@ export default function AdminSignup() {
     setErrors(newErrors);
 
     if (Object.values(newErrors).some(Boolean)) {
-      notify("error", "Please fix the form errors");
       return;
     }
 
@@ -121,17 +118,12 @@ export default function AdminSignup() {
       const res = await adminRegister(form);
 
       if (res?.status === 201 || res?.status === 200 || res?.data) {
-        notify("success", "Admin account created successfully! Please login.");
-        // small delay to allow state/notifications to flush before navigation
         setTimeout(() => {
           navigate("/admin/login", { replace: true });
         }, 100);
-      } else {
-        notify("error", "Registration failed. Please try again.");
       }
     } catch (err) {
-      notify("error", parseServerError(err));
-      // ...existing error handling...
+      console.error("Admin signup error:", parseServerError(err));
     } finally {
       setLoading(false);
     }
