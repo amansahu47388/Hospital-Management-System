@@ -56,6 +56,9 @@ const [openAdd, setOpenAdd] = useState(false);
     limit,
     setLimit,
     appointments,
+    loading,
+    error,
+    refetch,
   } = useAppointments();
 
   return (
@@ -83,19 +86,33 @@ const [openAdd, setOpenAdd] = useState(false);
             />
 
             <div className="mt-6">
-              <AppointmentTable data={appointments_data} />
+              {loading && (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                  Error: {error}
+                </div>
+              )}
+
+              {!loading && !error && (
+                <AppointmentTable data={appointments} />
+              )}
             </div>
 
             {/* Footer */}
             <div className="flex justify-between text-xs text-gray-500 mt-4">
-              <span>Records: 0 to 0 of 0</span>
-              <span>‹ ›</span>
+              <span>Records: {appointments.length} appointments</span>
+              <span>Page 1 of 1</span>
             </div>
           </div>
         </main>
          
       </div>
-        <AddAppointmentModal open={openAdd} onClose={() => setOpenAdd(false)} />
+        <AddAppointmentModal open={openAdd} onClose={() => setOpenAdd(false)} onSuccess={() => { setOpenAdd(false); refetch(); }} />
     </div>
   );
 }
