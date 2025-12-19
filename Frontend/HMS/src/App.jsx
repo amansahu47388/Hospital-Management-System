@@ -36,20 +36,22 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/signup" element={<AdminSignup />} />
 
-            {/* Patient Routes */}
-            <Route path="/admin/patients" element={<PatientDashboard />} />
-            <Route path="/admin/patients/add" element={<AddPatient />} />
-            <Route path="/admin/patients/:id" element={<PatientDetail />} />
-            <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
+          {/* Patient Routes */}
+          <Route path="/admin/patients" element={<PatientDashboard />} />
+          <Route path="/admin/patients/add" element={<AddPatient />} />
+          <Route path="/admin/patients/:id" element={<PatientDetail />} />
+          <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
             
-            {/* Appointment Routes */}
-            <Route path="/admin/appointments" element={<Appointment />} />
-            <Route path="/admin/appointment/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
-            <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
+          {/* Appointment Routes */}
+          <Route path="/admin/appointments" element={<Appointment />} />
+          <Route path="/admin/appointment/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
+          <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
             
-            {/* OPD/IPD Routes */}
-            <Route path="/admin/opd-patients" element={<OpdPatient />} />
-            <Route path="/admin/IPD-In Patients" element={<IpdPatient />} />
+          {/* OPD/IPD Routes */}
+          <Route path="/admin/opd-patients" element={<OpdPatient />} />
+          <Route path="/admin/IPD-In Patients" element={<IpdPatient />} />
+
+
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
