@@ -1,7 +1,9 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import Sidebar from "../../components/CommonComponent/Sidebar";
-import Navbar from "../../components/AdminComponent/Navbar";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getPatientDetail } from "../../api/patientApi";
+import { useNotify } from "../../context/NotificationContext";
+import UpdatePatient from "../../components/PatientComponent/UpdatePatient"; 
+
 import {
   User,
   Phone,
@@ -9,55 +11,122 @@ import {
   MapPin,
   Droplet,
   Calendar,
-  Heart,
-  Barcode,
-  QrCode,
+  SquareX,
   Edit,
-  Printer,
 } from "lucide-react";
 
-export default function PatientDetail() {
-  const { id } = useParams();
 
-  // Temporary Sample Data — Replace with API Data
-  const patient = {
-    id: id,
-    name: "Olivier Thomas",
-    guardian: "Edward Thomas",
-    gender: "Male",
-    bloodGroup: "B+",
-    maritalStatus: "Married",
-    age: "41 Year, 7 Month, 8 Day",
-    phone: "7896541230",
-    email: "olivier@gmail.com",
-    address: "482 Kingsway, Brooklyn West, CA",
-    allergies: "No",
-    remarks: "Injury Treatment",
-    tpa: "Health Life Insurance",
-    tpaId: "7745855",
-    tpaValidity: "11/19/2026",
-    nin: "77458596",
-    altNumber: "",
-    photo:
-      "https://img.freepik.com/free-photo/portrait-handsome-confident-young-man_23-2149022628.jpg",
+function PatientDetails() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const notify = useNotify();
+
+  const [patient, setPatient] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [openUpdate, setOpenUpdate] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      fetchPatient();
+    }
+  }, [id]);
+
+  const fetchPatient = async () => {
+    setLoading(true);
+    try {
+      console.log("Fetching patient with ID:", id);
+      const response = await getPatientDetail(id);
+      console.log("Patient data loaded:", response.data);
+      setPatient(response.data);
+    } catch (err) {
+      console.error("Error fetching patient:", err);
+      notify("error", err.response?.data?.detail || "Failed to load patient");
+      navigate("/admin/patients");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-4">
+            <h2 className="text-2xl font-semibold">Patient Details</h2>
+          </div>
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-500">Loading patient details...</p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state - patient not found
+  if (!patient) {
+    return (
+      <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-4">
+            <h2 className="text-2xl font-semibold">Patient Details</h2>
+          </div>
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 flex items-center justify-center">
+            <div className="bg-white p-8 rounded-lg shadow text-center">
+              <p className="text-gray-600 mb-4">Patient not found</p>
+              <button
+                onClick={() => navigate("/admin/patients")}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                ← Back to Patients
+              </button>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
-     
-
       <div className="flex flex-col flex-1 overflow-hidden">
-       
-
         {/* PAGE HEADER */}
         <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 flex justify-between items-center shadow-sm">
-          <h1 className="text-xl font-semibold">Patient Details</h1>
+          <h2 className="text-2xl font-semibold">Patient Details</h2>
 
-          <div className="flex gap-4">
-            <Edit size={20} className="cursor-pointer" />
-            <Printer size={20} className="cursor-pointer" />
+          <div className="flex gap-4 items-center">
+            <button
+              onClick={() => setOpenUpdate(true)}
+              className="flex items-center gap-2 hover:opacity-80 transition p-2 rounded hover:bg-white/20"
+              title="Edit Patient"
+            >
+              <Edit size={20} />
+            </button>
+
+            <button
+              onClick={() => navigate("/admin/patients")}
+              className="hover:opacity-80 transition p-2 rounded hover:bg-white/20"
+              title="Close"
+            >
+              <SquareX size={20} />
+            </button>
           </div>
         </div>
+
+        {/* UPDATE PATIENT MODAL - Only opens when edit button is clicked */}
+        {openUpdate && (
+          <UpdatePatient
+            open={openUpdate}
+            patientId={id}
+            onClose={() => {
+              setOpenUpdate(false);
+              fetchPatient(); // Refresh patient data after update
+            }}
+          />
+        )}
 
         {/* PAGE BODY */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
@@ -69,71 +138,98 @@ export default function PatientDetail() {
               {/* LEFT SIDE DETAILS */}
               <div className="space-y-3">
                 <h2 className="text-2xl font-semibold">
-                  {patient.name} ({patient.id})
+                  {patient?.full_name} (ID: {patient?.id})
                 </h2>
 
                 <p className="flex items-center gap-2 text-gray-700">
-                  <User size={18} /> {patient.guardian}
+                  <User size={18} />
+                  <strong>Guardian Name:</strong> {patient?.emergency_contact_name || "N/A"}
                 </p>
 
                 <p className="flex items-center gap-4 text-gray-700">
-                  
-                  <Droplet size={18} /> {patient.bloodGroup}
-                  <Heart size={18} /> {patient.maritalStatus}
+                  <Droplet size={18} />
+                  <strong>Blood Group:</strong> {patient?.blood_group || "N/A"}
                 </p>
 
                 <p className="flex items-center gap-2 text-gray-700">
-                  <Calendar size={18} /> {patient.age}
+                  <Calendar size={18} />
+                  <strong>Date of Birth:</strong> {patient?.date_of_birth ? new Date(patient.date_of_birth).toLocaleDateString() : "N/A"}
                 </p>
 
                 <p className="flex items-center gap-2 text-gray-700">
-                  <Phone size={18} /> {patient.phone}
+                  <Phone size={18} /> 
+                  <strong>Patient Phone:</strong> {patient?.phone || "N/A"}
                 </p>
 
                 <p className="flex items-center gap-2 text-gray-700">
-                  <Mail size={18} /> {patient.email}
+                  <Phone size={18} /> 
+                  <strong>Guardian Phone:</strong> {patient?.emergency_contact_phone || "N/A"}
                 </p>
 
                 <p className="flex items-center gap-2 text-gray-700">
-                  <MapPin size={18} /> {patient.address}
+                  <Mail size={18} /> 
+                  <strong>Email:</strong> {patient?.email || "N/A"}
                 </p>
 
-                <Barcode className="w-32 h-10 mt-2" />
-                <QrCode className="w-24 h-24" />
+                <p className="flex items-center gap-2 text-gray-700">
+                  <MapPin size={18} /> 
+                  <strong>Address:</strong> {patient?.address || "N/A"}
+                </p>
               </div>
 
               {/* MIDDLE COLUMN DETAILS */}
               <div className="space-y-2 text-gray-700">
                 <p>
-                  <strong>Any Known Allergies:</strong> {patient.allergies}
+                  <strong>Age (Years):</strong> {patient?.age || "N/A"} 
                 </p>
+
                 <p>
-                  <strong>Remarks:</strong> {patient.remarks}
+                  <strong>Gender:</strong> {getGenderDisplay(patient?.gender) || "N/A"}
                 </p>
+
                 <p>
-                  <strong>TPA:</strong> {patient.tpa}
+                  <strong>City:</strong> {patient?.city || "N/A"}
                 </p>
+                
                 <p>
-                  <strong>TPA ID:</strong> {patient.tpaId}
+                  <strong>State:</strong> {patient?.state || "N/A"}
                 </p>
+
                 <p>
-                  <strong>TPA Validity:</strong> {patient.tpaValidity}
+                  <strong>Pin Code:</strong> {patient?.zip_code || "N/A"}
                 </p>
+
                 <p>
-                  <strong>National Identification Number:</strong> {patient.nin}
+                  <strong>Known Allergies:</strong> {patient?.allergies || "None recorded"}
                 </p>
+
                 <p>
-                  <strong>Alternate Number:</strong> {patient.altNumber || "N/A"}
+                  <strong>Medical History:</strong> {patient?.medical_history || "None recorded"}
                 </p>
               </div>
 
-              {/* RIGHT SIDE PATIENT PHOTO */}
-              <div className="flex justify-center lg:justify-end">
-                <img
-                  src={patient.photo}
-                  alt="Patient"
-                  className="w-32 h-32 object-cover rounded shadow-md"
-                />
+              {/* RIGHT SIDE - PHOTO */}
+              <div className="flex justify-center items-center">
+                {patient?.photo ? (
+                  <div className="text-center">
+                    <img
+                      src={getImageUrl(patient.photo)}
+                      alt="Patient"
+                      className="w-32 h-32 object-cover rounded shadow-md"
+                      onError={(e) => {
+                        console.error("Image failed to load from:", e.target.src);
+                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ccircle cx="50" cy="35" r="15" fill="%23999"/%3E%3Cpath d="M 20 80 Q 50 60 80 80" fill="%23999"/%3E%3C/svg%3E';
+                      }}
+                    />
+                                      </div>
+                ) : (
+                  <div className="w-32 h-32 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full shadow-md border-4 border-purple-200 flex items-center justify-center">
+                    <div className="text-center">
+                      <span className="text-4xl">👤</span>
+                      <p className="text-gray-500 text-xs mt-1">No Photo</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -177,9 +273,40 @@ export default function PatientDetail() {
               </tbody>
             </table>
           </div>
-
         </main>
       </div>
     </div>
   );
 }
+
+// Helper function to get gender display
+function getGenderDisplay(genderCode) {
+  const genderMap = {
+    'M': 'Male',
+    'F': 'Female',
+    'O': 'Other',
+  };
+  return genderMap[genderCode] || genderCode;
+}
+
+// Add this helper function at the bottom before export
+function getImageUrl(photoPath) {
+  if (!photoPath) return null;
+  
+  // If it's already a full URL
+  if (photoPath.startsWith('http://') || photoPath.startsWith('https://')) {
+    return photoPath;
+  }
+  
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const baseUrl = apiUrl.replace('/api', ''); 
+  
+  // Ensure path starts with /
+  const path = photoPath.startsWith('/') ? photoPath : '/' + photoPath;
+  
+  const fullUrl = `${baseUrl}${path}`;
+  console.log('Generated image URL:', fullUrl);
+  return fullUrl;
+}
+
+export default PatientDetails;

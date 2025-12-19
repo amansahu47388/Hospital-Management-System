@@ -1,12 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const patientAPI = axios.create({
   baseURL: `${API_BASE_URL}/patients`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Add token to requests
@@ -16,11 +13,17 @@ patientAPI.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Don't set Content-Type for FormData
+    if (!(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
+    }
+    
     console.log('📤 API Request:', config.method.toUpperCase(), config.url);
-    console.log('📦 Data:', config.data);
     return config;
   },
   (error) => {
+    console.error('❌ Request error:', error);
     return Promise.reject(error);
   }
 );
@@ -28,7 +31,7 @@ patientAPI.interceptors.request.use(
 // Handle responses
 patientAPI.interceptors.response.use(
   (response) => {
-    console.log('📥 API Response:', response.status, response.data);
+    console.log('📥 API Response:', response.status);
     return response;
   },
   (error) => {
@@ -43,60 +46,39 @@ patientAPI.interceptors.response.use(
 );
 
 export const getPatientList = async () => {
-  try {
-    const response = await patientAPI.get('/');
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  const response = await patientAPI.get('/');
+  return response;
 };
 
 export const getPatientDetail = async (patientId) => {
-  try {
-    const response = await patientAPI.get(`/${patientId}/`);
-    return response;
-  } catch (error) {
-    throw error;
+  if (!patientId) throw new Error('Patient ID is required');
+  const response = await patientAPI.get(`/${patientId}/`);
+  console.log('Patient data:', response.data);
+  if (response.data.photo) {
+    console.log('Raw photo path:', response.data.photo);
   }
+  return response;
 };
 
 export const createPatient = async (patientData) => {
-  try {
-    console.log('🆕 Creating patient with data:', patientData);
-    const response = await patientAPI.post('/create/', patientData);
-    console.log('✅ Patient created successfully:', response.data);
-    return response;
-  } catch (error) {
-    console.error('❌ Create patient error:', error.response?.data);
-    throw error;
-  }
+  const response = await patientAPI.post('/create/', patientData);
+  return response;
 };
 
 export const updatePatient = async (patientId, patientData) => {
-  try {
-    const response = await patientAPI.patch(`/${patientId}/update/`, patientData);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  if (!patientId) throw new Error('Patient ID is required');
+  const response = await patientAPI.patch(`/${patientId}/update/`, patientData);
+  return response;
 };
 
 export const deletePatient = async (patientId) => {
-  try {
-    const response = await patientAPI.delete(`/${patientId}/delete/`);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  const response = await patientAPI.delete(`/${patientId}/delete/`);
+  return response;
 };
 
 export const searchPatient = async (query) => {
-  try {
-    const response = await patientAPI.get('/search/', {
-      params: { q: query },
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  const response = await patientAPI.get('/search/', {
+    params: { q: query },
+  });
+  return response;
 };
