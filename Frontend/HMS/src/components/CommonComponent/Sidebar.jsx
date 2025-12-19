@@ -32,8 +32,8 @@ const navItems = [
   { to: "/admin/patients", label: "Patient", Icon: UserRound },
   { to: "/admin/appointments", label: "Appointment", Icon: Calendar },
 
-  { to: "/admin/opd-out patients", label: "OPD-Out patient", Icon: Hospital },
-  { to: "/admin/ipd-in patients", label: "IPD-In Patient", Icon: Bed },
+  { to: "/admin/opd", label: "OPD-Out patient", Icon: Hospital },
+  { to: "/admin/ipd", label: "IPD-In Patient", Icon: Bed },
   { to: "/pharmacy", label: "Pharmacy", Icon: Pill },
   { to: "/pathology", label: "Pathology", Icon: FlaskConical },
   { to: "/Radiology", label: "Radiology", Icon: FolderGit2 },
@@ -81,13 +81,7 @@ function Sidebar() {
         onClick={handleToggle}
         className="absolute top-2 -right-20 z-50 p-1 cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
-      
-        <Menu />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-          />
+      <Menu />
       </button>
      
       {/* SIDEBAR */}

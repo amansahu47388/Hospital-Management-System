@@ -74,10 +74,6 @@ function AddPatient({ open, onClose }) {
     if (!formData.first_name?.trim()) {
       newErrors.first_name = "First name is required";
     }
-    if (!formData.last_name?.trim()) {
-      newErrors.last_name = "Last name is required";
-    }
-
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -92,15 +88,6 @@ function AddPatient({ open, onClose }) {
     if (!formData.address.trim()) {
       newErrors.address = "Address is required";
     }
-    if (!formData.city.trim()) {
-      newErrors.city = "City is required";
-    }
-    if (!formData.state.trim()) {
-      newErrors.state = "State is required";
-    }
-    if (!formData.zip_code.trim()) {
-      newErrors.zip_code = "Zip code is required";
-    }
 
     if (!formData.date_of_birth) {
       newErrors.date_of_birth = "Date of birth is required";
@@ -110,15 +97,6 @@ function AddPatient({ open, onClose }) {
       if (dob > today) {
         newErrors.date_of_birth = "Date cannot be in the future";
       }
-    }
-
-    if (!formData.emergency_contact_name.trim()) {
-      newErrors.emergency_contact_name = "Emergency contact name is required";
-    }
-    if (!formData.emergency_contact_phone.trim()) {
-      newErrors.emergency_contact_phone = "Emergency contact phone is required";
-    } else if (formData.emergency_contact_phone.length < 10) {
-      newErrors.emergency_contact_phone = "Contact phone must be at least 7 digits";
     }
 
     setErrors(newErrors);
@@ -293,6 +271,7 @@ function AddPatient({ open, onClose }) {
                   value={formData.phone}
                   onChange={handleChange}
                   error={errors.phone}
+                  required
                 />
                 <FormField
                   label="Date of Birth"
@@ -420,7 +399,7 @@ function AddPatient({ open, onClose }) {
             {/* EMERGENCY CONTACT */}
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
-                Emergency Contact
+                Guardian Contact
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField

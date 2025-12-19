@@ -48,8 +48,8 @@ function App() {
           <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
             
           {/* OPD/IPD Routes */}
-          <Route path="/admin/opd-patients" element={<OpdPatient />} />
-          <Route path="/admin/IPD-In Patients" element={<IpdPatient />} />
+          <Route path="/admin/opd" element={<OpdPatient />} />
+          <Route path="/admin/ipd" element={<IpdPatient />} />
 
 
           </Routes>

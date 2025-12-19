@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'admin_module',
     'doctor_module',
     'appointment_module',
+    'opd_ipd_module',
 ]
 
 MIDDLEWARE = [
