@@ -14,6 +14,10 @@ import Appointment from "./pages/AppointmentModule/Appointment";
 import DoctorWiseAppointment from "./pages/AppointmentModule/DoctorWiseAppointment";
 import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 import AddPatient from "./components/PatientComponent/AddPatient";
+import OpdPatient from "./pages/OPD/OpdPatient";
+import IpdPatient from "./pages/IPD/IpdPatient";
+import AddOpdVisit from "./pages/OPD/AddOpdVisit";
+import AddIpdAdmission from "./pages/IPD/AddIpdAdmission";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 
 function App() {
@@ -34,22 +38,21 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/signup" element={<AdminSignup />} />
 
-          {/* Patient Routes */}
-          <Route path="/admin/patients" element={<PatientDashboard />} />
-          <Route path="/admin/patients/add" element={<AddPatient />} />
-          <Route path="/admin/patients/:id" element={<PatientDetail />} />
-          <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
-          
-          {/* Appointment Routes */}
-          <Route path="/admin/appointments" element={<Appointment />} />
-          <Route path="/admin/appointment/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
-          <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
+            {/* Patient Routes */}
+            <Route path="/admin/patients" element={<PatientDashboard />} />
+            <Route path="/admin/patients/add" element={<AddPatient />} />
+            <Route path="/admin/patients/:id" element={<PatientDetail />} />
+            <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
             
-          {/* OPD/IPD Routes */}
-          {/* <Route path="/admin/opd" element={<OpdPatient />} />
-          <Route path="/admin/ipd" element={<IpdPatient />} /> */}
-
-        </Routes>
+            {/* Appointment Routes */}
+            <Route path="/admin/appointment" element={<Appointment />} />
+            <Route path="/admin/appointment/doctor-wise-appointment" element={<DoctorWiseAppointment />} />
+            <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
+            <Route path="/admin/opd-patient" element={<OpdPatient />} />
+            <Route path="/admin/IPD-In Patient" element={<IpdPatient />} />
+            <Route path="/admin/opd-patient/add-opd-visit" element={<AddOpdVisit />} />
+            <Route path="/admin/ipd-patient/add-ipd-admission" element={<AddIpdAdmission />} />
+          </Routes>
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>
