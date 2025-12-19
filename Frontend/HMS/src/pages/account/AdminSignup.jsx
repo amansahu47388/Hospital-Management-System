@@ -23,6 +23,7 @@ export default function AdminSignup() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const roles = [
     "admin",
@@ -53,9 +54,9 @@ export default function AdminSignup() {
   };
 
   const validatePhone = (phone) => {
-    if (!phone) return "";
+    if (!phone || !phone.trim()) return ""; // Phone is optional
     const re = /^[0-9]{10,15}$/;
-    if (!re.test(phone)) return "Phone must be 10–15 digits";
+    if (!re.test(phone.trim())) return "Phone must be 10–15 digits";
     return "";
   };
 
@@ -114,6 +115,7 @@ export default function AdminSignup() {
     }
 
     setLoading(true);
+    setError(""); // Clear previous errors
     try {
       const res = await adminRegister(form);
 
@@ -123,7 +125,9 @@ export default function AdminSignup() {
         }, 100);
       }
     } catch (err) {
-      console.error("Admin signup error:", parseServerError(err));
+      const errorMessage = parseServerError(err);
+      console.error("Admin signup error:", errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -147,6 +151,12 @@ export default function AdminSignup() {
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-center">
             Admin Signup
           </h2>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={submit} className="space-y-4">
             {/* Full Name */}

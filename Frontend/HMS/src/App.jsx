@@ -14,8 +14,6 @@ import Appointment from "./pages/AppointmentModule/Appointment";
 import DoctorWiseAppointment from "./pages/AppointmentModule/DoctorWiseAppointment";
 import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 import AddPatient from "./components/PatientComponent/AddPatient";
-import OpdPatient from "./pages/OPD/OpdPatient";
-import IpdPatient from "./pages/IPD/IpdPatient";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 
 function App() {
@@ -41,18 +39,17 @@ function App() {
           <Route path="/admin/patients/add" element={<AddPatient />} />
           <Route path="/admin/patients/:id" element={<PatientDetail />} />
           <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
-            
+          
           {/* Appointment Routes */}
           <Route path="/admin/appointments" element={<Appointment />} />
           <Route path="/admin/appointment/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
           <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
             
           {/* OPD/IPD Routes */}
-          <Route path="/admin/opd-patients" element={<OpdPatient />} />
-          <Route path="/admin/IPD-In Patients" element={<IpdPatient />} />
+          {/* <Route path="/admin/opd" element={<OpdPatient />} />
+          <Route path="/admin/ipd" element={<IpdPatient />} /> */}
 
-
-          </Routes>
+        </Routes>
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>
