@@ -155,6 +155,19 @@ class RegisterAdminView(APIView):
         is_super = not superuser_exists and role == 'admin'
         user = serializer.save(is_staff=True, is_superuser=is_super)
 
+        # If role is doctor, create AdminProfile
+        if role == 'doctor':
+            from admin_module.models import AdminProfile
+            AdminProfile.objects.create(
+                user=user,
+                designation='Doctor',
+                department='General Medicine',  # Default department
+                work_shift='morning',  # Default shift
+                consultation_fee=100.00,  # Default fee
+                gender='M'  # Default gender
+            )
+            print(f"✅ AdminProfile created for doctor: {user.email}")
+
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
         data = {
