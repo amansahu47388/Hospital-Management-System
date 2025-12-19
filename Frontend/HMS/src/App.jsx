@@ -44,6 +44,7 @@ function App() {
           <Route path="/admin/appointments" element={<Appointment />} />
           <Route path="/admin/appointment/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
           <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
+
         </Routes>
         </BrowserRouter>
       </NotificationProvider>

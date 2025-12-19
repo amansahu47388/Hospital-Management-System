@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import AddPatient from "../../components/PatientComponent/AddPatient";
-import { Menu } from "lucide-react";
+import { Eye } from "lucide-react";
 
 function PatientDashboard() {
   const [openAdd, setOpenAdd] = useState(false);
@@ -72,22 +72,6 @@ function PatientDashboard() {
       setSelectedPatients(patients.map((p) => p.id));
     }
   };
-
-  // // single delete (unchanged)
-  // const handleDelete = async (patientId, patientName) => {
-  //   if (!window.confirm(`Delete ${patientName}?`)) return;
-
-  //   setDeleteLoading(patientId);
-  //   try {
-  //     await deletePatient(patientId);
-  //     notify("success", "Patient deleted");
-  //     setPatients((prev) => prev.filter((p) => p.id !== patientId));
-  //   } catch {
-  //     notify("error", "Delete failed");
-  //   } finally {
-  //     setDeleteLoading(null);
-  //   }
-  // };
 
   // bulk delete (unchanged)
   const handleDeleteSelected = async () => {
@@ -256,7 +240,7 @@ function PatientDashboard() {
                           className="text-xl text-gray-600 hover:text-gray-900"
                           title="View Patient Details"
                         >
-                          <Menu />
+                          <Eye />
                         </button>
                       </td>
                     </tr>

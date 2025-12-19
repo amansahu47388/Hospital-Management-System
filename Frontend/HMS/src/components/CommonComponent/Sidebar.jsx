@@ -23,7 +23,8 @@ import {
   Monitor,
   BarChart3,
   Settings,
-  FolderGit2
+  FolderGit2,
+  Menu,
 } from "lucide-react";
 
 const navItems = [
@@ -80,20 +81,13 @@ function Sidebar() {
         onClick={handleToggle}
         className="absolute top-2 -right-20 z-50 p-1 cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="w-5 h-5"
-        >
+      
+        <Menu />
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
             d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
           />
-        </svg>
       </button>
      
       {/* SIDEBAR */}
