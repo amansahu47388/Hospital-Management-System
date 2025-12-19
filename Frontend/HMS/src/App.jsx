@@ -18,6 +18,8 @@ import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 import AddPatient from "./components/PatientComponent/AddPatient";
 import OpdPatient from "./pages/OPD/OpdPatient";
 import IpdPatient from "./pages/IPD/IpdPatient";
+import AddOpdVisit from "./pages/OPD/AddOpdVisit";
+import AddIpdAdmission from "./pages/IPD/AddIpdAdmission";
 function App() {
   return (
     <AuthProvider>
@@ -47,6 +49,8 @@ function App() {
             <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
             <Route path="/admin/opd-patient" element={<OpdPatient />} />
             <Route path="/admin/IPD-In Patient" element={<IpdPatient />} />
+            <Route path="/admin/opd-patient/add-opd-visit" element={<AddOpdVisit />} />
+            <Route path="/admin/ipd-patient/add-ipd-admission" element={<AddIpdAdmission />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
