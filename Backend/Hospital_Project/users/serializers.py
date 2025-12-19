@@ -83,26 +83,36 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
         return value.lower()
 
     def validate_phone(self, value):
-        """Validate phone number"""
-        if not value or len(value.strip()) < 10:
-            raise serializers.ValidationError("Phone must have at least 10 digits")
-        return value
+        """Validate phone number - allow empty/null"""
+        if value:
+            value = value.strip()
+            if len(value) < 10:
+                raise serializers.ValidationError("Phone must have at least 10 digits")
+        return value or None
 
     def create(self, validated_data):
         """Create admin user with specified role"""
         password = validated_data.pop('password')
         role = validated_data.pop('role', 'admin')
         
+        # Get is_staff and is_superuser from context (passed by view)
+        is_staff = self.context.get('is_staff', True)  # Default to True for admins
+        is_superuser = self.context.get('is_superuser', False)  # Default to False
+        
+        # Ensure phone is None if empty
+        phone = validated_data.get('phone')
+        phone = phone.strip() if phone else None
+        
         # Create user
         user = User.objects.create_user(
             email=validated_data['email'],
             password=password,
             full_name=validated_data['full_name'],
-            phone=validated_data['phone'],
+            phone=phone,
             role=role,
-            is_staff=True,  # All admins are staff
-            is_superuser=False  # None are superuser by default
+            is_staff=is_staff,
+            is_superuser=is_superuser
         )
         
-        print(f"✅ Admin user created: {user.email}, Role: {role}")
+        print(f"✅ Admin user created: {user.email}, Role: {role}, Staff: {is_staff}, Superuser: {is_superuser}")
         return user

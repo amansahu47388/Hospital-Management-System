@@ -19,13 +19,13 @@ class LoginView(APIView):
         password = request.data.get("password")
 
         if not email or not password:
-            return Response({"detail": "Email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"Email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = authenticate(request, username=email, password=password)
         if user is None:
-            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         if not user.is_active:
-            return Response({"detail": "User account is disabled"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"User account is disabled"}, status=status.HTTP_401_UNAUTHORIZED)
 
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
@@ -57,7 +57,7 @@ class RefreshTokenView(APIView):
         refresh_token = request.data.get("refresh") or cookie
 
         if not refresh_token:
-            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
 
         try:
             refresh = RefreshToken(refresh_token)
@@ -93,7 +93,7 @@ class RefreshTokenView(APIView):
 
             return Response({"access": access_token}, status=status.HTTP_200_OK)
         except TokenError:
-            return Response({"detail": "Invalid refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"Invalid refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -109,7 +109,7 @@ class LogoutView(APIView):
             except Exception:
                 pass
 
-        resp = Response({"detail": "Logged out"}, status=status.HTTP_200_OK)
+        resp = Response({"Logged out"}, status=status.HTTP_200_OK)
         resp.delete_cookie(COOKIE_NAME, path=COOKIE_PATH)
         return resp
 
@@ -138,41 +138,67 @@ class RegisterAdminView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        # Only require authentication if a superuser already exists
         superuser_exists = User.objects.filter(is_superuser=True).exists()
+        role = request.data.get('role', 'admin')
         
-        if superuser_exists:
-            # Check if user is authenticated and is a superuser
-            if not (request.user and request.user.is_authenticated and getattr(request.user, "is_superuser", False)):
-                return Response({"detail": "You do not have permission to create admin users."}, status=status.HTTP_403_FORBIDDEN)
-
-        serializer = AdminRegisterSerializer(data=request.data)
+        # Special handling for 'admin' role (superuser role)
+        if role == 'admin':
+            # If trying to create admin role and superuser already exists
+            if superuser_exists:
+                return Response(
+                    {"Only one superuser admin is allowed. A superuser admin already exists."}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            # First admin becomes superuser
+            is_super = True
+        else:
+            # # For other roles (doctor, pharmacist, etc.), allow multiple registrations
+            # # If superuser exists, require authentication to create other admin roles
+            # if superuser_exists:
+            #     if not (request.user and request.user.is_authenticated and getattr(request.user, "is_superuser", False)):
+            #         return Response(
+            #             {"You do not have permission to create admin users. Please login as superuser."}, 
+            #             status=status.HTTP_403_FORBIDDEN
+            #         )
+            # # Other roles are never superuser
+            is_super = False
+        
+        # Pass is_staff and is_superuser to serializer via context
+        serializer = AdminRegisterSerializer(
+            data=request.data,
+            context={'is_staff': True, 'is_superuser': is_super}
+        )
         serializer.is_valid(raise_exception=True)
+        user = serializer.save()
 
-        role = serializer.validated_data.get('role', 'admin')
-    
-        # Only the first admin (if no superuser exists) can be a superuser
-        is_super = not superuser_exists and role == 'admin'
-        user = serializer.save(is_staff=True, is_superuser=is_super)
-
-        # If role is doctor, create AdminProfile
-        if role == 'doctor':
-            from admin_module.models import AdminProfile
-            AdminProfile.objects.create(
-                user=user,
-                designation='Doctor',
-                department='General Medicine',  # Default department
-                work_shift='morning',  # Default shift
-                consultation_fee=100.00,  # Default fee
-                gender='M'  # Default gender
+        # Ensure user is saved and has an ID
+        if not user.pk:
+            return Response(
+                {"detail": "User creation failed - no user ID generated"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-            print(f"✅ AdminProfile created for doctor: {user.email}")
 
-        refresh = RefreshToken.for_user(user)
-        access = refresh.access_token
-        data = {
-            "user": UserSerializer(user).data,
-            "access": str(access),
-            "refresh": str(refresh)
-        }
-        return Response(data, status=status.HTTP_201_CREATED)
+        # Refresh user from database to ensure all fields are populated
+        user.refresh_from_db()
+
+        try:
+            refresh = RefreshToken.for_user(user)
+            access = refresh.access_token
+            user_data = UserSerializer(user).data
+            
+            data = {
+                "user": user_data,
+                "access": str(access),
+                "refresh": str(refresh),
+                "message": "Admin registered successfully"
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            # Log the error for debugging
+            import traceback
+            print(f"❌ Error during admin registration token generation: {str(e)}")
+            print(traceback.format_exc())
+            return Response(
+                {"detail": f"User created but token generation failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

@@ -75,9 +75,12 @@ export default function AdminLogin() {
         const adminRoles = ["admin","doctor","pharmacist","pathologist","radiologist","accountant","receptionist","staff"];
         const isAdmin = adminRoles.includes(role);
 
+        const roleName = role.charAt(0).toUpperCase() + role.slice(1);
+        notify("success", `Welcome back, ${user?.full_name || roleName}! Login successful.`);
+        
         setTimeout(() => {
           navigate(isAdmin ? "/admin/dashboard" : "/", { replace: true });
-        }, 100);
+        }, 1500);
       }
     } catch (err) {
       const detail = err.response?.data?.detail ||
@@ -85,6 +88,7 @@ export default function AdminLogin() {
         "Login failed. Please check your credentials and try again.";
       console.error("Admin login error:", detail);
       setErrors({ email: "", password: detail });
+      notify("error", detail);
     } finally {
       setLoading(false);
     }
