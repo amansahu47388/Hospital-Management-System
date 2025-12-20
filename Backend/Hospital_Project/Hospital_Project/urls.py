@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/patients/', include('patient_module.urls')),
     path('api/admin/', include('admin_module.urls')),
     # path('api/doctors/', include('doctor_module.urls')),
-    path('appointments/', include('appointment_module.urls')),
+    path('api/admin/appointments/', include('appointment_module.urls')),
 ]
 
 if settings.DEBUG:

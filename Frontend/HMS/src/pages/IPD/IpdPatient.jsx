@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
+import { useNavigate } from "react-router-dom";
 import {
   Plus,
   FileText,
@@ -41,7 +42,7 @@ const ipdPatients = [
 export default function IpdPatient() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(100);
-
+  const navigate = useNavigate();
   return (
     <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
       <Sidebar />
@@ -60,8 +61,10 @@ export default function IpdPatient() {
                 <button
                   className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                              text-white px-4 py-2 rounded flex items-center gap-2 justify-center"
+                              onClick={() => navigate('/admin/ipd-patient/add-ipd-admission')}
                 >
                   <Plus size={16} /> Add Patient
+                   
                 </button>
 
                 <button

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
+import { useNavigate } from "react-router-dom";
 import {
   Plus,
   FileText,
@@ -17,6 +18,7 @@ const tabs = [
 ];
 
 export default function OpdPatient() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Today OPD");
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(100);
@@ -58,6 +60,7 @@ export default function OpdPatient() {
                            text-white px-4 py-2 rounded
                            flex items-center gap-2
                            w-full lg:w-auto justify-center"
+                onClick={() => navigate('/admin/opd-patient/add-opd-visit')}
               >
                 <Plus size={18} /> Add Patient
               </button>

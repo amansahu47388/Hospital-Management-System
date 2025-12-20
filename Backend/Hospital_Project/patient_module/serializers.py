@@ -153,35 +153,6 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Address must be at least 5 characters.")
         return value.strip()
 
-    def validate_city(self, value):
-        if not value or len(value.strip()) < 2:
-            raise serializers.ValidationError("City is required.")
-        return value.strip()
-
-    def validate_state(self, value):
-        if not value or len(value.strip()) < 2:
-            raise serializers.ValidationError("State is required.")
-        return value.strip()
-
-    def validate_zip_code(self, value):
-        if not value or len(value.strip()) < 2:
-            raise serializers.ValidationError("Zip code is required.")
-        return value.strip()
-
-    def validate_emergency_contact_name(self, value):
-        if not value or len(value.strip()) < 2:
-            raise serializers.ValidationError("Emergency contact name is required.")
-        return value.strip()
-
-    def validate_emergency_contact_phone(self, value):
-        if not value:
-            raise serializers.ValidationError("Emergency contact phone is required.")
-        
-        digits = ''.join(filter(str.isdigit, value))
-        if len(digits) < 10:
-            raise serializers.ValidationError("Emergency contact phone must have at least 10 digits.")
-        return value
-
     def validate_date_of_birth(self, value):
         if not value:
             raise serializers.ValidationError("Date of birth is required.")

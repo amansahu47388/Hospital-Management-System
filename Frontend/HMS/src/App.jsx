@@ -16,6 +16,8 @@ import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 import AddPatient from "./components/PatientComponent/AddPatient";
 import OpdPatient from "./pages/OPD/OpdPatient";
 import IpdPatient from "./pages/IPD/IpdPatient";
+import AddOpdVisit from "./pages/OPD/AddOpdVisit";
+import AddIpdAdmission from "./pages/IPD/AddIpdAdmission";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 
 function App() {
@@ -44,12 +46,14 @@ function App() {
             
           {/* Appointment Routes */}
           <Route path="/admin/appointments" element={<Appointment />} />
-          <Route path="/admin/appointment/doctor-wise-appointment" element={<DoctorWiseAppointment />} />
-          <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
-            
-          {/* OPD/IPD Routes */}
+          <Route path="/admin/appointments/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
+          <Route path="/admin/appointments/patient-queue" element={<PatientQueue />} />
+
+          {/* OPD and IPD Routes */}
           <Route path="/admin/opd-patients" element={<OpdPatient />} />
-          <Route path="/admin/IPD-In Patients" element={<IpdPatient />} />
+          <Route path="/admin/ipd-patients" element={<IpdPatient />} />
+          <Route path="/admin/opd-patients/add-opd-visit" element={<AddOpdVisit />} />
+          <Route path="/admin/ipd-patients/add-ipd-admission" element={<AddIpdAdmission />} />
 
 
           </Routes>
