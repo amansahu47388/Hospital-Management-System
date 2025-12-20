@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { createAppointment } from "../../api/appointmentApi";
+import { createAppointment ,getDoctors} from "../../api/appointmentApi";
 import { getPatientList } from "../../api/patientApi";
-import { getDoctorList } from "../../api/doctorApi";
 import { useNotify } from "../../context/NotificationContext";
 
 export default function AddAppointmentModal({ open, onClose, onSuccess }) {
@@ -45,16 +44,10 @@ export default function AddAppointmentModal({ open, onClose, onSuccess }) {
 
   const fetchDoctors = async () => {
     try {
-      const response = await getDoctorList();
+      const response = await getDoctors();
       setDoctors(response.data);
     } catch (err) {
       console.error('Error fetching doctors:', err);
-      // Fallback to dummy data if API fails
-      setDoctors([
-        { id: 1, full_name: 'Dr. Smith', department: 'Cardiology', consultation_fee: 100 },
-        { id: 2, full_name: 'Dr. Johnson', department: 'Neurology', consultation_fee: 150 },
-        { id: 3, full_name: 'Dr. Williams', department: 'Orthopedics', consultation_fee: 120 },
-      ]);
     }
   };
 
@@ -132,7 +125,7 @@ export default function AddAppointmentModal({ open, onClose, onSuccess }) {
       // Show success notification with appointment details
       const formattedDateTime = `${appointmentDate.toLocaleDateString()} ${appointmentDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
       
-      notify('success', `Appointment created successfully! Date & Time: ${formattedDateTime}`);
+      notify("Appointment created successfully!");
       
       onSuccess && onSuccess();
     } catch (err) {

@@ -26,7 +26,8 @@ class DoctorSerializer(serializers.ModelSerializer):
 
 class AppointmentSerializer(serializers.ModelSerializer):
     patient_details = PatientSerializer(source='patient', read_only=True)
-    doctor_details = DoctorSerializer(source='doctor', read_only=True)
+    # doctor_details = DoctorSerializer(source='doctor', read_only=True)
+    doctor_name = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
     
     class Meta:
@@ -44,3 +45,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
         import uuid
         validated_data['appointment_no'] = f"APP{uuid.uuid4().hex[:8].upper()}"
         return super().create(validated_data)
+
+    def get_doctor_name(self, obj):
+        if obj.doctor:
+            return f"Dr. {obj.doctor.full_name or obj.doctor.email}"
+        return None

@@ -60,7 +60,7 @@ export default function OpdPatient() {
                            text-white px-4 py-2 rounded
                            flex items-center gap-2
                            w-full lg:w-auto justify-center"
-                onClick={() => navigate('/admin/opd-patient/add-opd-visit')}
+                onClick={() => navigate('/admin/opd-patients/add-opd-visit')}
               >
                 <Plus size={18} /> Add Patient
               </button>
