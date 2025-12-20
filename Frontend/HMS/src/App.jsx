@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import Home from "./pages/HomeModule/Home";
-import Contact from "./pages/HomeModule/Contact";
 import Dashboard from "./pages/AdminModule/Dashboard";
 import PatientDashboard from "./pages/PatientModule/patientDashboard";
 import PatientDetail from "./pages/PatientModule/patientDetail";
@@ -16,9 +15,10 @@ import PatientQueue from "./pages/AppointmentModule/PatientQueue";
 import AddPatient from "./components/PatientComponent/AddPatient";
 import OpdPatient from "./pages/OPD/OpdPatient";
 import IpdPatient from "./pages/IPD/IpdPatient";
-import AddOpdVisit from "./pages/OPD/AddOpdVisit";
-import AddIpdAdmission from "./pages/IPD/AddIpdAdmission";
+import AddOpd from "./pages/OPD/AddOpd";
+import AddIpd from "./pages/IPD/AddIpd";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
+import AdminProfile from "./pages/AdminModule/AdminProfie";
 
 function App() {
   return (
@@ -28,9 +28,13 @@ function App() {
         <Routes>
           {/* Home Routes */}
           <Route path="/" element={<Home />} /> 
-          
-          <Route path="/contact" element={<Contact />} />
+
+          {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
+          {/* <Route path="/admin/profile/edit" element={<UpdateAdminProfile />} />
+          <Route path="/admin/profile/change-password" element={<ChangePassword />} /> */}
+
 
           {/* Auth Routes */}
           <Route path="/login" element={<UserLogin />} />
@@ -52,8 +56,8 @@ function App() {
           {/* OPD and IPD Routes */}
           <Route path="/admin/opd-patients" element={<OpdPatient />} />
           <Route path="/admin/ipd-patients" element={<IpdPatient />} />
-          <Route path="/admin/opd-patients/add-opd-visit" element={<AddOpdVisit />} />
-          <Route path="/admin/ipd-patients/add-ipd-admission" element={<AddIpdAdmission />} />
+          <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
+          <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
 
 
           </Routes>

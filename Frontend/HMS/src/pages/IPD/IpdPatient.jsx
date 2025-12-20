@@ -61,7 +61,7 @@ export default function IpdPatient() {
                 <button
                   className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                              text-white px-4 py-2 rounded flex items-center gap-2 justify-center"
-                              onClick={() => navigate('/admin/ipd-patient/add-ipd-admission')}
+                              onClick={() => navigate('/admin/ipd-patients/add-ipd')}
                 >
                   <Plus size={16} /> Add Patient
                    
