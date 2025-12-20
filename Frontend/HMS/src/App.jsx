@@ -38,20 +38,24 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/signup" element={<AdminSignup />} />
 
-            {/* Patient Routes */}
-            <Route path="/admin/patients" element={<PatientDashboard />} />
-            <Route path="/admin/patients/add" element={<AddPatient />} />
-            <Route path="/admin/patients/:id" element={<PatientDetail />} />
-            <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
+          {/* Patient Routes */}
+          <Route path="/admin/patients" element={<PatientDashboard />} />
+          <Route path="/admin/patients/add" element={<AddPatient />} />
+          <Route path="/admin/patients/:id" element={<PatientDetail />} />
+          <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
             
-            {/* Appointment Routes */}
-            <Route path="/admin/appointment" element={<Appointment />} />
-            <Route path="/admin/appointment/doctor-wise-appointment" element={<DoctorWiseAppointment />} />
-            <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
-            <Route path="/admin/opd-patient" element={<OpdPatient />} />
-            <Route path="/admin/IPD-In Patient" element={<IpdPatient />} />
-            <Route path="/admin/opd-patient/add-opd-visit" element={<AddOpdVisit />} />
-            <Route path="/admin/ipd-patient/add-ipd-admission" element={<AddIpdAdmission />} />
+          {/* Appointment Routes */}
+          <Route path="/admin/appointments" element={<Appointment />} />
+          <Route path="/admin/appointments/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
+          <Route path="/admin/appointments/patient-queue" element={<PatientQueue />} />
+
+          {/* OPD and IPD Routes */}
+          <Route path="/admin/opd-patients" element={<OpdPatient />} />
+          <Route path="/admin/ipd-patients" element={<IpdPatient />} />
+          <Route path="/admin/opd-patients/add-opd-visit" element={<AddOpdVisit />} />
+          <Route path="/admin/ipd-patients/add-ipd-admission" element={<AddIpdAdmission />} />
+
+
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
