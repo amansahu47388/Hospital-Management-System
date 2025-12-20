@@ -39,11 +39,11 @@ export default function AppointmentToolbar({
           <Plus size={16} /> Add Appointment
         </button>
 
-        <button onClick={() => navigate("/admin/appointment/doctor-wise-appointment")} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-2 rounded">
+        <button onClick={() => navigate("/admin/appointments/doctor-wise-appointments")} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-2 rounded">
           Doctor Wise
         </button>
 
-        <button onClick={() => navigate("/admin/appointment/patient-queue")} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-2 rounded">
+        <button onClick={() => navigate("/admin/appointments/patient-queue")} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-2 rounded">
           Queue
         </button>
       </div>

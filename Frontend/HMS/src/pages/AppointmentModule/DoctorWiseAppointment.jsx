@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { Calendar, Search } from "lucide-react";
-import { getDoctors } from "../../api/adminApi";
+import { getDoctors} from "../../api/appointmentApi";
 import { getDoctorWiseAppointments } from "../../api/appointmentApi";
 
 /* ---------------- COMPONENT ---------------- */
@@ -83,7 +83,7 @@ export default function DoctorWiseAppointment() {
                   <option value="">Select Doctor</option>
                   {doctors.map((d) => (
                     <option key={d.id} value={d.id}>
-                      {d.full_name} ({d.user?.phone || 'N/A'})
+                      {d.full_name} 
                     </option>
                   ))}
                 </select>

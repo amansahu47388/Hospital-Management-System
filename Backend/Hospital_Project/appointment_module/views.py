@@ -8,6 +8,9 @@ from .models import Appointment
 from .serializers import AppointmentSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
+from  users.models import User
+from rest_framework.views import APIView
+
 
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
@@ -140,3 +143,40 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+
+class DoctorListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        doctors = User.objects.filter(
+            role="doctor",
+            is_active=True
+        ).values("id", "full_name", "email")
+
+        return Response(doctors)
+    
+
+class AppointmentListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset = Appointment.objects.select_related(
+            "patient", "doctor", "created_by"
+        ).order_by("-created_at")
+
+        serializer = AppointmentSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+
+class AppointmentCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = AppointmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
