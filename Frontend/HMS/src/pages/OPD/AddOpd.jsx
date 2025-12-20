@@ -13,7 +13,7 @@ const patients = [
   { id: 631, name: "Riya Verma" },
 ];
 
-export default function AddOpdVisit() {
+export default function AddOpd() {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
