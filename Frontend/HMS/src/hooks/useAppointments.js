@@ -36,7 +36,7 @@ export function useAppointments() {
         patient_name: appointment.patient_details?.full_name || 'N/A',
         appointment_no: appointment.appointment_no,
         created_by: appointment.created_by_name || 'N/A',
-        appointment_date: new Date(appointment.appointment_date).toLocaleDateString(),
+        appointment_date: `${new Date(appointment.appointment_date).toLocaleDateString()} ${new Date(appointment.appointment_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
         phone: appointment.patient_details?.phone || appointment.phone || 'N/A',
         gender: appointment.patient_details?.gender || 'N/A',
         doctor: appointment.doctor_details?.full_name || 'N/A',

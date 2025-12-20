@@ -44,8 +44,8 @@ function App() {
             
           {/* Appointment Routes */}
           <Route path="/admin/appointments" element={<Appointment />} />
-          <Route path="/admin/appointment/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
-          <Route path="/admin/appointment/patient-queues" element={<PatientQueue />} />
+          <Route path="/admin/appointment/doctor-wise-appointment" element={<DoctorWiseAppointment />} />
+          <Route path="/admin/appointment/patient-queue" element={<PatientQueue />} />
             
           {/* OPD/IPD Routes */}
           <Route path="/admin/opd-patients" element={<OpdPatient />} />

@@ -22,7 +22,7 @@ export default function AppointmentTable({ data }) {
               "Patient Name",
               "Appointment No",
               "Created By",
-              "Appointment Date",
+              "Appointment Date & Time",
               "Phone",
               "Gender",
               "Doctor",

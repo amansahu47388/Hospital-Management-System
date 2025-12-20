@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { Calendar, Search, RefreshCw } from "lucide-react";
+import { getDoctors } from "../../api/adminApi";
+import { getPatientQueue } from "../../api/appointmentApi";
 
 /* ---------------- MOCK DATA ---------------- */
-
-const doctors = [
-  { id: 1, name: "Reyan Jain (9011)" },
-  { id: 2, name: "Amit Singh (9009)" },
-  { id: 3, name: "Neha Sharma (9021)" },
-  { id: 4, name: "Rohit Verma (9033)" },
-  { id: 5, name: "Priya Patel (9044)" },
-];
 
 const shifts = ["Morning", "Evening"];
 
@@ -22,44 +16,32 @@ const slots = [
   "10:30 - 11:00",
 ];
 
-const appointments = [
-  {
-    doctorId: 1,
-    shift: "Morning",
-    slot: "10:00 - 10:30",
-    date: "2025-12-11",
-    sno: 1,
-    patient: "Olivier Thomas",
-    phone: "7896541230",
-    email: "olivier@gmail.com",
-    time: "10:05 AM",
-    source: "Online",
-  },
-  {
-    doctorId: 1,
-    shift: "Morning",
-    slot: "10:00 - 10:30",
-    date: "2025-12-11",
-    sno: 2,
-    patient: "John Marshall",
-    phone: "9856475632",
-    email: "john@gmail.com",
-    time: "10:15 AM",
-    source: "Walk-In",
-  },
-];
-
 /* ---------------- COMPONENT ---------------- */
 
 export default function PatientQueue() {
+  const [doctors, setDoctors] = useState([]);
   const [doctor, setDoctor] = useState("");
   const [shift, setShift] = useState("");
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState("");
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSearch = () => {
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await getDoctors();
+        setDoctors(response.data);
+      } catch (err) {
+        console.error("Error fetching doctors:", err);
+        setError("Failed to load doctors");
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  const handleSearch = async () => {
     if (!doctor || !shift || !date) {
       setError("Doctor, Shift and Date are required");
       setResults([]);
@@ -67,16 +49,17 @@ export default function PatientQueue() {
     }
 
     setError("");
-
-    const filtered = appointments.filter(
-      (a) =>
-        a.doctorId === Number(doctor) &&
-        a.shift === shift &&
-        a.date === date &&
-        (slot ? a.slot === slot : true)
-    );
-
-    setResults(filtered);
+    setLoading(true);
+    try {
+      const response = await getPatientQueue(doctor, date, shift, slot);
+      setResults(response.data);
+    } catch (err) {
+      console.error("Error fetching patient queue:", err);
+      setError("Failed to load patient queue");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -116,7 +99,7 @@ export default function PatientQueue() {
           <option value="">Select</option>
           {doctors.map((d) => (
             <option key={d.id} value={d.id}>
-              {d.name}
+              {d.full_name} ({d.user?.phone || 'N/A'})
             </option>
           ))}
         </select>
@@ -223,15 +206,27 @@ export default function PatientQueue() {
         </thead>
 
         <tbody className="divide-y divide-gray-200">
-          {results.length > 0 ? (
+          {loading ? (
+            <tr>
+              <td colSpan={7} className="text-center py-10 text-gray-500">
+                Loading...
+              </td>
+            </tr>
+          ) : error ? (
+            <tr>
+              <td colSpan={7} className="text-center py-10 text-red-500">
+                {error}
+              </td>
+            </tr>
+          ) : results.length > 0 ? (
             results.map((r, i) => (
-              <tr key={i} className="hover:bg-gray-50">
-                <td className="px-4 py-3">{r.sno}</td>
-                <td className="px-4 py-3">{r.patient}</td>
-                <td className="px-4 py-3">{r.phone}</td>
-                <td className="px-4 py-3">{r.email}</td>
-                <td className="px-4 py-3">{r.date}</td>
-                <td className="px-4 py-3">{r.time}</td>
+              <tr key={r.id || i} className="hover:bg-gray-50">
+                <td className="px-4 py-3">{i + 1}</td>
+                <td className="px-4 py-3">{r.patient_details?.full_name || 'N/A'}</td>
+                <td className="px-4 py-3">{r.patient_details?.phone || r.phone || 'N/A'}</td>
+                <td className="px-4 py-3">{r.patient_details?.email || 'N/A'}</td>
+                <td className="px-4 py-3">{new Date(r.appointment_date).toLocaleDateString()}</td>
+                <td className="px-4 py-3">{new Date(r.appointment_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
                 <td className="px-4 py-3">{r.source}</td>
               </tr>
             ))
