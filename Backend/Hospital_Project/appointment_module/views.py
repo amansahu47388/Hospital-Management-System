@@ -94,3 +94,49 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().filter(appointment_date__lt=today)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def doctor_wise(self, request):
+        """Get appointments by doctor and date"""
+        doctor_id = request.query_params.get('doctor')
+        date = request.query_params.get('date')
+        if not doctor_id or not date:
+            return Response({"error": "doctor and date parameters are required"}, status=status.HTTP_400_BAD_REQUEST)
+        queryset = self.get_queryset().filter(doctor_id=doctor_id, appointment_date__date=date)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def patient_queue(self, request):
+        """Get patient queue by doctor, date, and optional shift/slot"""
+        doctor_id = request.query_params.get('doctor')
+        date = request.query_params.get('date')
+        shift = request.query_params.get('shift')  # morning/evening
+        slot = request.query_params.get('slot')  # time range like "10:00 - 10:30"
+        if not doctor_id or not date:
+            return Response({"error": "doctor and date parameters are required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        queryset = self.get_queryset().filter(doctor_id=doctor_id, appointment_date__date=date)
+        
+        # Filter by shift if provided
+        if shift:
+            if shift.lower() == 'morning':
+                queryset = queryset.filter(appointment_date__hour__lt=12)
+            elif shift.lower() == 'evening':
+                queryset = queryset.filter(appointment_date__hour__gte=12)
+        
+        # Filter by slot if provided (assuming slot is a time range string)
+        if slot:
+            # Parse slot like "10:00 - 10:30" to filter time between
+            try:
+                start_time_str, end_time_str = slot.split(' - ')
+                # Convert to time objects
+                from datetime import datetime
+                start_time = datetime.strptime(start_time_str, '%H:%M').time()
+                end_time = datetime.strptime(end_time_str, '%H:%M').time()
+                queryset = queryset.filter(appointment_date__time__gte=start_time, appointment_date__time__lt=end_time)
+            except (ValueError, AttributeError):
+                pass  # Invalid slot format, ignore
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

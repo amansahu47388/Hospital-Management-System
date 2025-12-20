@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { createAppointment } from "../../api/appointmentApi";
 import { getPatientList } from "../../api/patientApi";
 import { getDoctorList } from "../../api/doctorApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function AddAppointmentModal({ open, onClose, onSuccess }) {
+  const notify = useNotify();
   const [formData, setFormData] = useState({
     patient: '',
     doctor: '',
@@ -125,7 +127,13 @@ export default function AddAppointmentModal({ open, onClose, onSuccess }) {
       };
 
       console.log('Submitting appointment data:', submitData);
-      await createAppointment(submitData);
+      const response = await createAppointment(submitData);
+      
+      // Show success notification with appointment details
+      const formattedDateTime = `${appointmentDate.toLocaleDateString()} ${appointmentDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+      
+      notify('success', `Appointment created successfully! Date & Time: ${formattedDateTime}`);
+      
       onSuccess && onSuccess();
     } catch (err) {
       console.error('Error creating appointment:', err);

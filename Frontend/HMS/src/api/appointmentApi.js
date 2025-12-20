@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const appointmentAPI = axios.create({
-  baseURL: `${API_BASE_URL}/appointments`,
+  baseURL: `${API_BASE_URL.replace('/api', '')}/appointments`,
 });
 
 // Add token to requests
@@ -57,7 +57,7 @@ export const getAppointmentDetail = async (appointmentId) => {
 };
 
 export const createAppointment = async (appointmentData) => {
-  const response = await appointmentAPI.post('/', appointmentData);
+  const response = await appointmentAPI.post('/create/', appointmentData);
   return response;
 };
 
@@ -85,5 +85,18 @@ export const getUpcomingAppointments = async () => {
 
 export const getPastAppointments = async () => {
   const response = await appointmentAPI.get('/past/');
+  return response;
+};
+
+export const getDoctorWiseAppointments = async (doctorId, date) => {
+  const response = await appointmentAPI.get('/doctor-wise/', { params: { doctor: doctorId, date } });
+  return response;
+};
+
+export const getPatientQueue = async (doctorId, date, shift = '', slot = '') => {
+  const params = { doctor: doctorId, date };
+  if (shift) params.shift = shift;
+  if (slot) params.slot = slot;
+  const response = await appointmentAPI.get('/patient-queue/', { params });
   return response;
 };
