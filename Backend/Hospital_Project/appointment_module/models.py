@@ -32,7 +32,6 @@ class Appointment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE)
-    # doctor = models.ForeignKey('admin_module.AdminProfile', on_delete=models.CASCADE)
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="appointments_as_doctor", limit_choices_to={"role": "doctor"})
     appointment_no = models.CharField(max_length=20, unique=True, editable=False, default=uuid.uuid4)
     appointment_date = models.DateTimeField()

@@ -125,7 +125,7 @@ export default function AddAppointmentModal({ open, onClose, onSuccess }) {
       // Show success notification with appointment details
       const formattedDateTime = `${appointmentDate.toLocaleDateString()} ${appointmentDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
       
-      notify("Appointment created successfully!");
+      notify('success', `Appointment created successfully` );
       
       onSuccess && onSuccess();
     } catch (err) {
