@@ -3,6 +3,13 @@ import uuid
 from django.conf import settings
 
 class AdminProfile(models.Model):
+    CHOOSE_MERITAL_STATUS = [
+        ('Single', 'Single'),
+        ('Married', 'Married'),
+        ('Divorced', 'Divorced'),
+        ('Widowed', 'Widowed'),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="doctor_profile")
     designation = models.CharField(max_length=150, blank=True)
@@ -13,6 +20,7 @@ class AdminProfile(models.Model):
     contract_type = models.CharField(max_length=100, blank=True)
     work_shift = models.CharField(max_length=100, blank=True)
     work_location = models.CharField(max_length=255, blank=True)
+    merital_status = models.CharField(max_length=10, choices=CHOOSE_MERITAL_STATUS, blank=True)
     basic_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     gender = models.CharField(max_length=10, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -21,12 +29,12 @@ class AdminProfile(models.Model):
     bio = models.TextField(blank=True)
     blood_group = models.CharField(max_length=5, blank=True)
     emergency_contact = models.CharField(max_length=15, blank=True)
-    profile_picture = models.ImageField(upload_to="doctor_profiles/", blank=True, null=True)
+    profile_picture = models.ImageField(upload_to="admin_profiles/", blank=True, null=True)
     qualifications = models.TextField(blank=True)
     experience_years = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    socia_media_links = models.JSONField(default=dict, blank=True)  # e.g. {"linkedin": "...", "twitter": "..."}
+    socia_media_links = models.JSONField(default=dict, blank=True)
 
     def __str__(self):
         return f"Dr. {self.user.get_full_name() or self.user.username}"

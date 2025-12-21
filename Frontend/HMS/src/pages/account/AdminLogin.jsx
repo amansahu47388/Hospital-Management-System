@@ -61,55 +61,34 @@ export default function AdminLogin() {
     
     if (emailError || passwordError) {
       setErrors({ email: emailError, password: passwordError });
-      notify("error", emailError || passwordError);
       return;
     }
-
     setLoading(true);
     try {
-      const res = await userLogin(form); 
+      const res = await userLogin(form);
       if (res?.data?.access) {
-        // Save login data first
+        // persist auth first
         login(res.data);
+
+        const user = res.data.user || JSON.parse(localStorage.getItem("user") || "{}");
+        const role = (user?.role || "").toLowerCase();
+        const adminRoles = ["admin","doctor","pharmacist","pathologist","radiologist","accountant","receptionist","staff"];
+        const isAdmin = adminRoles.includes(role);
+
+        const roleName = role.charAt(0).toUpperCase() + role.slice(1);
+        notify("success", `Welcome back, ${user?.full_name || roleName}! Login successful.`);
         
-        // Check user role to determine navigation - try multiple sources
-        const user = res.data.user;
-        let userRole = user?.role;
-        
-        // Fallback: try to get from localStorage if not in response
-        if (!userRole) {
-          try {
-            const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-            userRole = storedUser?.role;
-          } catch (e) {
-            // Ignore parse errors
-          }
-        }
-        
-        // Admin roles that should go to dashboard
-        const adminRoles = ["admin", "doctor", "pharmacist", "pathologist", "radiologist", "accountant", "receptionist", "staff"];
-        
-        // Use setTimeout to ensure state updates complete before navigation
-        if (userRole && adminRoles.includes(userRole.toLowerCase())) {
-          notify("success", "Admin logged in successfully!");
-          setTimeout(() => {
-            navigate("/admin/dashboard", { replace: true });
-          }, 100);
-        } else {
-          notify("success", "Logged in successfully!");
-          setTimeout(() => {
-            navigate("/", { replace: true });
-          }, 100);
-        }
-      } else {
-        notify("error", "Login failed. Please try again.");
+        setTimeout(() => {
+          navigate(isAdmin ? "/admin/dashboard" : "/", { replace: true });
+        }, 1500);
       }
     } catch (err) {
-      const detail = err.response?.data?.detail || 
-                    Object.values(err.response?.data || {}).flat().join(" ") || 
-                    "Login failed. Please check your credentials and try again.";
-      notify("error", detail);
+      const detail = err.response?.data?.detail ||
+        Object.values(err.response?.data || {}).flat().join(" ") ||
+        "Login failed. Please check your credentials and try again.";
+      console.error("Admin login error:", detail);
       setErrors({ email: "", password: detail });
+      notify("error", detail);
     } finally {
       setLoading(false);
     }

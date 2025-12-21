@@ -23,23 +23,25 @@ import {
   Monitor,
   BarChart3,
   Settings,
-  FolderGit2
+  FolderGit2,
+  Menu,
 } from "lucide-react";
 
 const navItems = [
-  { to: "/Admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
- 
+  { to: "/admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
+  { to: "/admin/patients", label: "Patient", Icon: UserRound },
+  { to: "/admin/appointments", label: "Appointment", Icon: Calendar },
+
+  { to: "/admin/opd-patients", label: "OPD-Out patient", Icon: Hospital },
+  { to: "/admin/ipd-patients", label: "IPD-In Patient", Icon: Bed },
+  { to: "/pharmacy", label: "Pharmacy", Icon: Pill },
+  { to: "/pathology", label: "Pathology", Icon: FlaskConical },
+  { to: "/Radiology", label: "Radiology", Icon: FolderGit2 },
   { to: "/lab", label: "Lab", Icon: FlaskConical },
   { to: "/ward", label: "Ward", Icon: Bed },
-  { to: "/treatment", label: "Treatment", Icon: Stethoscope },
-  { to: "/pharmacy", label: "Pharmacy", Icon: Pill },
-  { to: "/admin/patients", label: "Patient", Icon: UserRound },
-  { to: "/admin/appointment", label: "Appointment", Icon: Calendar },
-  { to: "/admin/opd-patient", label: "OPD-Out patient", Icon: Hospital },
-  { to: "/admin/IPD-In Patient", label: "IPD-In Patient", Icon: Bed },
-  { to: "/pathology", label: "Pathology", Icon: FlaskConical },
   { to: "/blood-bank", label: "Blood Bank", Icon: Droplet },
-  { to: "/Radiology", label: "Radiology", Icon: FolderGit2 },
+  { to: "/treatment", label: "Treatment", Icon: Stethoscope },
+ 
   { to: "/Ambulance", label: "Ambulance", Icon: Ambulance },
   { to: "/front-office", label: "Front Office", Icon: ClipboardList },
   { to: "/Birth-Death-Record", label: "Birth & Death Record", Icon: FileBadge },
@@ -79,20 +81,7 @@ function Sidebar() {
         onClick={handleToggle}
         className="absolute top-2 -right-20 z-50 p-1 cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="w-5 h-5"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-          />
-        </svg>
+      <Menu />
       </button>
      
       {/* SIDEBAR */}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getPatientDetail } from "../../api/patientApi";
-import { useNotify } from "../../context/NotificationContext";
 import UpdatePatient from "../../components/PatientComponent/UpdatePatient"; 
 
 import {
@@ -19,7 +18,6 @@ import {
 function PatientDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const notify = useNotify();
 
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +38,6 @@ function PatientDetails() {
       setPatient(response.data);
     } catch (err) {
       console.error("Error fetching patient:", err);
-      notify("error", err.response?.data?.detail || "Failed to load patient");
       navigate("/admin/patients");
     } finally {
       setLoading(false);

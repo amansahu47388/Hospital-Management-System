@@ -131,32 +131,29 @@ export default function UserSignup() {
       notify("error", fullNameError || emailError || phoneError || passwordError);
       return;
     }
-
+    
     setLoading(true);
     try {
       const res = await userRegister(form);
-      
-      // Check if registration was successful
+
       if (res?.status === 201 || res?.status === 200 || res?.data) {
         notify("success", "Account created successfully! Please login.");
-        // Use setTimeout to ensure state updates complete before navigation
         setTimeout(() => {
           navigate("/login", { replace: true });
-        }, 100);
+        }, 1500);
       } else {
         notify("error", "Registration failed. Please try again.");
       }
     } catch (err) {
       const errorMsg = parseServerError(err);
       notify("error", errorMsg);
-      // Set general error or field-specific errors
       if (err.response?.data) {
         const serverErrors = err.response.data;
         const newErrors = { ...errors };
         Object.keys(serverErrors).forEach((key) => {
           if (newErrors.hasOwnProperty(key)) {
-            newErrors[key] = Array.isArray(serverErrors[key]) 
-              ? serverErrors[key][0] 
+            newErrors[key] = Array.isArray(serverErrors[key])
+              ? serverErrors[key][0]
               : serverErrors[key];
           }
         });

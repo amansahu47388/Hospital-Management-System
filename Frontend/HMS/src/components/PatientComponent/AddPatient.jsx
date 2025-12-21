@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { createPatient } from "../../api/patientApi";
-import { useNotify } from "../../context/NotificationContext";
 import { X, Loader } from "lucide-react";
 
 function AddPatient({ open, onClose }) {
-  const notify = useNotify();
 
   // Initialize formData with default empty values
   const [formData, setFormData] = useState({
@@ -39,13 +37,11 @@ function AddPatient({ open, onClose }) {
 
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        notify("error", "Please select a valid image file");
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        notify("error", "Image size must be less than 5MB");
         return;
       }
 
@@ -78,10 +74,6 @@ function AddPatient({ open, onClose }) {
     if (!formData.first_name?.trim()) {
       newErrors.first_name = "First name is required";
     }
-    if (!formData.last_name?.trim()) {
-      newErrors.last_name = "Last name is required";
-    }
-
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -96,15 +88,6 @@ function AddPatient({ open, onClose }) {
     if (!formData.address.trim()) {
       newErrors.address = "Address is required";
     }
-    if (!formData.city.trim()) {
-      newErrors.city = "City is required";
-    }
-    if (!formData.state.trim()) {
-      newErrors.state = "State is required";
-    }
-    if (!formData.zip_code.trim()) {
-      newErrors.zip_code = "Zip code is required";
-    }
 
     if (!formData.date_of_birth) {
       newErrors.date_of_birth = "Date of birth is required";
@@ -116,15 +99,6 @@ function AddPatient({ open, onClose }) {
       }
     }
 
-    if (!formData.emergency_contact_name.trim()) {
-      newErrors.emergency_contact_name = "Emergency contact name is required";
-    }
-    if (!formData.emergency_contact_phone.trim()) {
-      newErrors.emergency_contact_phone = "Emergency contact phone is required";
-    } else if (formData.emergency_contact_phone.length < 10) {
-      newErrors.emergency_contact_phone = "Contact phone must be at least 7 digits";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -134,7 +108,6 @@ function AddPatient({ open, onClose }) {
 
     if (!validateForm()) {
       console.log("❌ Form validation failed");
-      notify("error", "Please fix the validation errors");
       return;
     }
 
@@ -167,7 +140,6 @@ function AddPatient({ open, onClose }) {
       const response = await createPatient(submitData);
 
       console.log("✅ Patient created successfully:", response.data);
-      notify("success", "Patient added successfully");
 
       // Reset form
       setFormData({
@@ -205,12 +177,12 @@ function AddPatient({ open, onClose }) {
           setErrors(backendErrors);
           const firstError = Object.values(backendErrors)[0];
           const message = Array.isArray(firstError) ? firstError[0] : firstError;
-          notify("error", message || "Failed to add patient");
+          console.error("Failed to add patient:", message);
         } else {
-          notify("error", backendErrors.detail || "Failed to add patient");
+          console.error("Failed to add patient:", backendErrors.detail);
         }
       } else {
-        notify("error", "Failed to add patient");
+        console.error("Failed to add patient");
       }
     } finally {
       setLoading(false);
@@ -299,6 +271,7 @@ function AddPatient({ open, onClose }) {
                   value={formData.phone}
                   onChange={handleChange}
                   error={errors.phone}
+                  required
                 />
                 <FormField
                   label="Date of Birth"
@@ -426,7 +399,7 @@ function AddPatient({ open, onClose }) {
             {/* EMERGENCY CONTACT */}
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
-                Emergency Contact
+                Guardian Contact
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField

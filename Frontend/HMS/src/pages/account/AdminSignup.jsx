@@ -25,6 +25,7 @@ export default function AdminSignup() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const roles = [
     "admin",
@@ -55,9 +56,9 @@ export default function AdminSignup() {
   };
 
   const validatePhone = (phone) => {
-    if (!phone) return "";
+    if (!phone || !phone.trim()) return ""; // Phone is optional
     const re = /^[0-9]{10,15}$/;
-    if (!re.test(phone)) return "Phone must be 10–15 digits";
+    if (!re.test(phone.trim())) return "Phone must be 10–15 digits";
     return "";
   };
 
@@ -112,34 +113,27 @@ export default function AdminSignup() {
     setErrors(newErrors);
 
     if (Object.values(newErrors).some(Boolean)) {
-      notify("error", "Please fix the form errors");
       return;
     }
 
     setLoading(true);
-
+    setError(""); // Clear previous errors
     try {
       const res = await adminRegister(form);
 
       if (res?.status === 201 || res?.status === 200 || res?.data) {
-        notify("success", "Admin account created successfully! Please login.");
-        // Use setTimeout to ensure state updates complete before navigation
+        const role = form.role || "admin";
+        const roleName = role.charAt(0).toUpperCase() + role.slice(1);
+        notify("success", `${roleName} account created successfully! Redirecting to login...`);
         setTimeout(() => {
           navigate("/admin/login", { replace: true });
-        }, 100);
-      } else {
-        notify("error", "Registration failed. Please try again.");
+        }, 1500);
       }
     } catch (err) {
-      notify("error", parseServerError(err));
-
-      if (err.response?.data && typeof err.response.data === "object") {
-        const backendErrors = {};
-        Object.entries(err.response.data).forEach(([key, val]) => {
-          backendErrors[key] = Array.isArray(val) ? val[0] : val;
-        });
-        setErrors((prev) => ({ ...prev, ...backendErrors }));
-      }
+      const errorMessage = parseServerError(err);
+      console.error("Admin signup error:", errorMessage);
+      setError(errorMessage);
+      notify("error", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -163,6 +157,12 @@ export default function AdminSignup() {
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-center">
             Admin Signup
           </h2>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={submit} className="space-y-4">
             {/* Full Name */}

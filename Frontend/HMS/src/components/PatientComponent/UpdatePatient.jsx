@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { getPatientDetail, updatePatient } from "../../api/patientApi";
-import { useNotify } from "../../context/NotificationContext";
 import { X, Loader } from "lucide-react";
 
 /* ==================== GENDER NORMALIZER (FIX) ==================== */
@@ -23,7 +22,6 @@ const getImageUrl = (photo) => {
 /* ==================== COMPONENT ==================== */
 
 function UpdatePatient({ open, onClose, patientId }) {
-  const notify = useNotify();
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -60,7 +58,7 @@ function UpdatePatient({ open, onClose, patientId }) {
         photo: res.data.photo || null,
       });
     } catch {
-      notify("error", "Failed to load patient");
+      console.error("Failed to load patient");
       onClose();
     } finally {
       setFetching(false);
@@ -103,15 +101,14 @@ function UpdatePatient({ open, onClose, patientId }) {
 
     try {
       await updatePatient(patientId, payload);
-      notify("success", "Patient updated successfully");
       onClose();
     } catch (err) {
       if (err.response?.data) {
         setErrors(err.response.data);
         const msg = Object.values(err.response.data)[0];
-        notify("error", Array.isArray(msg) ? msg[0] : msg);
+        console.error("Update patient error:", Array.isArray(msg) ? msg[0] : msg);
       } else {
-        notify("error", "Update failed");
+        console.error("Update failed");
       }
     } finally {
       setLoading(false);

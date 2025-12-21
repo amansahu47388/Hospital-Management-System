@@ -1,62 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { Calendar, Search } from "lucide-react";
-
-/* ---------------- MOCK DATA ---------------- */
-
-const doctors = [
-  { id: 1, name: "Reyan Jain (9011)" },
-  { id: 2, name: "Amit Singh (9009)" },
-  { id: 3, name: "Neha Sharma (9021)" },
-  { id: 4, name: "Rohit Verma (9033)" },
-  { id: 5, name: "Priya Patel (9044)" },
-];
-
-const appointmentsData = [
-  {
-    doctorId: 1,
-    patient: "Olivier Thomas",
-    phone: "7896541230",
-    email: "olivier@gmail.com",
-    date: "2025-02-12",
-    time: "10:30 AM",
-    source: "Online",
-  },
-  {
-    doctorId: 1,
-    patient: "John Marshall",
-    phone: "9856475632",
-    email: "john@gmail.com",
-    date: "2025-02-12",
-    time: "11:00 AM",
-    source: "Walk-In",
-  },
-  {
-    doctorId: 2,
-    patient: "Maria Taylor",
-    phone: "7488548942",
-    email: "maria@gmail.com",
-    date: "2025-02-13",
-    time: "12:00 PM",
-    source: "Online",
-  },
-];
+import { getDoctors} from "../../api/appointmentApi";
+import { getDoctorWiseAppointments } from "../../api/appointmentApi";
 
 /* ---------------- COMPONENT ---------------- */
 
 export default function DoctorWiseAppointment() {
+  const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSearch = () => {
-    const filtered = appointmentsData.filter(
-      (a) =>
-        a.doctorId === Number(selectedDoctor) &&
-        a.date === selectedDate
-    );
-    setResults(filtered);
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await getDoctors();
+        setDoctors(response.data);
+      } catch (err) {
+        console.error("Error fetching doctors:", err);
+        setError("Failed to load doctors");
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  const handleSearch = async () => {
+    if (!selectedDoctor || !selectedDate) {
+      setError("Please select both doctor and date");
+      setResults([]);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      const response = await getDoctorWiseAppointments(selectedDoctor, selectedDate);
+      setResults(response.data);
+    } catch (err) {
+      console.error("Error fetching appointments:", err);
+      setError("Failed to load appointments");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -93,7 +83,7 @@ export default function DoctorWiseAppointment() {
                   <option value="">Select Doctor</option>
                   {doctors.map((d) => (
                     <option key={d.id} value={d.id}>
-                      {d.name}
+                      {d.full_name} 
                     </option>
                   ))}
                 </select>
@@ -140,14 +130,26 @@ export default function DoctorWiseAppointment() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                  {results.length > 0 ? (
+                  {loading ? (
+                    <tr>
+                      <td colSpan={6} className="text-center py-10 text-gray-500">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : error ? (
+                    <tr>
+                      <td colSpan={6} className="text-center py-10 text-red-500">
+                        {error}
+                      </td>
+                    </tr>
+                  ) : results.length > 0 ? (
                     results.map((r, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="px-4 py-3">{r.patient}</td>
-                        <td className="px-4 py-3">{r.phone}</td>
-                        <td className="px-4 py-3">{r.email}</td>
-                        <td className="px-4 py-3">{r.date}</td>
-                        <td className="px-4 py-3">{r.time}</td>
+                      <tr key={r.id || index} className="hover:bg-gray-50">
+                        <td className="px-4 py-3">{r.patient_details?.full_name || 'N/A'}</td>
+                        <td className="px-4 py-3">{r.patient_details?.phone || r.phone || 'N/A'}</td>
+                        <td className="px-4 py-3">{r.patient_details?.email || 'N/A'}</td>
+                        <td className="px-4 py-3">{new Date(r.appointment_date).toLocaleDateString()}</td>
+                        <td className="px-4 py-3">{new Date(r.appointment_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
                         <td className="px-4 py-3">{r.source}</td>
                       </tr>
                     ))
