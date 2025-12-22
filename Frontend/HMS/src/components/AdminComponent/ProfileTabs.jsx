@@ -9,15 +9,15 @@ const tabs = [
 
 const ProfileTabs = ({ activeTab, setActiveTab }) => {
   return (
-    <div className="flex gap-6 border-b mt-6 text-sm">
+    <div className="flex gap-6 border-b border-gray-200 mt-6 text-md">
       {tabs.map((tab) => (
         <button
           key={tab}
           onClick={() => setActiveTab(tab)}
-          className={`pb-2 ${
+          className={`pb-2 px-1 transition-colors duration-200 ${
             activeTab === tab
-              ? "border-b-2 border-blue-600 font-semibold"
-              : "text-gray-500"
+              ? "border-b-2 border-[#6046B5] font-semibold text-[#6046B5]"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           {tab}
@@ -25,6 +25,6 @@ const ProfileTabs = ({ activeTab, setActiveTab }) => {
       ))}
     </div>
   );
-};
+};;
 
 export default ProfileTabs;

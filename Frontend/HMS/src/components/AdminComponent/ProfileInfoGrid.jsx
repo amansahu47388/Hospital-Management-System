@@ -9,10 +9,10 @@ const InfoItem = ({ label, value }) => {
 
 const ProfileInfoGrid = ({ profile }) => {
   return (
-    <div className="border rounded mt-4 overflow-hidden">
+    <div className="border rounded-lg shadow-sm mt-4 overflow-hidden bg-white">
 
       {/* ROW 1 */}
-      <div className="grid grid-cols-1 md:grid-cols-4 border-b">
+      <div className="grid grid-cols-1 md:grid-cols-4 border-b ">
         <InfoItem label="Department" value={profile.job.department} />
         <InfoItem label="Specialist" value={profile.job.specialist} />
         <InfoItem label="EPF No" value={profile.job.epfNo} />
@@ -29,6 +29,6 @@ const ProfileInfoGrid = ({ profile }) => {
 
     </div>
   );
-};
+};;
 
 export default ProfileInfoGrid;
