@@ -1,6 +1,6 @@
 const ProfileHeader = ({ profile }) => {
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between border-b pb-6">
+    <div className="flex flex-col md:flex-row md:items-center justify-between border-gray-300 pb-6">
 
       {/* Left */}
       <div className="flex items-center gap-4">

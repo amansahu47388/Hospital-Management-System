@@ -5,7 +5,7 @@ import React from "react";
     <div className="bg-white rounded-2xl p-4 shadow-card overflow-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-muted">
+          <tr className="text-left text-muted ">
             {columns.map((c) => (
               <th key={c.key} className="py-2 px-2">{c.label}</th>
             ))}
