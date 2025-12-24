@@ -6,6 +6,7 @@ from .views import (
     PatientUpdateView,
     PatientDeleteView,
     PatientSearchView,
+    PatientSearchAPIView,
 )
 
 app_name = 'patient_module'
@@ -14,6 +15,7 @@ urlpatterns = [
     path('', PatientListView.as_view(), name='patient-list'),
     path('create/', PatientCreateView.as_view(), name='patient-create'),
     path('search/', PatientSearchView.as_view(), name='patient-search'),
+    path("patients/search/", PatientSearchAPIView.as_view(), name="patient-search"),
     path('<int:patient_id>/', PatientDetailView.as_view(), name='patient-detail'),
     path('<int:patient_id>/update/', PatientUpdateView.as_view(), name='patient-update'),
     path('<int:patient_id>/delete/', PatientDeleteView.as_view(), name='patient-delete'),

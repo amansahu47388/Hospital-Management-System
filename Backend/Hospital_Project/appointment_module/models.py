@@ -32,7 +32,6 @@ class Appointment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE)
-    # doctor = models.ForeignKey('admin_module.AdminProfile', on_delete=models.CASCADE)
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="appointments_as_doctor", limit_choices_to={"role": "doctor"})
     appointment_no = models.CharField(max_length=20, unique=True, editable=False, default=uuid.uuid4)
     appointment_date = models.DateTimeField()
@@ -50,5 +49,8 @@ class Appointment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_appointments', null=True, blank=True)
 
+    # def __str__(self):
+    #     return f"Appointment {self.id} - {self.patient.full_name} with {self.doctor.user.get_full_name()}"
+
     def __str__(self):
-        return f"Appointment {self.id} - {self.patient.full_name} with {self.doctor.user.get_full_name()}"
+        return f"Appointment {self.appointment_no} - {self.patient.full_name} with Dr. {self.doctor.full_name or self.doctor.email}"

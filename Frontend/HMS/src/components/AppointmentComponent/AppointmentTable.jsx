@@ -57,7 +57,7 @@ export default function AppointmentTable({ data }) {
               <td className="p-2">{row.appointment_date}</td>
               <td className="p-2">{row.phone}</td>
               <td className="p-2">{row.gender}</td>
-              <td className="p-2">{row.doctor}</td>
+              <td className="p-2">{row.doctor_name || row.doctor_details?.full_name || "—"}</td>
               <td className="p-2">{row.source}</td>
               <td className="p-2">{row.priority}</td>
               <td className="p-2">{row.live_consultant}</td>

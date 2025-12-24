@@ -222,3 +222,18 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         except Exception as e:
             logger.error(f"❌ Error updating patient: {str(e)}", exc_info=True)
             raise serializers.ValidationError(f"Error updating patient: {str(e)}")
+        
+
+
+class PatientSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = ("id", "first_name", "last_name", "phone", "email")
+
+
+class PatientDetailSerializer(serializers.ModelSerializer):
+    full_name = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Patient
+        fields = "__all__"

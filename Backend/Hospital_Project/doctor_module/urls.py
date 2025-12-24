@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-app_name = 'patient_module'
+app_name = 'doctor_module'
 
 urlpatterns = [
     
