@@ -19,7 +19,7 @@ import AddOpd from "./pages/OPD/AddOpd";
 import AddIpd from "./pages/IPD/AddIpd";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 import AdminProfile from "./pages/AdminModule/AdminProfie";
-
+import IpdDischargedPatients from "./pages/IPD/IpdDischargedPatients";
 function App() {
   return (
     <AuthProvider>
@@ -59,7 +59,7 @@ function App() {
           <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
           <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
 
-
+          <Route path="/admin/ipd-patients/ipd-discharged-patients" element={<IpdDischargedPatients />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
