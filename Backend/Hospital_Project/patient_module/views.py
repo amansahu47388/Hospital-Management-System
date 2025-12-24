@@ -206,3 +206,19 @@ class PatientSearchView(APIView):
                 {"detail": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+class PatientSearchAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        q = request.query_params.get('q', '').strip()
+        if not q:
+            return Response([], status=200)
+        qs = Patient.objects.filter(
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(mobile__icontains=q) |
+            Q(pk__iexact=q)
+        )[:20]
+        serializer = PatientSerializer(qs, many=True)
+        return Response(serializer.data)

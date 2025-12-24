@@ -5,7 +5,6 @@ from .views import (AppointmentViewSet, DoctorListAPIView,AppointmentCreateAPIVi
 urlpatterns = [
     path("doctors/", DoctorListAPIView.as_view()),
     path('', AppointmentViewSet.as_view({'get': 'list'}), name='appointment-list'),
-    # path('create/', AppointmentViewSet.as_view({'post': 'create'}), name='appointment-create'),
     path('create/', AppointmentCreateAPIView.as_view(), name='appointment-create'),
     path('<uuid:pk>/', AppointmentListAPIView.as_view(), name='appointment-detail'),
     # path('<uuid:pk>/', AppointmentViewSet.as_view({

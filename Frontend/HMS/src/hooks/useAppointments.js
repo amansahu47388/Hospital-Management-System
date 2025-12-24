@@ -39,7 +39,9 @@ export function useAppointments() {
         appointment_date: `${new Date(appointment.appointment_date).toLocaleDateString()} ${new Date(appointment.appointment_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
         phone: appointment.patient_details?.phone || appointment.phone || 'N/A',
         gender: appointment.patient_details?.gender || 'N/A',
-        doctor: appointment.doctor_details?.full_name || 'N/A',
+        // Provide both a normalized doctor_name and the full doctor_details object
+        doctor_name: appointment.doctor_name || appointment.doctor_details?.full_name || 'N/A',
+        doctor_details: appointment.doctor_details || null,
         source: appointment.source,
         priority: appointment.appontmet_priority,
         live_consultant: appointment.live_consultation ? 'Yes' : 'No',
