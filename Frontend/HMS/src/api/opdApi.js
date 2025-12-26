@@ -48,7 +48,7 @@ export const getOpdPatientDetail = (opdId) => {
 };
 
 export const updateOpdPatient = (opdId, data) => {
-  return opdAPI.patch(`opd/${opdId}/`, data);
+  return opdAPI.patch(`opd/${opdId}/update/`, data);
 };
 
 export const searchPatients = (q) => {
