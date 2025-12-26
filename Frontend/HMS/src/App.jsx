@@ -23,6 +23,9 @@ import IpdDischargedPatients from "./pages/IPD/IpdDischargedPatients";
 import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
 
 
+import PathologyBill from "./pages/pathology/PathologyBill";
+import  GenerateBill from "./pages/pathology/GenerateBill";
+import PathologyTest from "./pages/pathology/PathologyTest";
 function App() {
   return (
     <AuthProvider>
@@ -64,6 +67,9 @@ function App() {
           <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
 
           <Route path="/admin/ipd-patients/ipd-discharged-patients" element={<IpdDischargedPatients />} />
+          <Route path="/admin/pathology-bill" element={<PathologyBill />} />
+          <Route path="/admin/pathology-bill/generate-bill" element={<GenerateBill />} />
+          <Route path="/admin/pathology-tests" element={<PathologyTest />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
