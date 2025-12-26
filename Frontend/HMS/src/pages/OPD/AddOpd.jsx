@@ -27,8 +27,7 @@ export default function AddOpd() {
   const [symptoms, setSymptoms] = useState([]);
   const [charges, setCharges] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  // const [selectedCharge, setSelectedCharge] = useState(null);
-  // const [selectedSymptom, setSelectedSymptom] = useState(null);
+
 
   /* ================= FORM DATA ================= */
   const [formData, setFormData] = useState({
@@ -238,15 +237,14 @@ const formatDateTimeLocal = (value) => {
             </div>
           </div>
 
-
         <main className="flex-1 overflow-y-auto bg-white">
           {/* ================= FORM ================= */}
           <form onSubmit={handleSubmit}>
           <div className="p-4 md:p-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-              {/* LEFT */}
-              <div className="lg:col-span-2 space-y-5">
+            {/* LEFT */}
+            <div className="lg:col-span-2 space-y-5">
 
             {/* PATIENT INFORMATION CARD */}
           {patientDetail && (
@@ -307,7 +305,7 @@ const formatDateTimeLocal = (value) => {
                 {patientDetail?.photo ? (
                   <div className="text-center">
                     <img
-                      src={getImageUrl(patient.photo)}
+                      src={getImageUrl(patientDetail.photo)}
                       alt="Patient"
                       className="w-32 h-32 object-cover  shadow-md"
                       onError={(e) => {
@@ -576,7 +574,7 @@ const formatDateTimeLocal = (value) => {
                         <option value="cheque">Cheque</option>
                         <option value="upi">UPI</option>
                         <option value="transfer to bank account">Transfer To Bank Account</option>
-                        <option value="online">Online</option>
+                        <option value="card">Card</option>
                         <option value="other">Other</option>
                       </select>
                   </div> 
@@ -653,3 +651,22 @@ const formatDateTimeLocal = (value) => {
 }
 
 
+// Add this helper function at the bottom before export
+function getImageUrl(photoPath) {
+  if (!photoPath) return null;
+  
+  // If it's already a full URL
+  if (photoPath.startsWith('http://') || photoPath.startsWith('https://')) {
+    return photoPath;
+  }
+  
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const baseUrl = apiUrl.replace('/api', ''); 
+  
+  // Ensure path starts with /
+  const path = photoPath.startsWith('/') ? photoPath : '/' + photoPath;
+  
+  const fullUrl = `${baseUrl}${path}`;
+  console.log('Generated image URL:', fullUrl);
+  return fullUrl;
+}

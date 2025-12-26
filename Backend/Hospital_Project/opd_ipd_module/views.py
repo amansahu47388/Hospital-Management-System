@@ -4,6 +4,7 @@ from rest_framework import status
 from .models import OpdPatient
 from .serializers import OpdPatientSerializer, OpdPatientCreateSerializer , OpdPatientListSerializer
 from django.utils.timezone import now
+from .serializers import OpdPatientUpdateSerializer
 
 
 class OpdPatientCreateAPIView(generics.CreateAPIView):
@@ -46,4 +47,10 @@ class OpdPatientListAPIView(generics.ListAPIView):
 class OpdPatientDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = OpdPatient.objects.all()
     serializer_class = OpdPatientSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class OpdPatientUpdateAPIView(generics.UpdateAPIView):
+    queryset = OpdPatient.objects.all()
+    serializer_class = OpdPatientUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]

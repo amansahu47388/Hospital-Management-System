@@ -20,6 +20,9 @@ import AddIpd from "./pages/IPD/AddIpd";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 import AdminProfile from "./pages/AdminModule/AdminProfie";
 import IpdDischargedPatients from "./pages/IPD/IpdDischargedPatients";
+import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
+
+
 import PathologyBill from "./pages/pathology/PathologyBill";
 import  GenerateBill from "./pages/pathology/GenerateBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
@@ -60,6 +63,7 @@ function App() {
           <Route path="/admin/opd-patients" element={<OpdPatient />} />
           <Route path="/admin/ipd-patients" element={<IpdPatient />} />
           <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
+          <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
           <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
 
           <Route path="/admin/ipd-patients/ipd-discharged-patients" element={<IpdDischargedPatients />} />
