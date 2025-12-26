@@ -1,6 +1,6 @@
 const InfoItem = ({ label, value }) => {
   return (
-    <div className="border-r last:border-r-0 px-4 py-3">
+    <div className="border-r border-gray-400 last:border-r-0 px-4 py-3">
       <p className="text-xs text-gray-500">{label}</p>
       <p className="text-sm font-medium text-gray-800">{value}</p>
     </div>
@@ -9,10 +9,10 @@ const InfoItem = ({ label, value }) => {
 
 const ProfileInfoGrid = ({ profile }) => {
   return (
-    <div className="border rounded-lg shadow-sm mt-4 overflow-hidden bg-white">
+    <div className="border border-gray-400 rounded-lg shadow-sm mt-4 overflow-hidden bg-white">
 
       {/* ROW 1 */}
-      <div className="grid grid-cols-1 md:grid-cols-4 border-b ">
+      <div className="grid grid-cols-1 md:grid-cols-4 border-b border-gray-400">
         <InfoItem label="Department" value={profile.job.department} />
         <InfoItem label="Specialist" value={profile.job.specialist} />
         <InfoItem label="EPF No" value={profile.job.epfNo} />
