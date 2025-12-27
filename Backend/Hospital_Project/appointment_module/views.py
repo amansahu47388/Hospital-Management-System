@@ -98,6 +98,23 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['patch'])
+    def reschedule(self, request, pk=None):
+        """Reschedule an appointment"""
+        appointment = self.get_object()
+        serializer = self.get_serializer(appointment, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['delete'])
+    def delete_appointment(self, request, pk=None):
+        """Delete an appointment"""
+        appointment = self.get_object()
+        appointment.delete()
+        return Response({"message": "Appointment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=['get'])
     def doctor_wise(self, request):
         """Get appointments by doctor and date"""

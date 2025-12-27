@@ -99,7 +99,7 @@ const [openAdd, setOpenAdd] = useState(false);
               )}
 
               {!loading && !error && (
-                <AppointmentTable data={appointments} />
+                <AppointmentTable data={appointments} onUpdate={refetch} onDelete={refetch} />
               )}
             </div>
 

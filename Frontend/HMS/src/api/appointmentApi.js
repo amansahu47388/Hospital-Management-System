@@ -201,9 +201,14 @@ export const updateAppointment = async (appointmentId, appointmentData) => {
   return await appointmentAPI.patch(`${appointmentId}/`, appointmentData);
 };
 
+export const rescheduleAppointment = async (appointmentId, appointmentData) => {
+  if (!appointmentId) throw new Error('Appointment ID is required');
+  return await appointmentAPI.patch(`${appointmentId}/reschedule/`, appointmentData);
+};
+
 export const deleteAppointment = async (appointmentId) => {
   if (!appointmentId) throw new Error('Appointment ID is required');
-  return await appointmentAPI.delete(`${appointmentId}/`);
+  return await appointmentAPI.delete(`${appointmentId}/delete/`);
 };
 
 export const getDoctors = async () => {
@@ -226,3 +231,4 @@ export const getUpcomingAppointments = async () => {
 export const getPastAppointments = async () => {
   return await appointmentAPI.get('past/');
 };
+

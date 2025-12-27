@@ -50,3 +50,4 @@ class AppointmentSerializer(serializers.ModelSerializer):
         if obj.doctor:
             return f"Dr. {obj.doctor.full_name or obj.doctor.email}"
         return None
+    
