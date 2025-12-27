@@ -67,8 +67,9 @@ export default function IpdPatient() {
                    
                 </button>
 
-                <button
-                   className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                <button   
+                  onClick={() => navigate('/admin/ipd-patients/ipd-discharged-patients')}
+                  className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                              text-white px-4 py-2 rounded flex items-center gap-2 justify-center"
                 >
                   Discharged Patient

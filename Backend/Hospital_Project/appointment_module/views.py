@@ -51,8 +51,8 @@ class AppointmentViewSet(viewsets.ModelViewSet):
                 Q(patient__last_name__icontains=search) |
                 Q(patient__email__icontains=search) |
                 Q(appointment_no__icontains=search) |
-                Q(doctor__user__first_name__icontains=search) |
-                Q(doctor__user__last_name__icontains=search)
+                Q(doctor__full_name__icontains=search) |
+                Q(doctor__email__icontains=search)
             )
         
         return queryset.order_by('-created_at')
@@ -167,10 +167,16 @@ class DoctorListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        doctors = User.objects.filter(
-            role="doctor",
-            is_active=True
-        ).values("id", "full_name", "email")
+        # Include related doctor profile fields so frontend can auto-fill fees and department
+        from django.db.models import F
+        doctors = (
+            User.objects.filter(role="doctor", is_active=True)
+            .annotate(
+                consultation_fee=F('doctor_profile__consultation_fee'),
+                department=F('doctor_profile__department')
+            )
+            .values("id", "full_name", "email", "consultation_fee", "department")
+        )
 
         return Response(doctors)
     
@@ -185,6 +191,7 @@ class AppointmentListAPIView(APIView):
 
         serializer = AppointmentSerializer(queryset, many=True)
         return Response(serializer.data)
+    
     
 
 class AppointmentCreateAPIView(APIView):
