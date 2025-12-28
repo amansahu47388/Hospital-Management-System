@@ -1,20 +1,20 @@
 from django.db import models
 
 # Create your models here.
-class Bad(models.Model):
-    BAD_STATUS_CHOICES = [
+class Bed(models.Model):
+    BED_STATUS_CHOICES = [
         ('available', 'Available'),
         ('occupied', 'Occupied'),
     ]
- 
-    bad_name = models.CharField(max_length=50, unique=True)
-    bad_type = models.CharField(max_length=50, default='Normal')
-    bad_group = models.CharField(max_length=50, default='General')
-    status = models.CharField(max_length=10, choices=BAD_STATUS_CHOICES, default='available')
+
+    bed_name = models.CharField(max_length=50, unique=True)
+    bed_type = models.CharField(max_length=50, default='Normal')
+    bed_group = models.CharField(max_length=50, default='General')
+    status = models.CharField(max_length=10, choices=BED_STATUS_CHOICES, default='available')
     floor = models.CharField(max_length=50 , blank=True, null=True)
 
     def __str__(self):
-        return self.bad_name
+        return self.bed_name
     
 
 class Symptom(models.Model):

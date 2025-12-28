@@ -21,11 +21,13 @@ import UpdatePatient from "./components/PatientComponent/UpdatePatient";
 import AdminProfile from "./pages/AdminModule/AdminProfie";
 import IpdDischargedPatients from "./pages/IPD/IpdDischargedPatients";
 import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
-
-
+import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
 import PathologyBill from "./pages/pathology/PathologyBill";
 import  GenerateBill from "./pages/pathology/GenerateBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
+
+
+
 function App() {
   return (
     <AuthProvider>
@@ -63,13 +65,17 @@ function App() {
           <Route path="/admin/opd-patients" element={<OpdPatient />} />
           <Route path="/admin/ipd-patients" element={<IpdPatient />} />
           <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
-          <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
           <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
+          <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
+          <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
 
+          {/* Pathoogy Routes */}
           <Route path="/admin/ipd-patients/ipd-discharged-patients" element={<IpdDischargedPatients />} />
           <Route path="/admin/pathology-bill" element={<PathologyBill />} />
           <Route path="/admin/pathology-bill/generate-bill" element={<GenerateBill />} />
           <Route path="/admin/pathology-tests" element={<PathologyTest />} />
+
+
           </Routes>
         </BrowserRouter>
       </NotificationProvider>

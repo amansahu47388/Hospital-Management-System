@@ -8,9 +8,11 @@ import { getDoctors } from "../../api/appointmentApi";
 import {User,Phone,Mail,MapPin,Droplet,Calendar} from "lucide-react";
 import { useNotify } from "../../context/NotificationContext";    
 
+
 export default function AddOpd() {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+  const hasFetchedRef = useRef(false);
 
   /* ================= STATES ================= */
   const [search, setSearch] = useState("");
@@ -22,7 +24,6 @@ export default function AddOpd() {
   const [patientDetail, setPatientDetail] = useState(null);
   const [isPatientDetailLoading, setIsPatientDetailLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const hasFetchedRef = useRef(false);
   const notify = useNotify();
   const [symptoms, setSymptoms] = useState([]);
   const [charges, setCharges] = useState([]);
@@ -39,6 +40,7 @@ export default function AddOpd() {
     discount: 0,
     paid_amount: 0,
     payment_mode: "",
+    allergies: "",
     old_patient: false,
     casualty: false,
     reference: "",
@@ -140,6 +142,7 @@ const handleSubmit = async (e) => {
     payment_mode: formData.payment_mode.toLowerCase(),
     old_patient: Boolean(formData.old_patient),
     casualty: Boolean(formData.casualty),
+    allergies: formData.allergies || "",
     reference: formData.reference || "",
     previous_medical_issue: formData.previous_medical_issue || "",
   };
@@ -178,7 +181,7 @@ const formatDateTimeLocal = (value) => {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* ================= HEADER ================= */}
         <div
-            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D
                       px-4 py-3 flex items-center relative"
           >
             {/* LEFT: Search */}
@@ -634,9 +637,7 @@ const formatDateTimeLocal = (value) => {
             </button> */}
            <button
               type="submit"
-              className="px-6 py-2 rounded text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2] disabled:opacity-50"
-              disabled={loading}
-            >
+              className="px-6 py-2 rounded text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2] disabled:opacity-50">
               {loading ? 'Saving...' : 'Save'}
             </button>
           </div>
