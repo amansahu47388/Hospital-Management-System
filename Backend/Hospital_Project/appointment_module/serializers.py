@@ -55,4 +55,3 @@ class AppointmentSerializer(serializers.ModelSerializer):
         import uuid
         validated_data["appointment_no"] = f"APP{uuid.uuid4().hex[:8].upper()}"
         return super().create(validated_data)
-
