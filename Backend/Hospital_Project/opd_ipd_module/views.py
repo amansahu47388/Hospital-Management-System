@@ -1,10 +1,10 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .models import OpdPatient
-from .serializers import OpdPatientSerializer, OpdPatientCreateSerializer , OpdPatientListSerializer
+from .models import OpdPatient , IpdPatient
+from .serializers import IpdPatientCreateSerializer, IpdPatientListSerializer, IpdPatientListSerializer, IpdPatientSerializer, OpdPatientSerializer, OpdPatientCreateSerializer , OpdPatientListSerializer
 from django.utils.timezone import now
-from .serializers import OpdPatientUpdateSerializer
+from .serializers import OpdPatientUpdateSerializer , IpdPatientUpdateSerializer
 
 
 class OpdPatientCreateAPIView(generics.CreateAPIView):
@@ -53,4 +53,46 @@ class OpdPatientDetailAPIView(generics.RetrieveUpdateAPIView):
 class OpdPatientUpdateAPIView(generics.UpdateAPIView):
     queryset = OpdPatient.objects.all()
     serializer_class = OpdPatientUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+
+
+# IPD Patient Views
+class IpdPatientCreateAPIView(generics.CreateAPIView):
+    queryset = IpdPatient.objects.all()
+    serializer_class = IpdPatientCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("❌ IPD CREATE ERROR:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save(created_by=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class IpdPatientListAPIView(generics.ListAPIView):
+    serializer_class = IpdPatientListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = IpdPatient.objects.select_related(
+            "patient", "doctor", "created_by", "symptom", "bed"
+        ).order_by("-created_at")
+        return qs
+
+
+class IpdPatientDetailAPIView(generics.RetrieveUpdateAPIView):
+    queryset = IpdPatient.objects.all()
+    serializer_class = IpdPatientSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class IpdPatientUpdateAPIView(generics.UpdateAPIView):
+    queryset = IpdPatient.objects.all()
+    serializer_class = IpdPatientUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]
