@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import OpdPatient, IpdPatient
+from .models import OpdPatient, IpdPatient, IpdDischarge
 from patient_module.serializers import PatientSerializer
 from setup_module.serializers import BedSerializers
 from users.serializers import UserSerializer
@@ -62,6 +62,7 @@ class OpdPatientUpdateSerializer(serializers.ModelSerializer):
 
 
 
+
 # IPD Patient Serializers 
 class IpdPatientSerializer(serializers.ModelSerializer):
     patient_detail = PatientSerializer(source='patient', read_only=True)
@@ -113,3 +114,75 @@ class IpdPatientUpdateSerializer(serializers.ModelSerializer):
             'appointment_date', 'doctor','allergies','symptom', 'bed','old_patient','casualty','reference','previous_medical_issue',
             "credit_limit","created_by","created_at",
         ]
+
+
+class IpdDischargeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IpdDischarge
+        fields = "__all__"
+        extra_kwargs = {
+            "ipd_patient": {"required": False},
+            "patient": {"required": False},
+            "death_date": {"required": False, "allow_null": True},
+            "guardian_name": {"required": False, "allow_blank": True},
+            "referral_date": {"required": False, "allow_null": True},
+            "hospital_name": {"required": False, "allow_blank": True},
+            "reason": {"required": False, "allow_blank": True},
+            "attachment": {"required": False, "allow_null": True},
+            "report": {"required": False, "allow_blank": True},
+            "diagnosis": {"required": False, "allow_blank": True},
+            "investigation": {"required": False, "allow_blank": True},
+            "operation": {"required": False, "allow_blank": True},
+            "treatment_at_home": {"required": False, "allow_blank": True},
+            "discharge_note": {"required": False, "allow_blank": True},
+        }
+
+    def validate(self, data):
+        status = data.get("discharge_status")
+
+        if status == "death":
+            if not data.get("death_date"):
+                raise serializers.ValidationError({
+                    "death_date": "Death date is required"
+                })
+            if not data.get("guardian_name"):
+                raise serializers.ValidationError({
+                    "guardian_name": "Guardian name is required"
+                })
+
+        if status == "referral":
+            if not data.get("referral_date"):
+                raise serializers.ValidationError({
+                    "referral_date": "Referral date is required"
+                })
+            if not data.get("hospital_name"):
+                raise serializers.ValidationError({
+                    "hospital_name": "Hospital name is required"
+                })
+            if not data.get("reason"):
+                raise serializers.ValidationError({
+                    "reason": "Reason is required"
+                })
+
+        return data
+
+
+class IpdDischargedListSerializer(serializers.ModelSerializer):
+    patient_detail = PatientSerializer(source="patient", read_only=True)
+    doctor_detail = UserSerializer(source="doctor", read_only=True)
+    created_by = UserSerializer(read_only=True)
+    discharge = serializers.SerializerMethodField()
+
+    class Meta:
+        model = IpdPatient
+        fields = [
+            "ipd_id","case_id","patient_detail","doctor_detail","created_by","appointment_date", "discharge_date","credit_limit","discharge",
+        ]
+
+    def get_discharge(self, obj):
+        if hasattr(obj, "discharge"):
+            return {
+                "status": obj.discharge.discharge_status,
+                "discharge_date": obj.discharge.discharge_date,
+            }
+        return None

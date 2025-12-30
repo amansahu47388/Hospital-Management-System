@@ -19,7 +19,7 @@ import AddOpd from "./pages/OPD/AddOpd";
 import AddIpd from "./pages/IPD/AddIpd";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
 import AdminProfile from "./pages/AdminModule/AdminProfie";
-import IpdDischargedPatients from "./pages/IPD/IpdDischargedPatients";
+import DischargePatients from "./pages/IPD/DischargePatients";
 import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
 import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
 import PathologyBill from "./pages/pathology/PathologyBill";
@@ -68,9 +68,9 @@ function App() {
           <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
           <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
           <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
+          <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
 
           {/* Pathoogy Routes */}
-          <Route path="/admin/ipd-patients/ipd-discharged-patients" element={<IpdDischargedPatients />} />
           <Route path="/admin/pathology-bill" element={<PathologyBill />} />
           <Route path="/admin/pathology-bill/generate-bill" element={<GenerateBill />} />
           <Route path="/admin/pathology-tests" element={<PathologyTest />} />

@@ -1,10 +1,32 @@
-import React from "react";
-import { X, Pencil, Trash } from "lucide-react";
+import React, { useState } from "react";
+import { X, Pencil, Trash, ClipboardPenLine  } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { deleteIpdPatient } from "../../api/ipdApi";
+import AddDischargePatient from "../ipd/AddDischargePatient"
 
-export default function IPDVisitDetail({ open, onClose, ipd }) {
+export default function IPDVisitDetail({ open, onClose, ipd, onDelete, onDischarge }) {
     const navigate = useNavigate();
+    const [deleting, setDeleting] = useState(false);
+    const [dischargePatient, setDischargePatient] = useState(false);
+
   if (!open || !ipd) return null;
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this IPD?")) return;
+
+    try {
+      setDeleting(true);
+      const res = await deleteIpdPatient(id);
+      if (onDelete) onDelete(id);
+      alert(res.data?.detail || "IPD deleted");
+      onClose();
+    } catch (err) {
+      const msg = err.response?.data?.detail || err.response?.data || err.message || "Delete failed";
+      alert(msg);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -15,10 +37,28 @@ export default function IPDVisitDetail({ open, onClose, ipd }) {
         <div className="flex justify-between items-center px-6 py-4 sticky top-0 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
           <h2 className="text-lg font-semibold">IPD Visit Details</h2>
           <div className="flex gap-3">
-            <Pencil className="cursor-pointer hover:opacity-80" size={18} 
-            onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/update`)}
-            />
-            <Trash className="cursor-pointer hover:opacity-80" size={18} />
+          <button
+          className="cursor-pointer hover:opacity-80"  
+          title="Discharge Patient"
+          onClick={(e) => {
+            setDischargePatient(true)
+          }}>
+            <ClipboardPenLine size={18} />
+          </button>
+
+          <button className="cursor-pointer hover:opacity-80"  
+          title="Edit"
+          onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/update`)}>
+          <Pencil size={18} />
+          </button>
+            <button
+              title="Delete IPD"
+              className={`cursor-pointer hover:opacity-80 ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
+              onClick={() => handleDelete(ipd.ipd_id)}
+              disabled={deleting}
+            >
+              <Trash size={18} />
+            </button>
             <X onClick={onClose} className="cursor-pointer hover:opacity-80" size={18} />
           </div>
         </div>
@@ -62,7 +102,6 @@ export default function IPDVisitDetail({ open, onClose, ipd }) {
               label="Consultant Doctor"
               value={`${ipd.doctor_detail?.full_name}`}
             />
-
             <Field label="Bed" value={ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"} />
           </div>
 
@@ -70,7 +109,7 @@ export default function IPDVisitDetail({ open, onClose, ipd }) {
           <div className="mt-6">
             <p className="font-semibold mb-1">Symptoms</p>
             <p className="text-gray-700 leading-relaxed">
-              {ipd.symptom_name || "—"}
+              {ipd.symptom_name} {ipd.symptom_description}
             </p>
           </div>
 
@@ -82,6 +121,16 @@ export default function IPDVisitDetail({ open, onClose, ipd }) {
             </p>
           </div>
         </div>
+        <AddDischargePatient
+          open={dischargePatient}
+          onClose={() => setDischargePatient(false)}
+          ipd={ipd}
+          onDischarged={() => {
+            setDischargePatient(false);
+            onClose();
+            if (typeof onDischarge === 'function') onDischarge();
+          }}
+        />
       </div>
     </div>
   );

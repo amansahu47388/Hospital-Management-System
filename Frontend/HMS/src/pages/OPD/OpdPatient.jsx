@@ -259,7 +259,7 @@ useEffect(() => {
           </div>
         </main>
       </div>
-      <OPDVisitDetail open={showDetail} opd={selectedOpd} onClose={() => setShowDetail(false)} />
+      <OPDVisitDetail open={showDetail} opd={selectedOpd} onClose={() => setShowDetail(false)} onDelete={(id) => setOpdList(prev => prev.filter(item => item.opd_id !== id))} />
 
     </div>
   );
