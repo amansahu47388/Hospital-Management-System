@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import { Eye, Printer, Calendar } from "lucide-react";
+import AppointmentDetailsModal from "./AppointmentDetailsModal";
+import RescheduleModal from "./RescheduleModal";
+import PrintAppointment from "./PrintAppointment";
 
-export default function AppointmentTable({ data }) {
-  
-  if (data.length === 0) {
+export default function AppointmentTable({ data, onUpdate, onDelete }) {
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showReschedule, setShowReschedule] = useState(false);
+  const [printData, setPrintData] = useState(null);
+
+  if (!data || data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-        <p className="text-sm mb-2">No data available in table</p>
-        <p className="text-xs text-green-600">
-          ← Add new record or search with different criteria.
-        </p>
+      <div className="text-center py-20 text-gray-500">
+        No data available
       </div>
     );
   }

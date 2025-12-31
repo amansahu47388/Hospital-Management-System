@@ -238,7 +238,7 @@ function PatientDashboard() {
                             navigate(`/admin/patients/${patient.id}`)
                           }
                           className="text-xl text-gray-600 hover:text-gray-900"
-                          title="View Patient Details"
+                          title="View"
                         >
                           <Eye />
                         </button>
