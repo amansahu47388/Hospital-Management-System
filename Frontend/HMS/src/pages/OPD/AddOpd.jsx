@@ -181,7 +181,7 @@ const formatDateTimeLocal = (value) => {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* ================= HEADER ================= */}
         <div
-            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D
+            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                       px-4 py-3 flex items-center relative"
           >
             {/* LEFT: Search */}
