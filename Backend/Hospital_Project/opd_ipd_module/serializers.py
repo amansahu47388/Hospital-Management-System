@@ -5,6 +5,7 @@ from setup_module.serializers import BedSerializers
 from users.serializers import UserSerializer
 import uuid
 
+
 # OPD Patient Serializers
 class OpdPatientSerializer(serializers.ModelSerializer):
     charge_id = serializers.IntegerField(source="charge.id", read_only=True)
@@ -184,5 +185,16 @@ class IpdDischargedListSerializer(serializers.ModelSerializer):
             return {
                 "status": obj.discharge.discharge_status,
                 "discharge_date": obj.discharge.discharge_date,
+                "death_date": obj.discharge.death_date,
+                "guardian_name": obj.discharge.guardian_name,
+                "report": obj.discharge.report,
+                "referral_date": obj.discharge.referral_date,
+                "reason": obj.discharge.reason,
+                "hospital_name": obj.discharge.hospital_name
             }
+        return None
+    
+    def get_attachment(self, obj):
+        if obj.attachment:
+            return obj.attachment.url
         return None

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import IpdPatientUpdateAPIView, OpdPatientCreateAPIView, OpdPatientListAPIView, OpdPatientDetailAPIView, OpdPatientUpdateAPIView, OpdPatientDeleteAPIView, IpdPatientCreateAPIView, IpdPatientListAPIView, IpdPatientDetailAPIView, IpdPatientDeleteAPIView, IpdDischargeCreateAPIView, IpdDischargedPatientListAPIView
+from .views import IpdPatientUpdateAPIView, OpdPatientCreateAPIView, OpdPatientListAPIView, OpdPatientDetailAPIView, OpdPatientUpdateAPIView, OpdPatientDeleteAPIView, IpdPatientCreateAPIView, IpdPatientListAPIView, IpdPatientDetailAPIView, IpdPatientDeleteAPIView, IpdDischargeCreateAPIView, IpdDischargedPatientListAPIView, IpdDischargeRevertAPIView
 
 urlpatterns = [
     # OPD Patient URLs
@@ -18,6 +18,8 @@ urlpatterns = [
     path("ipd/<int:pk>/delete/", IpdPatientDeleteAPIView.as_view()),
     path("ipd/<int:pk>/discharge/", IpdDischargeCreateAPIView.as_view()),
     path("ipd/discharged/",IpdDischargedPatientListAPIView.as_view(),name="ipd-discharged-list"),
+    path("ipd/<int:pk>/discharge/revert/",IpdDischargeRevertAPIView.as_view(),name="ipd-discharge-revert"),
+
 
 
 ]
