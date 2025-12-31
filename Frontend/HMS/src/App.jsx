@@ -25,6 +25,8 @@ import  GenerateBill from "./pages/pathology/GenerateBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
 import PharmacyBill from "./pages/Pharmacy/PharmacyBill";
 import PharmacyGenerateBill from "./pages/Pharmacy/PharmacyGenerateBill";
+import MedicineStock from "./pages/Pharmacy/Medicine/MedicineStock";
+import MedicinePurchaseList from "./pages/Pharmacy/Purchase/MedicinePurchaseList";
 function App() {
   return (
     <AuthProvider>
@@ -71,6 +73,8 @@ function App() {
           <Route path="*" element={<div>404 Not Found</div>} />
           <Route path="/admin/pharmacy-bill" element={<PharmacyBill />} />
           <Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
+          <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
+          <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>

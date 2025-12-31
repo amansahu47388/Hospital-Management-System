@@ -15,7 +15,7 @@ export default function PharmacyHeader({ search, setSearch, limit, setLimit }) {
             + Generate Bill
           </button>
 
-          <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-2 rounded text-sm hover:bg-blue-700">
+          <button onClick={() => navigate("/admin/pharmacy-bill/medicine-stock")} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-2 rounded text-sm hover:bg-blue-700">
             Medicines
           </button>
         </div>
