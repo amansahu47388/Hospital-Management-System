@@ -23,12 +23,17 @@ import DischargePatients from "./pages/IPD/DischargePatients";
 import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
 import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
 import PathologyBill from "./pages/pathology/PathologyBill";
-import  GenerateBill from "./pages/pathology/GenerateBill";
+//import  GenerateBill from "./pages/pathology/GenerateBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
 import PharmacyBill from "./pages/Pharmacy/PharmacyBill";
 import PharmacyGenerateBill from "./pages/Pharmacy/PharmacyGenerateBill";
 import MedicineStock from "./pages/Pharmacy/Medicine/MedicineStock";
 import MedicinePurchaseList from "./pages/Pharmacy/Purchase/MedicinePurchaseList";
+import RadiologyBill from "./pages/radiology/RadiologyBill";
+import RadiologyTest from "./pages/radiology/RadiologyTest";
+import BillPage from "./pages/Billing/BillPage";
+import RadiologyGen from "./pages/Billing/RadiologyGen";
+import PathologyGen from "./pages/Billing/PathologyGen";
 function App() {
   return (
     <AuthProvider>
@@ -73,13 +78,19 @@ function App() {
 
           {/* Pathoogy Routes */}
           <Route path="/admin/pathology-bill" element={<PathologyBill />} />
-          <Route path="/admin/pathology-bill/generate-bill" element={<GenerateBill />} />
+          {/* //<Route path="/admin/pathology-bill/generate-bill" element={<GenerateBill />} /> */}
           <Route path="/admin/pathology-tests" element={<PathologyTest />} />
           <Route path="*" element={<div>404 Not Found</div>} />
           <Route path="/admin/pharmacy-bill" element={<PharmacyBill />} />
-          <Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
+          //<Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
           <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
           <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
+          <Route path="/admin/radiology-bill" element={<RadiologyBill />} />
+          <Route path="/admin/radiology-tests" element={<RadiologyTest />} />
+           {/* // Billing Pages */}
+          <Route path="/admin/radiology/Generate" element={<RadiologyGen />} />
+          <Route path="/admin/pathology/Generate" element={<PathologyGen />} />
+         
           </Routes>
         </BrowserRouter>
       </NotificationProvider>

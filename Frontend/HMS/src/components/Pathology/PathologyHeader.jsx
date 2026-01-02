@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
       <div className="flex gap-2">
         
 
-        <button  onClick={() => navigate("/admin/pathology-bill/generate-bill")} className="bg-white text-[#6046B5] px-3 py-2 rounded text-sm font-medium">
+        <button  onClick={() => navigate("/admin/pathology/Generate")} className="bg-white text-[#6046B5] px-3 py-2 rounded text-sm font-medium">
           + Generate Bill
         </button>
 

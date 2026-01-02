@@ -49,3 +49,13 @@ export const getDoctors = async () => {
   const response = await adminAPI.get('/doctors/');
   return response;
 };
+
+export const getAdminProfiles = async () => {
+  const response = await adminAPI.get('/admin-profiles/');
+  return response;
+};
+
+export const updateAdminProfile = async (id, data) => {
+  const response = await adminAPI.put(`/admin-profiles/${id}/`, data);
+  return response;
+};
