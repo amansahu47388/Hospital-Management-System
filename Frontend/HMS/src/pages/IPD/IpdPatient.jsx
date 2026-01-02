@@ -36,6 +36,28 @@ useEffect(() => {
     }
   };
 
+  const filteredIpdList = React.useMemo(() => {
+  const query = search.toLowerCase().trim();
+
+  if (!query) return ipdList;
+
+  return ipdList.filter((ipd) => {
+    const patientName = ipd.patient_detail
+      ? `${ipd.patient_detail.first_name} ${ipd.patient_detail.last_name}`
+      : "";
+
+    return (
+      String(ipd.ipd_id).includes(query) ||
+      patientName.toLowerCase().includes(query) ||
+      String(ipd.case_id || "").toLowerCase().includes(query) ||
+      String(ipd.patient_detail?.gender || "").toLowerCase().includes(query) ||
+      String(ipd.patient_detail?.phone || "").includes(query) ||
+      String(ipd.doctor_detail?.full_name || "").toLowerCase().includes(query) ||
+      String(ipd.bed?.bed_name || "").toLowerCase().includes(query)
+    );
+  });
+}, [search, ipdList]);
+
 
   return (
     <div className="h-screen w-screen flex bg-gray-100">
@@ -121,7 +143,7 @@ useEffect(() => {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                  {ipdList.map((ipd) => (
+                  {filteredIpdList.slice(0, limit).map((ipd) => (
                   <tr key={ipd.ipd_id} className="border-t">
                     <td className="p-2 text-center">IPDN{ipd.ipd_id}</td>
                     <td

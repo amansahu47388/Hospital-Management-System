@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'doctor_module',
     'appointment_module',
     'opd_ipd_module',
+    'pathology_module',
     'setup_module',
 ]
 
