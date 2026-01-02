@@ -1,66 +1,35 @@
-import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-const opdAPI = axios.create({
-  baseURL: `${API_BASE_URL}/admin/`,
-});
-
-opdAPI.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  config.headers["Content-Type"] = "application/json";
-  return config;
-});
-
-// new setup API (adds auth header like opdAPI)
-const setupAPI = axios.create({
-  baseURL: `${API_BASE_URL}/admin/setup/`,
-});
-
-setupAPI.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  config.headers["Content-Type"] = "application/json";
-  return config;
-});
-
-// ==========================
-// OPD APIs
-// ==========================
+import api from "./axiosInstance";
 
 export const createOpdPatient = (data) => {
-  return opdAPI.post("opd/create/", data);
+  return api.post("opd/create/", data);
 };
 
 export const getOpdPatientList = (tab) => {
-  return opdAPI.get("opd/", {
+  return api.get("opd/", {
     params: { tab },
   });
 };
 
 export const getOpdPatientDetail = (opdId) => {
-  return opdAPI.get(`opd/${opdId}/`);
+  return api.get(`opd/${opdId}/`);
 };
 
 export const updateOpdPatient = (opdId, data) => {
-  return opdAPI.patch(`opd/${opdId}/`, data);
+  return api.patch(`opd/${opdId}/update/`, data);
 };
 
 export const searchPatients = (q) => {
-  return opdAPI.get("patients/search/", { params: { q } });
+  return api.get("patients/search/", { params: { q } });
 };
 
-// fetch from setup endpoints (use setupAPI so token is sent)
 export const getSymptoms = () => {
-  return setupAPI.get("symptoms/");
+  return api.get("setup/symptoms/");
 };
 
 export const getHospitalCharges = () => {
-  return setupAPI.get("charges/");
+  return api.get("setup/charges/");
 };
 
+export const deleteOpdPatient = (id) => {
+  return api.delete(`opd/${id}/delete/`);
+};

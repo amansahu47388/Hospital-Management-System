@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Symptom
 from .models import HospitalCharges
 
+
 # Create your views here.
 class SymptomListAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -21,3 +22,12 @@ class HospitalChargesListAPIView(APIView):
         return Response(
             HospitalCharges.objects.values("id", "charge_category", "charge_name","charge_type", "charge_amount","charge_description", "tax", "unit")
         )
+
+
+class BedListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from .models import Bed
+        data = list(Bed.objects.values("id", "bed_name", "bed_type", "bed_group", "status", "floor"))
+        return Response(data)
