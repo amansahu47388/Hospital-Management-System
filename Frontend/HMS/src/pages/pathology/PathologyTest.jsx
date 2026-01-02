@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { Search, Plus, Eye, Pencil, Trash2 } from "lucide-react";
-import AddPathologyTestModal from "../../components/Pathology/AddPathologyTestModal";
+import GenerateTextModal from "../../components/Pathology/GenerateTextModal";
 const testData = [
   {
     name: "Appendicitis",
@@ -232,9 +232,10 @@ export default function PathologyTest() {
               )}
             </tbody>
           </table>
-              <AddPathologyTestModal
+              <GenerateTextModal
              open={openAdd}
             onClose={() => setOpenAdd(false)}
+            type="pathology"
 />
 
             
