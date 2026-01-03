@@ -8,10 +8,11 @@ class AdminProfile(models.Model):
         ('Married', 'Married'),
         ('Divorced', 'Divorced'),
         ('Widowed', 'Widowed'),
+        ('Separated', 'Separated'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="doctor_profile")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="admin_profile")
     designation = models.CharField(max_length=150, blank=True)
     department = models.CharField(max_length=150, blank=True)
     specialist = models.CharField(max_length=255, blank=True)
@@ -36,5 +37,28 @@ class AdminProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     socia_media_links = models.JSONField(default=dict, blank=True)
 
+    # Additional fields from frontend
+    staff_id = models.CharField(max_length=20, blank=True)
+    father_name = models.CharField(max_length=255, blank=True)
+    mother_name = models.CharField(max_length=255, blank=True)
+    date_of_joining = models.DateField(null=True, blank=True)
+    pan_number = models.CharField(max_length=20, blank=True)
+    national_id = models.CharField(max_length=20, blank=True)
+    local_id = models.CharField(max_length=20, blank=True)
+    reference_contact = models.CharField(max_length=15, blank=True)
+    epf_no = models.CharField(max_length=20, blank=True)
+    date_of_leaving = models.DateField(null=True, blank=True)
+    casual_leave = models.IntegerField(default=0)
+    privilege_leave = models.IntegerField(default=0)
+    sick_leave = models.IntegerField(default=0)
+    maternity_leave = models.IntegerField(default=0)
+    paternity_leave = models.IntegerField(default=0)
+    fever_leave = models.IntegerField(default=0)
+    account_title = models.CharField(max_length=255, blank=True)
+    bank_account_number = models.CharField(max_length=20, blank=True)
+    bank_name = models.CharField(max_length=255, blank=True)
+    ifsc_code = models.CharField(max_length=20, blank=True)
+    bank_branch_name = models.CharField(max_length=255, blank=True)
+
     def __str__(self):
-        return f"Dr. {self.user.get_full_name() or self.user.username}"
+        return f"{self.user.get_full_name() or self.user.email}"
