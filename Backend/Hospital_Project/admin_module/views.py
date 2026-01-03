@@ -1,9 +1,12 @@
 from rest_framework import viewsets
 from .models import AdminProfile
-from .serializers import DoctorSerializer
+from .serializers import AdminProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 
-class DoctorViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = AdminProfile.objects.select_related('user').all()
-    serializer_class = DoctorSerializer
+class AdminProfileViewSet(viewsets.ModelViewSet):
+    queryset = AdminProfile.objects.all()
+    serializer_class = AdminProfileSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return AdminProfile.objects.filter(user=self.request.user)
