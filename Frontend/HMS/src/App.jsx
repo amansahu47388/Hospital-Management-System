@@ -23,7 +23,6 @@ import DischargePatients from "./pages/IPD/DischargePatients";
 import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
 import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
 import PathologyBill from "./pages/pathology/PathologyBill";
-//import  GenerateBill from "./pages/pathology/GenerateBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
 import PharmacyBill from "./pages/Pharmacy/PharmacyBill";
 import PharmacyGenerateBill from "./pages/Pharmacy/PharmacyGenerateBill";
@@ -31,12 +30,14 @@ import MedicineStock from "./pages/Pharmacy/Medicine/MedicineStock";
 import MedicinePurchaseList from "./pages/Pharmacy/Purchase/MedicinePurchaseList";
 import RadiologyBill from "./pages/radiology/RadiologyBill";
 import RadiologyTest from "./pages/radiology/RadiologyTest";
-import BillPage from "./pages/Billing/BillPage";
 import RadiologyGen from "./pages/Billing/RadiologyGen";
 import PathologyGen from "./pages/Billing/PathologyGen";
 import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
 import AmbulanceList from "./pages/Ambulance/AmbulanceList";
 import BirthRecord  from "./pages/birthrecord/BirthRecord";
+
+
+
 function App() {
   return (
     <AuthProvider>
@@ -79,9 +80,14 @@ function App() {
           <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
           <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
 
+
           {/* Pathoogy Routes */}
           <Route path="/admin/pathology-bill" element={<PathologyBill />} />
-          {/* //<Route path="/admin/pathology-bill/generate-bill" element={<GenerateBill />} /> */}
+
+
+
+
+          
           <Route path="/admin/pathology-tests" element={<PathologyTest />} />
           <Route path="*" element={<div>404 Not Found</div>} />
           <Route path="/admin/pharmacy-bill" element={<PharmacyBill />} />

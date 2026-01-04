@@ -23,3 +23,20 @@ export const deletePathologyTest = (id) =>{
 export const updatePathologyTest = (id, payload) => {
   return api.put(`pathology/pathology-test/${id}/update/`, payload);
 };
+
+export const createPathologyBill = async (payload) => {
+  return api.post("/pathology/pathology-bill/create/", payload);
+};
+
+export const getPathologyBills = async (search = "") => {
+  const params = search ? { search } : {};
+  return api.get("/pathology/pathology-bill/", { params });
+};
+
+export const getPathologyBillDetail = async (id) => {
+  return api.get(`/pathology/pathology-bill/${id}/`);
+};
+
+export const searchPrescription = async (prescriptionId) => {
+  return api.get("/pathology/prescription/search/", { params: { id: prescriptionId } });
+};
