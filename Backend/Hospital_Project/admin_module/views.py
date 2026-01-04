@@ -10,3 +10,11 @@ class AdminProfileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return AdminProfile.objects.filter(user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if not queryset.exists():
+            # Create AdminProfile if it doesn't exist
+            AdminProfile.objects.create(user=request.user)
+            queryset = self.get_queryset()
+        return super().list(request, *args, **kwargs)
