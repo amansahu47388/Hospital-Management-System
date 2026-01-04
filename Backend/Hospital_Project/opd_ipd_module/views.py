@@ -1,14 +1,14 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .models import OpdPatient , IpdPatient
+from .models import OpdPatient , IpdPatient, IpdDischarge
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.db.models import ProtectedError
 from .serializers import IpdPatientCreateSerializer, IpdPatientListSerializer, IpdPatientListSerializer, IpdPatientSerializer, OpdPatientSerializer, OpdPatientCreateSerializer , OpdPatientListSerializer, IpdDischargeSerializer
 from django.utils.timezone import now
 from .serializers import OpdPatientUpdateSerializer , IpdPatientUpdateSerializer, IpdDischargedListSerializer
-
+from rest_framework.views import APIView
 
 
 class OpdPatientCreateAPIView(generics.CreateAPIView):
@@ -78,9 +78,6 @@ class OpdPatientDeleteAPIView(generics.DestroyAPIView):
             return Response({"detail": "Cannot delete OPD because it is referenced by other records."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"detail": "Failed to delete OPD.", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 
 # IPD Patient Views
@@ -187,4 +184,29 @@ class IpdDischargedPatientListAPIView(generics.ListAPIView):
             .filter(is_discharged=True)
             .select_related("patient", "doctor", "created_by")
             .order_by("-discharge_date")
+        )
+    
+
+class IpdDischargeRevertAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        ipd = get_object_or_404(IpdPatient, pk=pk, is_discharged=True)
+
+        discharge = get_object_or_404(IpdDischarge, ipd_patient=ipd)
+
+        # OPTIONAL: store bed before discharge if needed
+        # bed = discharge.bed_snapshot (if you add snapshot logic)
+
+        # revert ipd
+        ipd.is_discharged = False
+        ipd.discharge_date = None
+        ipd.save()
+
+        # delete discharge record
+        discharge.delete()
+
+        return Response(
+            {"detail": "Discharge reverted successfully"},
+            status=status.HTTP_200_OK
         )

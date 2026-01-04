@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
@@ -60,6 +60,47 @@ useEffect(() => {
     setLoading(false);
   }
 };
+
+
+const filteredOpdList = useMemo(() => {
+  const q = search.toLowerCase().trim();
+  if (!q) return opdList;
+
+  return opdList.filter((opd) => {
+    const patientName = `${opd.patient_detail?.first_name || ""} ${opd.patient_detail?.last_name || ""}`.toLowerCase();
+
+    return (
+      String(opd.opd_id).includes(q) ||
+      patientName.includes(q) ||
+      String(opd.case_id || "").toLowerCase().includes(q) ||
+      String(opd.doctor_detail?.full_name || "").toLowerCase().includes(q) ||
+      String(opd.symptom_name || "").toLowerCase().includes(q) ||
+      String(opd.reference || "").toLowerCase().includes(q) ||
+      String(opd.previous_medical_issue || "").toLowerCase().includes(q)
+    );
+  });
+}, [search, opdList]);
+
+
+const filteredPatientList = useMemo(() => {
+  const q = search.toLowerCase().trim();
+  if (!q) return patientList;
+
+  return patientList.filter((patient) => {
+    const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
+
+    return (
+      fullName.includes(q) ||
+      String(patient.id).includes(q) ||
+      String(patient.phone || "").includes(q) ||
+      String(patient.email || "").toLowerCase().includes(q) ||
+      String(patient.gender || "").toLowerCase().includes(q) ||
+      String(patient.blood_group || "").toLowerCase().includes(q)
+    );
+  });
+}, [search, patientList]);
+
+
 
   return (
     <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
@@ -180,7 +221,7 @@ useEffect(() => {
               </td>
             </tr>
           ) : (
-            patientList.map((patient) => (
+            filteredPatientList.slice(0, limit).map((patient) => (
               <tr key={patient.id} className="border-t">
                 <td className="p-2">PTN{patient?.id}</td>
                 <td className="p-2 text-blue-600 cursor-pointer"
@@ -205,7 +246,7 @@ useEffect(() => {
             ))
           )
         ) : (
-          opdList.map((opd) => (
+          filteredOpdList.slice(0, limit).map((opd) => (
             <tr key={opd.opd_id} className="border-t">
               <td className="p-2">OPDN{opd.opd_id}</td>
               <td

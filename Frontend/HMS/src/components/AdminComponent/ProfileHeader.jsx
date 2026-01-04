@@ -3,7 +3,7 @@ import { useState } from "react";
 import EditProfileModal from "./EditProfile";
 import ChangePasswordModal from "./ChangePasswordModal";
 
-const ProfileHeader = ({ profile }) => {
+const ProfileHeader = ({ profile, refreshProfile }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
 
@@ -76,6 +76,7 @@ const ProfileHeader = ({ profile }) => {
         <EditProfileModal
           profile={profile}
           onClose={() => setOpenEdit(false)}
+          onSave={refreshProfile}
         />
       )}
 

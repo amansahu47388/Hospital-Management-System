@@ -5,17 +5,16 @@ import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
 import {Plus,FileText,FileSpreadsheet,Printer,File, Eye} from "lucide-react";
 import { getDischargedIpdPatients  } from "../../api/ipdApi";
-import IPDVisitDetail from "../../components/ipd/IPDVisitDetails";
+import DischargeVisitDetail from "../../components/ipd/DischargeVisitDetails";
 
 
 export default function DischargedPatients() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(100);
-  const [ipdList, setIpdList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
-  const [selectedIpd, setSelectedIpd] = useState(null);
+  const [selectedDischarge, setSelectedDischarge] = useState(null);
   const [patients, setPatients] = useState([]);
   const hasFetchedRef = useRef(false);
 
@@ -25,18 +24,6 @@ useEffect(() => {
     hasFetchedRef.current = true;
     fetchPatients();
   }, []);
-
-  // const fetchIpd = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const res = await getIpdPatientList();
-  //     setIpdList(res.data);
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
    const fetchPatients = async () => {
     try {
@@ -120,7 +107,8 @@ useEffect(() => {
                 <tbody className="divide-y">
                   {patients.map((ipd) => (
                     <tr key={ipd.ipd_id}>
-                      <td className="p-2 text-center">
+                      <td className="p-2 text-center text-blue-600 hover:text-blue-700 cursor-pointer"
+                      onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}`)}>
                         {ipd.patient_detail.first_name}{" "}
                         {ipd.patient_detail.last_name}
                       </td>
@@ -138,8 +126,20 @@ useEffect(() => {
                       <td className="p-2 text-center">
                         {new Date(ipd.discharge_date).toLocaleString()}
                       </td>
-                      <td className="p-2 text-center">{ipd.status}</td>
-
+                      <td className="p-2 text-center">{ipd.discharge.status}</td>
+                      <td className="p-2 text-center">
+                        <div className="relative inline-flex items-center group">
+                          <button
+                          title="view"
+                            onClick={(e) => {
+                              setSelectedDischarge(ipd);
+                              setShowDetail(true);
+                            }} 
+                          >
+                            <Eye size={16} />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
 
@@ -156,12 +156,14 @@ useEffect(() => {
           </div>
         </main>
       </div>
-     <IPDVisitDetail
+     <DischargeVisitDetail
       open={showDetail}
-      ipd={selectedIpd}
-      onClose={() => setShowDetail(false)}
-      onDelete={(id) => setIpdList(prev => prev.filter(item => item.ipd_id !== id))}
-      onDischarge={() => { setShowDetail(false); fetchIpd(); }}
+      ipd={selectedDischarge}
+      onClose={() => {
+        setShowDetail(false);
+        fetchPatients();
+    }}
+      
      />
     </div>
   );

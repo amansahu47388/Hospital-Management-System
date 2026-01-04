@@ -40,4 +40,4 @@ class HospitalCharges(models.Model):
         return f"{self.charge_name} - {self.charge_amount}"
     
 
-    
+

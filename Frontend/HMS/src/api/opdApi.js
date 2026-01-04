@@ -30,6 +30,8 @@ export const getHospitalCharges = () => {
   return api.get("setup/charges/");
 };
 
+
+
 export const deleteOpdPatient = (id) => {
   return api.delete(`opd/${id}/delete/`);
 };
