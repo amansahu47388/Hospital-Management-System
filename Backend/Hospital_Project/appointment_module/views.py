@@ -163,22 +163,37 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 
 
 
-class DoctorListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+# class DoctorListAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
 
+#     def get(self, request):
+#         # Include related doctor profile fields so frontend can auto-fill fees and department
+#         from django.db.models import F
+#         doctors = (
+#             User.objects.filter(role="doctor", is_active=True)
+#             .annotate(
+#                 consultation_fee=F('doctor_profile__consultation_fee'),
+#                 department=F('doctor_profile__department')
+#             )
+#             .values("id", "full_name", "email", "consultation_fee", "department")
+#         )
+
+#         return Response(doctors)
+
+class DoctorListAPIView(APIView):
     def get(self, request):
-        # Include related doctor profile fields so frontend can auto-fill fees and department
-        from django.db.models import F
-        doctors = (
-            User.objects.filter(role="doctor", is_active=True)
-            .annotate(
-                consultation_fee=F('doctor_profile__consultation_fee'),
-                department=F('doctor_profile__department')
-            )
-            .values("id", "full_name", "email", "consultation_fee", "department")
+        doctors = User.objects.filter(
+            role="doctor",
+            is_active=True
+        ).values(
+            "id",
+            "full_name",
+            "phone",
+            "email"
         )
 
         return Response(doctors)
+
     
 
 class AppointmentListAPIView(APIView):
