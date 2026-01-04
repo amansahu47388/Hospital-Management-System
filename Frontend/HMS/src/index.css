@@ -1,8 +1,7 @@
-    /* src/index.css */
-    @import 'tailwindcss';
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
+@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html {
   scroll-behavior: smooth;
@@ -41,7 +40,7 @@ a:hover {
   min-height: 100vh;
 } */
 
-h1 {
+/* h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
@@ -62,7 +61,7 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+} */
 
 @keyframes scroll {
   0% {
@@ -76,6 +75,9 @@ button:focus-visible {
 .animate-scroll {
   animation: scroll 12s linear infinite;
 }
+
+
+
 
 
 @keyframes slideIn {

@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserRegisterSerializer, AdminRegisterSerializer
 
+
 class IsSuperAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and getattr(request.user, "role", None) == "superadmin")
@@ -73,6 +74,8 @@ class RegisterAdminView(APIView):
         
         print(f"Making superuser: {is_super}")
         user = serializer.save(is_staff=True, is_superuser=is_super)
+
+       
 
         # Generate tokens
         refresh = RefreshToken.for_user(user)
