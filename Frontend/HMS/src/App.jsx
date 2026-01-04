@@ -34,6 +34,9 @@ import RadiologyTest from "./pages/radiology/RadiologyTest";
 import BillPage from "./pages/Billing/BillPage";
 import RadiologyGen from "./pages/Billing/RadiologyGen";
 import PathologyGen from "./pages/Billing/PathologyGen";
+import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
+import AmbulanceList from "./pages/Ambulance/AmbulanceList";
+import BirthRecord  from "./pages/birthrecord/BirthRecord";
 function App() {
   return (
     <AuthProvider>
@@ -90,7 +93,9 @@ function App() {
            {/* // Billing Pages */}
           <Route path="/admin/radiology/Generate" element={<RadiologyGen />} />
           <Route path="/admin/pathology/Generate" element={<PathologyGen />} />
-         
+          <Route path="/admin/Ambulance" element={<AmbulanceCallList />} />
+          <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
+          <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
