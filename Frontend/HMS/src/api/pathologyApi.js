@@ -40,3 +40,11 @@ export const getPathologyBillDetail = async (id) => {
 export const searchPrescription = async (prescriptionId) => {
   return api.get("/pathology/prescription/search/", { params: { id: prescriptionId } });
 };
+
+export const updatePathologyBill = (id, payload) => {
+  return api.put(`/pathology/pathology-bill/${id}/update/`, payload);
+};
+
+export const deletePathologyBill = (id) => {
+  return api.delete(`/pathology/pathology-bill/${id}/delete/`);
+};

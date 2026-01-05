@@ -1,53 +1,109 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
-import {Plus, Eye } from "lucide-react"
+import {Plus, Eye, Pencil, Trash2 } from "lucide-react"
 import GeneratePathologyBill from "../../components/Pathology/GeneratePathologyBill"; 
-import { getPathologyBills, getPathologyBillDetail } from "../../api/pathologyApi";
-
+import { getPathologyBills, getPathologyBillDetail, deletePathologyBill } from "../../api/pathologyApi";
+import UpdatePathologyBill from "../../components/Pathology/UpdatePathologyBill";
+import { useNotify } from "../../context/NotificationContext";
+import PathologyBillDetails from "../../components/Pathology/PathologyBillDetails";
 
 
 export default function PathologyBill() {
   const navigate = useNavigate();
+  const notify = useNotify();
   const hasFetchedRef = useRef(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [editBillId, setEditBillId] = useState(null);
   const [search, setSearch] = useState("");
   const [openGenerate, setOpenGenerate] = useState(false);
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState(25);
-  const [selectedBill, setSelectedBill] = useState(null);
+  const [selectedBillId, setSelectedBillId] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
 
-  useEffect(() => {
-    if (hasFetchedRef.current) return;
-    hasFetchedRef.current = true;
-    loadBills();
-  }, []);
+
+useEffect(() => {
+  if (hasFetchedRef.current) return;
+  hasFetchedRef.current = true;
+  loadBills();
+}, []);
+
+
+const filteredBills = useMemo(() => {
+  return bills.filter((bill) => {
+    const text = search.toLowerCase();
+
+    return (
+      bill.bill_no?.toLowerCase().includes(text) ||
+      bill.patient_name?.toLowerCase().includes(text) ||
+      bill.doctor_name?.toLowerCase().includes(text) ||
+      bill.created_by_name?.toLowerCase().includes(text)
+    );
+  });
+}, [search, bills]);
+
   
-  const loadBills = async () => {
-    try {
-      setLoading(true);
-      const res = await getPathologyBills(search);
-      const data = Array.isArray(res?.data) ? res.data : res?.data?.results || res?.results || [];
-      setBills(data);
-    } catch (err) {
-      console.error("Failed to load bills:", err);
-      setBills([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+
+
+const loadBills = async (searchText = "") => {
+  try {
+    setLoading(true);
+    const res = await getPathologyBills(searchText);
+    const data =
+      Array.isArray(res?.data)
+        ? res.data
+        : res?.data?.results || [];
+
+    setBills(data);
+  } catch (err) {
+    console.error("Failed to load bills:", err);
+    setBills([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleViewDetail = async (billId) => {
     try {
       const res = await getPathologyBillDetail(billId);
       const data = res?.data || res;
-      setSelectedBill(data);
+      setSelectedBillId(billId);
       setShowDetail(true);
     } catch (err) {
-      alert("Failed to load bill details");
+      notify("error", "failed to load bill details")
     }
   };
+
+  const handleEdit = (billId) => {
+  setEditBillId(billId);
+  setOpenUpdate(true);
+};
+
+
+
+const handleDelete = async (billId) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this pathology bill?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await deletePathologyBill(billId);
+    notify("success", "Bill deleted successfully");
+    loadBills();
+  } catch (error) {
+    notify(
+      "error",
+      error?.response?.data?.message || "Failed to delete bill"
+    );
+  }
+};
+
 
   return (
     <AdminLayout>
@@ -135,7 +191,7 @@ export default function PathologyBill() {
                   </thead>
 
                   <tbody className="divide-y divide-gray-200">
-                    {bills.slice(0, limit).map((bill) => (
+                    {filteredBills.slice(0, limit).map((bill) => (
                       <tr key={bill.id} className="border-t hover:bg-gray-50">
                         <td className="p-2 text-center font-medium">{bill.bill_no || `#${bill.id}`}</td>
                         <td className="p-2 text-center">
@@ -153,19 +209,42 @@ export default function PathologyBill() {
                        
                         <td className="p-2 text-center font-semibold">{Number(bill.total_amount || 0).toFixed(2)}</td>
                         <td className="p-2 text-center">{Number(bill.paid_amount || 0).toFixed(2)}</td>
-                        <td className={`p-2 text-center {Number(bill.balance || 0) > 0 ? "text-red-600" : "text-green-600"}`}>
+                        <td
+                          className={`p-2 text-center ${
+                            Number(bill.balance || 0) > 0
+                              ? "text-red-600"
+                              : "text-green-600"
+                          }`}
+                        >
                           {Number(bill.balance || 0).toFixed(2)}
                         </td>
                         
-                        <td className="p-2 text-center">
-                          <button
-                            title="view"
-                            onClick={() => handleViewDetail(bill.id)}
-                            className="text-blue-600 hover:text-blue-800"
-                          >
-                            <Eye size={16} />
-                          </button>
-                        </td>
+                      <td className="px-3 py-2">
+                    <div className="flex justify-center gap-2">
+                     <button
+                      title="view"
+                        onClick={(e) => {
+                          handleViewDetail(bill.id);
+                        }} 
+                      >
+                        <Eye size={16} />
+                      </button>
+                     <button
+                     title="Edit"
+                        onClick={() => handleEdit(bill.id)}
+                        className="p-1 hover:bg-gray-200 rounded"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                     <button
+                     title="Delete"
+                      onClick={() => handleDelete(bill.id)}
+                      className="p-1 rounded hover:bg-red-100 text-red-600"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    </div>
+                  </td>
                       </tr>
                     ))}
                   </tbody>
@@ -181,6 +260,24 @@ export default function PathologyBill() {
             loadBills(); // Refresh bills list after closing
           }}
         /> 
+        <UpdatePathologyBill
+          open={openUpdate}
+          billId={editBillId}
+          onClose={() => {
+            setOpenUpdate(false);
+            setEditBillId(null);
+            loadBills();
+          }}
+          />
+          <PathologyBillDetails
+          open={showDetail}
+          billId={selectedBillId}
+          onClose={() => {
+            setShowDetail(false);
+            setSelectedBillId(null);
+          }}
+        />
+
 
     </AdminLayout>
   );
