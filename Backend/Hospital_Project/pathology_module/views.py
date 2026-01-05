@@ -1,16 +1,18 @@
+from datetime import timedelta
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from .models import PathologyCategory, PathologyParameter, PathologyTest, PathologyBill
+from django.utils import timezone
+from .models import PathologyCategory, PathologyParameter, PathologyTest, PathologyBill, PathologyBillItem
 from .serializers import (
     PathologyTestCreateSerializer, PathologyTestListSerializer, PathologyTestUpdateSerializer,
     PathologyBillCreateSerializer, PathologyBillListSerializer, PathologyBillDetailSerializer
 )
 from opd_ipd_module.models import Prescription
-
+from django.db import transaction
 
 
 
@@ -198,3 +200,73 @@ class PrescriptionSearchAPIView(APIView):
                 {"error": "Prescription not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+        
+
+
+class PathologyBillUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def put(self, request, pk):
+        bill = get_object_or_404(PathologyBill, pk=pk)
+
+        serializer = PathologyBillCreateSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        tests = data.pop("tests")
+
+        # Update simple bill fields
+        bill.patient_id = data.get("patient_id", bill.patient_id)
+        bill.doctor_id = data.get("doctor_id", bill.doctor_id)
+        bill.prescription_id = data.get("prescription_id", bill.prescription_id)
+        bill.note = data.get("note", bill.note)
+        bill.previous_report_value = data.get("previous_report_value", bill.previous_report_value)
+        bill.payment_mode = data.get("payment_mode", bill.payment_mode)
+        bill.discount = data.get("discount", bill.discount)
+        bill.paid_amount = data.get("paid_amount", bill.paid_amount)
+
+        # Remove old items
+        bill.items.all().delete()
+
+        subtotal = 0
+        tax_total = 0
+
+        for t in tests:
+            test = PathologyTest.objects.get(id=t["test_id"])
+            price = test.standard_charge
+            tax = (price * test.tax) / 100
+
+            PathologyBillItem.objects.create(
+                bill=bill,
+                test=test,
+                price=price,
+                tax=tax,
+                report_days=test.report_days or 0,
+                report_date=timezone.now().date() + timedelta(days=test.report_days or 0),
+            )
+
+            subtotal += price
+            tax_total += tax
+
+        bill.subtotal = subtotal
+        bill.tax = tax_total
+        bill.total_amount = subtotal + tax_total - bill.discount
+        bill.balance = bill.total_amount - bill.paid_amount
+        bill.save()
+
+        return Response({"success": True, "message": "Bill updated successfully"})
+
+
+
+class PathologyBillDeleteAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        bill = get_object_or_404(PathologyBill, pk=pk)
+        bill.delete()
+        return Response({"success": True, "message": "Bill deleted successfully"})
+

@@ -253,6 +253,13 @@ class PathologyBillListSerializer(serializers.ModelSerializer):
 class PathologyBillDetailSerializer(serializers.ModelSerializer):
     patient_name = serializers.SerializerMethodField()
     patient_phone = serializers.SerializerMethodField()
+    patient_email = serializers.SerializerMethodField()
+    patient_age = serializers.SerializerMethodField()
+    patient_gender = serializers.SerializerMethodField()
+    patient_blood_group = serializers.SerializerMethodField()
+    patient_address = serializers.SerializerMethodField()
+    case_id = serializers.SerializerMethodField()
+    prescription_id = serializers.SerializerMethodField()
     doctor_name = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
     items = PathologyBillItemSerializer(many=True, read_only=True)
@@ -260,8 +267,10 @@ class PathologyBillDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = PathologyBill
         fields = [
-            "id", "bill_no", "patient", "patient_name", "patient_phone",
-            "doctor", "doctor_name", "prescription", "note", "previous_report_value",
+            "id", "bill_no", "patient", "patient_name", "patient_phone", "patient_email",
+            "patient_age", "patient_gender", "patient_blood_group", "patient_address",
+            "doctor", "doctor_name", "prescription", "prescription_id", "case_id",
+            "note", "previous_report_value",
             "subtotal", "tax", "discount", "total_amount", "paid_amount", "balance",
             "payment_mode", "created_at", "updated_at", "created_by", "created_by_name",
             "items"
@@ -277,6 +286,45 @@ class PathologyBillDetailSerializer(serializers.ModelSerializer):
             return obj.patient.phone or "-"
         return "-"
     
+    def get_patient_email(self, obj):
+        if obj.patient:
+            return obj.patient.email or "-"
+        return "-"
+    
+    def get_patient_age(self, obj):
+        if obj.patient:
+            return obj.patient.age
+        return None
+    
+    def get_patient_gender(self, obj):
+        if obj.patient:
+            return obj.patient.get_gender_display_value()
+        return "-"
+    
+    def get_patient_blood_group(self, obj):
+        if obj.patient:
+            return obj.patient.get_blood_group_display_value() or "-"
+        return "-"
+    
+    def get_patient_address(self, obj):
+        if obj.patient:
+            address_parts = [
+                obj.patient.address,
+                obj.patient.city,
+                obj.patient.state,
+                obj.patient.zip_code
+            ]
+            return ", ".join(filter(None, address_parts)) or "-"
+        return "-"
+    
+    def get_case_id(self, obj):
+        if obj.prescription_id:
+            return f"RX-{obj.prescription_id}"
+        return "-"
+    
+    def get_prescription_id(self, obj):
+        return obj.prescription_id if obj.prescription else None
+    
     def get_doctor_name(self, obj):
         if obj.doctor:
             return obj.doctor.full_name or obj.doctor.email
@@ -286,3 +334,4 @@ class PathologyBillDetailSerializer(serializers.ModelSerializer):
         if obj.created_by:
             return obj.created_by.full_name or obj.created_by.email
         return "-"
+    

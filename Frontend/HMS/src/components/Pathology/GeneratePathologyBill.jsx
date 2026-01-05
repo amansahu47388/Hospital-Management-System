@@ -4,6 +4,7 @@ import { createPathologyBill, getPathologyTests, searchPrescription } from "../.
 import { searchPatient } from "../../api/patientApi";
 import { getDoctors } from "../../api/appointmentApi";
 import { useNotify } from "../../context/NotificationContext";
+import AddPatient from "../../components/PatientComponent/AddPatient";
 
 
 export default function GeneratePathologyBill({ open, onClose }) {
@@ -15,7 +16,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showPatientDropdown, setShowPatientDropdown] = useState(false);
   const [patientLoading, setPatientLoading] = useState(false);
-
+  const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
   const [prescriptionSearch, setPrescriptionSearch] = useState("");
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
@@ -339,10 +340,23 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
             )}
           </div>
 
+            {/* RIGHT ACTIONS */}
+            <div className="ml-auto flex items-center gap-3">
+              <button
+                onClick={() => setIsAddPatientOpen(true)}
+                className="bg-white text-[#6046B5]
+                          px-4 py-2 text-sm rounded
+                          flex items-center gap-2
+                          shadow-sm hover:bg-gray-100"
+              >
+                <Plus size={14} /> New Patient
+              </button>
 
-          <button onClick={onClose}>
-            <X size={22} />
-          </button>
+              <X
+                onClick={onClose}
+                className="text-white cursor-pointer hover:opacity-80"
+              />
+            </div>
         </div>
       </div>
 
@@ -555,10 +569,6 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
             </div>
           </div>
 
-
-
-
-
           <div className="flex justify-end px-4 py-4 border-t bg-gray-100">
             <button
               onClick={handleSave}
@@ -570,6 +580,7 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
           </div>
         </div>
       </div>
+      <AddPatient open={isAddPatientOpen} onClose={() => setIsAddPatientOpen(false)} />
     </div>
   );
 }
