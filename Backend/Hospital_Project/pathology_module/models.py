@@ -1,6 +1,7 @@
 from django.db import models
 from setup_module.models import HospitalCharges
 from users.models import User
+from opd_ipd_module.models import Prescription
 
 
 class PathologyCategory(models.Model):
@@ -9,6 +10,7 @@ class PathologyCategory(models.Model):
     def __str__(self):
         return self.category_name
     
+
 
 class PathologyTest(models.Model):
     test_name = models.CharField(max_length=100)
@@ -30,6 +32,7 @@ class PathologyTest(models.Model):
         return self.test_name
 
 
+
 class PathologyParameter(models.Model):
     pathology_test = models.ForeignKey(PathologyTest,on_delete=models.CASCADE,related_name="parameters")
     parameter_name = models.CharField(max_length=100)
@@ -44,12 +47,16 @@ class PathologyParameter(models.Model):
         return f"{self.parameter_name} - {self.pathology_test.test_name}"
 
 
+
 class PathologyBill(models.Model):
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="pathology_bills" )
-    pathologytest = models.ForeignKey(PathologyTest, on_delete=models.CASCADE, related_name="pathology_bills")
-    doctor = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="pathology_bills", limit_choices_to={"role": "doctor"})
+    doctor = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="pathology_bills", limit_choices_to={"role": "doctor"}, null=True, blank=True)
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, related_name="pathology_bills", null=True, blank=True)
     note = models.TextField(null=True, blank=True)
     previous_report_value = models.BooleanField(default=False)
+    payment_mode = models.CharField(max_length=50, null=True, blank=True)
+    bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -68,3 +75,13 @@ class PathologyBill(models.Model):
     
 
     
+class PathologyBillItem(models.Model):
+    bill = models.ForeignKey( PathologyBill,on_delete=models.CASCADE, related_name="items")
+    test = models.ForeignKey( PathologyTest, on_delete=models.PROTECT)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    tax = models.DecimalField(max_digits=10, decimal_places=2)
+    report_days = models.PositiveIntegerField()
+    report_date = models.DateField()
+    
+    def __str__(self):
+        return f"{self.bill.bill_no} - {self.test.test_name}"

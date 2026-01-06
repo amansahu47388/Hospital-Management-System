@@ -1,12 +1,12 @@
 import { useState } from "react";
 import usePharmacyBill from "../../hooks/usePharmacyBill";
 
-import MedicineRow from "../../components/Pharmacy/MedicineRow";
-import { BillSummary } from "../../components/Pharmacy/BillSummary";
-import { PaymentSection } from "../../components/Pharmacy/PaymentSection";
-import { ActionButtons } from "../../components/Pharmacy/ActionButtons";
-import BillHeader from "../../components/Pathology/BillHeader";
-import AddPatient from "../../components/PatientComponent/AddPatient";
+// import MedicineRow from "../../components/Pharmacy/MedicineRow";
+// import { BillSummary } from "../../components/Pharmacy/BillSummary";
+// import { PaymentSection } from "../../components/Pharmacy/PaymentSection";
+// import { ActionButtons } from "../../components/Pharmacy/ActionButtons";
+// import BillHeader from "../../components/Pathology/BillHeader";
+// import AddPatient from "../../components/PatientComponent/AddPatient";
 export default function PharmacyGenerateBill() {
   const {
     rows,

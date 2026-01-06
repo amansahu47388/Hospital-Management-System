@@ -16,6 +16,7 @@ class OpdPatient(models.Model):
     appointment_date = models.DateTimeField(null=True, blank=True)
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="opd_patients_as_doctor", limit_choices_to={"role": "doctor"})
     symptom = models.ForeignKey('setup_module.Symptom', on_delete=models.SET_NULL, null=True)
+    case_id = models.CharField(max_length=20, blank=True, null=True)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -43,6 +44,7 @@ class IpdPatient(models.Model):
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ipd_patients_as_doctor", limit_choices_to={"role": "doctor"})
     symptom = models.ForeignKey('setup_module.Symptom', on_delete=models.SET_NULL, null=True)
     bed = models.ForeignKey('setup_module.Bed', on_delete=models.SET_NULL, null=True)
+    case_id = models.CharField(max_length=20, blank=True, null=True)
     checkup_id = models.CharField(max_length=20, blank=True, null=True)
     case_id = models.CharField(max_length=20, unique=True)
     old_patient = models.BooleanField(default=False)
@@ -92,3 +94,9 @@ class IpdDischarge(models.Model):
 
     def __str__(self):
         return f"Discharge - IPD {self.ipd_patient.ipd_id}"
+    
+
+
+class Prescription(models.Model):
+    fnding = models.CharField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

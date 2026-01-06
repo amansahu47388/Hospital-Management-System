@@ -36,9 +36,9 @@ const navItems = [
 
   { to: "/admin/opd-patients", label: "OPD-Out patient", Icon: Hospital },
   { to: "/admin/ipd-patients", label: "IPD-In Patient", Icon: Bed },
-  { to: "/admin/pharmacy-bill", label: "Pharmacy", Icon: Pill },
-  { to: "/admin/pathology-bill", label: "Pathology", Icon: FlaskConical },
-  { to: "/admin/radiology-bill", label: "Radiology", Icon: FolderGit2 },
+  { to: "/admin/pharmacy-bills", label: "Pharmacy", Icon: Pill },
+  { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
+  { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
   { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
  
  
