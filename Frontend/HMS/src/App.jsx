@@ -30,10 +30,12 @@ import MedicineStock from "./pages/Pharmacy/Medicine/MedicineStock";
 import MedicinePurchaseList from "./pages/Pharmacy/Purchase/MedicinePurchaseList";
 import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
 import AmbulanceList from "./pages/Ambulance/AmbulanceList";
-import BirthRecord  from "./pages/birthrecord/BirthRecord";
-
-
-
+import BirthRecord  from "./pages/Birthrecord/BirthRecord";
+import DeathRecordPage from "./pages/Deathrecord/DeathRecordPage";
+import ItemStockPage from "./pages/Inventory/ItemStockPage"; 
+import IssueItemPage from "./pages/Inventory/IssueItemPage";
+import ItemListPage from "./pages/Inventory/ItemListPage";
+import CelenderPage from "./pages/Celender/CalendarPage";
 function App() {
   return (
     <AuthProvider>
@@ -98,8 +100,12 @@ function App() {
           <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
           <Route path="/admin/Ambulance" element={<AmbulanceCallList />} />
           <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
-          <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
-
+            <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
+            <Route path="/admin/Death-Record"   element={<DeathRecordPage/>} />
+          <Route path="/admin/Inventory/Item-Stock"   element={<ItemStockPage/>} />   
+          <Route path="/admin/Inventory/Issue-Item"   element={<IssueItemPage/>} />
+          <Route path="/admin/Inventory/Item-List"   element={<ItemListPage/>} />
+          <Route path="/admin/Calendar"   element={<CelenderPage/>} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
