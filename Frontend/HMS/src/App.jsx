@@ -36,6 +36,8 @@ import ItemStockPage from "./pages/Inventory/ItemStockPage";
 import IssueItemPage from "./pages/Inventory/IssueItemPage";
 import ItemListPage from "./pages/Inventory/ItemListPage";
 import CelenderPage from "./pages/Celender/CalendarPage";
+import RadiologyBill from "./pages/radiology/RadiologyBill";
+import RadiologyTest from "./pages/radiology/RadiologyTest";
 function App() {
   return (
     <AuthProvider>
@@ -88,8 +90,8 @@ function App() {
 
 
           {/* Pathoogy Routes */}
-          <Route path="/admin/radiology-bills" element={<PathologyBill />} />
-          <Route path="/admin/raiology-tests" element={<PathologyTest />} />
+          <Route path="/admin/radiology-bills" element={<RadiologyBill />} />
+          <Route path="/admin/radiology-tests" element={<RadiologyTest />} />
 
 
 
