@@ -28,7 +28,7 @@ const ChangePasswordModal = ({ onClose }) => {
       <div className="bg-white w-full max-w-md rounded shadow-lg">
 
         {/* Header */}
-        <div className="flex justify-between items-center bg-blue-600 px-4 py-2 rounded-t">
+        <div className="flex justify-between items-center bg-gradient-to-b from-[#6046B5] to-[#8A63D2] px-4 py-2 rounded-t">
           <h3 className="text-white font-semibold">Change Password</h3>
           <button onClick={onClose} className="text-white">
             <X size={18} />
@@ -69,7 +69,7 @@ const ChangePasswordModal = ({ onClose }) => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+              className="px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded"
             >
               Save
             </button>

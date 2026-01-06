@@ -1,6 +1,7 @@
 from django.db import models
 from setup_module.models import HospitalCharges
 from users.models import User
+from opd_ipd_module.models import Prescription
 
 
 class RadiologyCategory(models.Model):
@@ -59,34 +60,37 @@ class RadiologyParameter(models.Model):
 
 
 class RadiologyBill(models.Model):
-    patient = models.ForeignKey(
-        'patient_module.Patient',
-        on_delete=models.CASCADE,
-        related_name="radiology_bills"
-    )
-    radiologytest = models.ForeignKey(
-        RadiologyTest,
-        on_delete=models.CASCADE,
-        related_name="radiology_bills"
-    )
-    doctor = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="radiology_bills",
-        limit_choices_to={"role": "doctor"}
-    )
+    patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="radiology_bills" )
+    doctor = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="radiology_bills", limit_choices_to={"role": "doctor"}, null=True, blank=True)
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, related_name="radiology_bills", null=True, blank=True)
     note = models.TextField(null=True, blank=True)
+    previous_report_value = models.BooleanField(default=False)
+    payment_mode = models.CharField(max_length=50, null=True, blank=True)
+    bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    balance  = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ["-created_at"]
-
+        
     def __str__(self):
-        return f"Radiology Bill #{self.id}"
+        return f"Radiology Bill #{self.id} - {self.patient}"
+
+class RadiologyBillItem(models.Model):
+    bill = models.ForeignKey( RadiologyBill,on_delete=models.CASCADE, related_name="items")
+    test = models.ForeignKey( RadiologyTest, on_delete=models.PROTECT)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    tax = models.DecimalField(max_digits=10, decimal_places=2)
+    report_days = models.PositiveIntegerField()
+    report_date = models.DateField()
+    
+    def __str__(self):
+        return f"{self.bill.bill_no} - {self.test.test_name}"

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { Search, Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import AddPathologyTest from "../../components/Pathology/AddPathologyTest";
@@ -10,6 +10,7 @@ import UpdatePathologyTest from "../../components/Pathology/UpdatePathologyTest"
 
 export default function PathologyTest() {
   const notify = useNotify();
+  const hasFetchedRef = useRef(false);
   const [search, setSearch] = useState("");
   const [pageSize, setPageSize] = useState(10);
   const [openAdd, setOpenAdd] = useState(false);
@@ -31,9 +32,12 @@ export default function PathologyTest() {
     }
   };
 
-  useEffect(() => {
-    fetchTests();
-  }, []);
+useEffect(() => {
+  if (hasFetchedRef.current) return;
+  hasFetchedRef.current = true;
+  fetchTests();
+}, []);
+
 
   const filteredData = useMemo(() => {
     return tests.filter((item) =>

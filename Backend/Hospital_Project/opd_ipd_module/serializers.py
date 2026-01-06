@@ -4,7 +4,7 @@ from patient_module.serializers import PatientSerializer
 from setup_module.serializers import BedSerializers
 from users.serializers import UserSerializer
 import uuid
-
+from django.db import transaction, models
 
 # OPD Patient Serializers
 class OpdPatientSerializer(serializers.ModelSerializer):
@@ -33,6 +33,12 @@ class OpdPatientCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+
+        max_id = OpdPatient.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        case_id = f"{max_id + 1:04d}"
+
+        validated_data["case_id"] = case_id
+
         return super().create(validated_data)
 
 
@@ -88,7 +94,13 @@ class IpdPatientCreateSerializer(serializers.ModelSerializer):
             'patient', 'appointment_date', 'doctor','allergies', 'symptom', 'bed', 'credit_limit' , 'case_id',
             'old_patient', 'casualty', 'reference', 'previous_medical_issue',
         ]
+
     def create(self, validated_data):
+
+        max_id = OpdPatient.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        case_id = f"{max_id + 1:04d}"
+
+        validated_data["case_id"] = case_id
         return super().create(validated_data)
 
 
@@ -102,7 +114,7 @@ class IpdPatientListSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpdPatient
         fields = [
-            "ipd_id","patient_detail","appointment_date","case_id","doctor_detail","bed","symptom_name",
+            "ipd_id","case_id","patient_detail","appointment_date","case_id","doctor_detail","bed","symptom_name",
             "previous_medical_issue","credit_limit","created_by","created_at",
         ]
 
