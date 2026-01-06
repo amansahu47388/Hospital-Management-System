@@ -47,7 +47,7 @@ export default function AddBirthRecordModal({ open, onClose }) {
       <div className="bg-white w-[95%] max-w-6xl rounded shadow-lg overflow-hidden">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center px-6 py-3 bg-blue-500 text-white">
+        <div className="flex justify-between items-center px-6 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
           <h2 className="text-lg font-semibold">Add Birth Record</h2>
           <button onClick={onClose}>
             <X />
@@ -160,7 +160,7 @@ export default function AddBirthRecordModal({ open, onClose }) {
         <div className="flex justify-end px-6 py-4 border-t">
           <button
             onClick={handleSubmit}
-            className="bg-blue-600 text-white px-6 py-2 rounded flex items-center gap-2"
+            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded flex items-center gap-2"
           >
             ✓ Save
           </button>

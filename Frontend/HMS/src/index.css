@@ -110,3 +110,6 @@ button:focus-visible {
 /* .btn-primary {
   @apply px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700;
 } */
+button{
+  cursor: pointer;
+}
