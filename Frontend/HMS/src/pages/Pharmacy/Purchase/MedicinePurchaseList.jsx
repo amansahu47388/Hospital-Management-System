@@ -4,7 +4,7 @@ import useMedicinePurchase from "../../../hooks/useMedicinePurchase";
 
 import PurchaseHeader from "../../../components/Pharmacy/Purchase/PurchaseHeader";
 import PurchaseTable from "../../../components/Pharmacy/Purchase/PurchaseTable";
-import PurchaseMedicineModal from "../../../components/Pharmacy/Purchase/PurchaseMedicineModal";
+import PurchaseMedicineModal from "../../../components/Pharmacy/Purchase/PurchaseMedicine";
 
 export default function MedicinePurchaseList() {
   const { search, setSearch, purchases } = useMedicinePurchase();

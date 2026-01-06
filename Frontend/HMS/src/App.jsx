@@ -80,24 +80,26 @@ function App() {
           <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
 
 
-          {/* Pathoogy Routes */}
+          {/* Pathology Routes */}
           <Route path="/admin/pathology-bills" element={<PathologyBill />} />
           <Route path="/admin/pathology-tests" element={<PathologyTest />} />
 
 
-          {/* Pathoogy Routes */}
+          {/* Radiology Routes */}
           <Route path="/admin/radiology-bills" element={<PathologyBill />} />
           <Route path="/admin/raiology-tests" element={<PathologyTest />} />
 
 
-
-
+          {/* Pharmacy Routes */}
           <Route path="/admin/pharmacy-bills" element={<PharmacyBill />} />
-          <Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
           <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
           <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
+          <Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
+
+          {/* Ambulance Routes */}
           <Route path="/admin/Ambulance" element={<AmbulanceCallList />} />
           <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
+          
           <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
 
           </Routes>

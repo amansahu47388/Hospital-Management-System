@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-// import AdminLayout from "../../layout/AdminLayout";
-// import useRadiologyBills from "../../hooks/useRadiologyBills";
-// import RadiologyHeader from "../../components/Radiology/RadiologyHeader";
-// import RadiologyTable from "../../components/Radiology/RadiologyTable";
-// import GenerateTextModal from "../../components/Pathology/GenerateTextModal";
+
+
+
 export default function RadiologyBill() {
   const { search, setSearch, bills } = useRadiologyBills();
   const [openGenerate, setOpenGenerate] = useState(false);

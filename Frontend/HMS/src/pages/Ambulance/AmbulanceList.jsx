@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { useNavigate } from "react-router-dom";
-import AddAmbulanceModel from "../../components/Ambulance/AddAmbulanceModal";
+import AddAmbulance from "../../components/Ambulance/AddAmbulance";
 import {
   Plus,
   Search,
@@ -76,8 +76,8 @@ export default function AmbulanceList() {
         <div className="bg-white rounded  shadow-sm">
 
           {/* HEADER */}
-          <div className="flex items-center justify-between px-4 py-3 border-b">
-            <h2 className="font-semibold text-gray-800">Ambulance List</h2>
+          <div className="flex items-center justify-between px-4 py-3">
+            <h2 className="font-semibold text-xl md:text-2xl text-gray-800">Ambulance List</h2>
 
             <button onClick={() => setOpen(true)} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded text-sm flex items-center gap-1">
               <Plus size={14} /> Add Ambulance
@@ -155,7 +155,7 @@ export default function AmbulanceList() {
           </div>
         </div>
       </div>
-      <AddAmbulanceModel
+      <AddAmbulance
         open={open}
         onClose={() => setOpen(false)}
         onSubmit={(data) => console.log(data)}
