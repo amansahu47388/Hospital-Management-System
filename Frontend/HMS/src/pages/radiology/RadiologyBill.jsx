@@ -1,30 +1,24 @@
-import React, { useState } from "react";
-import AdminLayout from "../../layout/AdminLayout";
-import useRadiologyBills from "../../hooks/useRadiologyBills";
 import RadiologyHeader from "../../components/Radiology/RadiologyHeader";
 import RadiologyTable from "../../components/Radiology/RadiologyTable";
-import GenerateTextModal from "../../components/Pathology/GenerateTextModal";
+import useRadiologyBills from "../../hooks/useRadiologyBills";
+import AdminLayout from "../../layout/AdminLayout";
+
 export default function RadiologyBill() {
-  const { search, setSearch, bills } = useRadiologyBills();
-  const [openGenerate, setOpenGenerate] = useState(false);
+  const { bills, search, setSearch } = useRadiologyBills();
+
   return (
     <AdminLayout>
-      <div className="min-h-screen  p-1">
+      {/* PAGE BACKGROUND */}
+      <div className="p-4 min-h-full bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
+        <div className="max-w-7xl mx-auto">
+          <RadiologyHeader
+            search={search}
+            setSearch={setSearch}
+          />
 
-        <div className="bg-white/95 rounded-lg p-4 shadow">
-
-          <RadiologyHeader search={search}     setSearch={setSearch} />
-           
           <RadiologyTable bills={bills} />
-       
         </div>
       </div>
-
-      <GenerateTextModal
-      open={openGenerate}
-      onClose={() => setOpenGenerate(false)}
-      type="radiology"
-     />
     </AdminLayout>
   );
 }

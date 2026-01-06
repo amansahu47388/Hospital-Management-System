@@ -13,6 +13,7 @@ urlpatterns = [
     path("api/admin/", include("opd_ipd_module.urls")),
     path("api/admin/", include('pathology_module.urls')),
     path("api/admin/setup/", include("setup_module.urls")),
+    path("api/admin/radiology/", include("radiology_module.urls")),
 
 ]
 
