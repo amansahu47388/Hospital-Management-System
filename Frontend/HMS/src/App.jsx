@@ -90,8 +90,8 @@ function App() {
 
 
           {/* Radiology Routes */}
-          <Route path="/admin/radiology-bills" element={<PathologyBill />} />
-          <Route path="/admin/raiology-tests" element={<PathologyTest />} />
+          <Route path="/admin/radiology-bills" element={<RadiologyBill />} />
+          <Route path="/admin/radiology-tests" element={<RadiologyTest />} />
 
 
           {/* Pharmacy Routes */}
