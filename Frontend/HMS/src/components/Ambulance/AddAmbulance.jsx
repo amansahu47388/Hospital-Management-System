@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-export default function AddAmbulanceModal({ open, onClose, onSubmit }) {
+export default function AddAmbulance({ open, onClose, onSubmit }) {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({

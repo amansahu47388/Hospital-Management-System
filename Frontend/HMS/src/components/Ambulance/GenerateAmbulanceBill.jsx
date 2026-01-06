@@ -1,6 +1,6 @@
 import { X, Search } from "lucide-react";
 
-export default function AddAmbulanceCallModal({ open, onClose }) {
+export default function GenerateAmbulanceBill({ open, onClose }) {
   if (!open) return null;
 
   return (

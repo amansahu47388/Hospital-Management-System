@@ -271,25 +271,30 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
       {/* HEADER */}
       <div className="px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
         <div className="flex items-center gap-3 justify-between">
-          <div className="relative w-full max-w-md patient-search flex gap-4">
-            <input
-              type="text"
-              placeholder="Search patient by name or phone"
-              value={
-                selectedPatient
-                  ? selectedPatient.full_name || selectedPatient.name
-                  : patientSearch
-              }
-              onChange={(e) => {
-                setPatientSearch(e.target.value);
-                setSelectedPatient(null);
-                setShowPatientDropdown(true);
-              }}
-              className="w-full px-3 py-2 bg-white rounded text-black"
-            />
+          {/* Patient Search Container */}
+          <div className="relative w-full max-w-md patient-search">
+            <div className="flex items-center bg-white rounded-md border border-gray-300 focus-within:ring-2 focus-within:ring-[#8A63D2]">
+              <Search size={16} className="ml-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search patient by name or phone"
+                value={
+                  selectedPatient
+                    ? selectedPatient.full_name || selectedPatient.name
+                    : patientSearch
+                }
+                onChange={(e) => {
+                  setPatientSearch(e.target.value);
+                  setSelectedPatient(null);
+                  setShowPatientDropdown(true);
+                }}
+                className="w-full px-3 py-2 text-sm outline-none rounded-md text-black"
+              />
+            </div>
 
+            {/* Dropdown positioned below the input */}
             {showPatientDropdown && !selectedPatient && (
-              <div className="absolute z-30  w-full bg-white border rounded shadow mt-1 max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto z-50">
                 {filteredPatients.length === 0 ? (
                   <div className="px-3 py-2 text-sm text-gray-600">
                     {patientLoading ? "Searching..." : "No patient found"}
@@ -306,35 +311,36 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
                           setShowPatientDropdown(false);
                           setPatientSearch("");
                         }}
-                        className="px-3 py-2 cursor-pointer hover:bg-indigo-50 text-sm flex gap-4"
+                        className="px-4 py-2 text-sm cursor-pointer flex justify-between hover:bg-[#F3EEFF]"
                       >
-                        <div className="font-medium text-black">{fullName || `#${patient.id}`}</div>
-                        <div className="text-xs text-black">{contact}</div>
+                        <span className="font-medium text-black">{fullName || `#${patient.id}`}</span>
+                        <span className="text-xs text-gray-400">{contact}</span>
                       </div>
                     );
                   })
                 )}
               </div>
             )}
+          </div>
 
-            <div className="flex items-center min-w-[220px]">
-              <input 
-                className="px-3 py-2 rounded text-black w-full bg-white" 
-                placeholder="Search by prescription Id"
-                value={prescriptionSearch}
-                onChange={(e) => setPrescriptionSearch(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handlePrescriptionSearch()}
-              />
-              <button 
-                className="bg-gray-100 p-2 h-10"
-                onClick={handlePrescriptionSearch}
-                disabled={prescriptionLoading}
-              >
-                <Search size={18} />
-              </button>
-            </div>
+          {/* Prescription Search */}
+          <div className="flex  items-center min-w-[220px] gap-2">
+            <input 
+              className="px-3 py-2 rounded text-black w-full bg-white border border-gray-300" 
+              placeholder="Search by prescription Id"
+              value={prescriptionSearch}
+              onChange={(e) => setPrescriptionSearch(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handlePrescriptionSearch()}
+            />
+            {/* <button 
+              className="bg-gray-100 p-2 h-10 rounded hover:bg-gray-200"
+              onClick={handlePrescriptionSearch}
+              disabled={prescriptionLoading}
+            >
+              <Search size={18} />
+            </button> */}
             {selectedPrescription && (
-              <div className="text-xs bg-white px-2 py-1 rounded text-black">
+              <div className="text-xs bg-white px-2 py-1 rounded text-black whitespace-nowrap">
                 Prescription #{selectedPrescription.id} found
               </div>
             )}
