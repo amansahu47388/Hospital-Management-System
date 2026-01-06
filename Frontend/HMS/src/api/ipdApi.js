@@ -39,3 +39,7 @@ export const dischargeIpdPatient = (ipdId, data) => {
 export const getDischargedIpdPatients = () => {
   return api.get("ipd/discharged/");
 };
+
+export const revertIpdDischarge = (ipdId) => {
+  return api.post(`ipd/${ipdId}/discharge/revert/`);
+};
