@@ -52,7 +52,7 @@ const navItems = [
   
    
   { to: "/front-office", label: "Front Office", Icon: ClipboardList },
-  { to: "/Human-Resources", label: "Human Resources", Icon: Users },
+   { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },   
   { to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
   { to: "/Duty-Roster", label: "Duty Roster", Icon: ClipboardList },
   { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
@@ -97,7 +97,7 @@ function Sidebar() {
       {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
       <button
         onClick={handleToggle}
-        className="absolute top-2 -right-20 z-50 p-1 cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
+        className="absolute top-4 -right-10 z-50 p-1  cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
       <Menu />
       </button>
@@ -188,7 +188,7 @@ function Sidebar() {
                             <span className="whitespace-nowrap">Birth Record</span>
                           </NavLink>
                           <NavLink
-                            to="/death-record"
+                            to="/admin/Death-Record"
                             className={({ isActive }) =>
                               `w-full flex items-center gap-4 py-2 px-2 transition-all duration-700 no-underline text-sm
                               ${

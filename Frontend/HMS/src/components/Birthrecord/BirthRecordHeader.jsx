@@ -1,4 +1,4 @@
-export default function BirthRecordHeader({ search, setSearch }) {
+export default function BirthRecordHeader({ search, setSearch, setOpenAdd }) {
     return (
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
         <h1 className="text-lg font-semibold">Birth Record</h1>
@@ -11,7 +11,7 @@ export default function BirthRecordHeader({ search, setSearch }) {
             className="border px-3 py-2 rounded text-sm w-full sm:w-64"
           />
   
-          <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded text-sm">
+          <button onClick={() => setOpenAdd(true)} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded text-sm">
             + Add Birth Record
           </button>
         </div>

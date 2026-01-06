@@ -1,6 +1,6 @@
 import BirthRecordRow from "./BirthRecordRow";
 
-export default function BirthRecordTable({ data }) {
+export default function BirthRecordTable({ data ,onView, onEdit, onDelete }) {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border text-left bg-white">
@@ -19,7 +19,7 @@ export default function BirthRecordTable({ data }) {
         </thead>
         <tbody>
           {data.map((item, i) => (
-            <BirthRecordRow key={i} item={item} />
+            <BirthRecordRow key={i} item={item} onView={onView} onEdit={onEdit} onDelete={onDelete} />
           ))}
         </tbody>
       </table>
