@@ -17,6 +17,7 @@ urlpatterns = [
     path("api/admin/", include("ambulance_module.urls")),
     path("api/admin/setup/", include("setup_module.urls")),
     path("api/admin/radiology/", include("radiology_module.urls")),
+    path("api/admin/", include("ambulance_module.urls")),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 
 ]
 
