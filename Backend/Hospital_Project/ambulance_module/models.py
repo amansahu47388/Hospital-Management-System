@@ -66,6 +66,7 @@ class AmbulanceBill(models.Model):
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="ambulance_bills")
     ambulance = models.ForeignKey(Ambulance, on_delete=models.SET_NULL, null=True, blank=True)
     charge = models.ForeignKey(AmbulanceCharge, on_delete=models.SET_NULL, null=True, blank=True)
+    hospital_charge = models.ForeignKey(HospitalCharges, on_delete=models.SET_NULL, null=True, blank=True, related_name="ambulance_bills")
     date = models.DateField()
     note = models.TextField(blank=True, null=True)
     payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES, blank=True, null=True)

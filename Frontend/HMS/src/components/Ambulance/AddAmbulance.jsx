@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import { createAmbulance } from "../../api/ambulanceApi";
+import { useNotify } from "../../context/NotificationContext";
 
-export default function AddAmbulance({ open, onClose, onSubmit }) {
+export default function AddAmbulance({ open, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
+  const notify = useNotify();
 
   const [form, setForm] = useState({
     vehicleNumber: "",
@@ -21,14 +24,24 @@ export default function AddAmbulance({ open, onClose, onSubmit }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    setLoading(true);
+  const handleSave = async () => {
+    // Basic validation
+    if (!form.vehicleNumber || !form.vehicleModel || !form.vehicleType) {
+      notify("error", "Please fill in all required fields");
+      return;
+    }
 
-    setTimeout(() => {
-      onSubmit?.(form);
-      setLoading(false);
+    try {
+      setLoading(true);
+      await createAmbulance(form);
+      notify("success", "Ambulance created successfully");
+      onSuccess?.(); // Refresh the list
       onClose();
-    }, 1500);
+    } catch (error) {
+      notify("error", error?.response?.data?.message || "Failed to create ambulance");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

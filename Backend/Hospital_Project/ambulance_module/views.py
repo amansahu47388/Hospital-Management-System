@@ -140,7 +140,7 @@ class AmbulanceBillListAPIView(APIView):
     def get(self, request):
         search = request.query_params.get('search', '').strip()
         queryset = AmbulanceBill.objects.select_related(
-            'patient', 'ambulance', 'charge', 'created_by'
+            'patient', 'ambulance', 'charge', 'hospital_charge', 'created_by'
         ).order_by('-created_at')
 
         if search:
@@ -148,7 +148,8 @@ class AmbulanceBillListAPIView(APIView):
                 Q(bill_no__icontains=search) |
                 Q(patient__first_name__icontains=search) |
                 Q(ambulance__vehicle_number__icontains=search) |
-                Q(charge__charge_name__icontains=search)
+                Q(charge__charge_name__icontains=search) |
+                Q(hospital_charge__charge_name__icontains=search)
             )
 
         serializer = AmbulanceBillListSerializer(queryset, many=True)
@@ -171,21 +172,31 @@ class GenerateAmbulanceBillAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = AmbulanceBillCreateSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            bill = serializer.save()
+        try:
+            serializer = AmbulanceBillCreateSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                bill = serializer.save()
+                return Response({
+                    'success': True,
+                    'bill_id': bill.id,
+                    'bill_no': bill.bill_no,
+                    'total': bill.total_amount,
+                    'net_amount': bill.net_amount,
+                    'balance': bill.balance,
+                }, status=status.HTTP_201_CREATED)
             return Response({
-                'success': True,
-                'bill_id': bill.id,
-                'bill_no': bill.bill_no,
-                'total': bill.total_amount,
-                'net_amount': bill.net_amount,
-                'balance': bill.balance,
-            }, status=status.HTTP_201_CREATED)
-        return Response({
-            'success': False,
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+                'success': False,
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error creating ambulance bill: {error_trace}")
+            return Response({
+                'success': False,
+                'message': str(e),
+                'error': 'An error occurred while creating the bill. Please check if database migrations have been applied.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AmbulanceBillUpdateAPIView(APIView):
