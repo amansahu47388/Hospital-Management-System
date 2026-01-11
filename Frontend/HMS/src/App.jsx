@@ -25,9 +25,8 @@ import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
 import PathologyBill from "./pages/pathology/PathologyBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
 import PharmacyBill from "./pages/Pharmacy/PharmacyBill";
-import PharmacyGenerateBill from "./pages/Pharmacy/PharmacyGenerateBill";
-import MedicineStock from "./pages/Pharmacy/Medicine/MedicineStock";
-import MedicinePurchaseList from "./pages/Pharmacy/Purchase/MedicinePurchaseList";
+import MedicineStock from "./pages/Pharmacy/MedicineStock";
+import MedicinePurchaseList from "./pages/Pharmacy/MedicinePurchaseList";
 import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
 import AmbulanceList from "./pages/Ambulance/AmbulanceList";
 import BirthRecord  from "./pages/Birthrecord/BirthRecord";
@@ -98,7 +97,7 @@ function App() {
           <Route path="/admin/pharmacy-bills" element={<PharmacyBill />} />
           <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
           <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
-          <Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
+
 
           {/* Ambulance Routes */}
           <Route path="/admin/Ambulance" element={<AmbulanceCallList />} />

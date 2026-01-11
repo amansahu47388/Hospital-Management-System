@@ -4,13 +4,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Q
-from .models import Ambulance, AmbulanceChargeCategory, AmbulanceCharge, AmbulanceBill
-from .serializers import (
-    AmbulanceSerializer, AmbulanceCreateSerializer, AmbulanceUpdateSerializer,
-    AmbulanceChargeCategorySerializer, AmbulanceChargeSerializer, AmbulanceChargeCreateSerializer,
-    AmbulanceBillListSerializer, AmbulanceBillDetailSerializer,
-    AmbulanceBillCreateSerializer, AmbulanceBillUpdateSerializer
-)
+from .models import Ambulance, AmbulanceBill
+from .serializers import *
 
 
 # Ambulance CRUD Views
@@ -21,6 +16,7 @@ class AmbulanceListAPIView(APIView):
         ambulances = Ambulance.objects.all()
         serializer = AmbulanceSerializer(ambulances, many=True)
         return Response(serializer.data)
+
 
 
 class AmbulanceCreateAPIView(APIView):
@@ -35,6 +31,7 @@ class AmbulanceCreateAPIView(APIView):
                 'ambulance': AmbulanceSerializer(ambulance).data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class AmbulanceUpdateAPIView(APIView):
@@ -61,77 +58,6 @@ class AmbulanceDeleteAPIView(APIView):
         return Response({'message': 'Ambulance deleted successfully'})
 
 
-# Ambulance Charge Category Views
-class AmbulanceChargeCategoryListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        categories = AmbulanceChargeCategory.objects.all()
-        serializer = AmbulanceChargeCategorySerializer(categories, many=True)
-        return Response(serializer.data)
-
-
-class AmbulanceChargeCategoryCreateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = AmbulanceChargeCategorySerializer(data=request.data)
-        if serializer.is_valid():
-            category = serializer.save()
-            return Response({
-                'message': 'Charge category created successfully',
-                'category': serializer.data
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# Ambulance Charge Views
-class AmbulanceChargeListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        charges = AmbulanceCharge.objects.select_related('category')
-        serializer = AmbulanceChargeSerializer(charges, many=True)
-        return Response(serializer.data)
-
-
-class AmbulanceChargeCreateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = AmbulanceChargeCreateSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            charge = serializer.save()
-            return Response({
-                'message': 'Charge created successfully',
-                'charge': AmbulanceChargeSerializer(charge).data
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AmbulanceChargeUpdateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request, pk):
-        charge = get_object_or_404(AmbulanceCharge, pk=pk)
-        serializer = AmbulanceChargeCreateSerializer(charge, data=request.data)
-        if serializer.is_valid():
-            charge = serializer.save()
-            return Response({
-                'message': 'Charge updated successfully',
-                'charge': AmbulanceChargeSerializer(charge).data
-            })
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AmbulanceChargeDeleteAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, pk):
-        charge = get_object_or_404(AmbulanceCharge, pk=pk)
-        charge.delete()
-        return Response({'message': 'Charge deleted successfully'})
-
 
 # Ambulance Bill Views
 class AmbulanceBillListAPIView(APIView):
@@ -140,7 +66,7 @@ class AmbulanceBillListAPIView(APIView):
     def get(self, request):
         search = request.query_params.get('search', '').strip()
         queryset = AmbulanceBill.objects.select_related(
-            'patient', 'ambulance', 'charge', 'hospital_charge', 'created_by'
+            'patient', 'ambulance', 'hospital_charge', 'created_by'
         ).order_by('-created_at')
 
         if search:

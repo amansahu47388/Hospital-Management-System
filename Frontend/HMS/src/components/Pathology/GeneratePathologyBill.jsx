@@ -441,7 +441,7 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
             </button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 border-t p-4">
+          <div className="grid md:grid-cols-2 gap-6  p-4">
 
             {/* LEFT */}
             <div className="space-y-4">
@@ -530,7 +530,7 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
                 </div>
               )}
 
-              <div className="flex justify-between font-bold text-lg border-t pt-2">
+              <div className="flex justify-between font-bold text-lg pt-2">
                 <span>Net Amount ($)</span>
                 <span>{netAmount.toFixed(2)}</span>
               </div>
