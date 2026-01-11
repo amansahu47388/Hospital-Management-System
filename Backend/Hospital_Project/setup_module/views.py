@@ -29,7 +29,17 @@ class BedListAPIView(APIView):
     def get(self, request):
         data = list(Bed.objects.values("id", "bed_name", "bed_type", "bed_group", "status", "floor"))
         return Response(data)
-    
+
+
+class ChargeCategoryListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get unique charge categories from HospitalCharges
+        categories = HospitalCharges.objects.values_list('charge_category', flat=True).distinct()
+        # Convert to list of dictionaries with id and name
+        category_list = [{'id': idx + 1, 'category_name': cat} for idx, cat in enumerate(categories) if cat]
+        return Response(category_list)
 
 
     

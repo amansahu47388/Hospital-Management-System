@@ -1,6 +1,12 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+// Get API URL from environment variable or use default
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
+// Validate API URL
+if (!API_BASE_URL) {
+  console.error("⚠️ VITE_API_URL is not set. Please create a .env file with VITE_API_URL=http://localhost:8000/api");
+}
 
 const api = axios.create({
   baseURL: `${API_BASE_URL}/admin/`,
