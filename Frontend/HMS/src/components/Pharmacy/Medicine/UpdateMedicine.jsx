@@ -1,105 +1,93 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { X, Upload } from "lucide-react";
-import {getMedicineCategories,getCompanies,getMedicineGroups,getUnits,addMedicine,} from "../../../api/pharmacyApi";
+import {getMedicineCategories,getCompanies,getMedicineGroups,getUnits,updateMedicine,} from "../../../api/pharmacyApi";
 import { useNotify } from "../../../context/NotificationContext";
 
-export default function AddMedicine({ open, onClose, onSuccess }) {
+export default function UpdateMedicine({ open, onClose, medicine, onSuccess }) {
   const notify = useNotify();
   const hasFetchedRef = useRef(false);
-  const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [groups, setGroups] = useState([]);
   const [units, setUnits] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    company: "",
-    group: "",
-    unit: "",
-    composition: "",
-    min_level: "",
-    reorder_level: "",
-    tax: "",
-    box_packing: "",
-    vat_account: "",
-    rack_number: "",
-    note: "",
+  const [formData, setFormData] = useState({});
+
+ useEffect(() => {
+  if (!open || !medicine) return;
+
+  // reset every time modal opens
+  hasFetchedRef.current = false;
+
+  setFormData({
+    name: medicine.name || "",
+    category: medicine.category || "",
+    company: medicine.company || "",
+    group: medicine.group || "",
+    unit: medicine.unit || "",
+    composition: medicine.composition || "",
+    min_level: medicine.min_level || "",
+    reorder_level: medicine.reorder_level || "",
+    tax: medicine.tax || "",
+    box_packing: medicine.box_packing || "",
+    vat_account: medicine.vat_account || "",
+    rack_number: medicine.rack_number || "",
+    note: medicine.note || "",
     image: null,
   });
 
-  // Load dropdown data ONCE
-  useEffect(() => {
-    if (!open || hasFetchedRef.current) return;
-    hasFetchedRef.current = true;
-    fetchDropdowns();
-  }, [open]);
+  fetchDropdowns();
+}, [open, medicine]);
+
 
   const fetchDropdowns = async () => {
-    try {
-      const [c1, c2, c3, c4] = await Promise.all([
-        getMedicineCategories(),
-        getCompanies(),
-        getMedicineGroups(),
-        getUnits(),
-      ]);
-      setCategories(c1.data);
-      setCompanies(c2.data);
-      setGroups(c3.data);
-      setUnits(c4.data);
-    } catch {
-      notify("error","Failed to load dropdown data");
-    }
+    const [c1, c2, c3, c4] = await Promise.all([
+      getMedicineCategories(),
+      getCompanies(),
+      getMedicineGroups(),
+      getUnits(),
+    ]);
+    setCategories(c1.data);
+    setCompanies(c2.data);
+    setGroups(c3.data);
+    setUnits(c4.data);
   };
 
-  if (!open) return null;
+  if (!open || !medicine) return null;
 
-const handleChange = (e) => {
-  const { name, value, type, files } = e.target;
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((p) => ({ ...p, [name]: files ? files[0] : value }));
+  };
 
-  if (type === "file") {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: files[0],
-    }));
-  } else {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+ const handleSubmit = async () => {
+  try {
+    setLoading(true);
+    const fd = new FormData();
+
+    Object.entries(formData).forEach(([k, v]) => {
+      if (v !== null && v !== "") {
+        fd.append(k, v);
+      }
+    });
+
+    await updateMedicine(medicine.id, fd);
+
+    notify("success", "Medicine updated");
+
+    // reset state
+    setFormData({});
+    hasFetchedRef.current = false;
+
+    onSuccess?.();
+    onClose();   // close modal
+  } catch (err) {
+    notify("error", err.response?.data?.detail || "Update failed");
+  } finally {
+    setLoading(false);
   }
 };
-
-
-  const handleSubmit = async () => {
-    if (!formData.name || !formData.category || !formData.unit || !formData.box_packing) {
-      notify("error", "Please fill all required fields");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const payload = new FormData();
-
-     for (const key in formData) {
-  if (formData[key] !== "" && formData[key] !== null) {
-    payload.append(key, formData[key]);
-  }
-}
-
-
-      await addMedicine(payload);
-      notify("success", "Medicine added successfully");
-      setFormData();
-      onSuccess?.();
-      onClose();
-    } catch (err) {
-      notify(err.response?.data ||"error", "Failed to add medicine");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3">
@@ -107,7 +95,7 @@ const handleChange = (e) => {
 
         {/* HEADER */}
         <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
-          <h2 className="text-lg font-semibold">Add Medicine Details</h2>
+          <h2 className="text-lg font-semibold">Update Medicine Details</h2>
           <button onClick={onClose}><X size={22} /></button>
         </div>
 
@@ -240,6 +228,7 @@ const handleChange = (e) => {
     </div>
   );
 }
+
 
 /* ---------- Reusable Components ---------- */
 
