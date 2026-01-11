@@ -4,11 +4,17 @@ import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import useAmbulanceCalls from "../../hooks/useAmbulanceCalls";
 import GenerateAmbulanceBill from "../../components/Ambulance/GenerateAmbulanceBill";
+import AmbulanceBillDetail from "../../components/Ambulance/AmbulanceBillDetail";
+import { deleteAmbulanceBill } from "../../api/ambulanceApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function AmbulanceCallList() {
   const navigate = useNavigate();
-  const { search, setSearch, data } = useAmbulanceCalls();
+  const notify = useNotify();
+  const { search, setSearch, data, loading, refresh } = useAmbulanceCalls();
   const [open, setOpen] = useState(false);
+  const [viewBillId, setViewBillId] = useState(null);
+  const [editBillId, setEditBillId] = useState(null);
 
   return (
     <AdminLayout>
@@ -89,9 +95,15 @@ export default function AmbulanceCallList() {
             </thead>
 
             <tbody>
-              {data.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan="16" className="text-center py-6 text-gray-500">
+                  <td colSpan="17" className="text-center py-6 text-gray-500">
+                    Loading...
+                  </td>
+                </tr>
+              ) : data.length === 0 ? (
+                <tr>
+                  <td colSpan="17" className="text-center py-6 text-gray-500">
                     No Records Found
                   </td>
                 </tr>
@@ -162,6 +174,7 @@ export default function AmbulanceCallList() {
       <GenerateAmbulanceBill
         open={open}
         onClose={() => setOpen(false)}
+        onSuccess={refresh}
       />
     </AdminLayout>
   );

@@ -10,4 +10,7 @@ export const getSymptoms = () => {
 
 export const getBeds = () => {
   return api.get("setup/beds/");
+  
+export const getChargeCategories = () => {
+  return api.get("setup/charge-categories/");
 };
