@@ -1,71 +1,71 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { useNavigate } from "react-router-dom";
-import AddAmbulanceModel from "../../components/Ambulance/AddAmbulanceModal";
+import AddAmbulance from "../../components/Ambulance/AddAmbulance";
+import { getAmbulances, deleteAmbulance } from "../../api/ambulanceApi";
+import { useNotify } from "../../context/NotificationContext";
 import {
   Plus,
   Search,
   FileText,
   FileSpreadsheet,
   Printer,
-  Copy
+  Copy,
+  Edit,
+  Trash2
 } from "lucide-react";
 
 export default function AmbulanceList() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
-    const navigate = useNavigate();
-  const data = [
-    {
-      number: "MP20DDHK2562",
-      model: "BS4FGD",
-      year: 2019,
-      driver: "David Wood",
-      license: "MLKK0099820",
-      contact: "9806545404",
-      note: "",
-      type: "Owned",
-    },
-    {
-      number: "MP20DFG56",
-      model: "BS440",
-      year: 2018,
-      driver: "David Wood",
-      license: "MKLKL-569079",
-      contact: "7446165065",
-      note: "",
-      type: "Contractual",
-    },
-    {
-      number: "MP20PL3265",
-      model: "MKL265",
-      year: 2018,
-      driver: "Ankit",
-      license: "LPK2205465",
-      contact: "968854556",
-      note: "",
-      type: "Owned",
-    },
-    {
-      number: "MP20QW2343",
-      model: "HJG1650",
-      year: 2016,
-      driver: "Oliver",
-      license: "MLK-98JGH2013",
-      contact: "984865101",
-      note: "",
-      type: "Owned",
-    },
-  ];
+  const [ambulances, setAmbulances] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const notify = useNotify();
+  const hasFetchedRef = useRef(false);
+
+  // Load ambulances
+  useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+    loadAmbulances();
+  }, []);
+
+  const loadAmbulances = async () => {
+    try {
+      setLoading(true);
+      const res = await getAmbulances();
+      setAmbulances(res.data || []);
+    } catch (err) {
+      console.error("Failed to load ambulances:", err);
+      notify("error", "Failed to load ambulances");
+      setAmbulances([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this ambulance?");
+    if (!confirmDelete) return;
+
+    try {
+      await deleteAmbulance(id);
+      notify("success", "Ambulance deleted successfully");
+      loadAmbulances(); // Refresh list
+    } catch (error) {
+      notify("error", error?.response?.data?.message || "Failed to delete ambulance");
+    }
+  };
 
   const filteredData = useMemo(() => {
-    return data.filter((row) =>
-      Object.values(row)
+    return ambulances.filter((ambulance) =>
+      Object.values(ambulance)
         .join(" ")
         .toLowerCase()
         .includes(search.toLowerCase())
     );
-  }, [search]);
+  }, [search, ambulances]);
 
   return (
     <AdminLayout>
@@ -76,8 +76,8 @@ export default function AmbulanceList() {
         <div className="bg-white rounded  shadow-sm">
 
           {/* HEADER */}
-          <div className="flex items-center justify-between px-4 py-3 border-b">
-            <h2 className="font-semibold text-gray-800">Ambulance List</h2>
+          <div className="flex items-center justify-between px-4 py-3">
+            <h2 className="font-semibold text-xl md:text-2xl text-gray-800">Ambulance List</h2>
 
             <button onClick={() => setOpen(true)} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded text-sm flex items-center gap-1">
               <Plus size={14} /> Add Ambulance
@@ -116,27 +116,60 @@ export default function AmbulanceList() {
                   <th className="px-3 py-2">Driver Contact</th>
                   <th className="px-3 py-2">Note</th>
                   <th className="px-3 py-2">Vehicle Type</th>
+                  <th className="px-3 py-2">Actions</th>
                 </tr>
               </thead>
 
               <tbody>
-                {filteredData.map((row, index) => (
-                  <tr
-                    key={index}
-                    className="border-b hover:bg-gray-50"
-                  >
-                    <td className="px-3 py-2 text-blue-600 cursor-pointer">
-                      {row.number}
+                {loading ? (
+                  <tr>
+                    <td colSpan="9" className="px-3 py-8 text-center">
+                      Loading ambulances...
                     </td>
-                    <td className="px-3 py-2">{row.model}</td>
-                    <td className="px-3 py-2">{row.year}</td>
-                    <td className="px-3 py-2">{row.driver}</td>
-                    <td className="px-3 py-2">{row.license}</td>
-                    <td className="px-3 py-2">{row.contact}</td>
-                    <td className="px-3 py-2">{row.note}</td>
-                    <td className="px-3 py-2">{row.type}</td>
                   </tr>
-                ))}
+                ) : filteredData.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="px-3 py-8 text-center text-gray-500">
+                      No ambulances found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredData.map((ambulance) => (
+                    <tr
+                      key={ambulance.id}
+                      className="border-b hover:bg-gray-50"
+                    >
+                      <td className="px-3 py-2 text-blue-600 cursor-pointer">
+                        {ambulance.vehicle_number}
+                      </td>
+                      <td className="px-3 py-2">{ambulance.vehicle_model}</td>
+                      <td className="px-3 py-2">{ambulance.year_made}</td>
+                      <td className="px-3 py-2">{ambulance.driver_name || "-"}</td>
+                      <td className="px-3 py-2">{ambulance.driver_license || "-"}</td>
+                      <td className="px-3 py-2">{ambulance.driver_contact || "-"}</td>
+                      <td className="px-3 py-2">{ambulance.note || "-"}</td>
+                      <td className="px-3 py-2">{ambulance.vehicle_type}</td>
+                      <td className="px-3 py-2">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {/* TODO: Implement edit */}}
+                            className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                            title="Edit"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(ambulance.id)}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded"
+                            title="Delete"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -144,7 +177,7 @@ export default function AmbulanceList() {
           {/* FOOTER */}
           <div className="flex items-center justify-between px-4 py-3 text-sm text-gray-600">
             <span>
-              Records: 1 to {filteredData.length} of {data.length}
+              Records: 1 to {filteredData.length} of {ambulances.length}
             </span>
 
             <div className="flex items-center gap-2">
@@ -155,10 +188,10 @@ export default function AmbulanceList() {
           </div>
         </div>
       </div>
-      <AddAmbulanceModel
+      <AddAmbulance
         open={open}
         onClose={() => setOpen(false)}
-        onSubmit={(data) => console.log(data)}
+        onSuccess={loadAmbulances}
       />
     </AdminLayout> 
   );

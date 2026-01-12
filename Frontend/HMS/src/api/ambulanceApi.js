@@ -1,0 +1,40 @@
+import api from "./axiosInstance";
+
+// Ambulance CRUD
+export const createAmbulance = (data) => {
+  return api.post("/ambulance/create/", data);
+};
+
+export const getAmbulances = () => {
+  return api.get("/ambulance/");
+};
+
+export const updateAmbulance = (id, payload) => {
+  return api.put(`/ambulance/${id}/update/`, payload);
+};
+
+export const deleteAmbulance = (id) => {
+  return api.delete(`/ambulance/${id}/delete/`);
+};
+
+// Ambulance Bills
+export const createAmbulanceBill = async (payload) => {
+  return api.post("/ambulance-bill/create/", payload);
+};
+
+export const getAmbulanceBills = async (search = "") => {
+  const params = search ? { search } : {};
+  return api.get("/ambulance-bill/", { params });
+};
+
+export const getAmbulanceBillDetail = async (id) => {
+  return api.get(`/ambulance-bill/${id}/`);
+};
+
+export const updateAmbulanceBill = (id, payload) => {
+  return api.put(`/ambulance-bill/${id}/update/`, payload);
+};
+
+export const deleteAmbulanceBill = (id) => {
+  return api.delete(`/ambulance-bill/${id}/delete/`);
+};

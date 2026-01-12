@@ -25,9 +25,8 @@ import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
 import PathologyBill from "./pages/pathology/PathologyBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
 import PharmacyBill from "./pages/Pharmacy/PharmacyBill";
-import PharmacyGenerateBill from "./pages/Pharmacy/PharmacyGenerateBill";
-import MedicineStock from "./pages/Pharmacy/Medicine/MedicineStock";
-import MedicinePurchaseList from "./pages/Pharmacy/Purchase/MedicinePurchaseList";
+import MedicineStock from "./pages/Pharmacy/MedicineStock";
+import MedicinePurchaseList from "./pages/Pharmacy/MedicinePurchaseList";
 import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
 import AmbulanceList from "./pages/Ambulance/AmbulanceList";
 import BirthRecord  from "./pages/Birthrecord/BirthRecord";
@@ -48,6 +47,8 @@ import BedStatus from "./pages/Setup/Bed/BedStatus";
 import BedList from "./pages/Setup/Bed/BedList";
 import BedTypeList from "./pages/Setup/Bed/BedTypeList";
 
+import RadiologyBill from "./pages/radiology/RadiologyBill";
+import RadiologyTest from "./pages/radiology/RadiologyTest";
 function App() {
   return (
     <AuthProvider>
@@ -94,26 +95,29 @@ function App() {
           <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
 
 
-          {/* Pathoogy Routes */}
+          {/* Pathology Routes */}
           <Route path="/admin/pathology-bills" element={<PathologyBill />} />
           <Route path="/admin/pathology-tests" element={<PathologyTest />} />
 
 
-          {/* Pathoogy Routes */}
-          <Route path="/admin/radiology-bills" element={<PathologyBill />} />
-          <Route path="/admin/raiology-tests" element={<PathologyTest />} />
+          {/* Radiology Routes */}
+          <Route path="/admin/radiology-bills" element={<RadiologyBill />} />
+          <Route path="/admin/radiology-tests" element={<RadiologyTest />} />
 
 
-
-
+          {/* Pharmacy Routes */}
           <Route path="/admin/pharmacy-bills" element={<PharmacyBill />} />
-          <Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
           <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
           <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
+
+
+          {/* Ambulance Routes */}
           <Route path="/admin/Ambulance" element={<AmbulanceCallList />} />
           <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
-            <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
-            <Route path="/admin/Death-Record"   element={<DeathRecordPage/>} />
+            
+            
+          <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
+          <Route path="/admin/Death-Record"   element={<DeathRecordPage/>} />
           <Route path="/admin/Inventory/Item-Stock"   element={<ItemStockPage/>} />   
           <Route path="/admin/Inventory/Issue-Item"   element={<IssueItemPage/>} />
           <Route path="/admin/Inventory/Item-List"   element={<ItemListPage/>} />

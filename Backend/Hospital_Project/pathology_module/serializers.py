@@ -202,11 +202,6 @@ class PathologyBillCreateSerializer(serializers.Serializer):
 
 
 
-
-
-
-
-
 class PathologyBillListSerializer(serializers.ModelSerializer):
     patient_name = serializers.SerializerMethodField()
     doctor_name = serializers.SerializerMethodField()
