@@ -27,13 +27,13 @@ import {
   Menu,
   ChevronDown,
   ChevronUp,
+  ChevronRight ,
 } from "lucide-react";
 
 const navItems = [
   { to: "/admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { to: "/admin/patients", label: "Patient", Icon: UserRound },
   { to: "/admin/appointments", label: "Appointment", Icon: Calendar },
-
   { to: "/admin/opd-patients", label: "OPD-Out patient", Icon: Hospital },
   { to: "/admin/ipd-patients", label: "IPD-In Patient", Icon: Bed },
   { to: "/admin/pharmacy-bills", label: "Pharmacy", Icon: Pill },
@@ -51,20 +51,21 @@ const navItems = [
   // { to: "/treatment", label: "Treatment", Icon: Stethoscope },
   
    
-  { to: "/front-office", label: "Front Office", Icon: ClipboardList },
+  { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
    { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },   
-  { to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
-  { to: "/Duty-Roster", label: "Duty Roster", Icon: ClipboardList },
-  { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
-  { to: "/Referral", label: "Referral", Icon: UserCheck },
-  { to: "/TPA-Management", label: "TPA Management", Icon: Building2 },
+  //{ to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
+  //{ to: "/Duty-Roster", label: "Duty Roster", Icon: ClipboardList },
+ // { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
+  //{ to: "/Referral", label: "Referral", Icon: UserCheck },
+  //{ to: "/TPA-Management", label: "TPA Management", Icon: Building2 },
   { to: "/Finance", label: "Finance", Icon: BarChart3 },
-  { to: "/Messaging", label: "Messaging", Icon: MessageCircle },
-  { to: "/Download-Calendar", label: "Download Calendar", Icon: FileDown },
-  { to: "/Certificate", label: "Certificate", Icon: FileBadge },
-  { to: "/Front-CMS", label: "Front CMS", Icon: Monitor },
-  { to: "/Live-Consultation", label: "Live Consultation", Icon: Stethoscope },
-  { to: "/Reports", label: "Reports", Icon: BarChart3 },
+ 
+  //{ to: "/Messaging", label: "Messaging", Icon: MessageCircle },
+  //{ to: "/Download-Calendar", label: "Download Calendar", Icon: FileDown },
+ 
+  //{ to: "/Front-CMS", label: "Front CMS", Icon: Monitor },
+  //{ to: "/Live-Consultation", label: "Live Consultation", Icon: Stethoscope },
+  //{ to: "/Reports", label: "Reports", Icon: BarChart3 },
   { to: "/Setup", label: "Setup", Icon: Settings },
 ];
 
@@ -72,7 +73,9 @@ function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [birthDeathRecordOpen, setBirthDeathRecordOpen] = useState(false);
-
+ 
+  const [financeOpen, setFinanceOpen] = useState(false);
+  const [setupOpen, setSetupOpen] = useState(false);
   const handleToggle = () => {
     if (window.innerWidth < 700) {
       setMobileOpen(!mobileOpen);
@@ -85,19 +88,33 @@ function Sidebar() {
     setBirthDeathRecordOpen(!birthDeathRecordOpen);
   };
 
+  
+
+  const toggleFinance = () => {
+    setFinanceOpen(!financeOpen);
+  };
+  const toggleSetup = () => {
+  setSetupOpen(!setupOpen);
+};
+
+  
   // Close submenu when sidebar collapses
   useEffect(() => {
     if (collapsed) {
       setBirthDeathRecordOpen(false);
+     
+      setFinanceOpen(false);
+      setSetupOpen(false);
     }
   }, [collapsed]);
+  
 
   return (
     <div className="relative">
       {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
       <button
         onClick={handleToggle}
-        className="absolute top-4 -right-10 z-50 p-1  cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
+        className="absolute  top-4 -right-10 z-50 p-1  cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
       <Menu />
       </button>
@@ -122,113 +139,218 @@ function Sidebar() {
 
           {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-bold pb-10">
-            {navItems.map(({ to, label, Icon }) => {
-              // Handle Birth & Death Record separately
-              if (to === "/front-office") {
-                return (
-                  <React.Fragment key={to}>
-                    <NavLink
-                      to={to}
-                      end
-                      className={({ isActive }) =>
-                        `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
-                        ${
-                          isActive
-                            ? "!text-white bg-white/10 rounded-md"
-                            : "!text-white hover:!text-gray-200"
-                        }`
-                      }
-                    >
-                      <Icon size={20} className="flex-shrink-0" />
-                      <span className={`${collapsed ? "hidden" : "block"}`}>
-                        {label}
-                      </span>
-                    </NavLink>
-                    
-                    {/* Birth & Death Record with submenu */}
-                    <div>
-                      <button
-                        onClick={toggleBirthDeathRecord}
-                        className={`w-full flex items-center justify-between gap-2 py-2 px-2 transition-all duration-700 no-underline
-                        ${
-                          birthDeathRecordOpen
-                            ? "!text-white bg-white/10 rounded-md"
-                            : "!text-white hover:!text-gray-200"
-                        }`}
-                      >
-                        <div className="flex items-center gap-4 min-w-0 flex-1">
-                          <FileBadge size={20} className="flex-shrink-0 transition-transform duration-1000" />
-                          <span className={`${collapsed ? "hidden" : "block whitespace-nowrap truncate"}`}>
-                            Birth & Death Record
-                          </span>
-                        </div>
-                        {!collapsed && (
-                          birthDeathRecordOpen ? (
-                            <ChevronUp size={16} className="flex-shrink-0 transition-transform duration-1000" />
-                          ) : (
-                            <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-1000" />
-                          )
-                        )}
-                      </button>
-                      
-                      {/* Submenu items */}
-                      {birthDeathRecordOpen && !collapsed && (
-                        <div className="ml-8 mt-2 space-y-2 transition-all duration-1000 ease-in-out">
-                          <NavLink
-                            to="/admin/Birth-Record"
-                            className={({ isActive }) =>
-                              `w-full flex items-center gap-4 py-2 px-2 transition-all duration-700 no-underline text-sm
-                              ${
-                                isActive
-                                  ? "!text-white bg-white/10 rounded-md"
-                                  : "!text-white/80 hover:!text-white"
-                              }`
-                            }
-                          >
-                            <span className="whitespace-nowrap">Birth Record</span>
-                          </NavLink>
-                          <NavLink
-                            to="/admin/Death-Record"
-                            className={({ isActive }) =>
-                              `w-full flex items-center gap-4 py-2 px-2 transition-all duration-700 no-underline text-sm
-                              ${
-                                isActive
-                                  ? "!text-white bg-white/10 rounded-md"
-                                  : "!text-white/80 hover:!text-white"
-                              }`
-                            }
-                          >
-                            <span className="whitespace-nowrap">Death Record</span>
-                          </NavLink>
-                        </div>
-                      )}
-                    </div>
-                  </React.Fragment>
-                );
-              }
+          {navItems.map(({ to, label, Icon }) => {
+
+/* FRONT OFFICE + BIRTH & DEATH */
+if (to === "/admin/front-office/visitor-list") {
+  return (
+    <React.Fragment key={to}>
+      <NavLink
+        to={to}
+        end
+        className={({ isActive }) =>
+          `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
+          ${
+            isActive
+              ? "!text-white bg-white/10 rounded-md"
+              : "!text-white hover:!text-gray-200"
+          }`
+        }
+      >
+        <Icon size={20} className="flex-shrink-0" />
+        <span className={`${collapsed ? "hidden" : "block"}`}>{label}</span>
+      </NavLink>
+
+      {/* Birth & Death */}
+      <div>
+        <button
+          onClick={toggleBirthDeathRecord}
+          className={`w-full flex items-center justify-between py-2 px-2 transition-all duration-700
+          ${
+            birthDeathRecordOpen
+              ? "bg-white/10 rounded-md"
+              : "hover:text-gray-200"
+          }`}
+        >
+          <div className="flex items-center gap-4">
+            <FileBadge size={20} />
+            <span
+                 className={`${collapsed ? "hidden" : "block"} whitespace-nowrap truncate`}
+             >
               
-              // Regular nav items
-              return (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end
-                  className={({ isActive }) =>
-                    `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
-                    ${
-                      isActive
-                        ? "!text-white bg-white/10 rounded-md"
-                        : "!text-white hover:!text-gray-200"
-                    }`
-                  }
-                >
-                  <Icon size={20} className="flex-shrink-0" />
-                  <span className={`${collapsed ? "hidden" : "block"}`}>
-                    {label}
-                  </span>
-                </NavLink>
-              );
-            })}
+       Birth & Death..
+
+          
+     </span>
+
+          </div>
+          {!collapsed &&
+            (birthDeathRecordOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+        </button>
+
+        {birthDeathRecordOpen && !collapsed && (
+          <div className="ml-8 mt-2 space-y-2">
+            <NavLink to="/admin/Birth-Record" className={({ isActive }) =>
+    `w-full flex items-center gap-4 py-2 px-2 no-underline
+     ${isActive ? "bg-white/10 rounded-md" : ""}
+     !text-white hover:!text-white`
+  }>    <ChevronRight size={20} className="flex-shrink-0 opacity-80" />
+           
+              Birth Record
+            </NavLink>
+            <NavLink to="/admin/Death-Record" className={({ isActive }) =>
+    `w-full flex items-center gap-4 py-2 px-2 no-underline
+     ${isActive ? "bg-white/10 rounded-md" : ""}
+     !text-white hover:!text-white`
+  }>     <ChevronRight size={20} className="flex-shrink-0 opacity-80" />
+              Death Record
+            </NavLink>
+          </div>
+        )}
+      </div>
+    </React.Fragment>
+  );
+}
+
+/* CERTIFICATE MENU WITH SUBMENU */
+
+/* FINANCE MENU WITH SUBMENU */
+if (to === "/Finance") {
+  return (
+    <React.Fragment key={to}>
+      <button
+        onClick={toggleFinance}
+        className={`w-full flex items-center justify-between py-2 px-2 transition-all duration-700
+        ${
+          financeOpen
+            ? "bg-white/10 rounded-md"
+            : "hover:text-gray-200"
+        }`}
+      >
+        <div className="flex items-center gap-4">
+          <BarChart3 size={20} />
+          <span
+               className={`${collapsed ? "hidden" : "block"} whitespace-nowrap truncate`}
+           >
+            
+     Finance
+
+        
+   </span>
+
+        </div>
+        {!collapsed &&
+          (financeOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+      </button>
+
+      {financeOpen && !collapsed && (
+        <div className="ml-8 mt-2 space-y-2">
+          <NavLink to="/admin/finance/income-list" className={({ isActive }) =>
+  `w-full flex items-center gap-4 py-2 px-2 no-underline
+   ${isActive ? "bg-white/10 rounded-md" : ""}
+   !text-white hover:!text-white`
+}>    <ChevronRight size={20} className="flex-shrink-0 opacity-80" />
+         
+            Income
+          </NavLink>
+          <NavLink to="/admin/finance/expense-list" className={({ isActive }) =>
+  `w-full flex items-center gap-4 py-2 px-2 no-underline
+   ${isActive ? "bg-white/10 rounded-md" : ""}
+   !text-white hover:!text-white`
+}>     <ChevronRight size={14} className="flex-shrink-0 opacity-80" />
+            Expenditure
+          </NavLink>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+/* SETUP MENU WITH SUBMENU */
+if (to === "/Setup") {
+  return (
+    <React.Fragment key={to}>
+      <button
+        onClick={toggleSetup}
+        className={`w-full flex items-center justify-between py-2 px-2 transition-all duration-700
+        ${setupOpen ? "bg-white/10 rounded-md" : "hover:text-gray-200"}`}
+      >
+        <div className="flex items-center gap-4">
+          <Settings size={20} />
+          <span className={`${collapsed ? "hidden" : "block"} whitespace-nowrap truncate`}>
+            Setup
+          </span>
+        </div>
+
+        {!collapsed &&
+          (setupOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+      </button>
+
+      {setupOpen && !collapsed && (
+        <div className="ml-8 mt-2 space-y-2">
+
+          {[
+            { label: "Settings", path: "/admin/setup/settings" },
+            { label: "Hospital Charges", path: "/admin/setup/hospital-charges" },
+            { label: "Bed", path: "/admin/setup/bed-status" },
+            { label: "Print Head. Foot.", path: "/admin/setup/print-header-footer" },
+            { label: "Front Office", path: "/admin/setup/front-office" },
+            { label: "Operations", path: "/admin/setup/operations" },
+            { label: "Pharmacy", path: "/admin/setup/pharmacy" },
+            { label: "Pathology", path: "/admin/setup/pathology" },
+            { label: "Radiology", path: "/admin/setup/radiology" },
+            { label: "Blood Bank", path: "/admin/setup/blood-bank" },
+            { label: "Symptoms", path: "/admin/setup/symptoms" },
+            { label: "Findings", path: "/admin/setup/findings" },
+            { label: "Vitals", path: "/admin/setup/vitals" },
+            { label: "Zoom Setting", path: "/admin/setup/zoom-setting" },
+            { label: "Finance", path: "/admin/setup/finance" },
+            { label: "Human Resource", path: "/admin/setup/human-resource" },
+          ].map(({ label, path }) => (
+            <NavLink
+              key={path}
+              to={path}
+              className={({ isActive }) =>
+                `w-full flex items-center gap-3 py-2 px-2 no-underline
+                ${isActive ? "bg-white/10 rounded-md" : ""}
+                !text-white hover:!text-white`
+              }
+            >
+              <ChevronRight size={14} className="opacity-80" />
+              <span className="whitespace-nowrap">{label}</span>
+            </NavLink>
+          ))}
+
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+
+/* NORMAL MENU */
+return (
+  <NavLink
+    key={to}
+    to={to}
+    end
+    className={({ isActive }) =>
+      `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
+      ${
+        isActive
+          ? "!text-white bg-white/10 rounded-md"
+          : "!text-white hover:!text-gray-200"
+      }`
+    }
+  >
+    <Icon size={20} className="flex-shrink-0" />
+    <span className={`${collapsed ? "hidden" : "block"}`}>
+      {label}
+    </span>
+  </NavLink>
+);
+})}
+
           </nav>
         </div>
       </aside>
