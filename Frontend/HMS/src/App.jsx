@@ -36,6 +36,18 @@ import ItemStockPage from "./pages/Inventory/ItemStockPage";
 import IssueItemPage from "./pages/Inventory/IssueItemPage";
 import ItemListPage from "./pages/Inventory/ItemListPage";
 import CelenderPage from "./pages/Celender/CalendarPage";
+import VisitorList from "./pages/Front_office/VisitorList";
+import PostalReceive from "./pages/Front_office/PostalReceive";
+import PostalDispatch from "./pages/Front_office/PostalDispatch";
+import ComplainList from "./pages/Front_office/ComplainList";
+import IncomeList from "./pages/Finance/IncomeList";
+import ExpenseList from "./pages/Finance/ExpenseList";
+
+//sertup route paths and components
+import BedStatus from "./pages/Setup/Bed/BedStatus";
+import BedList from "./pages/Setup/Bed/BedList";
+import BedTypeList from "./pages/Setup/Bed/BedTypeList";
+
 function App() {
   return (
     <AuthProvider>
@@ -106,6 +118,18 @@ function App() {
           <Route path="/admin/Inventory/Issue-Item"   element={<IssueItemPage/>} />
           <Route path="/admin/Inventory/Item-List"   element={<ItemListPage/>} />
           <Route path="/admin/Calendar"   element={<CelenderPage/>} />
+          <Route path="/admin/front-office/visitor-list"   element={<VisitorList/>} />
+          <Route path="/admin/front-office/postal-receive"   element={<PostalReceive/>} />
+          <Route path="/admin/front-office/postal-dispatch"   element={<PostalDispatch/>} />
+          <Route path="/admin/front-office/complain-list"   element={<ComplainList/>} />
+          <Route path="/admin/finance/income-list"   element={<IncomeList/>} />
+          <Route path="/admin/finance/expense-list"   element={<ExpenseList/>} />
+
+          // Setup Routes
+          <Route path="/admin/setup/bed-status" element={<BedStatus />}
+           />
+          <Route path="/admin/setup/bed" element={<BedList />} />
+          <Route path="/admin/setup/bed-type" element={<BedTypeList />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
