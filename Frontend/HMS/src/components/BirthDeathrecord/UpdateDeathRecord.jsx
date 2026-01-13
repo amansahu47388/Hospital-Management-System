@@ -1,7 +1,7 @@
 import { X, UploadCloud } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function EditDeathRecordModal({
+export default function UpdateDeathRecord({
   open,
   onClose,
   record,

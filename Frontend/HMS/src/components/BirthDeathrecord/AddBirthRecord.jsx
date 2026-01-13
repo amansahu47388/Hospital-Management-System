@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X, UploadCloud } from "lucide-react";
 
-export default function AddBirthRecordModal({ open, onClose }) {
+export default function AddBirthRecord({ open, onClose }) {
   if (!open) return null;
 
   const [form, setForm] = useState({

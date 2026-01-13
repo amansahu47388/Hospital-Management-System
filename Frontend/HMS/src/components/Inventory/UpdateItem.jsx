@@ -1,22 +1,35 @@
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getCategories, updateItem } from "../../api/inventoryApi";
+import { useNotify } from "../../context/NotificationContext";
 
-export default function EditItemModal({ open, item, onClose, onSave }) {
+export default function UpdateItem({ open, item, onClose, refresh }) {
+  const notify = useNotify();
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
-    name: "",
+    item_name: "",
     category: "",
     unit: "",
     description: "",
   });
 
-  /* Prefill data when modal opens */
+  /* Load categories */
+  useEffect(() => {
+    if (open) {
+      getCategories().then(res => setCategories(res.data));
+    }
+  }, [open]);
+
+  /* Prefill */
   useEffect(() => {
     if (item) {
       setForm({
-        name: item.name,
+        item_name: item.item_name,
         category: item.category,
         unit: item.unit,
-        description: item.description,
+        description: item.description || "",
       });
     }
   }, [item]);
@@ -25,13 +38,38 @@ export default function EditItemModal({ open, item, onClose, onSave }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave({ ...item, ...form });
-    onClose();
+
+    if (!form.item_name || !form.category || !form.unit) {
+      notify("warning", "All required fields must be filled");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await updateItem(item.id, {
+        item_name: form.item_name,
+        category: Number(form.category),
+        unit: Number(form.unit),
+        description: form.description,
+      });
+
+      notify("success", "Item updated successfully");
+      refresh();
+      onClose();
+    } catch (err) {
+      const msg = err.response?.data
+        ? Object.values(err.response.data)[0]
+        : "Update failed";
+      notify("error", msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,10 +77,7 @@ export default function EditItemModal({ open, item, onClose, onSave }) {
       <div className="w-full max-w-xl bg-white rounded-lg shadow-lg overflow-hidden">
 
         {/* HEADER */}
-        <div
-          className="flex justify-between items-center px-6 py-4
-          bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white"
-        >
+        <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
           <h2 className="text-lg font-semibold">Edit Item</h2>
           <X className="cursor-pointer" onClick={onClose} />
         </div>
@@ -51,10 +86,10 @@ export default function EditItemModal({ open, item, onClose, onSave }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
           <div>
-            <label className="text-sm font-medium">Item *</label>
+            <label className="text-sm font-medium">Item Name *</label>
             <input
-              name="name"
-              value={form.name}
+              name="item_name"
+              value={form.item_name}
               onChange={handleChange}
               className="w-full border rounded px-3 py-2 mt-1"
               required
@@ -62,7 +97,7 @@ export default function EditItemModal({ open, item, onClose, onSave }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Item Category *</label>
+            <label className="text-sm font-medium">Category *</label>
             <select
               name="category"
               value={form.category}
@@ -71,11 +106,9 @@ export default function EditItemModal({ open, item, onClose, onSave }) {
               required
             >
               <option value="">Select</option>
-              <option>Medical scissors</option>
-              <option>Medical Equipment</option>
-              <option>Apparel</option>
-              <option>Surgical blades</option>
-              <option>Cardiology</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
             </select>
           </div>
 
@@ -84,6 +117,7 @@ export default function EditItemModal({ open, item, onClose, onSave }) {
             <input
               type="number"
               name="unit"
+              min="1"
               value={form.unit}
               onChange={handleChange}
               className="w-full border rounded px-3 py-2 mt-1"
@@ -97,20 +131,20 @@ export default function EditItemModal({ open, item, onClose, onSave }) {
               name="description"
               value={form.description}
               onChange={handleChange}
-              rows={4}
+              rows={3}
               className="w-full border rounded px-3 py-2 mt-1"
             />
           </div>
 
-          {/* ACTION */}
           <div className="flex justify-end pt-3">
             <button
-              type="submit"
-              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded hover:bg-blue-700"
+              disabled={loading}
+              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded"
             >
-              Save
+              {loading ? "Updating..." : "Update"}
             </button>
           </div>
+
         </form>
       </div>
     </div>

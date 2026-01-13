@@ -39,7 +39,7 @@ const navItems = [
   { to: "/admin/pharmacy-bills", label: "Pharmacy", Icon: Pill },
   { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
   { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
-  { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
+  { to: "/admin/ambulance", label: "Ambulance", Icon: Ambulance },
  
  
  
@@ -175,7 +175,7 @@ function Sidebar() {
                       {birthDeathRecordOpen && !collapsed && (
                         <div className="ml-8 mt-2 space-y-2 transition-all duration-1000 ease-in-out">
                           <NavLink
-                            to="/admin/Birth-Record"
+                            to="/admin/birth-death-record/birth-record"
                             className={({ isActive }) =>
                               `w-full flex items-center gap-4 py-2 px-2 transition-all duration-700 no-underline text-sm
                               ${
@@ -188,7 +188,7 @@ function Sidebar() {
                             <span className="whitespace-nowrap">Birth Record</span>
                           </NavLink>
                           <NavLink
-                            to="/admin/Death-Record"
+                            to="/admin/birth-death-record/death-record"
                             className={({ isActive }) =>
                               `w-full flex items-center gap-4 py-2 px-2 transition-all duration-700 no-underline text-sm
                               ${
