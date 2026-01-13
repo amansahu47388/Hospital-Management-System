@@ -29,8 +29,8 @@ import MedicineStock from "./pages/Pharmacy/MedicineStock";
 import MedicinePurchaseList from "./pages/Pharmacy/MedicinePurchaseList";
 import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
 import AmbulanceList from "./pages/Ambulance/AmbulanceList";
-import BirthRecord  from "./pages/Birthrecord/BirthRecord";
-import DeathRecordPage from "./pages/Deathrecord/DeathRecordPage";
+import BirthRecord  from "./pages/BirthDeathRecord/BirthRecord";
+import DeathRecord from "./pages/BirthDeathRecord/DeathRecord";
 import ItemStockPage from "./pages/Inventory/ItemStockPage"; 
 import IssueItemPage from "./pages/Inventory/IssueItemPage";
 import ItemListPage from "./pages/Inventory/ItemListPage";
@@ -49,6 +49,10 @@ import BedTypeList from "./pages/Setup/Bed/BedTypeList";
 
 import RadiologyBill from "./pages/radiology/RadiologyBill";
 import RadiologyTest from "./pages/radiology/RadiologyTest";
+
+
+
+
 function App() {
   return (
     <AuthProvider>
@@ -112,12 +116,15 @@ function App() {
 
 
           {/* Ambulance Routes */}
-          <Route path="/admin/Ambulance" element={<AmbulanceCallList />} />
+          <Route path="/admin/ambulance" element={<AmbulanceCallList />} />
           <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
             
-            
-          <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
-          <Route path="/admin/Death-Record"   element={<DeathRecordPage/>} />
+            {/* Birth - Death Routes */}
+          <Route path="/admin/birth-death-record/birth-record" element={<BirthRecord/>} />
+          <Route path="/admin/birth-death-record/death-record" element={<DeathRecord/>} />
+
+
+
           <Route path="/admin/Inventory/Item-Stock"   element={<ItemStockPage/>} />   
           <Route path="/admin/Inventory/Issue-Item"   element={<IssueItemPage/>} />
           <Route path="/admin/Inventory/Item-List"   element={<ItemListPage/>} />

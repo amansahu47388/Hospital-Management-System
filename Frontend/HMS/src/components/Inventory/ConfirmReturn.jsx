@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 
-export default function ConfirmReturnModal({
+export default function ConfirmReturn({
   open,
   onClose,
   item,

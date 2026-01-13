@@ -1,7 +1,7 @@
 import { X, UploadCloud } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function EditBirthRecordModal({ open, onClose, record, onSave }) {
+export default function UpdateBirthRecord({ open, onClose, record, onSave }) {
   const [form, setForm] = useState({});
 
   // preload data (same as Show modal but editable)

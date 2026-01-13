@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X, UploadCloud } from "lucide-react";
 
-export default function AddDeathRecordModal({ open, onClose, onSubmit }) {
+export default function AddDeathRecord({ open, onClose, onSubmit }) {
   const [form, setForm] = useState({
     caseId: "",
     patientName: "",

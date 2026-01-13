@@ -1,6 +1,6 @@
 import { X, Printer, Pencil, Trash2 } from "lucide-react";
 
-export default function BirthRecordDetailsModal({ open, onClose, record }) {
+export default function BirthRecordDetails({ open, onClose, record }) {
   if (!open) return null;
 
   return (
