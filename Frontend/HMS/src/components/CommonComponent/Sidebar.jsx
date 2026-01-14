@@ -28,6 +28,7 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronRight ,
+  CreditCard,
 } from "lucide-react";
 
 const navItems = [
@@ -40,10 +41,10 @@ const navItems = [
   { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
   { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
   { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
+   { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
  
- 
- 
-
+   
+   
   // { to: "/multi-branch", label: "Multi Branch", Icon: Building2 },
   // { to: "/lab", label: "Lab", Icon: FlaskConical },
   // { to: "/ward", label: "Ward", Icon: Bed },
@@ -291,9 +292,9 @@ if (to === "/Setup") {
 
           {[
             { label: "Settings", path: "/admin/setup/settings" },
-            { label: "Hospital Charges", path: "/admin/setup/hospital-charges" },
+            { label: "Hospital Charges", path: "/admin/setup/charges-details" },
             { label: "Bed", path: "/admin/setup/bed-status" },
-            { label: "Print Head. Foot.", path: "/admin/setup/print-header-footer" },
+            { label: "Print Head. Foot.", path: "/admin/setup/appointment-header-footer" },
             { label: "Front Office", path: "/admin/setup/front-office" },
             { label: "Operations", path: "/admin/setup/operations" },
             { label: "Pharmacy", path: "/admin/setup/pharmacy" },

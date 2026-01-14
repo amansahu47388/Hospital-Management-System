@@ -42,13 +42,26 @@ import ComplainList from "./pages/Front_office/ComplainList";
 import IncomeList from "./pages/Finance/IncomeList";
 import ExpenseList from "./pages/Finance/ExpenseList";
 
+
+import RadiologyBill from "./pages/radiology/RadiologyBill";
+import RadiologyTest from "./pages/radiology/RadiologyTest";
+
 //sertup route paths and components
 import BedStatus from "./pages/Setup/Bed/BedStatus";
 import BedList from "./pages/Setup/Bed/BedList";
 import BedTypeList from "./pages/Setup/Bed/BedTypeList";
-
-import RadiologyBill from "./pages/radiology/RadiologyBill";
-import RadiologyTest from "./pages/radiology/RadiologyTest";
+import BedGroupList from "./pages/Setup/Bed/BedGroupList";
+import FloorList from "./pages/Setup/Bed/FloorList";
+import ChargesDetailsList from "./pages/Setup/Charges/ChargesDetailsList";
+import ChargeCategoryList from "./pages/Setup/Charges/ChargeCategoryList";
+import ChargeTypeList from "./pages/Setup/Charges/ChargeTypeList";
+import TaxCategoryList from "./pages/Setup/Charges/TaxCategoryList";
+import UnitTypeList from "./pages/Setup/Charges/UnitTypeList";
+import AppointmentHeaderFooter from "./pages/Setup/Header_Footer/AppointmentHeaderFooter";
+import OpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/OpdPrescriptionHeaderFooter";
+import OpdBillHeaderFooter from "./pages/Setup/Header_Footer/OpdBillHeaderFooter";
+import IpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/IpdPrescriptionHeaderFooter";  
+import IpdBillHeaderFooter from "./pages/Setup/Header_Footer/IpdBillHeaderFooter";
 function App() {
   return (
     <AuthProvider>
@@ -134,6 +147,18 @@ function App() {
            />
           <Route path="/admin/setup/bed" element={<BedList />} />
           <Route path="/admin/setup/bed-type" element={<BedTypeList />} />
+          <Route path="/admin/setup/bed-group" element={<BedGroupList />} />
+          <Route path="/admin/setup/floor" element={<FloorList />} />
+          <Route path="/admin/setup/charges-details" element={<ChargesDetailsList />} />
+          <Route path="/admin/setup/charge-category" element={<ChargeCategoryList />} />
+          <Route path="/admin/setup/charge-type" element={<ChargeTypeList />} />
+          <Route path="/admin/setup/tax-category" element={<TaxCategoryList />} />
+          <Route path="/admin/setup/unit-type" element={<UnitTypeList />} />  
+          <Route path="/admin/setup/appointment-header-footer" element={<AppointmentHeaderFooter />} />
+          <Route path="/admin/setup/opd-prescription-header-footer" element={<OpdPrescriptionHeaderFooter />} />
+          <Route path="/admin/setup/opd-bill-header-footer" element={<OpdBillHeaderFooter />} />
+          <Route path="/admin/setup/ipd-prescription-header-footer" element={<IpdPrescriptionHeaderFooter />} />  
+          <Route path="/admin/setup/ipd-bill-header-footer" element={<IpdBillHeaderFooter />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
