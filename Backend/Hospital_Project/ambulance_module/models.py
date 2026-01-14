@@ -101,3 +101,4 @@ class AmbulanceBill(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
