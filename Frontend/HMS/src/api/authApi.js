@@ -75,3 +75,7 @@ export const refreshToken = () =>
 export const getUsers = () => {
   return API.get("/auth/users/");
 }
+
+export const getStaffList = () => {
+  return API.get("/auth/staff/");
+}

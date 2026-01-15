@@ -7,6 +7,9 @@ from rest_framework_simplejwt.exceptions import TokenError
 from .serializers import UserSerializer, UserRegisterSerializer, AdminRegisterSerializer
 from .models import User
 from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated
+
+
 
 COOKIE_NAME = "refresh_token"
 COOKIE_PATH = "/auth/" 
@@ -152,15 +155,6 @@ class RegisterAdminView(APIView):
             # First admin becomes superuser
             is_super = True
         else:
-            # # For other roles (doctor, pharmacist, etc.), allow multiple registrations
-            # # If superuser exists, require authentication to create other admin roles
-            # if superuser_exists:
-            #     if not (request.user and request.user.is_authenticated and getattr(request.user, "is_superuser", False)):
-            #         return Response(
-            #             {"You do not have permission to create admin users. Please login as superuser."}, 
-            #             status=status.HTTP_403_FORBIDDEN
-            #         )
-            # # Other roles are never superuser
             is_super = False
         
         # Pass is_staff and is_superuser to serializer via context
@@ -202,3 +196,13 @@ class RegisterAdminView(APIView):
                 {"detail": f"User created but token generation failed: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+# users/views.py
+class StaffList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        users = User.objects.filter(is_staff=True)
+        data = [{"id": u.id, "full_name": u.full_name} for u in users]
+        return Response(data)

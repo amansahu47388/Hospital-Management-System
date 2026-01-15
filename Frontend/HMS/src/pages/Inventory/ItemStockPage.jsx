@@ -138,7 +138,7 @@ export default function ItemStockPage() {
                     <td className="p-2 text-left">{item.category_name}</td>
                     <td className="p-2 text-left">{item.supplier_name}</td>
                     <td className="p-2 text-left">{item.store_name}</td>
-                    <td className="p-2 text-left">{item.stock_date}</td>
+                    <td className="p-2 text-left">{new Date(item.stock_date).toLocaleDateString()}</td>
                     <td className="p-2 text-left">{item.description}</td>
                     <td className="p-2 text-left">{item.quantity}</td>
                     <td className="p-2 text-left">{item.created_by_name}</td>
