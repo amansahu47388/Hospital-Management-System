@@ -1,88 +1,144 @@
-import { useState } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { Trash2 } from "lucide-react";
-import ConfirmReturnModal from "../../components/Inventory/ConfirmReturnModal";
-import AddIssueItemModal from "../../components/Inventory/AddIssueItemModal";
+import ConfirmReturnModal from "../../components/Inventory/ConfirmReturn";
+import AddIssueItemModal from "../../components/Inventory/AddIssueItem";
+import { getIssueItems, returnIssueItem,deleteIssueItem } from "../../api/inventoryApi";
+import { useNotify } from "../../context/NotificationContext";
+
 export default function IssueItemPage() {
+  const notify = useNotify();
+
   /* ---------------- STATE ---------------- */
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      item: "Pharmacist Equipment",
-      category: "Medical Equipment",
-      period: "12/12/2025 - 12/16/2025",
-      issueTo: "Pharmacist Harry Grant (9012)",
-      issuedBy: "Super Admin",
-      quantity: 5,
-      status: "Pending",
-    },
-    {
-      id: 2,
-      item: "Medical shoe and boot covers",
-      category: "Apparel",
-      period: "12/01/2025 - 12/03/2025",
-      issueTo: "Doctor Amit Singh (9009)",
-      issuedBy: "Super Admin",
-      quantity: 0,
-      status: "Returned",
-    },
-    {
-      id: 3,
-      item: "Dressing Cotton",
-      category: "Cotton Packs",
-      period: "12/05/2025 - 12/10/2025",
-      issueTo: "Nurse April Clinton (9020)",
-      issuedBy: "Super Admin",
-      quantity: 10,
-      status: "Pending",
-    },
-  ]);
- 
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const searchRef = useRef("");
+  const [, forceRender] = useState(0);
+
+
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [openAdd, setOpenAdd] = useState(false);
 
-  /* ---------------- STATUS HANDLER (UNCHANGED) ---------------- */
-  const handleReturn = (item) => {
-    setItems((prev) =>
-      prev.map((i) =>
-        i.id === item.id
-          ? { ...i, status: "Returned" }
-          : i
-      )
-    );
+  /* ---------------- LOAD ISSUED ITEMS ---------------- */
+  const loadIssueItems = async () => {
+    try {
+      setLoading(true);
+      const res = await getIssueItems();
+      const data = res.data || [];
+
+      const mapped = data.map((issue) => {
+        const firstDetail = (issue.items && issue.items[0]) || {};
+        const period = issue.return_date
+          ? `${issue.issue_date} - ${issue.return_date}`
+          : issue.issue_date;
+
+        return {
+          id: issue.id,
+          item: firstDetail.item_name || "-",
+          category: firstDetail.category_name || "-",
+          period,
+          issueTo: issue.issued_to_name,
+          issuedBy: issue.issued_by_name,
+          quantity: firstDetail.quantity || 0,
+          status: issue.status ? "Returned" : "Pending",
+        };
+      });
+
+      setItems(mapped);
+    } catch (err) {
+      notify("error", "Failed to load issue items");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  /* ---------------- DELETE HANDLERS (SEPARATE) ---------------- */
-  const handleDeleteClick = (item) => {
+  useEffect(() => {
+    loadIssueItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ---------------- RETURN HANDLERS ---------------- */
+  const handleReturnClick = (item) => {
     setSelectedItem(item);
     setOpenConfirm(true);
   };
 
-  const handleConfirmDelete = () => {
-    setItems((prev) =>
-      prev.filter((i) => i.id !== selectedItem.id)
-    );
-    setOpenConfirm(false);
-    setSelectedItem(null);
-  };
-  
+  const handleDelete = async (id) => {
+  if (!window.confirm("Delete this issue record?")) return;
 
-
-  const [openAdd, setOpenAdd] = useState(false);
-
-const handleAddIssueItem = (data) => {
-  console.log("ADD ISSUE ITEM:", data);
+  try {
+    await deleteIssueItem(id);
+    notify("success", "Issue record deleted");
+    loadIssueItems();
+  } catch (err) {
+    notify("error", "Delete failed");
+  }
 };
+
+
+  const handleConfirmReturn = async () => {
+    if (!selectedItem) return;
+    try {
+      await returnIssueItem(selectedItem.id);
+      notify("success", "Items returned successfully");
+      await loadIssueItems();
+    } catch (err) {
+      notify("error", "Failed to return items");
+    } finally {
+      setOpenConfirm(false);
+      setSelectedItem(null);
+    }
+  };
+
+  /* ---------------- ADD ISSUE HANDLER ---------------- */
+  const handleAddIssueItem = () => {
+    setOpenAdd(false);
+    loadIssueItems();
+  };
+
+const filteredItems = useMemo(() => {
+  const term = searchRef.current.toLowerCase();
+
+  if (!term) return items;
+
+  return items.filter((i) =>
+    [
+      i.item,
+      i.category,
+      i.issueTo,
+      i.issuedBy,
+      i.status,
+    ].some((field) =>
+      String(field).toLowerCase().includes(term)
+    )
+  );
+}, [items, forceRender]);
+
 
   /* ---------------- UI ---------------- */
   return (
     <AdminLayout>
       <div className="min-h-full p-1 ">
-
         {/* HEADER */}
         <div className="bg-white rounded-lg shadow p-4 mb-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Issue Item List</h2>
-          <button onClick={() => setOpenAdd(true)} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded">
+          <div>
+            <h2 className="text-2xl font-semibold pb-4">Issue Item List</h2>
+             <input
+              placeholder="Search..."
+              onChange={(e) => {
+                searchRef.current = e.target.value;
+                forceRender(n => n + 1);
+              }}
+              className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+            />
+
+          </div>
+            
+          <button
+            onClick={() => setOpenAdd(true)}
+            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded"
+          >
             + Add Issue Item
           </button>
         </div>
@@ -93,78 +149,90 @@ const handleAddIssueItem = (data) => {
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-3 text-left">Item</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Issue - Return</th>
-                <th className="p-3">Issue To</th>
-                <th className="p-3">Issued By</th>
-                <th className="p-3 text-center">Qty</th>
-                <th className="p-3 text-center">Status</th>
-                <th className="p-3 text-center">Action</th>
+                <th className="p-3 text-left">Category</th>
+                <th className="p-3 text-left">Issue - Return</th>
+                <th className="p-3 text-left">Issue To</th>
+                <th className="p-3 text-left">Issued By</th>
+                <th className="p-3 text-left">Qty</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Action</th>
               </tr>
             </thead>
 
             <tbody>
-              {items.map((row) => (
-                <tr
-                  key={row.id}
-                  className="group border-t hover:bg-gray-50 transition"
-                >
-                  <td className="p-3 text-blue-600 font-medium">
-                    {row.item}
-                  </td>
-                  <td className="p-3">{row.category}</td>
-                  <td className="p-3">{row.period}</td>
-                  <td className="p-3">{row.issueTo}</td>
-                  <td className="p-3">{row.issuedBy}</td>
-                  <td className="p-3 text-center">{row.quantity}</td>
-
-                  {/* ✅ STATUS COLUMN — WORKS AS BEFORE */}
-                  <td className="p-3 text-center">
-                    {row.status === "Returned" ? (
-                      <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs">
-                        Returned
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handleReturn(row)}
-                        className="bg-pink-600 text-white px-3 py-1 rounded-full text-xs"
-                      >
-                        Click To Return
-                      </button>
-                    )}
-                  </td>
-
-                  {/* ✅ ACTION COLUMN — DELETE ONLY, HOVER ONLY */}
-                  <td className="p-3 text-center">
-                    <button
-                      onClick={() => handleDeleteClick(row)}
-                      className="opacity-0 group-hover:opacity-100 transition
-                        p-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
-                      title="Delete"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="p-4 text-center text-gray-500"
+                  >
+                    Loading...
                   </td>
                 </tr>
-              ))}
+              ) : items.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="p-4 text-center text-gray-500"
+                  >
+                    No items issued yet.
+                  </td>
+                </tr>
+              ) : (
+                filteredItems.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="group border-t hover:bg-gray-50 transition"
+                  >
+                    <td className="p-3 text-blue-600 font-medium text-left">
+                      {row.item}
+                    </td>
+                    <td className="p-3 text-left">{row.category}</td>
+                    <td className="p-3 text-left">{row.period}</td>
+                    <td className="p-3 text-left">{row.issueTo}</td>
+                    <td className="p-3 text-left">{row.issuedBy}</td>
+                    <td className="p-3 text-left">{row.quantity}</td>
+
+                    {/* STATUS COLUMN */}
+                    <td className="p-3 text-left">
+                      {row.status === "Returned" ? (
+                        <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs">
+                          Returned
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleReturnClick(row)}
+                          className="bg-pink-600 text-white px-3 py-1 rounded-full text-xs"
+                        >
+                          Click To Return
+                        </button>
+                      )}
+                    </td>
+                    <td className="p-3 text-left">
+                    <button onClick={() => handleDelete(row.id)} className="bg-red-100 p-2 rounded text-red-600">
+                      <Trash2 size={16} />
+                    </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* CONFIRM DELETE POPUP */}
+        {/* CONFIRM RETURN POPUP */}
         <ConfirmReturnModal
           open={openConfirm}
           item={selectedItem}
           onClose={() => setOpenConfirm(false)}
-          onConfirm={handleConfirmDelete}
+          onConfirm={handleConfirmReturn}
         />
 
         <AddIssueItemModal
-        open={openAdd}
-       onClose={() => setOpenAdd(false)}
-       onSave={handleAddIssueItem}
-/>
-
+          open={openAdd}
+          onClose={() => setOpenAdd(false)}
+          onSave={handleAddIssueItem}
+        />
       </div>
     </AdminLayout>
   );

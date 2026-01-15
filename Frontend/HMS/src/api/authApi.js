@@ -1,10 +1,12 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8000";
+const RAW_API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+// Auth endpoints live at /auth/* (no /api prefix). Strip trailing "/api" if present.
+const AUTH_BASE_URL = RAW_API_URL.replace(/\/api\/?$/, "");
 
 const API = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true, // Important for cookies
+  baseURL: `${AUTH_BASE_URL}`,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -34,7 +36,7 @@ API.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refresh_token");
         const response = await axios.post(
-          `${API_BASE_URL}/auth/refresh/`,
+          `${AUTH_BASE_URL}/auth/refresh/`,
           { refresh: refreshToken },
           { withCredentials: true }
         );
@@ -68,3 +70,8 @@ export const userLogout = () =>
 
 export const refreshToken = () =>
   API.post("/auth/refresh/");
+
+
+export const getUsers = () => {
+  return API.get("/auth/users/");
+}

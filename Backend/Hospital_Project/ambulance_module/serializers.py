@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ambulance, AmbulanceChargeCategory, AmbulanceCharge, AmbulanceBill
+from .models import Ambulance, AmbulanceBill
 
 
 class AmbulanceSerializer(serializers.ModelSerializer):
@@ -89,33 +89,6 @@ class AmbulanceUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class AmbulanceChargeCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AmbulanceChargeCategory
-        fields = ['id', 'category_name']
-
-
-class AmbulanceChargeSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source='category.category_name', read_only=True)
-
-    class Meta:
-        model = AmbulanceCharge
-        fields = [
-            'id', 'category', 'category_name', 'charge_name',
-            'standard_charge', 'description', 'created_at'
-        ]
-
-
-class AmbulanceChargeCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AmbulanceCharge
-        fields = ['category', 'charge_name', 'standard_charge', 'description']
-
-    def create(self, validated_data):
-        validated_data['created_by'] = self.context['request'].user
-        return super().create(validated_data)
-
-
 class AmbulanceBillListSerializer(serializers.ModelSerializer):
     patient_name = serializers.CharField(source='patient.first_name', read_only=True)
     patient_id = serializers.IntegerField(source='patient.id', read_only=True)
@@ -124,21 +97,26 @@ class AmbulanceBillListSerializer(serializers.ModelSerializer):
     driver_name = serializers.CharField(source='ambulance.driver_name', read_only=True)
     driver_contact = serializers.CharField(source='ambulance.driver_contact', read_only=True)
     charge_name = serializers.SerializerMethodField()
+    patient_address = serializers.SerializerMethodField()
     created_by_name = serializers.CharField(source='created_by.first_name', read_only=True)
     
     def get_charge_name(self, obj):
         if obj.hospital_charge:
             return obj.hospital_charge.charge_name
-        elif obj.charge:
-            return obj.charge.charge_name
         return None
+    
+    def get_patient_name(self, obj):
+        return f"{obj.patient.first_name} {obj.patient.last_name}".strip()
+
+    def get_patient_address(self, obj):
+        return obj.patient.address if obj.patient else None
 
     class Meta:
         model = AmbulanceBill
         fields = [
             'id', 'bill_no', 'patient_id', 'patient_name', 'ambulance_number', 
             'ambulance_model', 'driver_name', 'driver_contact', 'charge_name',
-            'date', 'total_amount', 'discount', 'tax', 'net_amount',
+            'date', 'total_amount', 'discount', 'tax', 'net_amount', 'patient_address',
             'paid_amount', 'balance', 'payment_mode', 'created_by_name', 'created_at'
         ]
 
@@ -192,7 +170,7 @@ class AmbulanceBillCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = AmbulanceBill
         fields = [
-            'patient', 'ambulance', 'charge', 'hospital_charge', 'date', 'note',
+            'patient', 'ambulance','hospital_charge', 'date', 'note',
             'payment_mode', 'total_amount', 'discount', 'tax', 'paid_amount'
         ]
         extra_kwargs = {
@@ -209,9 +187,7 @@ class AmbulanceBillCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         hospital_charge_id = validated_data.pop('hospital_charge', None)
-        # Remove charge if hospital_charge is provided
         if hospital_charge_id:
-            validated_data.pop('charge', None)  # Remove charge if hospital_charge is provided
             from setup_module.models import HospitalCharges
             try:
                 hospital_charge = HospitalCharges.objects.get(id=hospital_charge_id)
