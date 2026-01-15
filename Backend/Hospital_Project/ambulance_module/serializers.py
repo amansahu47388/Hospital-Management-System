@@ -222,3 +222,9 @@ class AmbulanceBillUpdateSerializer(serializers.ModelSerializer):
                 instance.hospital_charge = None
         
         return super().update(instance, validated_data)
+
+        
+class AmbulanceBillDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AmbulanceBill
+        fields = "__all__"

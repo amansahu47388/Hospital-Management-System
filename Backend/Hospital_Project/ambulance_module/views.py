@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Q
-from .models import Ambulance, AmbulanceBill
+from .models import *
 from .serializers import *
 
 
@@ -125,32 +125,31 @@ class GenerateAmbulanceBillAPIView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AmbulanceBillUpdateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
+class AmbulanceBillUpdateView(APIView):
     def put(self, request, pk):
         bill = get_object_or_404(AmbulanceBill, pk=pk)
-        serializer = AmbulanceBillUpdateSerializer(bill, data=request.data)
+        serializer = AmbulanceBillUpdateSerializer(
+            bill, data=request.data, partial=True
+        )
         if serializer.is_valid():
-            bill = serializer.save()
-            return Response({
-                'success': True,
-                'bill_id': bill.id,
-                'bill_no': bill.bill_no,
-                'total': bill.total_amount,
-                'net_amount': bill.net_amount,
-                'balance': bill.balance,
-            })
-        return Response({
-            'success': False,
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save(updated_by=request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        # PATCH support added ✅
+        bill = get_object_or_404(AmbulanceBill, pk=pk)
+        serializer = AmbulanceBillUpdateSerializer(
+            bill, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save(updated_by=request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AmbulanceBillDeleteAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
+class AmbulanceBillDeleteView(APIView):
     def delete(self, request, pk):
         bill = get_object_or_404(AmbulanceBill, pk=pk)
         bill.delete()
-        return Response({'message': 'Bill deleted successfully'})
+        return Response(status=status.HTTP_204_NO_CONTENT)

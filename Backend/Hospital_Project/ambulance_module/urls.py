@@ -12,6 +12,6 @@ urlpatterns = [
     path('ambulance-bill/', AmbulanceBillListAPIView.as_view()),
     path('ambulance-bill/<int:pk>/', AmbulanceBillDetailAPIView.as_view()),
     path('ambulance-bill/create/', GenerateAmbulanceBillAPIView.as_view()),
-    path('ambulance-bill/<int:pk>/update/', AmbulanceBillUpdateAPIView.as_view()),
-    path('ambulance-bill/<int:pk>/delete/', AmbulanceBillDeleteAPIView.as_view()),
+     path("ambulance-bill/<int:pk>/update/", AmbulanceBillUpdateView.as_view()),
+    
 ]
