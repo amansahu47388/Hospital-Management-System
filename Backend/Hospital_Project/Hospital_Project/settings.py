@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'pharmacy_module',
     'ambulance_module',
     'inventory_module',
+    'front_office_module',
     'setup_module',
 ]
 
