@@ -191,7 +191,7 @@ if (to === "/admin/front-office/visitor-list") {
 
         {birthDeathRecordOpen && !collapsed && (
           <div className="ml-8 mt-2 space-y-2">
-            <NavLink to="/admin/Birth-Record" className={({ isActive }) =>
+            <NavLink to="/admin/birth-death-record/birth-record" className={({ isActive }) =>
     `w-full flex items-center gap-4 py-2 px-2 no-underline
      ${isActive ? "bg-white/10 rounded-md" : ""}
      !text-white hover:!text-white`
@@ -199,7 +199,7 @@ if (to === "/admin/front-office/visitor-list") {
            
               Birth Record
             </NavLink>
-            <NavLink to="/admin/Death-Record" className={({ isActive }) =>
+            <NavLink to="/admin/birth-death-record/death-record" className={({ isActive }) =>
     `w-full flex items-center gap-4 py-2 px-2 no-underline
      ${isActive ? "bg-white/10 rounded-md" : ""}
      !text-white hover:!text-white`

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { Plus } from "lucide-react";
-import AddExpenseModal from "../../components/Finance/AddExpenseModal";
+import AddExpense from "../../components/Finance/AddExpense";
 
 export default function ExpenseList() {
   const [openModal, setOpenModal] = useState(false);
@@ -68,7 +68,7 @@ export default function ExpenseList() {
         </div>
 
         {/* MODAL */}
-        <AddExpenseModal
+        <AddExpense
           open={openModal}
           onClose={() => setOpenModal(false)}
         />

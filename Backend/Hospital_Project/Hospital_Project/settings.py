@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'ambulance_module',
     'inventory_module',
     'front_office_module',
+    'finance_module',
     'setup_module',
 ]
 

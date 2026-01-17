@@ -87,7 +87,7 @@ class AmbulanceBillDetailAPIView(APIView):
 
     def get(self, request, pk):
         bill = get_object_or_404(
-            AmbulanceBill.objects.select_related('patient', 'ambulance', 'charge', 'created_by'),
+            AmbulanceBill.objects.select_related('patient', 'ambulance', 'hospital_charge', 'created_by'),
             pk=pk
         )
         serializer = AmbulanceBillDetailSerializer(bill)
