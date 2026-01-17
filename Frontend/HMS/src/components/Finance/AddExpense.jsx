@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 
-export default function AddExpenseModal({ open, onClose }) {
+export default function AddExpense({ open, onClose }) {
   if (!open) return null;
 
   return (
@@ -51,11 +51,6 @@ export default function AddExpenseModal({ open, onClose }) {
             <div>
               <label className="text-sm font-medium">Amount ($) *</label>
               <input className="w-full mt-1 border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Attach Document</label>
-              <input type="file" className="w-full mt-1" />
             </div>
 
             <div className="md:col-span-2">

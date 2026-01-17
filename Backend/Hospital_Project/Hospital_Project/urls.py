@@ -19,6 +19,7 @@ urlpatterns = [
     path("api/admin/", include("ambulance_module.urls")),   
     path("api/admin/", include("inventory_module.urls")),
     path('api/admin/',include('front_office_module.urls')),
+    path('api/admin/',include('finance_module.urls')),
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 ]

@@ -163,6 +163,9 @@ function App() {
           <Route path="/admin/setup/ipd-prescription-header-footer" element={<IpdPrescriptionHeaderFooter />} />  
           <Route path="/admin/setup/ipd-bill-header-footer" element={<IpdBillHeaderFooter />} />
           </Routes>
+
+
+          
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>
