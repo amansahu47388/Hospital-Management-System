@@ -82,7 +82,6 @@ class IncomeAPI(APIView):
 
 
 
-
 class ExpenseAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -91,10 +90,15 @@ class ExpenseAPI(APIView):
             expense = get_object_or_404(Expense, pk=pk)
             serializer = ExpenseSerializer(expense)
             return Response(serializer.data)
-        else:
-            expenses = Expense.objects.all().order_by("-created_at")
-            serializer = ExpenseSerializer(expenses, many=True)
-            return Response(serializer.data)
+
+        expenses = (
+            Expense.objects
+            .select_related("expense_head", "created_by")
+            .all()
+            .order_by("-created_at")
+        )
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = ExpenseSerializer(data=request.data)
@@ -118,7 +122,5 @@ class ExpenseAPI(APIView):
             {"message": "Expense deleted successfully"},
             status=status.HTTP_204_NO_CONTENT
         )
-
-
 
 

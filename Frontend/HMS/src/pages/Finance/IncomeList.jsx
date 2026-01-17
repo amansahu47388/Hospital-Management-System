@@ -2,42 +2,48 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import AddIncome from "../../components/Finance/AddIncome";
+import UpdateIncome from "../../components/Finance/UpdateIncome";
 import { getIncomes, deleteIncome } from "../../api/financeApi";
 import { useNotify } from "../../context/NotificationContext";
-import UpdateIncome from "../../components/Finance/UpdateIncome";
-
 
 export default function IncomeList() {
   const notify = useNotify();
 
-  const [openModal, setOpenModal] = useState(false);
-  const [incomes, setIncomes] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // 🔹 Modal states (SEPARATED)
+  const [addOpen, setAddOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState(null);
 
-  const searchRef = useRef("");
+  // 🔹 Data states
+  const [incomes, setIncomes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 🔹 Fetch incomes
+  // 🔹 Utils
+  const searchRef = useRef("");
+  const hasFetched = useRef(false);
+
+  // 🔹 Fetch incomes (STRICTMODE SAFE)
   const fetchIncomes = async () => {
     setLoading(true);
     try {
       const res = await getIncomes();
       setIncomes(res.data);
     } catch {
-      notify( "error","Failed to load incomes");
+      notify("error", "Failed to load incomes");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     fetchIncomes();
   }, []);
 
-  // 🔹 Optimized search using useMemo
+  // 🔹 Search filter
   const filteredIncomes = useMemo(() => {
     const q = searchRef.current.toLowerCase();
-
     if (!q) return incomes;
 
     return incomes.filter((item) =>
@@ -51,7 +57,7 @@ export default function IncomeList() {
         .toLowerCase()
         .includes(q)
     );
-  }, [incomes, openModal]); // re-evaluate after add
+  }, [incomes]);
 
   // 🔹 Delete income
   const handleDelete = async (id) => {
@@ -59,10 +65,10 @@ export default function IncomeList() {
 
     try {
       await deleteIncome(id);
-      notify( "success","Income deleted successfully");
+      notify("success", "Income deleted successfully");
       fetchIncomes();
     } catch {
-      notify("error","Failed to delete income");
+      notify("error", "Failed to delete income");
     }
   };
 
@@ -73,7 +79,7 @@ export default function IncomeList() {
         {/* HEADER */}
         <div className="flex flex-wrap justify-between items-center bg-white rounded-md p-3 shadow">
           <div>
-            <h1 className="text-xl font-semibold pb-4">Income List</h1>
+            <h1 className="text-xl font-semibold pb-3">Income List</h1>
             <input
               placeholder="Search..."
               onChange={(e) => {
@@ -85,8 +91,9 @@ export default function IncomeList() {
           </div>
 
           <button
-            onClick={() => setOpenModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded-md"
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+            text-white px-4 py-2 rounded-md"
           >
             <Plus size={16} /> Add Income
           </button>
@@ -117,7 +124,7 @@ export default function IncomeList() {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={7} className="p-4 text-center">
+                  <td colSpan={8} className="p-4 text-center">
                     Loading...
                   </td>
                 </tr>
@@ -125,7 +132,7 @@ export default function IncomeList() {
 
               {!loading && filteredIncomes.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-4 text-center text-gray-500">
+                  <td colSpan={8} className="p-4 text-center text-gray-500">
                     No income records found
                   </td>
                 </tr>
@@ -134,27 +141,19 @@ export default function IncomeList() {
               {filteredIncomes.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="px-3 py-2 text-blue-600">{item.name}</td>
-                  <td className="px-3 py-2">{item.id || "-"}</td>
+                  <td className="px-3 py-2">{item.id}</td>
                   <td className="px-3 py-2">{item.date}</td>
-                  <td className="px-3 py-2">
-                    {item.description || "-"}
-                  </td>
-                  <td className="px-3 py-2">
-                    {item.income_head_name}
-                  </td>
-                  <td className="px-3 py-2">
-                    {item.created_by_name || "-"}
-                  </td>
-                  <td className="px-3 py-2 font-medium">
-                    {item.amount}
-                  </td>
-                  <td className="p-3 flex gap-2">
+                  <td className="px-3 py-2">{item.description || "-"}</td>
+                  <td className="px-3 py-2">{item.income_head_name}</td>
+                  <td className="px-3 py-2">{item.created_by_name || "-"}</td>
+                  <td className="px-3 py-2 font-medium">{item.amount}</td>
+                  <td className="px-3 py-2 flex gap-2">
                     <button
                       onClick={() => {
                         setEditId(item.id);
-                        setOpenModal(true);
+                        setEditOpen(true);
                       }}
-                       className="bg-green-100 p-2 rounded text-green-600 hover:bg-green-200"
+                      className="bg-green-100 p-2 rounded text-green-600 hover:bg-green-200"
                     >
                       <Pencil size={16} />
                     </button>
@@ -173,16 +172,18 @@ export default function IncomeList() {
 
         {/* ADD MODAL */}
         <AddIncome
-          open={openModal}
-          onClose={() => setOpenModal(false)}
+          open={addOpen}
+          onClose={() => setAddOpen(false)}
           refresh={fetchIncomes}
         />
+
+        {/* UPDATE MODAL */}
         <UpdateIncome
-          open={openModal}
+          open={editOpen}
           incomeId={editId}
           onClose={() => {
             setEditId(null);
-            setOpenModal(false);
+            setEditOpen(false);
           }}
           refresh={fetchIncomes}
         />
