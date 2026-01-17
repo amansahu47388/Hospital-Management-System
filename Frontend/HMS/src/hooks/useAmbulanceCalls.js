@@ -52,7 +52,7 @@ export default function useAmbulanceCalls() {
           model: bill.ambulance_model || "-",
           driver: bill.driver_name || "-",
           contact: bill.driver_contact || "-",
-          address: "-", // Address not in current API response
+          address: bill.patient_address || "-",
           date: formattedDate,
           amount: parseFloat(bill.total_amount) || 0,
           discount: parseFloat(bill.discount) || 0,

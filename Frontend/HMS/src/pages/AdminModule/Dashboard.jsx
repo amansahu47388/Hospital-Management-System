@@ -1,13 +1,12 @@
 import React from "react";
-import Sidebar from "../../components/CommonComponent/Sidebar";
-import Navbar from "../../components/AdminComponent/Navbar";
+import AdminLayout from "../../layout/AdminLayout";
 import StatsCard from "../../components/AdminComponent/StatsCard";
 import PatientsChart from "../../components/AdminComponent/PatientsChart";
 import SimpleTable from "../../components/AdminComponent/SimpleTable";
 import AppointmentList from "../../components/AdminComponent/AppointmentList";
 import { useFetchData } from "../../hooks/useFetchData";
 
- function DashboardPage() {
+function DashboardPage() {
   const { loading, data } = useFetchData();
 
   if (loading) {
@@ -21,61 +20,74 @@ import { useFetchData } from "../../hooks/useFetchData";
   const { stats, chart, doctors, stock, appointments } = data;
 
   return (
-    <div className="min-h-screen flex">
-      <Sidebar />
+    <AdminLayout>
+      <main className="p-6 space-y-6">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {stats.map((s) => (
+            <StatsCard key={s.id} title={s.title} value={s.value} />
+          ))}
+        </div>
 
-      <div className="flex-1">
-        <Navbar />
-
-        <main className="p-6 space-y-6">
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {stats.map((s) => (
-              <StatsCard key={s.id} title={s.title} value={s.value} />
-            ))}
+        {/* Chart + Appointments */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
+            <PatientsChart data={chart} />
           </div>
-
-          {/* Chart + Appointments */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
-              <PatientsChart data={chart} />
-            </div>
-            <div>
-              <AppointmentList items={appointments} />
-            </div>
+          <div>
+            <AppointmentList items={appointments} />
           </div>
+        </div>
 
-          {/* Tables */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <SimpleTable
-              columns={[
-                { key: "id", label: "ID" },
-                { key: "name", label: "Name" },
-                { key: "mobile", label: "Mobile" },
-                { key: "address", label: "Address" },
-                { key: "fee", label: "Consultancy Charge", render: (r) => r.fee },
-                { key: "education", label: "Education" },
-                { key: "dob", label: "DOB" },
-                { key: "status", label: "Status", render: (r) => <span className={`text-xs px-2 py-1 rounded ${r.status === "online" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{r.status}</span> },
-              ]}
-              rows={doctors}
-            />
+        {/* Tables */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <SimpleTable
+            columns={[
+              { key: "id", label: "ID" },
+              { key: "name", label: "Name" },
+              { key: "mobile", label: "Mobile" },
+              { key: "address", label: "Address" },
+              {
+                key: "fee",
+                label: "Consultancy Charge",
+                render: (r) => r.fee,
+              },
+              { key: "education", label: "Education" },
+              { key: "dob", label: "DOB" },
+              {
+                key: "status",
+                label: "Status",
+                render: (r) => (
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${
+                      r.status === "online"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {r.status}
+                  </span>
+                ),
+              },
+            ]}
+            rows={doctors}
+          />
 
-            <SimpleTable
-              columns={[
-                { key: "id", label: "ID" },
-                { key: "drug", label: "Drug Name" },
-                { key: "expire", label: "Expire Date" },
-                { key: "mfr", label: "Manufacture Date" },
-                { key: "price", label: "Price" },
-                { key: "qty", label: "QTY" },
-              ]}
-              rows={stock}
-            />
-          </div>
-        </main>
-      </div>
-    </div>
+          <SimpleTable
+            columns={[
+              { key: "id", label: "ID" },
+              { key: "drug", label: "Drug Name" },
+              { key: "expire", label: "Expire Date" },
+              { key: "mfr", label: "Manufacture Date" },
+              { key: "price", label: "Price" },
+              { key: "qty", label: "QTY" },
+            ]}
+            rows={stock}
+          />
+        </div>
+      </main>
+    </AdminLayout>
   );
 }
+
 export default DashboardPage;

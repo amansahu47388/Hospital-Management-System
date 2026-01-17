@@ -18,8 +18,7 @@ export const deleteAmbulance = (id) => {
   return api.delete(`/ambulance/${id}/delete/`);
 };
 
-/* ================= Ambulance Charge Categories ================= */
-
+// Ambulance Charge Categories
 export const getAmbulanceChargeCategories = () => {
   return api.get("/charge-category/");
 };
@@ -28,8 +27,7 @@ export const createAmbulanceChargeCategory = (data) => {
   return api.post("/charge-category/create/", data);
 };
 
-/* ================= Ambulance Charges ================= */
-
+// Ambulance Charges
 export const getAmbulanceCharges = () => {
   return api.get("/charge/");
 };

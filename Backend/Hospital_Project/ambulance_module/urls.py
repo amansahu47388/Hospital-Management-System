@@ -6,15 +6,7 @@ from .views import (
     AmbulanceUpdateAPIView,
     AmbulanceDeleteAPIView,
 
-    # Charge Category
-    AmbulanceChargeCategoryListAPIView,
-    AmbulanceChargeCategoryCreateAPIView,
-
-    # Charges
-    AmbulanceChargeListAPIView,
-    AmbulanceChargeCreateAPIView,
-    AmbulanceChargeUpdateAPIView,
-    AmbulanceChargeDeleteAPIView,
+    
 
     # Bills
     AmbulanceBillListAPIView,
@@ -30,16 +22,6 @@ urlpatterns = [
     path('ambulance/create/', AmbulanceCreateAPIView.as_view()),
     path('ambulance/<int:pk>/update/', AmbulanceUpdateAPIView.as_view()),
     path('ambulance/<int:pk>/delete/', AmbulanceDeleteAPIView.as_view()),
-
-    # Charge categories
-    path('charge-category/', AmbulanceChargeCategoryListAPIView.as_view()),
-    path('charge-category/create/', AmbulanceChargeCategoryCreateAPIView.as_view()),
-
-    # Charges
-    path('charge/', AmbulanceChargeListAPIView.as_view()),
-    path('charge/create/', AmbulanceChargeCreateAPIView.as_view()),
-    path('charge/<int:pk>/update/', AmbulanceChargeUpdateAPIView.as_view()),
-    path('charge/<int:pk>/delete/', AmbulanceChargeDeleteAPIView.as_view()),
 
     # Bills
     path('ambulance-bill/', AmbulanceBillListAPIView.as_view()),

@@ -27,34 +27,6 @@ class Ambulance(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-
-class AmbulanceChargeCategory(models.Model):
-    category_name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.category_name
-
-
-class AmbulanceCharge(models.Model):
-    category = models.ForeignKey(
-        AmbulanceChargeCategory,
-        on_delete=models.CASCADE,
-        related_name="charges"
-    )
-    charge_name = models.CharField(max_length=100)
-    standard_charge = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.charge_name} - ${self.standard_charge}"
-
-    class Meta:
-        unique_together = ('category', 'charge_name')
-
-
 class AmbulanceBill(models.Model):
     PAYMENT_MODE_CHOICES = [
         ('cash', 'Cash'),
@@ -65,7 +37,6 @@ class AmbulanceBill(models.Model):
 
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="ambulance_bills")
     ambulance = models.ForeignKey(Ambulance, on_delete=models.SET_NULL, null=True, blank=True)
-    charge = models.ForeignKey(AmbulanceCharge, on_delete=models.SET_NULL, null=True, blank=True)
     hospital_charge = models.ForeignKey(HospitalCharges, on_delete=models.SET_NULL, null=True, blank=True, related_name="ambulance_bills")
     date = models.DateField()
     note = models.TextField(blank=True, null=True)

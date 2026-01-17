@@ -1,248 +1,114 @@
-import { useState } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import { Trash2, Plus ,Pencil} from "lucide-react";
-import EditItemModal from "../../components/Inventory/EditItemModal";
-import AddItemModal from "../../components/Inventory/AddItemModal";
+import { Trash2, Plus, Pencil } from "lucide-react";
+import UpdateItem from "../../components/Inventory/UpdateItem";
+import AddItem from "../../components/Inventory/AddItem";
+import { getItems, deleteItem } from "../../api/inventoryApi";
 
 export default function ItemListPage() {
-  /* ---------------- STATE ---------------- */
-
-const [openEdit, setOpenEdit] = useState(false);
-const [editItem, setEditItem] = useState(null);
-const [openAdd, setOpenAdd] = useState(false);
-
+  const [items, setItems] = useState([]);
+  const searchRef = useRef("");
+  const [, forceRender] = useState(0);
   const [search, setSearch] = useState("");
-
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "manual wheelchairs",
-      category: "Patient wheelchairs",
-      unit: 250,
-      available: 0,
-      description:
-        "A user-powered wheelchair that can be pushed from behind by an assistant",
-    },
-    {
-      id: 2,
-      name: "Operating Scissors",
-      category: "Medical scissors",
-      unit: 200,
-      available: 60,
-      description:
-        "Operating scissors are general medical scissors that allow for variety in size and design.",
-    },
-    {
-      id: 3,
-      name: "Head or beard covers and nets",
-      category: "Apparel",
-      unit: 100,
-      available: 0,
-      description: "",
-    },
-    {
-      id: 4,
-      name: "Medical shoe and boot covers",
-      category: "Apparel",
-      unit: 100,
-      available: 71,
-      description: "",
-    },
-    {
-      id: 5,
-      name: "Cardiac monitors, implantable or external",
-      category: "Cardiology",
-      unit: 100,
-      available: 0,
-      description: "",
-    },
-    {
-      id: 6,
-      name: "Electrocardiography machines",
-      category: "Cardiology",
-      unit: 100,
-      available: 0,
-      description: "",
-    },
-    {
-      id: 7,
-      name: "Monitor for glucose management",
-      category: "Medical Equipment",
-      unit: 100,
-      available: 0,
-      description: "Monitor for glucose management",
-    },
-    {
-      id: 8,
-      name: "Surgical blade",
-      category: "Surgical blades",
-      unit: 500,
-      available: 98,
-      description:
-        "An operating table or surgical table is the table on which the patient lies during surgery.",
-    },
-    {
-      id: 9,
-      name: "Automatic Blood Pressure",
-      category: "Automatic Blood Pressure Cuff",
-      unit: 500,
-      available: 40,
-      description:
-        "Displays simultaneous readings of systolic and diastolic blood pressure and pulse.",
-    },
-  ]);
-
-  /* ---------------- FILTER ---------------- */
-  const filteredItems = items.filter(
-    (i) =>
-      i.name.toLowerCase().includes(search.toLowerCase()) ||
-      i.category.toLowerCase().includes(search.toLowerCase())
-  );
-
-  /* ---------------- DELETE ---------------- */
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      setItems((prev) => prev.filter((i) => i.id !== id));
-    }
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  /* LOAD ITEMS */
+  const fetchItems = async () => {
+    const res = await getItems();
+    setItems(res.data);
   };
-  
 
-  const handleSaveEdit = (updatedItem) => {
-  setItems((prev) =>
-    prev.map((i) =>
-      i.id === updatedItem.id ? updatedItem : i
-    )
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+
+  const filteredItems = useMemo(() => {
+  const keyword = searchRef.current.toLowerCase();
+
+  if (!keyword) return items;
+
+  return items.filter((item) =>
+    item.item_name.toLowerCase().includes(keyword) ||
+    item.category_name?.toLowerCase().includes(keyword) ||
+    String(item.unit).includes(keyword)
   );
-};
-    const handleEdit = (item) => {
-    setEditItem(item);
-    setOpenEdit(true);
-  }
+}, [items, searchRef.current]);
 
 
-  const handleAddItem = (data) => {
-  setItems((prev) => [
-    ...prev,
-    {
-      id: Date.now(),
-      name: data.name,
-      category: data.category,
-      unit: Number(data.unit),
-      available: 0,
-      description: data.description,
-    },
-  ]);
-};
 
-  /* ---------------- UI ---------------- */
+  /* DELETE */
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this item?")) return;
+    await deleteItem(id);
+    fetchItems();
+  };
+
   return (
     <AdminLayout>
-      <div className="min-h-full p-1 ">
+      <div className="min-h-full">
+        <div className="bg-white mt-2 shadow rounded overflow-x-auto">
 
-        {/* HEADER */}
-        <div className="bg-white rounded-lg shadow p-4 mb-1 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Item List</h2>
-          <button onClick={() => setOpenAdd(true)} className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded">
-            <Plus size={16} /> Add Item
-          </button>
-        </div>
+          {/* HEADER */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4 p-4">
+            <div>
+            <h1 className="text-xl font-semibold pb-4">Item List</h1>
+           <input
+                placeholder="Search..."
+                onChange={(e) => {
+                  searchRef.current = e.target.value;
+                  forceRender(n => n + 1);   // tell React to re-evaluate useMemo
+                }}
+                className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+              />
+            </div>
 
-        {/* SEARCH */}
-        {/* <div className="bg-white rounded-lg shadow p-3 mb-3">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-64 border px-3 py-2 rounded"
-          />
-        </div> */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={() => setOpenAdd(true)} className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded flex gap-2">
+              <Plus size={16} /> Add Item
+            </button>
+            </div>
+          </div>
 
-        {/* TABLE */}
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="min-w-full text-sm">
+          <table className="min-w-full text-sm shadow ">
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-3 text-left">Item</th>
-                <th className="p-3">Category</th>
-                <th className="p-3 text-center">Unit</th>
-                <th className="p-3 text-center">Available Quantity</th>
-                <th className="p-3">Description</th>
-                <th className="p-3 text-center">Action</th>
+                <th className="p-3 text-left">Category</th>
+                <th className="p-3 text-left">Unit</th>
+                <th className="p-3 text-left">Available Quantity</th>
+                <th className="p-3 text-left">Description</th>
+                <th className="p-3 text-left text-center">Action</th>
               </tr>
             </thead>
 
             <tbody>
-              {filteredItems.map((row) => (
-                <tr
-                  key={row.id}
-                  className="group border-t hover:bg-gray-50 transition"
-                >
-                  <td className="p-3 text-blue-600 font-medium">
-                    {row.name}
+              {filteredItems.map((item) => (
+                <tr key={item.id} className=" hover:bg-gray-100">
+                  <td className="p-3 text-blue-600 text-left" text-left>{item.item_name}</td>
+                  <td className="p-3 text-left">{item.category_name}</td>
+                  <td className="p-3 text-left">{item.unit}</td>
+                 <td className="p-3 text-left">{item.available_quantity}</td>
+                  <td className="p-3 text-left">{item.description}</td>
+                  <td className="p-3 text-left flex gap-2">
+                    <button onClick={() => {setEditItem(item);setOpenEdit(true)}} className="bg-green-100 p-2 rounded text-green-600">
+                      <Pencil size={16} />
+                    </button>
+                    <button onClick={() => handleDelete(item.id)} className="bg-red-100 p-2 rounded text-red-600">
+                      <Trash2 size={16} />
+                    </button>
                   </td>
-                  <td className="p-3">{row.category}</td>
-                  <td className="p-3 text-center">{row.unit}</td>
-                  <td className="p-3 text-center">{row.available}</td>
-                  <td className="p-3 max-w-md">
-                    {row.description || "—"}
-                  </td>
-
-                  {/* ACTION (HOVER ONLY) */}
-                  <td className="p-3 text-center">
-  <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-    
-    {/* EDIT */}
-    <button
-      onClick={() => handleEdit(row)}
-      className="p-2 bg-green-100 text-green-600 rounded hover:bg-green-200"
-      title="Edit"
-    >
-      <Pencil size={16} />
-    </button>
-
-    {/* DELETE */}
-    <button
-      onClick={() => handleDelete(row.id)}
-      className="p-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
-      title="Delete"
-    >
-      <Trash2 size={16} />
-    </button>
-
-  </div>
-</td>
                 </tr>
               ))}
-
-              {filteredItems.length === 0 && (
-                <tr>
-                  <td
-                    colSpan="6"
-                    className="p-6 text-center text-gray-500"
-                  >
-                    No items found
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
+
+        <AddItem open={openAdd} onClose={() => setOpenAdd(false)} refresh={fetchItems} />
+        <UpdateItem open={openEdit} onClose={() => setOpenEdit(false)} item={editItem} refresh={fetchItems} />
+
       </div>
-
-<EditItemModal
-  open={openEdit}
-  item={editItem}
-  onClose={() => setOpenEdit(false)}
-  onSave={handleSaveEdit}
-/>
-
-
-<AddItemModal
-  open={openAdd}
-  onClose={() => setOpenAdd(false)}
-  onSave={handleAddItem}
-/>
     </AdminLayout>
   );
 }

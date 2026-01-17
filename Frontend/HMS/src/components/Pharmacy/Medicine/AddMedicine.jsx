@@ -1,18 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { X, Upload } from "lucide-react";
-import {
-  getMedicineCategories,
-  getCompanies,
-  getMedicineGroups,
-  getUnits,
-  addMedicine,
-} from "../../../api/pharmacyApi";
+import {getMedicineCategories,getCompanies,getMedicineGroups,getUnits,addMedicine,} from "../../../api/pharmacyApi";
 import { useNotify } from "../../../context/NotificationContext";
 
 export default function AddMedicine({ open, onClose, onSuccess }) {
   const notify = useNotify();
   const hasFetchedRef = useRef(false);
-
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -62,13 +55,22 @@ export default function AddMedicine({ open, onClose, onSuccess }) {
 
   if (!open) return null;
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
+const handleChange = (e) => {
+  const { name, value, type, files } = e.target;
+
+  if (type === "file") {
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value,
+      [name]: files[0],
     }));
-  };
+  } else {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+};
+
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.category || !formData.unit || !formData.box_packing) {
@@ -80,11 +82,12 @@ export default function AddMedicine({ open, onClose, onSuccess }) {
       setLoading(true);
       const payload = new FormData();
 
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== "" && value !== null) {
-          payload.append(key, value);
-        }
-      });
+     for (const key in formData) {
+  if (formData[key] !== "" && formData[key] !== null) {
+    payload.append(key, formData[key]);
+  }
+}
+
 
       await addMedicine(payload);
       notify("success", "Medicine added successfully");
@@ -211,6 +214,14 @@ export default function AddMedicine({ open, onClose, onSuccess }) {
               <Upload size={18} />
               <span>Upload Image</span>
               <input type="file" name="image" onChange={handleChange} hidden />
+              {formData.image && (
+              <img
+                src={URL.createObjectURL(formData.image)}
+                alt="preview"
+                className="mt-2 w-16 h-16 object-cover rounded "
+              />
+            )}
+
             </label>
           </div>
         </div>

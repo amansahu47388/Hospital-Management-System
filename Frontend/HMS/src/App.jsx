@@ -25,19 +25,43 @@ import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
 import PathologyBill from "./pages/pathology/PathologyBill";
 import PathologyTest from "./pages/pathology/PathologyTest";
 import PharmacyBill from "./pages/Pharmacy/PharmacyBill";
-import PharmacyGenerateBill from "./pages/Pharmacy/PharmacyGenerateBill";
-import MedicineStock from "./pages/Pharmacy/Medicine/MedicineStock";
-import MedicinePurchaseList from "./pages/Pharmacy/Purchase/MedicinePurchaseList";
+import MedicineStock from "./pages/Pharmacy/MedicineStock";
+import MedicinePurchaseList from "./pages/Pharmacy/MedicinePurchaseList";
 import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
 import AmbulanceList from "./pages/Ambulance/AmbulanceList";
-import BirthRecord  from "./pages/Birthrecord/BirthRecord";
-import DeathRecordPage from "./pages/Deathrecord/DeathRecordPage";
+import BirthRecord  from "./pages/BirthDeathRecord/BirthRecord";
+import DeathRecord from "./pages/BirthDeathRecord/DeathRecord";
 import ItemStockPage from "./pages/Inventory/ItemStockPage"; 
 import IssueItemPage from "./pages/Inventory/IssueItemPage";
 import ItemListPage from "./pages/Inventory/ItemListPage";
 import CelenderPage from "./pages/Celender/CalendarPage";
+import VisitorList from "./pages/Front_office/VisitorList";
+import PostalReceive from "./pages/Front_office/PostalReceive";
+import PostalDispatch from "./pages/Front_office/PostalDispatch";
+import ComplainList from "./pages/Front_office/ComplainList";
+import IncomeList from "./pages/Finance/IncomeList";
+import ExpenseList from "./pages/Finance/ExpenseList";
+
+
 import RadiologyBill from "./pages/radiology/RadiologyBill";
 import RadiologyTest from "./pages/radiology/RadiologyTest";
+
+//sertup route paths and components
+import BedStatus from "./pages/Setup/Bed/BedStatus";
+import BedList from "./pages/Setup/Bed/BedList";
+import BedTypeList from "./pages/Setup/Bed/BedTypeList";
+import BedGroupList from "./pages/Setup/Bed/BedGroupList";
+import FloorList from "./pages/Setup/Bed/FloorList";
+import ChargesDetailsList from "./pages/Setup/Charges/ChargesDetailsList";
+import ChargeCategoryList from "./pages/Setup/Charges/ChargeCategoryList";
+import ChargeTypeList from "./pages/Setup/Charges/ChargeTypeList";
+import TaxCategoryList from "./pages/Setup/Charges/TaxCategoryList";
+import UnitTypeList from "./pages/Setup/Charges/UnitTypeList";
+import AppointmentHeaderFooter from "./pages/Setup/Header_Footer/AppointmentHeaderFooter";
+import OpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/OpdPrescriptionHeaderFooter";
+import OpdBillHeaderFooter from "./pages/Setup/Header_Footer/OpdBillHeaderFooter";
+import IpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/IpdPrescriptionHeaderFooter";  
+import IpdBillHeaderFooter from "./pages/Setup/Header_Footer/IpdBillHeaderFooter";
 function App() {
   return (
     <AuthProvider>
@@ -98,19 +122,46 @@ function App() {
           <Route path="/admin/pharmacy-bills" element={<PharmacyBill />} />
           <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
           <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
-          <Route path="/admin/pharmacy-bill/generate-bill" element={<PharmacyGenerateBill />} />
+
 
           {/* Ambulance Routes */}
-          <Route path="/admin/Ambulance" element={<AmbulanceCallList />} />
+          <Route path="/admin/ambulance" element={<AmbulanceCallList />} />
           <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
             
-            
-          <Route path="/admin/Birth-Record"   element={<BirthRecord/>} />
-          <Route path="/admin/Death-Record"   element={<DeathRecordPage/>} />
+            {/* Birth - Death Routes */}
+          <Route path="/admin/birth-death-record/birth-record" element={<BirthRecord/>} />
+          <Route path="/admin/birth-death-record/death-record" element={<DeathRecord/>} />
+
+
+
           <Route path="/admin/Inventory/Item-Stock"   element={<ItemStockPage/>} />   
           <Route path="/admin/Inventory/Issue-Item"   element={<IssueItemPage/>} />
           <Route path="/admin/Inventory/Item-List"   element={<ItemListPage/>} />
           <Route path="/admin/Calendar"   element={<CelenderPage/>} />
+          <Route path="/admin/front-office/visitor-list"   element={<VisitorList/>} />
+          <Route path="/admin/front-office/postal-receive"   element={<PostalReceive/>} />
+          <Route path="/admin/front-office/postal-dispatch"   element={<PostalDispatch/>} />
+          <Route path="/admin/front-office/complain-list"   element={<ComplainList/>} />
+          <Route path="/admin/finance/income-list"   element={<IncomeList/>} />
+          <Route path="/admin/finance/expense-list"   element={<ExpenseList/>} />
+
+          // Setup Routes
+          <Route path="/admin/setup/bed-status" element={<BedStatus />}
+           />
+          <Route path="/admin/setup/bed" element={<BedList />} />
+          <Route path="/admin/setup/bed-type" element={<BedTypeList />} />
+          <Route path="/admin/setup/bed-group" element={<BedGroupList />} />
+          <Route path="/admin/setup/floor" element={<FloorList />} />
+          <Route path="/admin/setup/charges-details" element={<ChargesDetailsList />} />
+          <Route path="/admin/setup/charge-category" element={<ChargeCategoryList />} />
+          <Route path="/admin/setup/charge-type" element={<ChargeTypeList />} />
+          <Route path="/admin/setup/tax-category" element={<TaxCategoryList />} />
+          <Route path="/admin/setup/unit-type" element={<UnitTypeList />} />  
+          <Route path="/admin/setup/appointment-header-footer" element={<AppointmentHeaderFooter />} />
+          <Route path="/admin/setup/opd-prescription-header-footer" element={<OpdPrescriptionHeaderFooter />} />
+          <Route path="/admin/setup/opd-bill-header-footer" element={<OpdBillHeaderFooter />} />
+          <Route path="/admin/setup/ipd-prescription-header-footer" element={<IpdPrescriptionHeaderFooter />} />  
+          <Route path="/admin/setup/ipd-bill-header-footer" element={<IpdBillHeaderFooter />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>
