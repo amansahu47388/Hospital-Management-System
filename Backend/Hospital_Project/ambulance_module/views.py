@@ -5,16 +5,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Q
 
+
 from .models import Ambulance,  AmbulanceBill
 from .serializers import (
     AmbulanceSerializer, AmbulanceCreateSerializer, AmbulanceUpdateSerializer,
     
     AmbulanceBillListSerializer, AmbulanceBillDetailSerializer,
     AmbulanceBillCreateSerializer, AmbulanceBillUpdateSerializer)
-
-from .models import Ambulance, AmbulanceBill
-from .serializers import *
-
 
 
 # Ambulance CRUD Views

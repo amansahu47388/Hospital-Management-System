@@ -18,35 +18,8 @@ export const deleteAmbulance = (id) => {
   return api.delete(`/ambulance/${id}/delete/`);
 };
 
-// Ambulance Charge Categories
-export const getAmbulanceChargeCategories = () => {
-  return api.get("/charge-category/");
-};
-
-export const createAmbulanceChargeCategory = (data) => {
-  return api.post("/charge-category/create/", data);
-};
-
-// Ambulance Charges
-export const getAmbulanceCharges = () => {
-  return api.get("/charge/");
-};
-
-export const createAmbulanceCharge = (data) => {
-  return api.post("/charge/create/", data);
-};
-
-export const updateAmbulanceCharge = (id, payload) => {
-  return api.put(`/charge/${id}/update/`, payload);
-};
-
-export const deleteAmbulanceCharge = (id) => {
-  return api.delete(`/charge/${id}/delete/`);
-};
-
-/* ================= Ambulance Bills ================= */
-
-export const createAmbulanceBill = (payload) => {
+// Ambulance Bills
+export const createAmbulanceBill = async (payload) => {
   return api.post("/ambulance-bill/create/", payload);
 };
 
