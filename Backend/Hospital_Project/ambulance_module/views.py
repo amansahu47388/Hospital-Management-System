@@ -83,7 +83,6 @@ class AmbulanceBillListAPIView(APIView):
                 Q(bill_no__icontains=search) |
                 Q(patient__first_name__icontains=search) |
                 Q(ambulance__vehicle_number__icontains=search) |
-                Q(charge__charge_name__icontains=search) |
                 Q(hospital_charge__charge_name__icontains=search)
             )
 
@@ -96,7 +95,7 @@ class AmbulanceBillDetailAPIView(APIView):
 
     def get(self, request, pk):
         bill = get_object_or_404(
-            AmbulanceBill.objects.select_related('patient', 'ambulance', 'charge', 'created_by'),
+            AmbulanceBill.objects.select_related('patient', 'ambulance', 'hospital_charge', 'created_by'),
             pk=pk
         )
         serializer = AmbulanceBillDetailSerializer(bill)
