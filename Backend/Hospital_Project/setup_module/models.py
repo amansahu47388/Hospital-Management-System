@@ -1,6 +1,8 @@
 from django.db import models
 
-
+#***********************************************************************************#
+#                     Hospital Charges Setup Models                                 #
+#***********************************************************************************#
 
 class ChargeUnit(models.Model):
     unit_type = models.CharField(max_length=50, unique=True)
@@ -13,7 +15,6 @@ class ChargeType(models.Model):
 
     def __str__(self):
         return self.charge_type
-
 
 
 class ChargeCategory(models.Model):
@@ -46,11 +47,40 @@ class HospitalCharges(models.Model):
         return f"{self.charge_name} - {self.charge_amount}"
     
 
+#***********************************************************************************#
+#                     Hospital BAD Setup Models                                     #
+#***********************************************************************************#
+
+class Floor(models.Model):
+    floor_name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Floor {self.floor_number} - {self.name}"
 
 
+class BedType(models.Model):
+    bad_type = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.bad_type
 
+class BedGroup(models.Model):
+    name = models.CharField(max_length=100)
+    floor = models.ForeignKey(Floor,on_delete=models.CASCADE,related_name="bed_groups")
+    bed_type = models.ForeignKey(BedType,on_delete=models.PROTECT,related_name="bed_groups")
+    description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ("name", "floor")
+
+    def __str__(self):
+        return f"{self.name} ({self.bed_type.name}) - {self.floor}"
 
 
 class Bed(models.Model):
@@ -58,7 +88,6 @@ class Bed(models.Model):
         ('available', 'Available'),
         ('occupied', 'Occupied'),
     ]
-
     bed_name = models.CharField(max_length=50, unique=True)
     bed_type = models.CharField(max_length=50, default='Normal')
     bed_group = models.CharField(max_length=50, default='General')
@@ -68,6 +97,26 @@ class Bed(models.Model):
     def __str__(self):
         return self.bed_name
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Symptom(models.Model):
     symptom_title = models.CharField(max_length=100, unique=True)

@@ -265,6 +265,11 @@ function Sidebar() {
                   </React.Fragment>
                 );
               }
+            >
+              <ChevronRight size={14} className="opacity-80" />
+              <span className="whitespace-nowrap">{label}</span>
+            </NavLink>
+          ))}
 
               /* SETUP MENU WITH SUBMENU */
               if (to === "/Setup") {
@@ -325,28 +330,29 @@ function Sidebar() {
                 );
               }
 
-              /* NORMAL MENU */
-              return (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end
-                  className={({ isActive }) =>
-                    `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
-                    ${
-                      isActive
-                        ? "!text-white bg-white/10 rounded-md"
-                        : "!text-white hover:!text-gray-200"
-                    }`
-                  }
-                >
-                  <Icon size={20} className="flex-shrink-0" />
-                  <span className={`${collapsed ? "hidden" : "block"}`}>
-                    {label}
-                  </span>
-                </NavLink>
-              );
-            })}
+/* NORMAL MENU */
+return (
+  <NavLink
+    key={to}
+    to={to}
+    end
+    className={({ isActive }) =>
+      `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
+      ${
+        isActive
+          ? "!text-white bg-white/10 rounded-md"
+          : "!text-white hover:!text-gray-200"
+      }`
+    }
+  >
+    <Icon size={20} className="flex-shrink-0" />
+    <span className={`${collapsed ? "hidden" : "block"}`}>
+      {label}
+    </span>
+  </NavLink>
+);
+})}
+
           </nav>
         </div>
       </aside>
