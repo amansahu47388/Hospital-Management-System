@@ -1,7 +1,7 @@
 import api from "./axiosInstance"
 
 // ***************************************************************************** //
-//                           CHARGES SETUP API                                 //
+//                             CHARGES SETUP API                                 //
 // ******************************************************************************//  
 export const getChargeUnits = () =>{
   return api.get("/setup/charge-units/");
@@ -32,7 +32,6 @@ export const updateTaxCategory = (id, data) =>{
 export const deleteTaxCategory = (id) =>{
   return api.delete(`/setup/charge-tax/${id}/delete/`);
 };
-
 
 // Charge Type APIs
 export const getChargeTypes = () =>{
@@ -84,6 +83,22 @@ export const updateHospitalCharge = (id, data) =>{
 export const deleteHospitalCharge = (id) =>{
   return api.delete(`/setup/charges/${id}/delete/`);
 };
+
+
+
+
+
+
+
+// ***************************************************************************** //
+//                             BAD SETUP API                                     //
+// ******************************************************************************//
+
+
+
+
+
+
 
 
 
