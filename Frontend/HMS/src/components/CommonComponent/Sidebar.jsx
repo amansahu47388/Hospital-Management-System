@@ -265,6 +265,11 @@ function Sidebar() {
                   </React.Fragment>
                 );
               }
+            >
+              <ChevronRight size={14} className="opacity-80" />
+              <span className="whitespace-nowrap">{label}</span>
+            </NavLink>
+          ))}
 
               /* SETUP MENU WITH SUBMENU */
               if (to === "/Setup") {

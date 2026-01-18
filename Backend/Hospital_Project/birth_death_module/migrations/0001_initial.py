@@ -1,0 +1,63 @@
+# Generated manually for birth_death_module
+
+import django.db.models.deletion
+from django.conf import settings
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    initial = True
+
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='BirthRecord',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('reference_no', models.CharField(blank=True, max_length=50, null=True, unique=True)),
+                ('child_name', models.CharField(max_length=150)),
+                ('gender', models.CharField(choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], max_length=10)),
+                ('weight', models.CharField(blank=True, max_length=50, null=True)),
+                ('birth_date', models.DateTimeField()),
+                ('phone', models.CharField(blank=True, max_length=15, null=True)),
+                ('address', models.TextField(blank=True, null=True)),
+                ('case_id', models.CharField(blank=True, max_length=50, null=True)),
+                ('mother_name', models.CharField(max_length=150)),
+                ('father_name', models.CharField(blank=True, max_length=150, null=True)),
+                ('report', models.TextField(blank=True, null=True)),
+                ('child_photo', models.ImageField(blank=True, null=True, upload_to='birth_records/child_photos/')),
+                ('mother_photo', models.ImageField(blank=True, null=True, upload_to='birth_records/mother_photos/')),
+                ('father_photo', models.ImageField(blank=True, null=True, upload_to='birth_records/father_photos/')),
+                ('document_photo', models.ImageField(blank=True, null=True, upload_to='birth_records/documents/')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='birth_records_created', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+            },
+        ),
+        migrations.CreateModel(
+            name='DeathRecord',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('reference_no', models.CharField(blank=True, max_length=50, null=True, unique=True)),
+                ('case_id', models.CharField(blank=True, max_length=50, null=True)),
+                ('patient_name', models.CharField(max_length=150)),
+                ('death_date', models.DateField()),
+                ('guardian_name', models.CharField(blank=True, max_length=150, null=True)),
+                ('report', models.TextField(blank=True, null=True)),
+                ('attachment', models.ImageField(blank=True, null=True, upload_to='death_records/attachments/')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='death_records_created', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+            },
+        ),
+    ]

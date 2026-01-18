@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { X, UploadCloud } from "lucide-react";
+import { createDeathRecord } from "../../api/birthDeathApi";
+import { useNotify } from "../../context/NotificationContext";
 
-export default function AddDeathRecord({ open, onClose, onSubmit }) {
+export default function AddDeathRecord({ open, onClose, onSuccess }) {
+  const notify = useNotify();
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     caseId: "",
     patientName: "",
@@ -19,13 +24,51 @@ export default function AddDeathRecord({ open, onClose, onSubmit }) {
   };
 
   const handleFileChange = (e) => {
-    setForm({ ...form, attachment: e.target.files[0] });
+    setForm({ ...form, attachment: e.target.files[0] || null });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(form);
-    onClose();
+
+    // Validation
+    if (!form.patientName || !form.deathDate) {
+      notify("error", "Please fill in all required fields (Patient Name and Death Date)");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Map frontend field names to backend field names
+      const data = {
+        case_id: form.caseId || "",
+        patient_name: form.patientName,
+        death_date: form.deathDate,
+        guardian_name: form.guardianName || "",
+        report: form.report || "",
+        attachment: form.attachment,
+      };
+
+      await createDeathRecord(data);
+      notify("success", "Death record created successfully");
+      onSuccess?.();
+      onClose();
+      
+      // Reset form
+      setForm({
+        caseId: "",
+        patientName: "",
+        deathDate: "",
+        guardianName: "",
+        report: "",
+        attachment: null,
+      });
+    } catch (error) {
+      const errorMsg = error?.response?.data?.error || error?.message || "Failed to create death record";
+      notify("error", errorMsg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -78,9 +121,10 @@ export default function AddDeathRecord({ open, onClose, onSubmit }) {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded-md hover:bg-blue-700"
+              disabled={loading}
+              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
         </form>
