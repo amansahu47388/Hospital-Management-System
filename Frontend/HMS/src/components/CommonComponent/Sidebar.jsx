@@ -139,7 +139,7 @@ function Sidebar() {
           </div>
 
           {/* NAVIGATION */}
-          <nav className="space-y-3 text-md font-bold pb-10">
+          <nav className="space-y-3 text-md font-semibold pb-10">
             {navItems.map(({ to, label, Icon }) => {
               /* FRONT OFFICE + BIRTH & DEATH */
               if (to === "/admin/front-office/visitor-list") {
@@ -287,7 +287,7 @@ function Sidebar() {
                     </button>
 
                     {setupOpen && !collapsed && (
-                      <div className="ml-8 mt-2 space-y-2">
+                      <div className="ml-8 mt-2 space-y-2 ">
                         {[
                           { label: "Settings", path: "/admin/setup/settings" },
                           { label: "Hospital Charges", path: "/admin/setup/charges-details" },
@@ -301,8 +301,9 @@ function Sidebar() {
                           { label: "Symptoms", path: "/admin/setup/symptoms/symptoms-head" },
                           { label: "Findings", path: "/admin/setup/finding" },
                           { label: "Vitals", path: "/admin/setup/vitals" },
-                          { label: "Finance", path: "/admin/setup/finance" },
-                          { label: "Appointment", path: "/admin/setup/Appointment" },
+                          { label: "Finance", path: "/admin/setup/finance/income-head" },
+                          {label: "Inventory", path: "/admin/setup/inventory/item-category" },
+                          { label: "Appointment", path: "/admin/setup/appointment/slots" },
                           { label: "Custom Fields", path: "/admin/setup/Custom Fields" },
                         ].map(({ label, path }) => (
                           <NavLink

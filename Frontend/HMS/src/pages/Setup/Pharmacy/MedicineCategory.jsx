@@ -49,20 +49,20 @@ export default function MedicineCategory() {
 
             {/* TABLE */}
             <div className="flex-1 overflow-x-auto">
-              <table className="w-full border text-sm">
+              <table className="w-full text-sm">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="text-left px-3 py-2 border">Category Name</th>
-                    <th className="text-center px-3 py-2 border w-32">
+                    <th className="text-left px-3 py-2 ">Category Name</th>
+                    <th className="text-center px-3 py-2  w-32">
                       Action
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {categories.map((cat) => (
-                    <tr key={cat} className="hover:bg-gray-50">
-                      <td className="px-3 py-2 border">{cat}</td>
-                      <td className="px-3 py-2 border text-center">
+                    <tr key={cat} className=" bg-white hover:bg-gray-50">
+                      <td className="px-3 py-2 ">{cat}</td>
+                      <td className="px-3 py-2  text-center">
                         <div className="flex justify-center gap-3">
                           <button
                             onClick={() => {

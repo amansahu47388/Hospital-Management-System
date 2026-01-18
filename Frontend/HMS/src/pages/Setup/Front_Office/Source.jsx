@@ -47,7 +47,7 @@ export default function Source() {
             </div>
 
             <div className="flex-1 overflow-x-auto">
-              <table className="w-full text-sm border">
+              <table className="w-full text-sm ">
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="px-3 py-2 text-left">Source</th>
@@ -57,7 +57,7 @@ export default function Source() {
                 </thead>
                 <tbody>
                   {data.map((item, i) => (
-                    <tr key={i} className="border-b hover:bg-gray-50">
+                    <tr key={i} className=" hover:bg-gray-50">
                       <td className="px-3 py-2">{item.name}</td>
                       <td className="px-3 py-2">{item.description}</td>
                       <td className="px-3 py-2 text-center">

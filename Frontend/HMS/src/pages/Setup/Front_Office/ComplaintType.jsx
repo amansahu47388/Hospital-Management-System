@@ -27,7 +27,7 @@ export default function ComplaintType() {
       <div className="min-h-screen p-1 ">
         <div className="bg-white rounded-md p-4">
 
-          <div className="flex justify-between items-center mb-4 border-b pb-2">
+          <div className="flex justify-between items-center mb-4  pb-2">
             <h2 className="text-lg font-semibold">Complaint Type List</h2>
             <button
               onClick={() => setOpenAdd(true)}
@@ -45,7 +45,7 @@ export default function ComplaintType() {
 
             {/* Table */}
             <div className="flex-1 overflow-x-auto">
-              <table className="w-full text-sm border">
+              <table className="w-full text-sm ">
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="px-3 py-2 text-left">Complaint Type</th>
@@ -55,7 +55,7 @@ export default function ComplaintType() {
                 </thead>
                 <tbody>
                   {data.map((item, i) => (
-                    <tr key={i} className="border-b hover:bg-gray-50">
+                    <tr key={i} className=" hover:bg-gray-50">
                       <td className="px-3 py-2">{item.name}</td>
                       <td className="px-3 py-2">{item.description}</td>
                       <td className="px-3 py-2 text-center">
