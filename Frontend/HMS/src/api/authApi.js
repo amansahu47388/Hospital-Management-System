@@ -70,3 +70,8 @@ export const userLogout = () =>
 
 export const refreshToken = () =>
   API.post("/auth/refresh/");
+
+
+export const getUsers = () => {
+  return API.get("/auth/users/");
+}

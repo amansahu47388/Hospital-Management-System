@@ -1,6 +1,6 @@
 import { X, Printer, Pencil, Trash2 } from "lucide-react";
 
-export default function DeathRecordDetailsModal({
+export default function DeathRecordDetails({
   open,
   onClose,
   record,

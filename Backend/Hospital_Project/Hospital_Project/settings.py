@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'radiology_module',
     'pharmacy_module',
     'ambulance_module',
+    'inventory_module',
     'setup_module',
 ]
 
