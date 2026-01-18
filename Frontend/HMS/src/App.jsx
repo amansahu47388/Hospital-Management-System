@@ -239,6 +239,9 @@ function App() {
           <Route path="/admin/setup/finding/category" element={<FindingCategory />} />
           <Route path="/admin/setup/vitals" element={<VitalList />} />
           </Routes>
+
+
+          
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>
