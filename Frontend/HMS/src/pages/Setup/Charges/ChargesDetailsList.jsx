@@ -1,102 +1,107 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
-import AddChargesModal from "../../../components/Setup/Charges/AddChargesModal.jsx";
 import ChargesSidebar from "../../../components/Setup/Charges/ChargesSidebar";
+import AddCharges from "../../../components/Setup/Charges/AddCharges";
+import UpdateCharges from "../../../components/Setup/Charges/Updatecharges";
+import {
+  getHospitalCharges,
+  deleteHospitalCharge,
+} from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 export default function ChargesDetailsList() {
-  const [openModal, setOpenModal] = useState(false);
+  const notify = useNotify();
+  const fetched = useRef(false);
 
-  const charges = [
-    {
-      name: "Private Charge",
-      category: "ERS/Patient Transport Service",
-      type: "Ambulance",
-      unit: "per hour",
-      tax: "15%",
-      amount: "125.00",
-    },
-    {
-      name: "Stay Charge",
-      category: "Admission and Discharge",
-      type: "IPD",
-      unit: "Hour",
-      tax: "18%",
-      amount: "1010.00",
-    },
-    {
-      name: "ICU",
-      category: "Intensive Care Units",
-      type: "IPD",
-      unit: "per day",
-      tax: "18%",
-      amount: "515.00",
-    },
-  ];
+  const [rows, setRows] = useState([]);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selected, setSelected] = useState(null);
+
+  const fetchCharges = async () => {
+    try {
+      const res = await getHospitalCharges();
+      setRows(res.data);
+    } catch {
+      notify("error", "Failed to load charges");
+    }
+  };
+
+  useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+    fetchCharges();
+  }, []);
+
+  const handleDelete = async (row) => {
+    if (!confirm(`Delete ${row.charge_name}?`)) return;
+    try {
+      await deleteHospitalCharge(row.id);
+      notify("success", "Charge deleted");
+      fetchCharges();
+    } catch {
+      notify("error", "Delete failed");
+    }
+  };
 
   return (
     <AdminLayout>
-      <div className="min-h-screen p-2">
-
-        {/* HEADER */}
-        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Charges Details List</h2>
-
-          <button
-            onClick={() => setOpenModal(true)}
-            className="flex items-center gap-2
-            bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-            text-white px-4 py-2 rounded-md"
-          >
-            <Plus size={16} /> Add Charges
+      <div className="min-h-screen p-2 shadow">
+        <div className="bg-white p-3 flex justify-between shadow">
+          <h2 className="font-semibold">Charges Details List</h2>
+          <button onClick={() => setOpenAdd(true)}
+             className="flex items-center gap-2 text-white px-4 py-2 rounded-md
+            bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
+            <Plus size={16}/> Add Charges
           </button>
         </div>
 
-        {/* CONTENT */}
-        <div className="flex flex-col md:flex-row gap-4">
-
-          {/* LEFT SIDEBAR MENU */}
+        <div className="flex gap-4 mt-4 shadow">
           <ChargesSidebar />
 
-          {/* TABLE */}
-          <div className="flex-1 bg-white rounded-md overflow-x-auto">
+          <div className="flex-1 bg-white rounded shadow">
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="px-3 py-2 text-left">Name</th>
-                  <th className="px-3 py-2 text-left">Charge Category</th>
-                  <th className="px-3 py-2 text-left">Charge Type</th>
+                  <th className="px-3 py-2 text-left">Category</th>
+                  <th className="px-3 py-2 text-left">Type</th>
                   <th className="px-3 py-2 text-left">Unit</th>
-                  <th className="px-3 py-2 text-left">Tax (%)</th>
-                  <th className="px-3 py-2 text-left">Standard Charge ($)</th>
-                  <th className="px-3 py-2 text-center">Action</th>
+                  <th className="px-3 py-2 text-left">Tax</th>
+                  <th className="px-3 py-2 text-left">Amount</th>
+                  <th className="px-3 py-2 text-left">Action</th>
                 </tr>
               </thead>
-
               <tbody>
-                {charges.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="border-b hover:bg-gray-50 group"
-                  >
-                    <td className="px-3 py-2 font-medium text-blue-600">
-                      {item.name}
-                    </td>
-                    <td className="px-3 py-2">{item.category}</td>
-                    <td className="px-3 py-2">{item.type}</td>
-                    <td className="px-3 py-2">{item.unit}</td>
-                    <td className="px-3 py-2">{item.tax}</td>
-                    <td className="px-3 py-2">{item.amount}</td>
+                {rows.map(row => (
+                  <tr key={row.id} className="hover:bg-gray-50 group">
+                    <td className="px-3 py-2 text-left">{row.charge_name}</td>
+                    <td className="px-3 py-2 text-left">{row.charge_category}</td>
+                    <td className="px-3 py-2 text-left">{row.charge_type}</td>
+                    <td className="px-3 py-2 text-left">{row.unit}</td>
+                    <td className="px-3 py-2 text-left">{row.tax}%</td>
+                    <td className="px-3 py-2 text-left">{row.charge_amount}</td>
+                    <td className="px-3 py-2 text-left">
+                      <div className="flex gap-3">
+                        <button
+                        onClick={() => {
+                          setSelected(row);
+                          setOpenEdit(true);
+                        }}
+                        className="text-purple-600 hover:text-purple-800"
+                      >
+                        <Pencil size={16} />
+                      </button>
 
-                    <td className="px-3 py-2 text-center">
-                      <div className="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition">
-                        <button className="text-blue-600 hover:text-blue-800">
-                          <Pencil size={16} />
-                        </button>
-                        <button className="text-red-600 hover:text-red-800">
+                        <button
+                          title="Delete"
+                          onClick={() => handleDelete(row)}
+                          className="text-red-600 hover:text-red-800"
+                        >
                           <Trash2 size={16} />
                         </button>
+
                       </div>
                     </td>
                   </tr>
@@ -104,15 +109,15 @@ export default function ChargesDetailsList() {
               </tbody>
             </table>
           </div>
-
         </div>
 
-        {/* ADD CHARGES MODAL */}
-        <AddChargesModal
-          open={openModal}
-          onClose={() => setOpenModal(false)}
+        <AddCharges open={openAdd} onClose={() => setOpenAdd(false)} refresh={fetchCharges}/>
+       <UpdateCharges
+          open={openEdit}
+          data={selected}
+          onClose={() => setOpenEdit(false)}
+          refresh={fetchCharges}
         />
-
       </div>
     </AdminLayout>
   );

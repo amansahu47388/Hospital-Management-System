@@ -325,13 +325,25 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
                 onChange={(e) => setPrescriptionSearch(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handlePrescriptionSearch()}
               />
-              <button 
-                className="bg-gray-100 p-2 h-10"
-                onClick={handlePrescriptionSearch}
-                disabled={prescriptionLoading}
-              >
-                <Search size={18} />
-              </button>
+              <button
+  onClick={handlePrescriptionSearch}
+  disabled={prescriptionLoading}
+  className="
+    ml-2 h-10 px-4
+    flex items-center justify-center gap-2
+    rounded-md
+    bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+    text-white
+    shadow-md
+    transition-all duration-200
+    hover:scale-105 hover:shadow-lg
+    active:scale-95
+    disabled:opacity-60 disabled:cursor-not-allowed
+  "
+>
+  <Search size={18} />
+</button>
+
             </div>
             {selectedPrescription && (
               <div className="text-xs bg-white px-2 py-1 rounded text-black">
