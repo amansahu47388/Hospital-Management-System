@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import useAmbulanceCalls from "../../hooks/useAmbulanceCalls";
 import GenerateAmbulanceBill from "../../components/Ambulance/GenerateAmbulanceBill";
+import UpdateAmbulance from "../../components/Ambulance/UpdateAmbulance";
 import AmbulanceBillDetail from "../../components/Ambulance/AmbulanceBillDetail";
 import { deleteAmbulanceBill } from "../../api/ambulanceApi";
 import { useNotify } from "../../context/NotificationContext";
@@ -15,6 +16,21 @@ export default function AmbulanceCallList() {
   const [open, setOpen] = useState(false);
   const [viewBillId, setViewBillId] = useState(null);
   const [editBillId, setEditBillId] = useState(null);
+  const [openUpdate, setOpenUpdate] = useState(false);
+
+  const handleDelete = async (billId) => {
+    if (!window.confirm("Are you sure you want to delete this ambulance bill?")) {
+      return;
+    }
+
+    try {
+      await deleteAmbulanceBill(billId);
+      notify("success", "Ambulance bill deleted successfully");
+      refresh(); // Refresh the list
+    } catch (error) {
+      notify("error", error?.response?.data?.message || "Failed to delete ambulance bill");
+    }
+  };
 
   return (
     <AdminLayout>
@@ -135,7 +151,7 @@ export default function AmbulanceCallList() {
                       <div className="flex items-center gap-2">
                         <button
                           title="View"
-                          onClick={() => console.log("View", row.billNo)}
+                          onClick={() => setViewBillId(row.id)}
                           className="p-1 rounded hover:bg-blue-100 text-blue-600"
                         >
                           <Eye size={16} />
@@ -143,7 +159,10 @@ export default function AmbulanceCallList() {
 
                         <button
                           title="Edit"
-                          onClick={() => console.log("Edit", row.billNo)}
+                          onClick={() => {
+                            setEditBillId(row.id);
+                            setOpenUpdate(true);
+                          }}
                           className="p-1 rounded hover:bg-green-100 text-green-600"
                         >
                           <Pencil size={16} />
@@ -151,11 +170,7 @@ export default function AmbulanceCallList() {
 
                         <button
                           title="Delete"
-                          onClick={() => {
-                            if (window.confirm("Are you sure you want to delete?")) {
-                              console.log("Delete", row.billNo);
-                            }
-                          }}
+                          onClick={() => handleDelete(row.id)}
                           className="p-1 rounded hover:bg-red-100 text-red-600"
                         >
                           <Trash2 size={16} />
@@ -175,6 +190,28 @@ export default function AmbulanceCallList() {
         open={open}
         onClose={() => setOpen(false)}
         onSuccess={refresh}
+      />
+
+      {/* UPDATE AMBULANCE BILL MODAL */}
+      <UpdateAmbulance
+        open={openUpdate}
+        onClose={() => {
+          setOpenUpdate(false);
+          setEditBillId(null);
+        }}
+        billId={editBillId}
+        onSuccess={() => {
+          refresh();
+          setOpenUpdate(false);
+          setEditBillId(null);
+        }}
+      />
+      
+      {/* AMBULANCE BILL DETAIL MODAL */}
+      <AmbulanceBillDetail
+        open={viewBillId !== null}
+        billId={viewBillId}
+        onClose={() => setViewBillId(null)}
       />
     </AdminLayout>
   );

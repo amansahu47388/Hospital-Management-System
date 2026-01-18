@@ -140,90 +140,6 @@ function Sidebar() {
 
           {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-bold pb-10">
-            {navItems.map(({ to, label, Icon }) => {
-              // Handle Birth & Death Record separately
-              if (to === "/front-office") {
-                return (
-                  <React.Fragment key={to}>
-                    <NavLink
-                      to={to}
-                      end
-                      className={({ isActive }) =>
-                        `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
-                        ${
-                          isActive
-                            ? "!text-white bg-white/10 rounded-md"
-                            : "!text-white hover:!text-gray-200"
-                        }`
-                      }
-                    >
-                      <Icon size={20} className="flex-shrink-0" />
-                      <span className={`${collapsed ? "hidden" : "block"}`}>
-                        {label}
-                      </span>
-                    </NavLink>
-                    
-                    {/* Birth & Death Record with submenu */}
-                    <div>
-                      <button
-                        onClick={toggleBirthDeathRecord}
-                        className={`w-full flex items-center justify-between gap-2 py-2 px-2 transition-all duration-700 no-underline
-                        ${
-                          birthDeathRecordOpen
-                            ? "!text-white bg-white/10 rounded-md"
-                            : "!text-white hover:!text-gray-200"
-                        }`}
-                      >
-                        <div className="flex items-center gap-4 min-w-0 flex-1">
-                          <FileBadge size={20} className="flex-shrink-0 transition-transform duration-1000" />
-                          <span className={`${collapsed ? "hidden" : "block whitespace-nowrap truncate"}`}>
-                            Birth & Death Record
-                          </span>
-                        </div>
-                        {!collapsed && (
-                          birthDeathRecordOpen ? (
-                            <ChevronUp size={16} className="flex-shrink-0 transition-transform duration-1000" />
-                          ) : (
-                            <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-1000" />
-                          )
-                        )}
-                      </button>
-                      
-                      {/* Submenu items */}
-                      {birthDeathRecordOpen && !collapsed && (
-                        <div className="ml-8 mt-2 space-y-2 transition-all duration-1000 ease-in-out">
-                          <NavLink
-                            to="/admin/birth-death-record/birth-record"
-                            className={({ isActive }) =>
-                              `w-full flex items-center gap-4 py-2 px-2 transition-all duration-700 no-underline text-sm
-                              ${
-                                isActive
-                                  ? "!text-white bg-white/10 rounded-md"
-                                  : "!text-white/80 hover:!text-white"
-                              }`
-                            }
-                          >
-                            <span className="whitespace-nowrap">Birth Record</span>
-                          </NavLink>
-                          <NavLink
-                            to="/admin/birth-death-record/death-record"
-                            className={({ isActive }) =>
-                              `w-full flex items-center gap-4 py-2 px-2 transition-all duration-700 no-underline text-sm
-                              ${
-                                isActive
-                                  ? "!text-white bg-white/10 rounded-md"
-                                  : "!text-white/80 hover:!text-white"
-                              }`
-                            }
-                          >
-                            <span className="whitespace-nowrap">Death Record</span>
-                          </NavLink>
-                        </div>
-                      )}
-                    </div>
-                  </React.Fragment>
-                );
-              }
           {navItems.map(({ to, label, Icon }) => {
 
 /* FRONT OFFICE + BIRTH & DEATH */
@@ -275,7 +191,7 @@ if (to === "/admin/front-office/visitor-list") {
 
         {birthDeathRecordOpen && !collapsed && (
           <div className="ml-8 mt-2 space-y-2">
-            <NavLink to="/admin/Birth-Record" className={({ isActive }) =>
+            <NavLink to="/admin/birth-death-record/birth-record" className={({ isActive }) =>
     `w-full flex items-center gap-4 py-2 px-2 no-underline
      ${isActive ? "bg-white/10 rounded-md" : ""}
      !text-white hover:!text-white`
@@ -283,7 +199,7 @@ if (to === "/admin/front-office/visitor-list") {
            
               Birth Record
             </NavLink>
-            <NavLink to="/admin/Death-Record" className={({ isActive }) =>
+            <NavLink to="/admin/birth-death-record/death-record" className={({ isActive }) =>
     `w-full flex items-center gap-4 py-2 px-2 no-underline
      ${isActive ? "bg-white/10 rounded-md" : ""}
      !text-white hover:!text-white`

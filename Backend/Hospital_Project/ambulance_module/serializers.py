@@ -146,12 +146,6 @@ class AmbulanceBillDetailSerializer(serializers.ModelSerializer):
                 'standard_charge': obj.hospital_charge.charge_amount,
                 'tax': obj.hospital_charge.tax,
             }
-        elif obj.charge:
-            return {
-                'category': obj.charge.category.category_name,
-                'charge_name': obj.charge.charge_name,
-                'standard_charge': obj.charge.standard_charge,
-            }
         return None
 
     class Meta:
@@ -222,3 +216,9 @@ class AmbulanceBillUpdateSerializer(serializers.ModelSerializer):
                 instance.hospital_charge = None
         
         return super().update(instance, validated_data)
+
+        
+class AmbulanceBillDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AmbulanceBill
+        fields = "__all__"

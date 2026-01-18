@@ -17,11 +17,11 @@ export default function ChargesSidebar() {
             <NavLink
               to={item.path}
               className={({ isActive }) =>
-                `block px-3 py-2 rounded
+                `block px-3 py-2 rounded 
                 ${
                   isActive
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "hover:bg-gray-100"
+                    ? "bg-gray-200 text-purple-600 font-bold"
+                    : "hover:bg-gray-100 hover:text-purple-500"
                 }`
               }
             >
