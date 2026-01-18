@@ -59,7 +59,7 @@ export default function BirthRecord() {
   return (
     <AdminLayout>
       <div className="min-h-full p-1">
-        <div className="bg-white rounded shadow p-4 max-w-7xl mx-auto">
+        <div className="bg-white rounded shadow p-4 max-w-8xl mx-auto">
 
           {/* HEADER */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
@@ -105,7 +105,7 @@ export default function BirthRecord() {
               <tbody>
                 {records.map((item, i) => (
                   <tr key={i} className=" text-sm group hover:bg-gray-50 transition">
-                    <td className="px-3 py-2">{item.refNo}</td>
+                    <td className="px-3 py-2">{item.id}</td>
                     <td className="px-3 py-2">{item.caseId}</td>
                     <td className="px-3 py-2">{item.generatedBy}</td>
                     <td className="px-3 py-2">{item.childName}</td>

@@ -81,11 +81,10 @@ import OperationList from "./pages/Setup/Operation/OperationList";
 import OperationCategory from "./pages/Setup/Operation/OperationCategory";
 import MedicineCategory from "./pages/Setup/Pharmacy/MedicineCategory";
 import Supplier from "./pages/Setup/Pharmacy/Supplier";
-import DoseInterval from "./pages/Setup/Pharmacy/DoseInterval";
+import DoseInterval from "./pages/Setup/Pharmacy/Dose";
 import MedicineDosage from "./pages/Setup/Pharmacy/MedicineDosage"; 
 import Company from "./pages/Setup/Pharmacy/Company";   
-import Unit from "./pages/Setup/Pharmacy/Unit";         
-import DoseDuration from "./pages/Setup/Pharmacy/DoseDuration";   
+import Unit from "./pages/Setup/Pharmacy/Unit";           
 import MedicineGroup from "./pages/Setup/Pharmacy/MedicineGroup";
 import PathologyCategory from "./pages/Setup/Pathology/PathologyCategory";
 import PathologyUnit from "./pages/Setup/Pathology/PathologyUnit";
@@ -197,13 +196,6 @@ function App() {
 
 
 
-
-
-
-
-
-
-
           {/* Bad Setup Routes */}
           <Route path="/admin/setup/bed-status" element={<BedStatus />}/>
           <Route path="/admin/setup/bed" element={<BedList />} />
@@ -245,11 +237,10 @@ function App() {
           <Route path="/admin/setup/operation/operation-category" element={<OperationCategory />} />
           <Route path="/admin/setup/pharmacy/medicine-category" element={<MedicineCategory />} />
           <Route path="/admin/setup/pharmacy/supplier" element={<Supplier />} />
-          <Route path="/admin/setup/pharmacy/dose-interval" element={<DoseInterval />} />
+          <Route path="/admin/setup/pharmacy/dose" element={<DoseInterval />} />
           <Route path="/admin/setup/pharmacy/medicine-dosage" element={<MedicineDosage />} />
           <Route path="/admin/setup/pharmacy/company" element={<Company />} />
           <Route path="/admin/setup/pharmacy/unit" element={<Unit />} />
-          <Route path="/admin/setup/pharmacy/dose-duration" element={<DoseDuration />} />
           <Route path="/admin/setup/pharmacy/medicine-group" element={<MedicineGroup />} />
           <Route path="/admin/setup/pathology/category" element={<PathologyCategory />} />
           <Route path="/admin/setup/pathology/unit" element={<PathologyUnit />} />

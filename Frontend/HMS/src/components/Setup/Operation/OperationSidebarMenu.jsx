@@ -10,8 +10,8 @@ export default function OperationSidebarMenu() {
             className={({ isActive }) =>
               `block px-4 py-2 ${
                 isActive
-                  ? "text-blue-600 font-semibold bg-blue-50"
-                  : "text-gray-700 hover:bg-gray-100"
+                  ? "bg-purple-200 text-purple-600 font-bold"
+                    : "hover:bg-purple-100 hover:text-purple-500"
               }`
             }
           >
@@ -25,8 +25,8 @@ export default function OperationSidebarMenu() {
             className={({ isActive }) =>
               `block px-4 py-2 ${
                 isActive
-                  ? "text-blue-600 font-semibold bg-blue-50"
-                  : "text-gray-700 hover:bg-gray-100"
+                  ? "bg-purple-200 text-purple-600 font-bold"
+                    : "hover:bg-purple-100 hover:text-purple-500"
               }`
             }
           >

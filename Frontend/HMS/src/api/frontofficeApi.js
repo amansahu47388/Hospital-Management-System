@@ -1,26 +1,65 @@
 import api from "./axiosInstance";
 
+// ==================== PURPOSE ====================
 export const getPurposes = () => {
-    return api.get("/front-office/purpose/");
+  return api.get("/front-office/purpose/");
 }
 
+export const createPurpose = (data) => {
+  return api.post("/front-office/purpose/create/", data);
+}
+
+export const updatePurpose = (id, data) => {
+  return api.put(`/front-office/purpose/${id}/update/`, data);
+}
+
+export const deletePurpose = (id) => {
+  return api.delete(`/front-office/purpose/${id}/delete`);
+}
+
+// ==================== COMPLAINT TYPE ====================
 export const getComplaintTypes = () => {
   return api.get("/front-office/complain-types/");
 };
 
+export const createComplaintType = (data) => {
+  return api.post("/front-office/complain-types/create", data);
+};
+
+export const updateComplaintType = (id, data) => {
+  return api.put(`/front-office/complain-types/${id}/update/`, data);
+};
+
+export const deleteComplaintType = (id) => {
+  return api.delete(`/front-office/complain-types/${id}/delete/`);
+};
+
+// ==================== SOURCE ====================
 export const getSources = () => {
   return api.get("/front-office/sources/");
+};
+
+export const createSource = (data) => {
+  return api.post("/front-office/sources/create/", data);
+};
+
+export const updateSource = (id, data) => {
+  return api.put(`/front-office/sources/${id}/update/`, data);
+};
+
+export const deleteSource = (id) => {
+  return api.delete(`/front-office/sources/${id}/delete/`);
 };
 
 
 
 
 export const getVisitors = () => {
-    return api.get("/front-office/visitor/");
+  return api.get("/front-office/visitor/");
 }
 
 export const createVisitor = (data) => {
-    return api.post("/front-office/visitor/create/", data);
+  return api.post("/front-office/visitor/create/", data);
 }
 
 export const updateVisitor = (id, data) => {
@@ -28,11 +67,11 @@ export const updateVisitor = (id, data) => {
 };
 
 export const detailVisitor = (id, data) => {
-    return api.get(`/front-office/visitor/${id}/details/`);
+  return api.get(`/front-office/visitor/${id}/details/`);
 }
 
 export const deleteVisitor = (id) => {
-    return api.delete(`/front-office/visitor/${id}/delete/`);
+  return api.delete(`/front-office/visitor/${id}/delete/`);
 }
 
 
@@ -92,7 +131,7 @@ export const getReceiveList = () => {
   return api.get("/front-office/receive/");
 }
 
-export const deleteReceive = (id) =>{
+export const deleteReceive = (id) => {
   return api.delete(`/front-office/receive/${id}/delete/`);
 }
 

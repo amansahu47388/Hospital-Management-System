@@ -193,8 +193,8 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
       <div className="bg-white w-full h-full flex flex-col">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-2 bg-blue-500 text-white">
-          <h2 className="text-sm font-semibold">Payments</h2>
+        <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
+          <h2 className="text-xl font-semibold">Payments</h2>
           <button onClick={onClose}>
             <X size={18} />
           </button>
@@ -284,7 +284,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="bg-blue-500 text-white text-sm px-4 py-1 rounded hover:bg-blue-600 disabled:opacity-50"
+                className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
               >
                 {loading ? "Adding..." : "Add Payment"}
               </button>

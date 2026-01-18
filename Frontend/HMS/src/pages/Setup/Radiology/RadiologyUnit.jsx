@@ -1,147 +1,130 @@
 import { useState } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
 import RadiologySidebarMenu from "../../../components/Setup/Radiology/RadiologySidebarMenu";
-import { Pencil, Trash2, Plus, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
 
 export default function RadiologyUnit() {
   const [units, setUnits] = useState([
-    "CT",
-    "MRI",
-    "Mammography",
-    "HVL",
-    "KHz",
-    "(dGy×cm2)",
-    "Teslas",
+    { id: 1, name: "Micrometer (oi)" },
+    { id: 2, name: "mmol/L" },
+    { id: 3, name: "Dalton (Da)" },
+    { id: 4, name: "Nanometer" },
+    { id: 5, name: "million/mm3" },
+    { id: 6, name: "Cells / cubic mm" },
+    { id: 7, name: "(U/L)" },
   ]);
 
-  const [showAdd, setShowAdd] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [unitName, setUnitName] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
+  const [form, setForm] = useState({ id: null, name: "" });
+  const [open, setOpen] = useState(false);
 
-  const handleAdd = () => {
-    if (!unitName) return;
-    setUnits([...units, unitName]);
-    setUnitName("");
-    setShowAdd(false);
-  };
-
-  const handleEdit = () => {
-    const updated = [...units];
-    updated[editIndex] = unitName;
-    setUnits(updated);
-    setShowEdit(false);
+  const saveUnit = () => {
+    if (form.id) {
+      setUnits((u) => u.map((x) => (x.id === form.id ? form : x)));
+    } else {
+      setUnits((u) => [...u, { ...form, id: Date.now() }]);
+    }
+    setOpen(false);
   };
 
   return (
     <AdminLayout>
-      <div className="p-4 grid grid-cols-12 gap-4">
-        {/* SIDEBAR */}
-        <div className="col-span-12 lg:col-span-3">
-          <RadiologySidebarMenu />
-        </div>
+      <div className="min-h-screen p-1">
 
-        {/* MAIN CONTENT */}
-        <div className="col-span-12 lg:col-span-9">
-          <div className="flex justify-between items-center p-4">
-            <h2 className="text-lg font-semibold">Unit List</h2>
-            <button
-              onClick={() => setShowAdd(true)}
-              className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-1 rounded"
-            >
-              <Plus size={16} /> Add Unit
-            </button>
-          </div>
+        {/* HEADER */}
+        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
+          <h2 className="text-lg font-semibold">Radiology Unit</h2>
 
-          <table className="w-full text-sm bg-white">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="text-left p-3">Unit Name</th>
-                <th className="text-right p-3">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {units.map((unit, index) => (
-                <tr key={index}>
-                  <td className="p-3">{unit}</td>
-                  <td className="p-3 text-right space-x-2">
-                    <button
-                      onClick={() => {
-                        setUnitName(unit);
-                        setEditIndex(index);
-                        setShowEdit(true);
-                      }}
-                      className="text-blue-600"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                    <button className="text-red-600">
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ADD MODAL */}
-      {showAdd && (
-        <Modal title="Add Unit" onClose={() => setShowAdd(false)}>
-          <input
-            className="input"
-            placeholder="Unit Name"
-            value={unitName}
-            onChange={(e) => setUnitName(e.target.value)}
-          />
-          <ModalFooter onSave={handleAdd} />
-        </Modal>
-      )}
-
-      {/* EDIT MODAL */}
-      {showEdit && (
-        <Modal title="Edit Unit" onClose={() => setShowEdit(false)}>
-          <input
-            className="input"
-            value={unitName}
-            onChange={(e) => setUnitName(e.target.value)}
-          />
-          <ModalFooter onSave={handleEdit} />
-        </Modal>
-      )}
-    </AdminLayout>
-  );
-}
-
-/* INLINE MODAL (NOT SEPARATE COMPONENT FILE) */
-function Modal({ title, children, onClose }) {
-  return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="w-full max-w-md bg-gradient-to-b from-[#6046B5] to-[#8A63D2] rounded shadow-lg">
-        <div className="flex justify-between items-center p-4 text-white">
-          <h3 className="font-semibold">{title}</h3>
-          <button onClick={onClose}>
-            <X />
+          <button
+            onClick={() => {
+              setForm({ id: null, name: "" });
+              setOpen(true);
+            }}
+            className="flex items-center gap-2 bg-gradient-to-b
+            from-[#6046B5] to-[#8A63D2]
+            text-white px-4 py-2 rounded-md"
+          >
+            <Plus size={16} /> Add Unit
           </button>
         </div>
-        <div className="bg-white p-4 space-y-4 rounded-b">
-          {children}
+
+        <div className="flex gap-4">
+
+          {/* LEFT MENU */}
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
+            <RadiologySidebarMenu />
+          </div>
+
+
+          {/* TABLE */}
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-3 py-2 text-left">Unit Name</th>
+                  <th className="px-3 py-2 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {units.map((u) => (
+                  <tr key={u.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 text-left">{u.name}</td>
+                    <td className="px-3 py-2 text-left">
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            setForm(u);
+                            setOpen(true);
+                          }}
+                          className="text-purple-600 hover:text-purple-800"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setUnits((x) => x.filter((i) => i.id !== u.id))
+                          }
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
 
-function ModalFooter({ onSave }) {
-  return (
-    <div className="flex justify-end">
-      <button
-        onClick={onSave}
-        className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-1 rounded"
-      >
-        Save
-      </button>
-    </div>
+      {open && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-lg rounded-md">
+            <div className="flex justify-between px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
+              <h3>{form.id ? "Edit Unit" : "Add Unit"}</h3>
+              <X onClick={() => setOpen(false)} className="cursor-pointer" />
+            </div>
+
+            <div className="p-4">
+              <label className="text-sm font-medium">Unit Name *</label>
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full mt-1 px-3 py-2 border rounded focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <div className="flex justify-end p-4 border-t">
+              <button
+                onClick={saveUnit}
+                className="px-6 py-2 text-white rounded bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </AdminLayout>
   );
 }

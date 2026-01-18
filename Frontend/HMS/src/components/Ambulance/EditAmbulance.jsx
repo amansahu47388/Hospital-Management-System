@@ -78,7 +78,7 @@ export default function EditAmbulance({ open, onClose, ambulanceId, onSuccess })
 
         {/* HEADER */}
         <div className="flex justify-between items-center px-6 py-4 
-          bg-gradient-to-b from-[#1e9af1] to-[#2196f3] text-white">
+          bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
           <h2 className="text-lg font-semibold">Edit Ambulance</h2>
           <button onClick={onClose}>
             <X className="w-5 h-5" />
@@ -126,7 +126,7 @@ export default function EditAmbulance({ open, onClose, ambulanceId, onSuccess })
           <button
             onClick={handleUpdate}
             disabled={loading}
-            className="bg-blue-500 text-white px-6 py-2 rounded"
+            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded"
           >
             {loading ? "Please wait..." : "Save"}
           </button>

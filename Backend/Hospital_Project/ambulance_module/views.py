@@ -4,16 +4,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Q
-
-
-from .models import Ambulance, AmbulanceBill, AmbulanceBillTransaction
-from .serializers import (
-    AmbulanceSerializer, AmbulanceCreateSerializer, AmbulanceUpdateSerializer,
-    AmbulanceBillListSerializer, AmbulanceBillDetailSerializer,
-    AmbulanceBillCreateSerializer, AmbulanceBillUpdateSerializer,
-    AmbulanceBillTransactionSerializer, AmbulanceBillTransactionCreateSerializer
-)
-
+from .models import *
+from .serializers import *
 
 # Ambulance CRUD Views
 class AmbulanceListAPIView(APIView):
@@ -78,7 +70,7 @@ class AmbulanceBillListAPIView(APIView):
 
         if search:
             queryset = queryset.filter(
-                Q(bill_no__icontains=search) |
+                Q(id__icontains=search) |
                 Q(patient__first_name__icontains=search) |
                 Q(ambulance__vehicle_number__icontains=search) |
                 Q(hospital_charge__charge_name__icontains=search)
@@ -111,7 +103,6 @@ class GenerateAmbulanceBillAPIView(APIView):
                 return Response({
                     'success': True,
                     'bill_id': bill.id,
-                    'bill_no': bill.bill_no,
                     'total': bill.total_amount,
                     'net_amount': bill.net_amount,
                     'balance': bill.balance,
@@ -248,7 +239,7 @@ class AmbulanceBillListAPIView(APIView):
 
         if search:
             queryset = queryset.filter(
-                Q(bill_no__icontains=search) |
+                Q(id__icontains=search) |
                 Q(patient__first_name__icontains=search) |
                 Q(ambulance__vehicle_number__icontains=search) |
                 Q(hospital_charge__charge_name__icontains=search)
@@ -281,7 +272,6 @@ class GenerateAmbulanceBillAPIView(APIView):
                 return Response({
                     'success': True,
                     'bill_id': bill.id,
-                    'bill_no': bill.bill_no,
                     'total': bill.total_amount,
                     'net_amount': bill.net_amount,
                     'balance': bill.balance,

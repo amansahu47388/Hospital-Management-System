@@ -10,7 +10,6 @@ class BirthRecord(models.Model):
         ('Other', 'Other'),
     ]
 
-    reference_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
     child_name = models.CharField(max_length=150)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     weight = models.CharField(max_length=50, blank=True, null=True)
@@ -32,20 +31,16 @@ class BirthRecord(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        if not self.reference_no:
-            self.reference_no = f"BREF{uuid.uuid4().hex[:4].upper()}"
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Birth Record - {self.child_name} ({self.reference_no})"
-
     class Meta:
         ordering = ['-created_at']
 
+    def __str__(self):
+        return f"Birth Record - {self.child_name}"
+
+   
+
 
 class DeathRecord(models.Model):
-    reference_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
     case_id = models.CharField(max_length=50, blank=True, null=True)
     patient_name = models.CharField(max_length=150)
     death_date = models.DateField()
@@ -57,13 +52,10 @@ class DeathRecord(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        if not self.reference_no:
-            self.reference_no = f"DREF{uuid.uuid4().hex[:4].upper()}"
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Death Record - {self.patient_name} ({self.reference_no})"
-
     class Meta:
         ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Death Record - {self.patient_name}"
+
+    

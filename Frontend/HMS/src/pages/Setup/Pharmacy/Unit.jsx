@@ -25,68 +25,74 @@ export default function Unit() {
 
   return (
     <AdminLayout>
-      <div className="p-4 md:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="min-h-screen p-1">
 
-          <div className="lg:col-span-1">
+        {/* HEADER */}
+        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
+          <h2 className="text-lg font-semibold">Unit</h2>
+
+          <button
+            onClick={() => { setForm({ id: null, name: "" }); setOpen(true); }}
+            className="flex items-center gap-2 bg-gradient-to-b
+            from-[#6046B5] to-[#8A63D2]
+            text-white px-4 py-2 rounded-md"
+          >
+            <Plus size={16} /> Add Unit
+          </button>
+        </div>
+
+        <div className="flex gap-4">
+
+          {/* LEFT MENU */}
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
             <MedicineSidebarMenu />
           </div>
 
-          <div className="lg:col-span-3">
-            <div className="flex justify-between mb-4">
-              <h2 className="text-xl font-semibold">Unit List</h2>
-              <button
-                onClick={() => { setForm({ id: null, name: "" }); setOpen(true); }}
-                className="flex items-center gap-2 px-4 py-2 text-white rounded bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
-              >
-                <Plus size={16} /> Add Unit
-              </button>
-            </div>
 
-            <div className="bg-white rounded shadow">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-3 py-2 text-left">ID</th>
-                    <th className="px-3 py-2 text-left">Unit Name</th>
-                    <th className="px-3 py-2 text-left">Action</th>
+          {/* TABLE */}
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-3 py-2 text-left">ID</th>
+                  <th className="px-3 py-2 text-left">Unit Name</th>
+                  <th className="px-3 py-2 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.map(row => (
+                  <tr key={row.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 text-left">{row.id}</td>
+                    <td className="px-3 py-2 text-left">{row.name}</td>
+                    <td className="px-3 py-2 text-left">
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => { setForm(row); setOpen(true); }}
+                          className="text-purple-600 hover:text-purple-800"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => setList(list.filter(i => i.id !== row.id))}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {list.map(row => (
-                    <tr key={row.id} className="group hover:bg-gray-50">
-                      <td className="px-3 py-2">{row.id}</td>
-                      <td className="px-3 py-2">{row.name}</td>
-                      <td className="px-3 py-2">
-                        <div className="flex gap-2 opacity-0 group-hover:opacity-100">
-                          <button
-                            onClick={() => { setForm(row); setOpen(true); }}
-                            className="p-1 bg-blue-500 text-white rounded"
-                          >
-                            <Pencil size={14} />
-                          </button>
-                          <button
-                            onClick={() => setList(list.filter(i => i.id !== row.id))}
-                            className="p-1 bg-red-500 text-white rounded"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
       {/* MODAL */}
       {open && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
-          <div className="bg-white w-full max-w-lg rounded">
-            <div className="flex justify-between px-4 py-3 text-white rounded-t bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-lg rounded-md">
+            <div className="flex justify-between px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
               <h3>{form.id ? "Edit Unit" : "Add Unit"}</h3>
               <button onClick={() => setOpen(false)}><X /></button>
             </div>

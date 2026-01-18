@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { createAmbulanceBill, getAmbulances } from "../../api/ambulanceApi";
-import { getHospitalCharges, getChargeCategories } from "../../api/setupApi";
+import { getHospitalCharges } from "../../api/setupApi";
 import { searchPatient } from "../../api/patientApi";
 import { useNotify } from "../../context/NotificationContext";
 
@@ -18,7 +18,6 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
   /* ================= DATA ================= */
   const [ambulances, setAmbulances] = useState([]);
   const [charges, setCharges] = useState([]);
-  const [chargeCategories, setChargeCategories] = useState([]);
 
   /* ================= SELECTION ================= */
   const [selectedAmbulance, setSelectedAmbulance] = useState("");
@@ -71,9 +70,9 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
     hasFetchedRef.current = true;
 
     loadAmbulances();
-    loadCharges();
-    loadChargeCategories();
+    loadCharges(); // ✅ ONLY THIS
   }, [open]);
+
 
   /* ================= API ================= */
   const loadAmbulances = async () => {
@@ -86,10 +85,13 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
     setCharges(res.data || []);
   };
 
-  const loadChargeCategories = async () => {
-    const res = await getChargeCategories();
-    setChargeCategories(res.data || []);
+
+  const getChargeCategoriesFromCharges = () => {
+    const categories = charges.map((c) => c.charge_category);
+    return [...new Set(categories)];
   };
+
+
 
   const searchPatients = async (query) => {
     if (!query.trim()) {
@@ -157,8 +159,8 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-      <div className="w-[98%] max-w-7xl bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-white flex flex-col">
+      <div className="w-full h-full bg-white flex flex-col overflow-hidden">
 
         {/* HEADER */}
         <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
@@ -171,7 +173,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                 setPatientSearch(e.target.value);
                 searchPatients(e.target.value);
               }}
-              className="w-full px-3 py-2 rounded text-sm text-black"
+              className="w-full px-3 py-2 rounded text-sm text-black bg-white"
             />
             {showPatientDropdown && (
               <div className="absolute top-full left-0 right-0 bg-white border shadow z-10">
@@ -200,153 +202,181 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
         </div>
 
         {/* BODY */}
-        <div className="p-6 overflow-y-auto max-h-[75vh]">
+        <div className="flex-1 p-6 overflow-y-auto">
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <select
-              value={selectedAmbulance}
-              onChange={(e) => setSelectedAmbulance(e.target.value)}
-              className="border px-3 py-2 rounded"
-            >
-              <option value="">Select Ambulance</option>
-              {ambulances.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.vehicle_model} ({a.vehicle_number})
-                </option>
-              ))}
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ambulance</label>
+              <select
+                value={selectedAmbulance}
+                onChange={(e) => setSelectedAmbulance(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+              >
+                <option value="">Select Ambulance</option>
+                {ambulances.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.vehicle_model} ({a.vehicle_number})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            <input
-              readOnly
-              value={
-                ambulances.find(
-                  (a) => a.id === parseInt(selectedAmbulance)
-                )?.driver_name || ""
-              }
-              className="border px-3 py-2 rounded bg-gray-100"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Driver Name</label>
+              <input
+                readOnly
+                value={
+                  ambulances.find(
+                    (a) => a.id === parseInt(selectedAmbulance)
+                  )?.driver_name || ""
+                }
+                className="w-full border px-3 py-2 rounded bg-gray-100"
+              />
+            </div>
 
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="border px-3 py-2 rounded"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
 
-            <select
-              value={selectedChargeCategory}
-              onChange={(e) => {
-                setSelectedChargeCategory(e.target.value);
-                setSelectedCharge("");
-              }}
-              className="border px-3 py-2 rounded"
-            >
-              <option value="">Select Category</option>
-              {chargeCategories.map((c) => (
-                <option key={c.id} value={c.category_name}>
-                  {c.category_name}
-                </option>
-              ))}
-            </select>
 
-            <select
-              value={selectedCharge}
-              onChange={(e) => setSelectedCharge(e.target.value)}
-              className="border px-3 py-2 rounded md:col-span-2"
-            >
-              <option value="">Select Charge</option>
-              {getFilteredCharges().map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.charge_name}
-                </option>
-              ))}
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Charge Category</label>
+              <select
+                value={selectedChargeCategory}
+                onChange={(e) => {
+                  setSelectedChargeCategory(e.target.value);
+                  setSelectedCharge("");
+                }}
+                className="w-full border px-3 py-2 rounded"
+              >
+                <option value="">Select Category</option>
+                {getChargeCategoriesFromCharges().map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            <input
-              type="number"
-              placeholder="Standard Charge"
-              value={totalAmount}
-              onChange={(e) => setTotalAmount(e.target.value)}
-              className="border px-3 py-2 rounded"
-            />
+
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Charge Name</label>
+              <select
+                value={selectedCharge}
+                onChange={(e) => setSelectedCharge(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+              >
+                <option value="">Select Charge</option>
+                {getFilteredCharges().map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.charge_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Standard Charge ($)</label>
+              <input
+                type="number"
+                placeholder="Enter amount"
+                value={totalAmount}
+                onChange={(e) => setTotalAmount(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
           </div>
 
           {/* NOTE + BILL */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-            <textarea
-              rows={5}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="border rounded p-3"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
+              <textarea
+                rows={5}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Add any additional notes here..."
+                className="w-full border rounded p-3"
+              />
+            </div>
 
-            {/* BILL SUMMARY (IMAGE STYLE) */}
-            <div className="space-y-3">
-              <div className="flex justify-between border-b pb-1">
-                <span>Total ($)</span>
-                <span className="font-semibold">
-                  {total.toFixed(2)}
-                </span>
-              </div>
-
-              <div className="flex justify-between border-b pb-1">
-                <span>Discount ($)</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    placeholder="%"
-                    value={discountPercent}
-                    onChange={(e) => setDiscountPercent(e.target.value)}
-                    className="w-14 border-b outline-none text-right"
-                  />
-                  <span className="font-semibold w-20 text-right">
-                    {discountValue.toFixed(2)}
+            {/* BILL SUMMARY */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">Bill Summary</label>
+              <div className="space-y-3">
+                <div className="flex justify-between border-b pb-1">
+                  <span>Total ($)</span>
+                  <span className="font-semibold">
+                    {total.toFixed(2)}
                   </span>
                 </div>
-              </div>
 
-              <div className="flex justify-between border-b pb-1">
-                <span>Tax ($)</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    placeholder="Tax %"
-                    value={taxPercent}
-                    onChange={(e) => setTaxPercent(e.target.value)}
-                    className="w-14 border-b outline-none text-right"
-                  />
-                  <span className="font-semibold w-20 text-right">
-                    {taxValue.toFixed(2)}
+                <div className="flex justify-between border-b pb-1">
+                  <span>Discount ($)</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      placeholder="%"
+                      value={discountPercent}
+                      onChange={(e) => setDiscountPercent(e.target.value)}
+                      className="w-14 border-b outline-none text-right"
+                    />
+                    <span className="font-semibold w-20 text-right">
+                      {discountValue.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between border-b pb-1">
+                  <span>Tax ($)</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      placeholder="Tax %"
+                      value={taxPercent}
+                      onChange={(e) => setTaxPercent(e.target.value)}
+                      className="w-14 border-b outline-none text-right"
+                    />
+                    <span className="font-semibold w-20 text-right">
+                      {taxValue.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between border-b pb-1">
+                  <span>Net Amount ($)</span>
+                  <span className="font-semibold">
+                    {netAmount.toFixed(2)}
                   </span>
                 </div>
-              </div>
 
-              <div className="flex justify-between border-b pb-1">
-                <span>Net Amount ($)</span>
-                <span className="font-semibold">
-                  {netAmount.toFixed(2)}
-                </span>
-              </div>
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <select
+                    value={paymentMode}
+                    onChange={(e) => setPaymentMode(e.target.value)}
+                    className="border px-3 py-2 rounded"
+                  >
+                    <option value="cash">Cash</option>
+                    <option value="card">Card</option>
+                    <option value="upi">UPI</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                  </select>
 
-              <div className="grid grid-cols-2 gap-3 mt-3">
-                <select
-                  value={paymentMode}
-                  onChange={(e) => setPaymentMode(e.target.value)}
-                  className="border px-3 py-2 rounded"
-                >
-                  <option value="cash">Cash</option>
-                  <option value="card">Card</option>
-                  <option value="upi">UPI</option>
-                  <option value="bank_transfer">Bank Transfer</option>
-                </select>
-
-                <input
-                  type="number"
-                  placeholder="Payment Amount ($)"
-                  value={paymentAmount}
-                  onChange={(e) => setPaymentAmount(e.target.value)}
-                  className="border px-3 py-2 rounded"
-                />
+                  <input
+                    type="number"
+                    placeholder="Payment Amount ($)"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    className="border px-3 py-2 rounded"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -359,14 +389,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
             disabled={loading}
             className="px-4 py-2 rounded bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white"
           >
-            {loading ? "Saving..." : "💾 Save & Print"}
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={loading}
-            className="px-4 py-2 rounded bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white"
-          >
-            ✔ Save
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       </div>

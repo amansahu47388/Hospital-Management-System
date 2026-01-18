@@ -35,54 +35,52 @@ export default function AmbulanceCallList() {
   return (
     <AdminLayout>
       {/* PAGE CONTAINER */}
-      <div className="w-full rounded-lg bg-white p-4 md:p-6 shadow-md">
+      <div className="w-full rounded-lg bg-white  md:p-4 shadow-md">
 
         {/* HEADER SECTION */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
 
           {/* TITLE + SEARCH */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
+          <div className="flex-1">
+            <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">
               Ambulance Call List
             </h2>
 
-            <div className="relative w-full sm:w-64 pt-4">
+            <div className="relative w-full sm:w-80">
               <input
                 type="text"
                 placeholder="Search by Bill No or Patient"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-md text-sm outline-none border border-gray-400 focus:ring-2 focus:ring-purple-600"
+                className="w-full px-4 py-2.5 rounded-md text-sm outline-none border border-gray-300 focus:ring-2 focus:ring-purple-600 focus:border-purple-600"
               />
             </div>
           </div>
 
           {/* ACTION BUTTONS */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center w-full md:w-auto">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setOpen(true)}
-                className="flex items-center gap-1 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded-md text-sm font-medium shadow"
-              >
-                <Plus size={16} />
-                Add Ambulance
-              </button>
+          <div className="flex flex-wrap gap-3 items-start">
+            <button
+              onClick={() => setOpen(true)}
+              className="flex items-center gap-2 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-5 py-2.5 rounded-md text-sm font-medium shadow-md hover:shadow-lg transition-shadow"
+            >
+              <Plus size={18} />
+              Add Ambulance Bill
+            </button>
 
-              <button
-                onClick={() => navigate("/admin/ambulance-list")}
-                className="flex items-center gap-1 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded-md text-sm shadow"
-              >
-                <List size={16} />
-                Ambulance List
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/admin/ambulance-list")}
+              className="flex items-center gap-2 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-5 py-2.5 rounded-md text-sm font-medium shadow-md hover:shadow-lg transition-shadow"
+            >
+              <List size={18} />
+              Ambulance List
+            </button>
           </div>
         </div>
 
         {/* TABLE */}
-        <div className="overflow-x-auto bg-white rounded shadow mt-6">
-          <table className="min-w-[1400px] w-full text-left">
-            <thead className="bg-gray-100 text-sm font-semibold">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm mt-6 overflow-x-auto lg:overflow-x-visible">
+          <table className="w-full text-left table-auto min-w-[900px] lg:min-w-0">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
               <tr>
                 {[
                   "Bill No",
@@ -96,14 +94,12 @@ export default function AmbulanceCallList() {
                   "Address",
                   "Date",
                   "Amount",
-                  "Discount",
-                  "Tax",
                   "Net",
                   "Paid",
                   "Balance",
                   "Actions",
                 ].map((h) => (
-                  <th key={h} className="px-3 py-2">
+                  <th key={h} className="px-2 py-3 text-sm font-bold text-gray-700 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -127,27 +123,25 @@ export default function AmbulanceCallList() {
                 data.map((row, i) => (
                   <tr
                     key={i}
-                    className="border-b text-sm hover:bg-gray-50"
+                    className="border-b border-gray-200 text-sm hover:bg-purple-50 transition-colors"
                   >
-                    <td className="px-3 py-2">{row.billNo}</td>
-                    <td className="px-3 py-2">{row.caseId}</td>
-                    <td className="px-3 py-2">{row.patient}</td>
-                    <td className="px-3 py-2">{row.generatedBy}</td>
-                    <td className="px-3 py-2">{row.vehicleNo}</td>
-                    <td className="px-3 py-2">{row.model}</td>
-                    <td className="px-3 py-2">{row.driver}</td>
-                    <td className="px-3 py-2">{row.contact}</td>
-                    <td className="px-3 py-2">{row.address}</td>
-                    <td className="px-3 py-2">{row.date}</td>
-                    <td className="px-3 py-2">{row.amount.toFixed(2)}</td>
-                    <td className="px-3 py-2">{row.discount.toFixed(2)}</td>
-                    <td className="px-3 py-2">{row.tax.toFixed(2)}</td>
-                    <td className="px-3 py-2">{row.net.toFixed(2)}</td>
-                    <td className="px-3 py-2">{row.paid.toFixed(2)}</td>
-                    <td className="px-3 py-2">{row.balance.toFixed(2)}</td>
+                    <td className="px-2 py-3 ">{row.id}</td>
+                    <td className="px-2 py-3 ">{row.caseId}</td>
+                    <td className="px-2 py-3 ">{row.patient}</td>
+                    <td className="px-2 py-3 ">{row.generatedBy}</td>
+                    <td className="px-2 py-3 ">{row.vehicleNo}</td>
+                    <td className="px-2 py-3 ">{row.model}</td>
+                    <td className="px-2 py-3 ">{row.driver}</td>
+                    <td className="px-2 py-3 ">{row.contact}</td>
+                    <td className="px-2 py-3  ">{row.address}</td>
+                    <td className="px-2 py-3 ">{row.date}</td>
+                    <td className="px-2 py-3 ">${row.amount.toFixed(2)}</td>
+                    <td className="px-2 py-3  ">${row.net.toFixed(2)}</td>
+                    <td className="px-2 py-3  ">${row.paid.toFixed(2)}</td>
+                    <td className="px-2 py-3  ">${row.balance.toFixed(2)}</td>
 
                     {/* ACTIONS */}
-                    <td className="px-3 py-2">
+                    <td className="px-2 py-3">
                       <div className="flex items-center gap-2">
                         <button
                           title="View"
@@ -159,7 +153,7 @@ export default function AmbulanceCallList() {
                             }
                           }}
                           disabled={!row.id}
-                          className="p-1 rounded hover:bg-blue-100 text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1 rounded hover:bg-purple-100 text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Eye size={16} />
                         </button>
@@ -225,7 +219,7 @@ export default function AmbulanceCallList() {
           setEditBillId(null);
         }}
       />
-      
+
       {/* AMBULANCE BILL DETAIL MODAL */}
       <AmbulanceBillDetail
         open={viewBillId !== null}

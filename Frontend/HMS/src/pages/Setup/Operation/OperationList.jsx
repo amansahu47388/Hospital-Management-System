@@ -9,69 +9,65 @@ export default function OperationList() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen p-1 ">
-        <div className="bg-white rounded-md p-4">
-          <h2 className="text-lg font-semibold mb-4  pb-2">
-            Operation List
-          </h2>
+      <div className="min-h-screen p-1">
 
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* SIDEBAR */}
-            <div className="w-full lg:w-64">
-              <SideBarMenu />
-            </div>
+        {/* HEADER */}
+        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
+          <h2 className="text-lg font-semibold">Operation</h2>
 
-            {/* CONTENT */}
-            <div className="flex-1 ">
-              <div className="flex justify-end items-center mb-3">
-                
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 bg-gradient-to-b
+            from-[#6046B5] to-[#8A63D2]
+            text-white px-4 py-2 rounded-md"
+          >
+            <Plus size={16} /> Add Operation
+          </button>
+        </div>
 
-                <button
-                  onClick={() => setShowAdd(true)}
-                  className="flex items-center gap-1 text-white px-3 py-1 rounded
-                  bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
-                >
-                  <Plus size={16} /> Add Operation
-                </button>
-              </div>
+        <div className="flex gap-4">
 
-              {/* TABLE */}
-              <div className="overflow-x-auto">
-                <table className="w-full  text-sm">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className=" px-2 py-2 text-left">Name</th>
-                      <th className=" px-2 py-2 text-left">Category</th>
-                      <th className=" px-2 py-2 text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { name: "Facelift Surgery", cat: "Plastic Surgery" },
-                      { name: "Tooth extraction", cat: "ENT and Oral Surgery" },
-                    ].map((row, i) => (
-                      <tr key={i} className="hover:bg-gray-50">
-                        <td className=" px-2 py-2">{row.name}</td>
-                        <td className=" px-2 py-2">{row.cat}</td>
-                        <td className=" px-2 py-2 text-center">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() => setShowEdit(true)}
-                              className="text-blue-600"
-                            >
-                              <Pencil size={16} />
-                            </button>
-                            <button className="text-red-600">
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          {/* LEFT MENU */}
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
+            <SideBarMenu />
+          </div>
+
+
+          {/* TABLE */}
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-3 py-2 text-left">Name</th>
+                  <th className="px-3 py-2 text-left">Category</th>
+                  <th className="px-3 py-2 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: "Facelift Surgery", cat: "Plastic Surgery" },
+                  { name: "Tooth extraction", cat: "ENT and Oral Surgery" },
+                ].map((row, i) => (
+                  <tr key={i} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 text-left">{row.name}</td>
+                    <td className="px-3 py-2 text-left">{row.cat}</td>
+                    <td className="px-3 py-2 text-left">
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setShowEdit(true)}
+                          className="text-purple-600 hover:text-purple-800"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button className="text-red-600 hover:text-red-800">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
