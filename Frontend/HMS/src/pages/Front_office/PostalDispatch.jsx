@@ -1,63 +1,86 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import { Plus } from "lucide-react";
-import AddDispatchModal from "../../components/Front_office/AddDispatchModal";
-import ActionButtons from "../../components/Front_office/ActionButtons";
-import ShowDispatchModal from "../../components/Front_office/ShowDispatchModal";
-import EditDispatchModal from "../../components/Front_office/EditDispatchModal";
+import { Plus, Trash2, Pencil, Eye } from "lucide-react";
+import AddDispatch from "../../components/Front_office/AddDispatch";
+import DispatchDetails from "../../components/Front_office/DispatchDetails";
+import UpdateDispatch from "../../components/Front_office/UpdateDispatch";
+import {getDispatchList,deleteDispatch,} from "../../api/frontofficeApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function PostalDispatch() {
-  const [openAdd, setOpenAdd] = useState(false);
+  const notify = useNotify();
 
+  const [openAdd, setOpenAdd] = useState(false);
+  const [dispatches, setDispatches] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleShow = (row) => {
-    setSelectedRow(row);
-    setShowModal(true);
-  };
+  const searchRef = useRef("");
+  const [, force] = useState(0);
 
-  const handleEdit = (row) => {
-    setSelectedRow(row);
-    setEditModal(true);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete?")) {
-      console.log("Delete ID:", id);
-      // 🔥 API CALL HERE
+  // ================= FETCH DATA =================
+  const loadDispatch = async () => {
+    try {
+      setLoading(true);
+      const res = await getDispatchList();
+      setDispatches(res.data);
+    } catch (e) {
+      notify("error","Failed to load postal dispatch");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const dispatchList = [
-    {
-      id: 1,
-      toTitle: "Patient Daily Clothes",
-      refNo: "RFN6754",
-      fromTitle: "Patient Daily Clothes",
-      address: "",
-      note: "",
-      date: "01/31/2026",
-    },
-    {
-      id: 2,
-      toTitle: "Cardiac SPECT perfusion",
-      refNo: "RFN9008",
-      fromTitle: "Cardiac SPECT perfusion",
-      address: "",
-      note: "",
-      date: "01/26/2026",
-    },
-  ];
+  useEffect(() => {
+    loadDispatch();
+  }, []);
+
+  // ================= SEARCH =================
+  const filtered = useMemo(() => {
+    const keyword = searchRef.current.toLowerCase();
+
+    if (!keyword) return dispatches;
+
+    return dispatches.filter((d) =>
+      d.reference_no.toLowerCase().includes(keyword) ||
+      d.to_title.toLowerCase().includes(keyword) ||
+      d.from_title.toLowerCase().includes(keyword)
+    );
+  }, [dispatches, searchRef.current]);
+
+  // ================= DELETE =================
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this postal dispatch?")) return;
+
+    try {
+      await deleteDispatch(id);
+      notify("success","Dispatch deleted successfully");
+      loadDispatch();
+      refresh();
+    } catch {
+      notify("error","Failed to delete dispatch");
+    }
+  };
 
   return (
     <AdminLayout>
       <div className="min-h-screen p-1">
 
-        {/* HEADER */}
-        <div className="flex flex-wrap justify-between items-center bg-white rounded-md p-3">
-          <h2 className="text-lg font-semibold">Postal Dispatch List</h2>
+        {/* ================= HEADER ================= */}
+        <div className="flex flex-wrap justify-between items-center bg-white rounded-md p-4 shadow">
+          <div>
+            <h2 className="text-lg font-semibold pb-3">Postal Dispatch List</h2>
+            <input
+              placeholder="Search by reference, to or from..."
+              onChange={(e) => {
+                searchRef.current = e.target.value;
+                force((x) => x + 1);
+              }}
+              className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+            />
+          </div>
 
           <button
             onClick={() => setOpenAdd(true)}
@@ -67,73 +90,92 @@ export default function PostalDispatch() {
           </button>
         </div>
 
-        {/* TABLE */}
-        <div className="bg-white rounded-md mt-4 overflow-x-auto">
+        {/* ================= TABLE ================= */}
+        <div className="bg-white rounded-md mt-4 overflow-x-auto shadow">
           <table className="w-full text-sm">
             <thead className="bg-gray-100">
               <tr>
-                {[
-                  "To Title",
-                  "Reference No",
-                  "From Title",
-                  "Date",
-                  "Action",
-                ].map((h) => (
-                  <th key={h} className="px-3 py-2 text-left">
-                    {h}
-                  </th>
+                {["To Title", "Reference No", "From Title", "Date", "Action"].map((h) => (
+                  <th key={h} className="px-3 py-2 text-left">{h}</th>
                 ))}
               </tr>
             </thead>
 
             <tbody>
-              {dispatchList.map((row) => (
-                <tr key={row.id} className="border-b hover:bg-gray-50 group">
-                  <td className="px-3 py-2">{row.toTitle}</td>
-                  <td className="px-3 py-2">{row.refNo}</td>
-                  <td className="px-3 py-2">{row.fromTitle}</td>
-                  <td className="px-3 py-2">{row.date}</td>
-
-                  {/* ACTION FIELD */}
+              {filtered.map((row) => (
+                <tr key={row.id} className=" hover:bg-gray-50">
+                  <td className="px-3 py-2">{row.to_title}</td>
+                  <td className="px-3 py-2 font-medium">{row.reference_no}</td>
+                  <td className="px-3 py-2">{row.from_title}</td>
                   <td className="px-3 py-2">
-                    <div className="opacity-0 group-hover:opacity-100 transition">
-                      <ActionButtons
-                        row={row}
-                        onShow={handleShow}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                      />
-                    </div>
+                    {new Date(row.date).toLocaleDateString()}
+                  </td>
+
+                  <td className="px-3 py-2 flex gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedRow(row);
+                        setShowModal(true);
+                      }}
+                      className="bg-blue-100 p-2 rounded text-blue-600"
+                    >
+                      <Eye size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setSelectedRow(row);
+                        setEditModal(true);
+                      }}
+                      className="bg-green-100 p-2 rounded text-green-600"
+                    >
+                      <Pencil size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(row.id)}
+                      className="bg-red-100 p-2 rounded text-red-600"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </td>
                 </tr>
               ))}
+
+              {!loading && filtered.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="text-center py-6 text-gray-500">
+                    No records found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* ADD MODAL */}
+        {/* ================= MODALS ================= */}
         {openAdd && (
-          <AddDispatchModal
+          <AddDispatch
             open={openAdd}
             onClose={() => setOpenAdd(false)}
+            refresh={loadDispatch}
           />
         )}
 
-        {/* SHOW MODAL */}
         {showModal && selectedRow && (
-          <ShowDispatchModal
+          <DispatchDetails
             open={showModal}
             data={selectedRow}
             onClose={() => setShowModal(false)}
           />
         )}
 
-        {/* EDIT MODAL */}
         {editModal && selectedRow && (
-          <EditDispatchModal
+          <UpdateDispatch
             open={editModal}
             data={selectedRow}
             onClose={() => setEditModal(false)}
+            refresh={loadDispatch}
           />
         )}
 

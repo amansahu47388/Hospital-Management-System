@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { useNavigate } from "react-router-dom";
 import AddAmbulance from "../../components/Ambulance/AddAmbulance";
+import EditAmbulance from "../../components/Ambulance/EditAmbulance";
 import { getAmbulances, deleteAmbulance } from "../../api/ambulanceApi";
 import { useNotify } from "../../context/NotificationContext";
 import {
@@ -23,6 +24,9 @@ export default function AmbulanceList() {
   const navigate = useNavigate();
   const notify = useNotify();
   const hasFetchedRef = useRef(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
 
   // Load ambulances
   useEffect(() => {
@@ -151,13 +155,16 @@ export default function AmbulanceList() {
                       <td className="px-3 py-2">{ambulance.vehicle_type}</td>
                       <td className="px-3 py-2">
                         <div className="flex gap-2">
-                          <button
-                            onClick={() => {/* TODO: Implement edit */}}
+                        <button
+                            onClick={() => {
+                              setSelectedId(ambulance.id);
+                              setEditOpen(true);
+                            }}
                             className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                            title="Edit"
                           >
                             <Edit size={16} />
                           </button>
+
                           <button
                             onClick={() => handleDelete(ambulance.id)}
                             className="p-1 text-red-600 hover:bg-red-50 rounded"
@@ -188,11 +195,13 @@ export default function AmbulanceList() {
           </div>
         </div>
       </div>
-      <AddAmbulance
-        open={open}
-        onClose={() => setOpen(false)}
+      <EditAmbulance
+        open={editOpen}
+        ambulanceId={selectedId}
+        onClose={() => setEditOpen(false)}
         onSuccess={loadAmbulances}
       />
+
     </AdminLayout> 
   );
 }

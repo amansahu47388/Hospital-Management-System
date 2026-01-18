@@ -1,46 +1,48 @@
-import { useState } from "react";
-
-const mockData = [
-  {
-    id: 1,
-    refNo: "DREF70",
-    caseId: 7447,
-    generatedBy: "Super Admin (9001)",
-    patient: "Alfred (987)",
-    guardian: "David",
-    gender: "Male",
-    date: "12/22/2025 01:53 PM",
-    report: "-",
-  },
-  {
-    id: 2,
-    refNo: "DREF68",
-    caseId: 6604,
-    generatedBy: "Super Admin (9001)",
-    patient: "Georgia Paten (1103)",
-    guardian: "William Paten",
-    gender: "Female",
-    date: "11/22/2025 05:31 PM",
-    report: "Natural",
-  },
-];
+import { useState, useEffect, useCallback } from "react";
+import { getDeathRecords, deleteDeathRecord as deleteRecordApi } from "../api/birthDeathApi";
 
 export default function useDeathRecords() {
-  const [records, setRecords] = useState(mockData);
+  const [records, setRecords] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const loadRecords = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await getDeathRecords(search);
+      setRecords(response.data || []);
+    } catch (error) {
+      console.error("Failed to load death records:", error);
+      setRecords([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
+
+  useEffect(() => {
+    loadRecords();
+  }, [loadRecords]);
+
+  const deleteRecord = async (id) => {
+    try {
+      await deleteRecordApi(id);
+      setRecords((prev) => prev.filter((r) => r.id !== id));
+    } catch (error) {
+      console.error("Failed to delete death record:", error);
+      throw error;
+    }
+  };
 
   const filtered = records.filter((r) =>
-    r.patient.toLowerCase().includes(search.toLowerCase())
+    (r.patientName || r.patient || "").toLowerCase().includes(search.toLowerCase())
   );
-
-  const deleteRecord = (id) => {
-    setRecords((prev) => prev.filter((r) => r.id !== id));
-  };
 
   return {
     records: filtered,
     search,
     setSearch,
     deleteRecord,
+    loading,
+    refresh: loadRecords,
   };
 }
