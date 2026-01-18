@@ -1,46 +1,51 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
-import AddChargeCategoryModal from "../../../components/Setup/Charges/AddChargeCategoryModal";
-import EditChargeCategoryModal from "../../../components/Setup/Charges/EditChargeCategoryModal";
+import AddChargeCategory from "../../../components/Setup/Charges/AddChargeCategory";
+import UpdateChargeCategory from "../../../components/Setup/Charges/UpdateChargeCategory";
 import ChargesSidebar from "../../../components/Setup/Charges/ChargesSidebar";
+import {getChargeCategories,deleteChargeCategory,} from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 export default function ChargeCategoryList() {
+  const notify = useNotify();
+
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const chargeCategories = [
-    {
-      id: 1,
-      name: "Other Charges",
-      type: "Others",
-      description: "Others",
-    },
-    {
-      id: 2,
-      name: "Operation Services",
-      type: "Operations",
-      description:
-        "Health care operations include administrative and clinical services.",
-    },
-    {
-      id: 3,
-      name: "Fire extinguisher",
-      type: "Supplier",
-      description: "Fire safety equipment charges",
-    },
-  ];
+  const fetched = useRef(false);
 
-  const handleEdit = (row) => {
-    setSelectedRow(row);
-    setOpenEdit(true);
+  const fetchCategories = async () => {
+    setLoading(true);
+    try {
+      const res = await getChargeCategories();
+      setRows(res.data);
+    } catch {
+      notify("error", "Failed to load charge categories");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = (row) => {
-    if (window.confirm(`Delete ${row.name}?`)) {
-      console.log("Deleted:", row);
+  useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+    fetchCategories();
+  }, []);
+
+  const handleDelete = async (row) => {
+    if (!confirm(`Delete "${row.category_name}" ?`)) return;
+
+    try {
+      await deleteChargeCategory(row.id);
+      notify("success", "Charge category deleted successfully");
+      fetchCategories();
+    } catch {
+      notify("error", "Failed to delete charge category");
     }
   };
 
@@ -61,14 +66,12 @@ export default function ChargeCategoryList() {
           </button>
         </div>
 
-        {/* CONTENT */}
         <div className="flex flex-col md:flex-row gap-4">
 
-          {/* LEFT SIDEBAR */}
           <ChargesSidebar />
 
           {/* TABLE */}
-          <div className="flex-1 bg-white rounded-md overflow-x-auto">
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>
@@ -80,26 +83,46 @@ export default function ChargeCategoryList() {
               </thead>
 
               <tbody>
-                {chargeCategories.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-b hover:bg-gray-50 group"
-                  >
-                    <td className="px-3 py-2 font-medium text-blue-600">
-                      {row.name}
+                {loading && (
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center">Loading...</td>
+                  </tr>
+                )}
+
+                {!loading && rows.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center text-gray-500">
+                      No charge categories found
                     </td>
-                    <td className="px-3 py-2">{row.type}</td>
-                    <td className="px-3 py-2">{row.description}</td>
+                  </tr>
+                )}
+
+                {rows.map((row) => (
+                  <tr key={row.id} className="hover:bg-gray-50 group">
+                    <td className="px-3 py-2 font-medium">
+                      {row.category_name}
+                    </td>
+                    <td className="px-3 py-2">
+                      {row.charge_type_name}
+                    </td>
+                    <td className="px-3 py-2">
+                      {row.description || "-"}
+                    </td>
 
                     <td className="px-3 py-2 text-center">
-                      <div className="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition">
+                      <div className="flex justify-center gap-3">
                         <button
-                          onClick={() => handleEdit(row)}
-                          className="text-blue-600 hover:text-blue-800"
+                        title="Edit"
+                          onClick={() => {
+                            setSelectedRow(row);
+                            setOpenEdit(true);
+                          }}
+                          className="text-purple-600 hover:text-purple-800"
                         >
                           <Pencil size={16} />
                         </button>
                         <button
+                        title="Delete"
                           onClick={() => handleDelete(row)}
                           className="text-red-600 hover:text-red-800"
                         >
@@ -113,25 +136,27 @@ export default function ChargeCategoryList() {
             </table>
 
             <div className="px-3 py-2 text-xs text-gray-500">
-              Records: 1 to {chargeCategories.length} of{" "}
-              {chargeCategories.length}
+              Records: {rows.length}
             </div>
           </div>
-
         </div>
 
         {/* MODALS */}
-        <AddChargeCategoryModal
+        <AddChargeCategory
           open={openAdd}
           onClose={() => setOpenAdd(false)}
+          refresh={fetchCategories}
         />
 
-        <EditChargeCategoryModal
+        <UpdateChargeCategory
           open={openEdit}
-          onClose={() => setOpenEdit(false)}
           data={selectedRow}
+          onClose={() => {
+            setSelectedRow(null);
+            setOpenEdit(false);
+          }}
+          refresh={fetchCategories}
         />
-
       </div>
     </AdminLayout>
   );
