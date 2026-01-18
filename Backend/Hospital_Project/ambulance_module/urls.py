@@ -1,5 +1,21 @@
 from django.urls import path
-from .views import *
+
+from .views import (
+    # Ambulance CRUD
+    AmbulanceListAPIView,
+    AmbulanceCreateAPIView,
+    AmbulanceUpdateAPIView,
+    AmbulanceDeleteAPIView,
+
+    
+
+    # Bills
+    AmbulanceBillListAPIView,
+    AmbulanceBillDetailAPIView,
+    GenerateAmbulanceBillAPIView,
+    AmbulanceBillUpdateView,
+    
+)
 
 urlpatterns = [
     # Ambulance management

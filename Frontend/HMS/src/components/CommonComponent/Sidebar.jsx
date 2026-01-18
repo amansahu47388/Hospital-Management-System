@@ -5,30 +5,20 @@ import {
   Pill,
   UserRound,
   Calendar,
-  Users,
-  UserCheck,
   Hospital,
-  Stethoscope,
-  FlaskConical,
-  Droplet,
   Bed,
   Ambulance,
-  Building2,
-  QrCode,
   ClipboardList,
-  CalendarDays,
-  MessageCircle,
-  FileDown,
   FileBadge,
-  Monitor,
   BarChart3,
   Settings,
   FolderGit2,
   Menu,
   ChevronDown,
   ChevronUp,
-  ChevronRight ,
+  ChevronRight,
   CreditCard,
+  FlaskConical,
 } from "lucide-react";
 
 const navItems = [
@@ -41,32 +31,10 @@ const navItems = [
   { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
   { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
   { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
-   { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
- 
-   
-   
-  // { to: "/multi-branch", label: "Multi Branch", Icon: Building2 },
-  // { to: "/lab", label: "Lab", Icon: FlaskConical },
-  // { to: "/ward", label: "Ward", Icon: Bed },
-  // { to: "/blood-bank", label: "Blood Bank", Icon: Droplet },
-  // { to: "/treatment", label: "Treatment", Icon: Stethoscope },
-  
-   
+  { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
   { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
-   { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },   
-  //{ to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
-  //{ to: "/Duty-Roster", label: "Duty Roster", Icon: ClipboardList },
- // { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
-  //{ to: "/Referral", label: "Referral", Icon: UserCheck },
-  //{ to: "/TPA-Management", label: "TPA Management", Icon: Building2 },
+  { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },
   { to: "/Finance", label: "Finance", Icon: BarChart3 },
- 
-  //{ to: "/Messaging", label: "Messaging", Icon: MessageCircle },
-  //{ to: "/Download-Calendar", label: "Download Calendar", Icon: FileDown },
- 
-  //{ to: "/Front-CMS", label: "Front CMS", Icon: Monitor },
-  //{ to: "/Live-Consultation", label: "Live Consultation", Icon: Stethoscope },
-  //{ to: "/Reports", label: "Reports", Icon: BarChart3 },
   { to: "/Setup", label: "Setup", Icon: Settings },
 ];
 
@@ -74,9 +42,9 @@ function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [birthDeathRecordOpen, setBirthDeathRecordOpen] = useState(false);
- 
   const [financeOpen, setFinanceOpen] = useState(false);
   const [setupOpen, setSetupOpen] = useState(false);
+
   const handleToggle = () => {
     if (window.innerWidth < 700) {
       setMobileOpen(!mobileOpen);
@@ -85,60 +53,35 @@ function Sidebar() {
     }
   };
 
-  const toggleBirthDeathRecord = () => {
-    setBirthDeathRecordOpen(!birthDeathRecordOpen);
-  };
-
-  
-
-  const toggleFinance = () => {
-    setFinanceOpen(!financeOpen);
-  };
-  const toggleSetup = () => {
-  setSetupOpen(!setupOpen);
-};
-
-  
-  // Close submenu when sidebar collapses
   useEffect(() => {
     if (collapsed) {
       setBirthDeathRecordOpen(false);
-     
       setFinanceOpen(false);
       setSetupOpen(false);
     }
   }, [collapsed]);
-  
 
   return (
     <div className="relative">
-      {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
+      {/* Toggle Button */}
       <button
         onClick={handleToggle}
-        className="absolute  top-4 -right-10 z-50 p-1  cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
+        className="absolute top-4 -right-10 z-50 p-1 bg-transparent border-0"
       >
-      <Menu />
+        <Menu />
       </button>
-     
-      {/* SIDEBAR */}
+
+      {/* Sidebar */}
       <aside
         className={`fixed md:relative top-0 left-0 z-40 ${
           collapsed ? "w-20" : "w-64"
-        } h-screen overflow-y-auto
-        text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-        transition-transform duration-1000 md:transition-all md:duration-1000
-        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+        } h-screen overflow-y-auto text-white
+        bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+        transition-all duration-1000
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
-        <div className="flex flex-col h-full p-5 justify-even">
-          {/* Logo */}
-          <div className="text-xl font-bold mb-10 flex items-center gap-3">
-            {/* <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
-              ML
-            </div>
-            {!collapsed && <span>MediLab Hospital</span>} */}
-          </div>
+        <div className="flex flex-col h-full p-5">
 
-          {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-bold pb-10">
             {navItems.map(({ to, label, Icon }) => {
               /* FRONT OFFICE + BIRTH & DEATH */
@@ -329,17 +272,13 @@ function Sidebar() {
                 <NavLink
                   key={to}
                   to={to}
-                  end
                   className={({ isActive }) =>
-                    `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
-                    ${
-                      isActive
-                        ? "!text-white bg-white/10 rounded-md"
-                        : "!text-white hover:!text-gray-200"
-                    }`
+                    `flex items-center gap-4 py-2 px-2 no-underline ${
+                      isActive ? "bg-white/10 rounded-md" : ""
+                    } !text-white`
                   }
                 >
-                  <Icon size={20} className="flex-shrink-0" />
+                  <Icon size={20} />
                   <span className={`${collapsed ? "hidden" : "block"}`}>
                     {label}
                   </span>

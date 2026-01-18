@@ -4,8 +4,14 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Q
-from .models import *
-from .serializers import *
+
+
+from .models import Ambulance,  AmbulanceBill
+from .serializers import (
+    AmbulanceSerializer, AmbulanceCreateSerializer, AmbulanceUpdateSerializer,
+    
+    AmbulanceBillListSerializer, AmbulanceBillDetailSerializer,
+    AmbulanceBillCreateSerializer, AmbulanceBillUpdateSerializer)
 
 
 # Ambulance CRUD Views
@@ -74,7 +80,6 @@ class AmbulanceBillListAPIView(APIView):
                 Q(bill_no__icontains=search) |
                 Q(patient__first_name__icontains=search) |
                 Q(ambulance__vehicle_number__icontains=search) |
-                Q(charge__charge_name__icontains=search) |
                 Q(hospital_charge__charge_name__icontains=search)
             )
 
