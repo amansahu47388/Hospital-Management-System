@@ -41,12 +41,10 @@ import PostalDispatch from "./pages/Front_office/PostalDispatch";
 import ComplainList from "./pages/Front_office/ComplainList";
 import IncomeList from "./pages/Finance/IncomeList";
 import ExpenseList from "./pages/Finance/ExpenseList";
-
-
 import RadiologyBill from "./pages/radiology/RadiologyBill";
 import RadiologyTest from "./pages/radiology/RadiologyTest";
 
-//sertup route paths and components
+//setup route paths and components
 import BedStatus from "./pages/Setup/Bed/BedStatus";
 import BedList from "./pages/Setup/Bed/BedList";
 import BedTypeList from "./pages/Setup/Bed/BedTypeList";
@@ -100,6 +98,11 @@ import SymptomsType from "./pages/Setup/Symptoms/SymptomsType";
 import FindingCategory from "./pages/Setup/Finding/FindingCategory";
 import FindingSetup from "./pages/Setup/Finding/FindingSetup";
 import VitalList from "./pages/Setup/Vital/VitalList";
+
+
+
+
+
 function App() {
   return (
     <AuthProvider>
@@ -170,31 +173,48 @@ function App() {
           <Route path="/admin/birth-death-record/birth-record" element={<BirthRecord/>} />
           <Route path="/admin/birth-death-record/death-record" element={<DeathRecord/>} />
 
-
-
+          {/* Inventory Routes */}
           <Route path="/admin/Inventory/Item-Stock"   element={<ItemStockPage/>} />   
           <Route path="/admin/Inventory/Issue-Item"   element={<IssueItemPage/>} />
           <Route path="/admin/Inventory/Item-List"   element={<ItemListPage/>} />
-          <Route path="/admin/Calendar"   element={<CelenderPage/>} />
+
+          {/* Front Office Routes */}
           <Route path="/admin/front-office/visitor-list"   element={<VisitorList/>} />
           <Route path="/admin/front-office/postal-receive"   element={<PostalReceive/>} />
           <Route path="/admin/front-office/postal-dispatch"   element={<PostalDispatch/>} />
           <Route path="/admin/front-office/complain-list"   element={<ComplainList/>} />
+
+          {/* Finance Routes */}
           <Route path="/admin/finance/income-list"   element={<IncomeList/>} />
           <Route path="/admin/finance/expense-list"   element={<ExpenseList/>} />
 
-          // Setup Routes
-          <Route path="/admin/setup/bed-status" element={<BedStatus />}
-           />
+          {/* Calendar Routes */}
+          <Route path="/admin/Calendar"   element={<CelenderPage/>} />
+
+
+
+
+
+
+
+
+
+
+          {/* Bad Setup Routes */}
+          <Route path="/admin/setup/bed-status" element={<BedStatus />}/>
           <Route path="/admin/setup/bed" element={<BedList />} />
           <Route path="/admin/setup/bed-type" element={<BedTypeList />} />
           <Route path="/admin/setup/bed-group" element={<BedGroupList />} />
           <Route path="/admin/setup/floor" element={<FloorList />} />
+
+          {/* Hospital charges Setup Routes */}
           <Route path="/admin/setup/charges-details" element={<ChargesDetailsList />} />
           <Route path="/admin/setup/charge-category" element={<ChargeCategoryList />} />
           <Route path="/admin/setup/charge-type" element={<ChargeTypeList />} />
           <Route path="/admin/setup/tax-category" element={<TaxCategoryList />} />
           <Route path="/admin/setup/unit-type" element={<UnitTypeList />} />  
+
+          {/* Header Footer Setup Routes */}
           <Route path="/admin/setup/appointment-header-footer" element={<AppointmentHeaderFooter />} />
           <Route path="/admin/setup/opd-prescription-header-footer" element={<OpdPrescriptionHeaderFooter />} />
           <Route path="/admin/setup/opd-bill-header-footer" element={<OpdBillHeaderFooter />} />
@@ -241,7 +261,7 @@ function App() {
           </Routes>
 
 
-          
+
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>

@@ -9,7 +9,7 @@ from .serializers import *
 
 
 # **************************************************************** #
-#                       Hospital Setup APIs                        #
+#                       Hospital Charge Setup APIs                        #
 # **************************************************************** #   
 class ChargeUnitAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -209,11 +209,168 @@ class HospitalChargesAPIView(APIView):
 
 
 
+# **************************************************************** #
+#                       BED Setup APIs                             #
+# **************************************************************** # 
+
+class FloorAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        floors = Floor.objects.all().order_by("-created_at")
+        serializer = FloorSerializer(floors, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = FloorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk=None):
+        try:
+            floor = Floor.objects.get(pk=pk)
+        except Floor.DoesNotExist:
+            return Response({"error": "Floor not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = FloorSerializer(floor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        try:
+            floor = Floor.objects.get(pk=pk)
+        except Floor.DoesNotExist:
+            return Response({"error": "Floor not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        floor.delete()
+        return Response(
+            {"message": "Floor deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
+class BedTypeAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        bed_types = BedType.objects.all().order_by("-created_at")
+        serializer = BedTypeSerializer(bed_types, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = BedTypeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk=None):
+        try:
+            bed_type = BedType.objects.get(pk=pk)
+        except BedType.DoesNotExist:
+            return Response({"error": "Bed type not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BedTypeSerializer(bed_type, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        try:
+            bed_type = BedType.objects.get(pk=pk)
+        except BedType.DoesNotExist:
+            return Response({"error": "Bed type not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        bed_type.delete()
+        return Response(
+            {"message": "Bed type deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
+class BedGroupAPI(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        bed_groups = BedGroup.objects.select_related("floor", "bed_type").order_by("-created_at")
+        serializer = BedGroupSerializer(bed_groups, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = BedGroupSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk=None):
+        try:
+            bed_group = BedGroup.objects.get(pk=pk)
+        except BedGroup.DoesNotExist:
+            return Response({"error": "Bed group not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BedGroupSerializer(bed_group, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        try:
+            bed_group = BedGroup.objects.get(pk=pk)
+        except BedGroup.DoesNotExist:
+            return Response({"error": "Bed group not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        bed_group.delete()
+        return Response(
+            {"message": "Bed group deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
+class BedAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        beds = Bed.objects.all().order_by("bed_name")
+        serializer = BedSerializer(beds, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = BedSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk=None):
+        try:
+            bed = Bed.objects.get(pk=pk)
+        except Bed.DoesNotExist:
+            return Response({"error": "Bed not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BedSerializer(bed, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        try:
+            bed = Bed.objects.get(pk=pk)
+        except Bed.DoesNotExist:
+            return Response({"error": "Bed not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        bed.delete()
+        return Response(
+            {"message": "Bed deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
 
