@@ -1,33 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
-import AddBedModal from "../../../components/Setup/Bed/AddBedModal";
-import EditBedModal from "../../../components/Setup/Bed/EditBedModal";
+import AddBed from "../../../components/Setup/Bed/AddBed";
+import {
+  getBeds,
+  deleteBed,
+} from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 export default function BedList() {
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [selectedBed, setSelectedBed] = useState(null);
+  const notify = useNotify();
 
-  const beds = [
-    { name: "GF - 101", type: "Standard", group: "VIP Ward - Ground Floor", used: true },
-    { name: "TF - 102", type: "VIP", group: "Private Ward - 3rd Floor", used: true },
-    { name: "TF - 103", type: "Normal", group: "Private Ward - 3rd Floor", used: true },
-    { name: "TF - 104", type: "Standard", group: "Private Ward - 3rd Floor", used: true },
-    { name: "SF - 105", type: "Standard", group: "ICU - 2nd Floor", used: true },
-  ];
+  const [openModal, setOpenModal] = useState(false);
+  const [beds, setBeds] = useState([]);
+  const [editData, setEditData] = useState(null);
 
-  /* ACTION HANDLERS */
-  const handleEdit = (bed) => {
-    setSelectedBed(bed);
-    setOpenEditModal(true);
+  const fetchBeds = async () => {
+    try {
+      const res = await getBeds();
+      setBeds(res.data);
+    } catch {
+      notify( "error", "Failed to load beds");
+    }
   };
 
-  const handleDelete = (bed) => {
-    if (window.confirm(`Are you sure you want to delete ${bed.name}?`)) {
-      console.log("Delete bed:", bed);
-      // API delete later
+  useEffect(() => {
+    fetchBeds();
+  }, []);
+
+  const handleEdit = (bed) => {
+    setEditData(bed);
+    setOpenModal(true);
+  };
+
+  const handleDelete = async (bed) => {
+    if (!window.confirm(`Delete ${bed.bed_name}?`)) return;
+
+    try {
+      await deleteBed(bed.id);
+      notify("success", "Bed deleted successfully");
+      fetchBeds();
+    } catch {
+      notify("error","Delete failed");
     }
   };
 
@@ -36,23 +51,26 @@ export default function BedList() {
       <div className="min-h-screen p-1">
 
         {/* HEADER */}
-        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center">
+        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
           <h2 className="text-lg font-semibold">Bed List</h2>
 
           <button
-            onClick={() => setOpenAddModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+            onClick={() => {
+              setEditData(null);
+              setOpenModal(true);
+            }}
+            className="flex items-center gap-2 bg-gradient-to-b
+            from-[#6046B5] to-[#8A63D2]
             text-white px-4 py-2 rounded-md"
           >
             <Plus size={16} /> Add Bed
           </button>
         </div>
 
-        {/* CONTENT */}
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex gap-4">
 
           {/* LEFT MENU */}
-          <div className="w-full md:w-64 bg-white rounded-md p-3">
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow shadow">
             <ul className="space-y-1 text-sm">
               {[
                 { label: "Bed Status", path: "/admin/setup/bed-status" },
@@ -65,10 +83,9 @@ export default function BedList() {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `block px-3 py-2 rounded
-                      ${isActive
-                        ? "bg-blue-50 text-blue-600 font-semibold"
-                        : "hover:bg-gray-100"}`
+                      isActive
+                        ? "block px-3 py-2 rounded bg-purple-200 text-purple-600 font-bold"
+                        : "block px-3 py-2 rounded hover:bg-purple-100"
                     }
                   >
                     {item.label}
@@ -78,77 +95,57 @@ export default function BedList() {
             </ul>
           </div>
 
+
           {/* TABLE */}
-          <div className="flex-1 bg-white rounded-md overflow-x-auto">
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="px-3 py-2 text-left">Name</th>
                   <th className="px-3 py-2 text-left">Bed Type</th>
                   <th className="px-3 py-2 text-left">Bed Group</th>
-                  <th className="px-3 py-2 text-center">Used</th>
-                  <th className="px-3 py-2 text-center">Action</th>
+                  <th className="px-3 py-2 text-left">Action</th>
                 </tr>
               </thead>
-
               <tbody>
-                {beds.map((bed, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50 group">
-                    <td className="px-3 py-2 text-blue-600 font-medium">
-                      {bed.name}
+                {beds.map(bed => (
+                  <tr key={bed.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 text-left">
+                      {bed.bed_name}
                     </td>
-                    <td className="px-3 py-2">{bed.type}</td>
-                    <td className="px-3 py-2">{bed.group}</td>
-
-                    <td className="px-3 py-2 text-center">
-                      <input type="checkbox" checked={bed.used} readOnly />
-                    </td>
-
-                    {/* ACTION COLUMN */}
-                    <td className="px-3 py-2 text-center">
-                      <div className="flex justify-center gap-3">
-
-                        <button
-                          onClick={() => handleEdit(bed)}
-                          className="text-blue-600 hover:text-blue-800
-                          opacity-0 group-hover:opacity-100 transition"
-                          title="Edit"
-                        >
+                    <td className="px-3 py-2 text-left">{bed.bed_type}</td>
+                    <td className="px-3 py-2 text-left">{bed.bed_group}</td>
+                    <td className="px-3 py-2 text-left">
+                      <div className="flex  gap-3">
+                        <button onClick={() => handleEdit(bed)}
+                        className="text-purple-600 hover:text-purple-800">
                           <Pencil size={16} />
                         </button>
-
-                        <button
-                          onClick={() => handleDelete(bed)}
-                          className="text-red-600 hover:text-red-800
-                          opacity-0 group-hover:opacity-100 transition"
-                          title="Delete"
-                        >
+                        <button onClick={() => handleDelete(bed)}
+                        className="text-red-600 hover:text-red-800">
                           <Trash2 size={16} />
                         </button>
-
                       </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
 
+            {beds.length === 0 && (
+              <p className="text-center text-gray-500 py-4">
+                No beds found
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* ADD BED MODAL */}
-        <AddBedModal
-          open={openAddModal}
-          onClose={() => setOpenAddModal(false)}
+        <AddBed
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          editData={editData}
+          refresh={fetchBeds}
         />
-
-        {/* EDIT BED MODAL */}
-        <EditBedModal
-          open={openEditModal}
-          bed={selectedBed}
-          onClose={() => setOpenEditModal(false)}
-        />
-
       </div>
     </AdminLayout>
   );

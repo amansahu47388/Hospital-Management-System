@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function EditBedModal({ open, onClose, bed }) {
+export default function UpdateBed({ open, onClose, bed }) {
   const [form, setForm] = useState({
     name: "",
     type: "",
