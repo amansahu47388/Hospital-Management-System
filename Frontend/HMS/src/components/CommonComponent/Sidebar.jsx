@@ -302,9 +302,10 @@ function Sidebar() {
                           { label: "Findings", path: "/admin/setup/finding" },
                           { label: "Vitals", path: "/admin/setup/vitals" },
                           { label: "Finance", path: "/admin/setup/finance/income-head" },
-                          {label: "Inventory", path: "/admin/setup/inventory" },
-                          { label: "Appointment", path: "/admin/setup/Appointment" },
+                          {label: "Inventory", path: "/admin/setup/inventory/item-category" },
+                          { label: "Appointment", path: "/admin/setup/appointment/slots" },
                           { label: "Custom Fields", path: "/admin/setup/Custom Fields" },
+
                         ].map(({ label, path }) => (
                           <NavLink
                             key={path}
