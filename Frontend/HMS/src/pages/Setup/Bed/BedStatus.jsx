@@ -1,32 +1,47 @@
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import AdminLayout from "../../../layout/AdminLayout";
+import { getBeds } from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 export default function BedStatus() {
-  const beds = [
-    { name: "GF - 101", type: "Standard", group: "VIP Ward", floor: "Ground Floor", status: "Allotted" },
-    { name: "GF - 108", type: "Standard", group: "VIP Ward", floor: "Ground Floor", status: "Available" },
-    { name: "GF - 109", type: "VIP", group: "VIP Ward", floor: "Ground Floor", status: "Available" },
-    { name: "GF - 118", type: "VIP", group: "VIP Ward", floor: "Ground Floor", status: "Available" },
-    { name: "GF - 119", type: "VIP", group: "VIP Ward", floor: "Ground Floor", status: "Allotted" },
-    { name: "TF - 102", type: "VIP", group: "Private Ward", floor: "3rd Floor", status: "Allotted" },
-    { name: "TF - 103", type: "Normal", group: "Private Ward", floor: "3rd Floor", status: "Allotted" },
-    { name: "TF - 107", type: "VIP", group: "Private Ward", floor: "3rd Floor", status: "Available" },
-  ];
+  const notify = useNotify();
+  const [beds, setBeds] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  /* ---------- FETCH BEDS ---------- */
+  const fetchBeds = async () => {
+    try {
+      setLoading(true);
+      const res = await getBeds();
+      setBeds(res.data);
+    } catch {
+      notify({
+        type: "error",
+        message: "Failed to load bed status",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBeds();
+  }, []);
 
   return (
     <AdminLayout>
-      <div className="min-h-screen p-1 ">
+      <div className="min-h-screen p-1">
 
         {/* PAGE HEADER */}
-        <div className="bg-white rounded-md p-3 mb-4">
+        <div className="bg-white rounded-md p-3 mb-4 shadow">
           <h2 className="text-lg font-semibold">Bed Status</h2>
         </div>
 
-        {/* MAIN CONTENT */}
         <div className="flex flex-col md:flex-row gap-4">
 
-          {/* LEFT SIDE BLOCK */}
-          <div className="w-full md:w-64 bg-white rounded-md p-3">
+          {/* LEFT MENU */}
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
             <ul className="space-y-1 text-sm">
               {[
                 { label: "Bed Status", path: "/admin/setup/bed-status" },
@@ -40,7 +55,9 @@ export default function BedStatus() {
                     to={item.path}
                     className={({ isActive }) =>
                       `block px-3 py-2 rounded
-                      ${isActive ? "bg-blue-50 text-blue-600 font-semibold" : "hover:bg-gray-100"}`
+                      ${isActive
+                        ? "bg-purple-200 text-purple-600 font-bold"
+                        : "hover:bg-purple-100"}`
                     }
                   >
                     {item.label}
@@ -50,8 +67,8 @@ export default function BedStatus() {
             </ul>
           </div>
 
-          {/* RIGHT TABLE */}
-          <div className="flex-1 bg-white rounded-md overflow-x-auto">
+          {/* TABLE */}
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
             <table className="w-full text-sm border-collapse">
               <thead className="bg-gray-100">
                 <tr>
@@ -64,33 +81,41 @@ export default function BedStatus() {
               </thead>
 
               <tbody>
-                {beds.map((bed, index) => (
+                {beds.map((bed) => (
                   <tr
-                    key={index}
-                    className={`border-b
-                      ${bed.status === "Available" ? "bg-green-100" : "bg-red-100"}`}
+                    key={bed.id}
+                    className={`
+                      ${
+                        bed.status === "available"
+                          ? "bg-green-50 hover:bg-green-100"
+                          : "bg-red-50 hover:bg-red-100"
+                      }`}
                   >
-                    {/* BED NAME AS LINK */}
-                    <td className="px-3 py-2">
-                      <NavLink
-                        to={`/admin/setup/bed/${bed.name}`}
-                        className="text-blue-600 hover:underline font-medium"
-                      >
-                        {bed.name}
-                      </NavLink>
+                    <td className="px-3 py-2 font-medium">
+                      {bed.bed_name}
                     </td>
-
-                    <td className="px-3 py-2">{bed.type}</td>
-                    <td className="px-3 py-2">{bed.group}</td>
+                    <td className="px-3 py-2">{bed.bed_type}</td>
+                    <td className="px-3 py-2">{bed.bed_group}</td>
                     <td className="px-3 py-2">{bed.floor}</td>
-
-                    <td className="px-3 py-2 font-semibold">
+                    <td className="px-3 py-2 font-semibold capitalize">
                       {bed.status}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
+            {!loading && beds.length === 0 && (
+              <p className="text-center text-gray-500 py-4">
+                No beds found
+              </p>
+            )}
+
+            {loading && (
+              <p className="text-center text-gray-500 py-4">
+                Loading bed status...
+              </p>
+            )}
           </div>
 
         </div>
