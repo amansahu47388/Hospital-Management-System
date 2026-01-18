@@ -32,7 +32,7 @@ export default function PurposeList() {
         <div className="bg-white rounded-md p-4">
 
           {/* HEADER */}
-          <div className="flex justify-between items-center border-b pb-3 mb-4">
+          <div className="flex justify-between items-center  pb-3 mb-4">
             <h2 className="text-lg font-semibold">Purpose List</h2>
             <button
               onClick={() => setOpenAdd(true)}
@@ -61,7 +61,7 @@ export default function PurposeList() {
                 </thead>
                 <tbody>
                   {purposes.map((item, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
+                    <tr key={index} className=" hover:bg-gray-50">
                       <td className="px-3 py-2 font-medium">{item.purpose}</td>
                       <td className="px-3 py-2">{item.description}</td>
                       <td className="px-3 py-2 text-center">

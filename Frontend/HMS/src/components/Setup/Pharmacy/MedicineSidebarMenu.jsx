@@ -13,7 +13,7 @@ export default function MedicineSidebarMenu() {
   ];
 
   return (
-    <div className="bg-white rounded-md border shadow-sm">
+    <div className="bg-white rounded-sm shadow-sm">
       <ul className="text-sm">
         {menus.map((menu) => (
           <li key={menu.path}>

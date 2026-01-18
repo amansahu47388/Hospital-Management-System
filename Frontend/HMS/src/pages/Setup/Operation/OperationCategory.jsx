@@ -11,7 +11,7 @@ export default function OperationCategory() {
     <AdminLayout>
       <div className="min-h-screen p-1 ">
         <div className="bg-white rounded-md p-4">
-          <h2 className="text-lg font-semibold mb-4 border-b pb-2">
+          <h2 className="text-lg font-semibold mb-4  pb-2">
             Operation Category List
           </h2>
 
@@ -21,8 +21,8 @@ export default function OperationCategory() {
             </div>
 
             <div className="flex-1">
-              <div className="flex justify-between mb-3">
-                <input placeholder="Search..." className="border px-3 py-1 rounded" />
+              <div className="flex justify-end mb-3">
+                
                 <button
                   onClick={() => setShowAdd(true)}
                   className="flex items-center gap-1 text-white px-3 py-1 rounded
@@ -32,18 +32,18 @@ export default function OperationCategory() {
                 </button>
               </div>
 
-              <table className="w-full border text-sm">
+              <table className="w-full  text-sm">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="border px-2 py-2">Name</th>
-                    <th className="border px-2 py-2 text-center">Action</th>
+                    <th className=" px-2 py-2">Name</th>
+                    <th className="px-2 py-2 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {["Plastic Surgery", "ENT", "Urology"].map((cat, i) => (
                     <tr key={i}>
-                      <td className="border px-2 py-2">{cat}</td>
-                      <td className="border px-2 py-2 text-center">
+                      <td className=" px-2 py-2">{cat}</td>
+                      <td className=" px-2 py-2 text-center">
                         <div className="flex justify-center gap-2">
                           <button onClick={() => setShowEdit(true)} className="text-blue-600">
                             <Pencil size={16} />

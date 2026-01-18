@@ -98,11 +98,15 @@ import SymptomsType from "./pages/Setup/Symptoms/SymptomsType";
 import FindingCategory from "./pages/Setup/Finding/FindingCategory";
 import FindingSetup from "./pages/Setup/Finding/FindingSetup";
 import VitalList from "./pages/Setup/Vital/VitalList";
-
-
-
-
-
+import IncomeHead from "./pages/Setup/Finance/IncomeHead";
+import ExpenseHead from "./pages/Setup/Finance/ExpenseHead";
+import Slots from "./pages/Setup/Appointment/Slots";
+import DoctorShift from "./pages/Setup/Appointment/DoctorShift";
+import Shift from "./pages/Setup/Appointment/Shift";
+import AppointmentPriority from "./pages/Setup/Appointment/AppointmentPriority";
+import ItemCategory from "./pages/Setup/Inventory/ItemCategory";
+import ItemStore from "./pages/Setup/Inventory/ItemStore";
+import ItemSupplier from "./pages/Setup/Inventory/ItemSupplier";
 function App() {
   return (
     <AuthProvider>
@@ -258,6 +262,15 @@ function App() {
           <Route path="/admin/setup/finding" element={<FindingSetup />} />
           <Route path="/admin/setup/finding/category" element={<FindingCategory />} />
           <Route path="/admin/setup/vitals" element={<VitalList />} />
+          <Route path="/admin/setup/finance/income-head" element={<IncomeHead />} />
+          <Route path="/admin/setup/finance/expense-head" element={<ExpenseHead />} />
+          <Route path="/admin/setup/appointment/slots" element={<Slots />} />
+          <Route path="/admin/setup/appointment/doctor-shift" element={<DoctorShift />} />
+          <Route path="/admin/setup/appointment/shift" element={<Shift />} />
+          <Route path="/admin/setup/appointment/priority" element={<AppointmentPriority />} />
+          <Route path="/admin/setup/inventory/item-category" element={<ItemCategory />} />
+          <Route path="/admin/setup/inventory/item-store" element={<ItemStore />} />
+          <Route path="/admin/setup/inventory/item-supplier" element={<ItemSupplier />} />
           </Routes>
 
 
