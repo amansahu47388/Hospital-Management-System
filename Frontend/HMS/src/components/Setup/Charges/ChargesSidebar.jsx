@@ -10,8 +10,8 @@ export default function ChargesSidebar() {
   ];
 
   return (
-    <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
-      <ul className="space-y-1 text-sm text-black">
+    <div className="w-full md:w-64 bg-white rounded-md shadow h-fit sticky top-6">
+      <ul className="space-y-1 text-sm">
         {menuItems.map((item) => (
           <li key={item.label}>
             <NavLink

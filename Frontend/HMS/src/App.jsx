@@ -62,6 +62,44 @@ import OpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/OpdPrescrip
 import OpdBillHeaderFooter from "./pages/Setup/Header_Footer/OpdBillHeaderFooter";
 import IpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/IpdPrescriptionHeaderFooter";  
 import IpdBillHeaderFooter from "./pages/Setup/Header_Footer/IpdBillHeaderFooter";
+import PaySlipHeaderFooter from "./pages/Setup/Header_Footer/PayslipHeaderFooter";
+import PharmacyBillHeaderFooter from "./pages/Setup/Header_Footer/PharmacyBillHeaderFooter";
+import BillSummaryHeaderFooter from "./pages/Setup/Header_Footer/BillSummaryHeaderFooter";
+import PaymentReceiptHeaderFooter from "./pages/Setup/Header_Footer/PaymentReceiptHeaderFooter";
+import BirthRecordHeaderFooter from "./pages/Setup/Header_Footer/BirthRecordHeaderFooter";
+import DeathRecordHeaderFooter from "./pages/Setup/Header_Footer/DeathRecordHeaderFooter";
+import RadiologyHeaderFooter from "./pages/Setup/Header_Footer/RadiologyHeaderFooter";
+import PathologyHeaderFooter from "./pages/Setup/Header_Footer/PathologyHeaderFooter";
+import OperationHeaderFooter from "./pages/Setup/Header_Footer/OperationHeaderFooter";
+import AmbulanceHeaderFooter from "./pages/Setup/Header_Footer/OperationHeaderFooter";
+import ObstetricHistoryHeaderFooter from "./pages/Setup/Header_Footer/ObstetricHistoryHeaderFooter";
+import OpdAntenatalFindingHeaderFooter from "./pages/Setup/Header_Footer/OpdAntenatalFindingHeaderFooter";
+import IpdAntenatalFindingHeaderFooter from "./pages/Setup/Header_Footer/IpdAntenatalFindingHeaderFooter";
+import DischargeCardHeaderFooter from "./pages/Setup/Header_Footer/DischargeCardHeaderFooter"; 
+import PurposeList from "./pages/Setup/Front_Office/PurposeList";
+import ComplaintType from "./pages/Setup/Front_Office/ComplaintType";
+import Source from "./pages/Setup/Front_Office/Source";
+import OperationList from "./pages/Setup/Operation/OperationList";
+import OperationCategory from "./pages/Setup/Operation/OperationCategory";
+import MedicineCategory from "./pages/Setup/Pharmacy/MedicineCategory";
+import Supplier from "./pages/Setup/Pharmacy/Supplier";
+import DoseInterval from "./pages/Setup/Pharmacy/DoseInterval";
+import MedicineDosage from "./pages/Setup/Pharmacy/MedicineDosage"; 
+import Company from "./pages/Setup/Pharmacy/Company";   
+import Unit from "./pages/Setup/Pharmacy/Unit";         
+import DoseDuration from "./pages/Setup/Pharmacy/DoseDuration";   
+import MedicineGroup from "./pages/Setup/Pharmacy/MedicineGroup";
+import PathologyCategory from "./pages/Setup/Pathology/PathologyCategory";
+import PathologyUnit from "./pages/Setup/Pathology/PathologyUnit";
+import PathologyParameter from "./pages/Setup/Pathology/PathologyParameter";
+import RadiologyCategory from "./pages/Setup/Radiology/RadiologyCategory";
+import RadiologyParameter from "./pages/Setup/Radiology/RadiologyParameter"; 
+import RadiologyUnit from "./pages/Setup/Radiology/RadiologyUnit";
+import SymptomsHead from "./pages/Setup/Symptoms/SymptomsHead";
+import SymptomsType from "./pages/Setup/Symptoms/SymptomsType";
+import FindingCategory from "./pages/Setup/Finding/FindingCategory";
+import FindingSetup from "./pages/Setup/Finding/FindingSetup";
+import VitalList from "./pages/Setup/Vital/VitalList";
 function App() {
   return (
     <AuthProvider>
@@ -162,6 +200,44 @@ function App() {
           <Route path="/admin/setup/opd-bill-header-footer" element={<OpdBillHeaderFooter />} />
           <Route path="/admin/setup/ipd-prescription-header-footer" element={<IpdPrescriptionHeaderFooter />} />  
           <Route path="/admin/setup/ipd-bill-header-footer" element={<IpdBillHeaderFooter />} />
+          <Route path="/admin/setup/payslip-header-footer" element={<PaySlipHeaderFooter />} />
+          <Route path="/admin/setup/pharmacy-bill-header-footer" element={<PharmacyBillHeaderFooter />} />
+          <Route path="/admin/setup/bill-summary-header-footer" element={<BillSummaryHeaderFooter />} />
+          <Route path="/admin/setup/payment-receipt-header-footer" element={<PaymentReceiptHeaderFooter />} />
+          <Route path="/admin/setup/birth-record-header-footer" element={<BirthRecordHeaderFooter />} />
+          <Route path="/admin/setup/death-record-header-footer" element={<DeathRecordHeaderFooter />} />
+          <Route path="/admin/setup/radiology-header-footer" element={<RadiologyHeaderFooter />} />
+          <Route path="/admin/setup/pathology-header-footer" element={<PathologyHeaderFooter />} />
+          <Route path="/admin/setup/operation-header-footer" element={<OperationHeaderFooter />} />
+          <Route path="/admin/setup/ambulance-header-footer" element={<AmbulanceHeaderFooter />} /> 
+          <Route path="/admin/setup/obstetric-history-header-footer" element={<ObstetricHistoryHeaderFooter />} />
+          <Route path="/admin/setup/opd-antenatal-finding-header-footer" element={<OpdAntenatalFindingHeaderFooter />} />
+          <Route path="/admin/setup/ipd-antenatal-finding-header-footer" element={<IpdAntenatalFindingHeaderFooter />} />
+          <Route path="/admin/setup/discharge-card-header-footer" element={<DischargeCardHeaderFooter />} />
+          <Route path="/admin/setup/front-office/purpose-list" element={<PurposeList />} />
+          <Route path="/admin/setup/front-office/complain-type" element={<ComplaintType />} />
+          <Route path="/admin/setup/front-office/source" element={<Source />} />
+          <Route path="/admin/setup/operation/operation-list" element={<OperationList />} />
+          <Route path="/admin/setup/operation/operation-category" element={<OperationCategory />} />
+          <Route path="/admin/setup/pharmacy/medicine-category" element={<MedicineCategory />} />
+          <Route path="/admin/setup/pharmacy/supplier" element={<Supplier />} />
+          <Route path="/admin/setup/pharmacy/dose-interval" element={<DoseInterval />} />
+          <Route path="/admin/setup/pharmacy/medicine-dosage" element={<MedicineDosage />} />
+          <Route path="/admin/setup/pharmacy/company" element={<Company />} />
+          <Route path="/admin/setup/pharmacy/unit" element={<Unit />} />
+          <Route path="/admin/setup/pharmacy/dose-duration" element={<DoseDuration />} />
+          <Route path="/admin/setup/pharmacy/medicine-group" element={<MedicineGroup />} />
+          <Route path="/admin/setup/pathology/category" element={<PathologyCategory />} />
+          <Route path="/admin/setup/pathology/unit" element={<PathologyUnit />} />
+          <Route path="/admin/setup/pathology/parameter" element={<PathologyParameter />} />
+          <Route path="/admin/setup/radiology/category" element={<RadiologyCategory />} />  
+          <Route path="/admin/setup/radiology/unit" element={<RadiologyUnit />} />
+          <Route path="/admin/setup/radiology/parameter" element={<RadiologyParameter />} />
+          <Route path="/admin/setup/symptoms/symptoms-head" element={<SymptomsHead />} />
+          <Route path="/admin/setup/symptoms/symptoms-type" element={<SymptomsType />} />
+          <Route path="/admin/setup/finding" element={<FindingSetup />} />
+          <Route path="/admin/setup/finding/category" element={<FindingCategory />} />
+          <Route path="/admin/setup/vitals" element={<VitalList />} />
           </Routes>
 
 
