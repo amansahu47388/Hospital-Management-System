@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Ambulance, AmbulanceBill
-
+from .models import Ambulance, AmbulanceBill, AmbulanceBillTransaction
 
 class AmbulanceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -222,3 +221,34 @@ class AmbulanceBillDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = AmbulanceBill
         fields = "__all__"
+
+
+class AmbulanceBillTransactionSerializer(serializers.ModelSerializer):
+    created_by_name = serializers.SerializerMethodField()
+    payment_mode_display = serializers.CharField(source='get_payment_mode_display', read_only=True)
+    
+    def get_created_by_name(self, obj):
+        if obj.created_by:
+            return obj.created_by.get_full_name() if hasattr(obj.created_by, 'get_full_name') else obj.created_by.email
+        return None
+
+    class Meta:
+        model = AmbulanceBillTransaction
+        fields = [
+            'id', 'transaction_id', 'bill', 'date', 'payment_mode', 
+            'payment_mode_display', 'amount', 'note', 'created_by_name', 
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'transaction_id', 'created_at', 'updated_at']
+
+
+class AmbulanceBillTransactionCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AmbulanceBillTransaction
+        fields = ['bill', 'date', 'payment_mode', 'amount', 'note']
+
+    def create(self, validated_data):
+        validated_data['created_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+        
