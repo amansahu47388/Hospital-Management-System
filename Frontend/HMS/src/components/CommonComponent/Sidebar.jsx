@@ -5,20 +5,30 @@ import {
   Pill,
   UserRound,
   Calendar,
+  Users,
+  UserCheck,
   Hospital,
+  Stethoscope,
+  FlaskConical,
+  Droplet,
   Bed,
   Ambulance,
+  Building2,
+  QrCode,
   ClipboardList,
+  CalendarDays,
+  MessageCircle,
+  FileDown,
   FileBadge,
+  Monitor,
   BarChart3,
   Settings,
   FolderGit2,
   Menu,
   ChevronDown,
   ChevronUp,
-  ChevronRight,
+  ChevronRight ,
   CreditCard,
-  FlaskConical,
 } from "lucide-react";
 
 const navItems = [
@@ -31,10 +41,32 @@ const navItems = [
   { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
   { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
   { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
-  { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
+   { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
+ 
+   
+   
+  // { to: "/multi-branch", label: "Multi Branch", Icon: Building2 },
+  // { to: "/lab", label: "Lab", Icon: FlaskConical },
+  // { to: "/ward", label: "Ward", Icon: Bed },
+  // { to: "/blood-bank", label: "Blood Bank", Icon: Droplet },
+  // { to: "/treatment", label: "Treatment", Icon: Stethoscope },
+  
+   
   { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
-  { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },
+   { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },   
+  //{ to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
+  //{ to: "/Duty-Roster", label: "Duty Roster", Icon: ClipboardList },
+ // { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
+  //{ to: "/Referral", label: "Referral", Icon: UserCheck },
+  //{ to: "/TPA-Management", label: "TPA Management", Icon: Building2 },
   { to: "/Finance", label: "Finance", Icon: BarChart3 },
+ 
+  //{ to: "/Messaging", label: "Messaging", Icon: MessageCircle },
+  //{ to: "/Download-Calendar", label: "Download Calendar", Icon: FileDown },
+ 
+  //{ to: "/Front-CMS", label: "Front CMS", Icon: Monitor },
+  //{ to: "/Live-Consultation", label: "Live Consultation", Icon: Stethoscope },
+  //{ to: "/Reports", label: "Reports", Icon: BarChart3 },
   { to: "/Setup", label: "Setup", Icon: Settings },
 ];
 
@@ -42,9 +74,9 @@ function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [birthDeathRecordOpen, setBirthDeathRecordOpen] = useState(false);
+ 
   const [financeOpen, setFinanceOpen] = useState(false);
   const [setupOpen, setSetupOpen] = useState(false);
-
   const handleToggle = () => {
     if (window.innerWidth < 700) {
       setMobileOpen(!mobileOpen);
@@ -53,35 +85,60 @@ function Sidebar() {
     }
   };
 
+  const toggleBirthDeathRecord = () => {
+    setBirthDeathRecordOpen(!birthDeathRecordOpen);
+  };
+
+  
+
+  const toggleFinance = () => {
+    setFinanceOpen(!financeOpen);
+  };
+  const toggleSetup = () => {
+  setSetupOpen(!setupOpen);
+};
+
+  
+  // Close submenu when sidebar collapses
   useEffect(() => {
     if (collapsed) {
       setBirthDeathRecordOpen(false);
+     
       setFinanceOpen(false);
       setSetupOpen(false);
     }
   }, [collapsed]);
+  
 
   return (
     <div className="relative">
-      {/* Toggle Button */}
+      {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
       <button
         onClick={handleToggle}
-        className="absolute top-4 -right-10 z-50 p-1 bg-transparent border-0"
+        className="absolute  top-4 -right-10 z-50 p-1  cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
-        <Menu />
+      <Menu />
       </button>
-
-      {/* Sidebar */}
+     
+      {/* SIDEBAR */}
       <aside
         className={`fixed md:relative top-0 left-0 z-40 ${
           collapsed ? "w-20" : "w-64"
-        } h-screen overflow-y-auto text-white
-        bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-        transition-all duration-1000
-        ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+        } h-screen overflow-y-auto
+        text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+        transition-transform duration-1000 md:transition-all md:duration-1000
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        <div className="flex flex-col h-full p-5">
+        <div className="flex flex-col h-full p-5 justify-even">
+          {/* Logo */}
+          <div className="text-xl font-bold mb-10 flex items-center gap-3">
+            {/* <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
+              ML
+            </div>
+            {!collapsed && <span>MediLab Hospital</span>} */}
+          </div>
 
+          {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-bold pb-10">
           {navItems.map(({ to, label, Icon }) => {
 
@@ -238,17 +295,18 @@ if (to === "/Setup") {
             { label: "Hospital Charges", path: "/admin/setup/charges-details" },
             { label: "Bed", path: "/admin/setup/bed-status" },
             { label: "Print Head. Foot.", path: "/admin/setup/appointment-header-footer" },
-            { label: "Front Office", path: "/admin/setup/front-office/purpose-list" },
-            { label: "Operations", path: "/admin/setup/operation/operation-list" },
-            { label: "Pharmacy", path: "/admin/setup/pharmacy/medicine-category" },
-            { label: "Pathology", path: "/admin/setup/pathology/category" },
-            { label: "Radiology", path: "/admin/setup/radiology/category" },
-            { label: "Symptoms", path: "/admin/setup/symptoms/symptoms-head" },
-            { label: "Findings", path: "/admin/setup/finding" },
+            { label: "Front Office", path: "/admin/setup/front-office" },
+            { label: "Operations", path: "/admin/setup/operations" },
+            { label: "Pharmacy", path: "/admin/setup/pharmacy" },
+            { label: "Pathology", path: "/admin/setup/pathology" },
+            { label: "Radiology", path: "/admin/setup/radiology" },
+            { label: "Blood Bank", path: "/admin/setup/blood-bank" },
+            { label: "Symptoms", path: "/admin/setup/symptoms" },
+            { label: "Findings", path: "/admin/setup/findings" },
             { label: "Vitals", path: "/admin/setup/vitals" },
+            { label: "Zoom Setting", path: "/admin/setup/zoom-setting" },
             { label: "Finance", path: "/admin/setup/finance" },
-            { label: "Appointment", path: "/admin/setup/Appointment" },
-            { label: "Custom Fields", path: "/admin/setup/Custom Fields" },
+            { label: "Human Resource", path: "/admin/setup/human-resource" },
           ].map(({ label, path }) => (
             <NavLink
               key={path}
@@ -258,69 +316,42 @@ if (to === "/Setup") {
                 ${isActive ? "bg-white/10 rounded-md" : ""}
                 !text-white hover:!text-white`
               }
+            >
+              <ChevronRight size={14} className="opacity-80" />
+              <span className="whitespace-nowrap">{label}</span>
+            </NavLink>
+          ))}
 
-              /* SETUP */
-              if (to === "/Setup") {
-                return (
-                  <React.Fragment key={to}>
-                    <button
-                      onClick={() => setSetupOpen(!setupOpen)}
-                      className="w-full flex justify-between items-center py-2 px-2"
-                    >
-                      <div className="flex gap-4">
-                        <Icon size={20} />
-                        {!collapsed && "Setup"}
-                      </div>
-                      {!collapsed &&
-                        (setupOpen ? <ChevronUp /> : <ChevronDown />)}
-                    </button>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
 
-                    {setupOpen && !collapsed && (
-                      <div className="ml-8 space-y-2">
-                        {[
-                          "settings",
-                          "charges-details",
-                          "bed-status",
-                          "front-office",
-                          "operations",
-                          "pharmacy",
-                          "pathology",
-                          "radiology",
-                          "blood-bank",
-                          "finance",
-                        ].map((item) => (
-                          <NavLink
-                            key={item}
-                            to={`/admin/setup/${item}`}
-                            className="flex gap-2 py-1"
-                          >
-                            <ChevronRight size={16} /> {item}
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
-                  </React.Fragment>
-                );
-              }
 
-              /* NORMAL MENU */
-              return (
-                <NavLink
-                  key={to}
-                  to={to}
-                  className={({ isActive }) =>
-                    `flex items-center gap-4 py-2 px-2 no-underline ${
-                      isActive ? "bg-white/10 rounded-md" : ""
-                    } !text-white`
-                  }
-                >
-                  <Icon size={20} />
-                  <span className={`${collapsed ? "hidden" : "block"}`}>
-                    {label}
-                  </span>
-                </NavLink>
-              );
-            })}
+/* NORMAL MENU */
+return (
+  <NavLink
+    key={to}
+    to={to}
+    end
+    className={({ isActive }) =>
+      `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
+      ${
+        isActive
+          ? "!text-white bg-white/10 rounded-md"
+          : "!text-white hover:!text-gray-200"
+      }`
+    }
+  >
+    <Icon size={20} className="flex-shrink-0" />
+    <span className={`${collapsed ? "hidden" : "block"}`}>
+      {label}
+    </span>
+  </NavLink>
+);
+})}
+
           </nav>
         </div>
       </aside>

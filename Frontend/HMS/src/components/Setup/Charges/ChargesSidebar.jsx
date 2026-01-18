@@ -20,8 +20,8 @@ export default function ChargesSidebar() {
                 `block px-3 py-2 rounded 
                 ${
                   isActive
-                    ? "bg-gray-200 text-purple-600 font-bold"
-                    : "hover:bg-gray-100 hover:text-purple-500"
+                    ? "bg-purple-200 text-purple-600 font-bold"
+                    : "hover:bg-purple-100 hover:text-purple-500"
                 }`
               }
             >
