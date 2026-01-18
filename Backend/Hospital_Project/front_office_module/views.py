@@ -7,29 +7,144 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 
+
+
+
 class PurposeAPI(APIView):
     permission_classes = [IsAuthenticated]
+
+    # LIST
     def get(self, request):
-        data = Purpose.objects.all()
-        serializer = PurposeSerializer(data, many=True)
-        return Response(serializer.data)
+        purposes = Purpose.objects.all()
+        serializer = PurposeSerializer(purposes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # CREATE
+    def post(self, request):
+        serializer = PurposeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # UPDATE
+    def put(self, request, pk):
+        try:
+            purpose = Purpose.objects.get(pk=pk)
+        except Purpose.DoesNotExist:
+            return Response({"detail": "Purpose not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PurposeSerializer(purpose, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # DELETE
+    def delete(self, request, pk):
+        try:
+            purpose = Purpose.objects.get(pk=pk)
+        except Purpose.DoesNotExist:
+            return Response({"detail": "Purpose not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        purpose.delete()
+        return Response({"message": "Purpose deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
 
 
 class ComplainTypeAPI(APIView):
     permission_classes = [IsAuthenticated]
+
+    # LIST
     def get(self, request):
-        data = ComplaintType.objects.all()
-        serializer = ComplaintTypeSerializer(data, many=True)
-        return Response(serializer.data)
+        complaint_types = ComplaintType.objects.all()
+        serializer = ComplaintTypeSerializer(complaint_types, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # CREATE
+    def post(self, request):
+        serializer = ComplaintTypeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # UPDATE
+    def put(self, request, pk):
+        try:
+            complaint_type = ComplaintType.objects.get(pk=pk)
+        except ComplaintType.DoesNotExist:
+            return Response({"detail": "Complaint type not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ComplaintTypeSerializer(complaint_type, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # DELETE
+    def delete(self, request, pk):
+        try:
+            complaint_type = ComplaintType.objects.get(pk=pk)
+        except ComplaintType.DoesNotExist:
+            return Response({"detail": "Complaint type not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        complaint_type.delete()
+        return Response({"message": "Complaint type deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+
 
 
 
 class SourceAPI(APIView):
     permission_classes = [IsAuthenticated]
+
+    # LIST
     def get(self, request):
-        data = Source.objects.all()
-        serializer = SourceSerializer(data, many=True)
-        return Response(serializer.data)
+        sources = Source.objects.all()
+        serializer = SourceSerializer(sources, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # CREATE
+    def post(self, request):
+        serializer = SourceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # UPDATE
+    def put(self, request, pk):
+        try:
+            source = Source.objects.get(pk=pk)
+        except Source.DoesNotExist:
+            return Response({"detail": "Source not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = SourceSerializer(source, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # DELETE
+    def delete(self, request, pk):
+        try:
+            source = Source.objects.get(pk=pk)
+        except Source.DoesNotExist:
+            return Response({"detail": "Source not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        source.delete()
+        return Response({"message": "Source deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 
 

@@ -3,11 +3,11 @@ import AdminLayout from "../../../layout/AdminLayout";
 import MedicineSidebarMenu from "../../../components/Setup/Pharmacy/MedicineSidebarMenu";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 
-export default function MedicineDosage() {
+export default function Dose() {
   const [list, setList] = useState([
-    { id: 1, name: "100 mg" },
-    { id: 2, name: "250 mg" },
-    { id: 3, name: "500 mg" },
+    { id: 1, name: "Once a day" },
+    { id: 2, name: "Twice a day" },
+    { id: 3, name: "Three times a day" },
   ]);
 
   const [form, setForm] = useState({ id: null, name: "" });
@@ -28,7 +28,7 @@ export default function MedicineDosage() {
 
         {/* HEADER */}
         <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
-          <h2 className="text-lg font-semibold">Medicine Dosage</h2>
+          <h2 className="text-lg font-semibold">Dose Interval</h2>
 
           <button
             onClick={() => { setForm({ id: null, name: "" }); setOpen(true); }}
@@ -36,7 +36,7 @@ export default function MedicineDosage() {
             from-[#6046B5] to-[#8A63D2]
             text-white px-4 py-2 rounded-md"
           >
-            <Plus size={16} /> Add Medicine Dosage
+            <Plus size={16} /> Add Dose
           </button>
         </div>
 
@@ -53,7 +53,8 @@ export default function MedicineDosage() {
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-3 py-2 text-left">Dosage</th>
+                  <th className="px-3 py-2 text-left">Dose Duration</th>
+                  <th className="px-3 py-2 text-left">Dose Interval</th>
                   <th className="px-3 py-2 text-left">Action</th>
                 </tr>
               </thead>
@@ -61,6 +62,7 @@ export default function MedicineDosage() {
                 {list.map(row => (
                   <tr key={row.id} className="hover:bg-gray-50">
                     <td className="px-3 py-2 text-left">{row.name}</td>
+                     <td className="px-3 py-2 text-left">{row.name}</td>
                     <td className="px-3 py-2 text-left">
                       <div className="flex gap-3">
                         <button
@@ -90,7 +92,7 @@ export default function MedicineDosage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-lg rounded-md">
             <div className="flex justify-between px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
-              <h3>{form.id ? "Edit Medicine Dosage" : "Add Medicine Dosage"}</h3>
+              <h3>{form.id ? "Edit Dose Interval" : "Add Dose Interval"}</h3>
               <button onClick={() => setOpen(false)}><X /></button>
             </div>
 
@@ -99,7 +101,16 @@ export default function MedicineDosage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 className="w-full border px-3 py-2 rounded"
-                placeholder="Dosage"
+                placeholder="Dose Interval"
+              />
+            </div>
+
+            <div className="p-4">
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full border px-3 py-2 rounded"
+                placeholder="Dose Duration"
               />
             </div>
 

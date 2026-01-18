@@ -24,7 +24,7 @@ class BirthRecordListAPIView(APIView):
         
         if search:
             records = records.filter(
-                Q(reference_no__icontains=search) |
+                Q(id__icontains=search) |
                 Q(child_name__icontains=search) |
                 Q(mother_name__icontains=search) |
                 Q(father_name__icontains=search) |
@@ -38,7 +38,6 @@ class BirthRecordListAPIView(APIView):
         for record in serializer.data:
             transformed_data.append({
                 'id': record['id'],
-                'refNo': record['reference_no'],
                 'caseId': record['case_id'] or '',
                 'generatedBy': record['created_by_name'] or 'N/A',
                 'childName': record['child_name'],
@@ -70,7 +69,6 @@ class BirthRecordDetailAPIView(APIView):
 
         transformed = {
             "id": data["id"],
-            "refNo": data["reference_no"],
             "childName": data["child_name"],
             "gender": data["gender"],
             "weight": data["weight"],
@@ -142,7 +140,7 @@ class DeathRecordListAPIView(APIView):
         
         if search:
             records = records.filter(
-                Q(reference_no__icontains=search) |
+                Q(id__icontains=search) |
                 Q(patient_name__icontains=search) |
                 Q(guardian_name__icontains=search) |
                 Q(case_id__icontains=search)
@@ -155,7 +153,6 @@ class DeathRecordListAPIView(APIView):
         for record in serializer.data:
             transformed_data.append({
                 'id': record['id'],
-                'refNo': record['reference_no'],
                 'caseId': record['case_id'] or '',
                 'generatedBy': record['created_by_name'] or 'N/A',
                 'patient': record['patient_name'],

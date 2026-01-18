@@ -41,7 +41,6 @@ class AmbulanceBill(models.Model):
     date = models.DateField()
     note = models.TextField(blank=True, null=True)
     payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES, blank=True, null=True)
-    bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
 
     # Financial fields
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

@@ -5,15 +5,14 @@ export default function MedicineSidebarMenu() {
     { label: "Medicine Category", path: "/admin/setup/pharmacy/medicine-category" },
     { label: "Supplier", path: "/admin/setup/pharmacy/supplier" },
     { label: "Medicine Dosage", path: "/admin/setup/pharmacy/medicine-dosage" },
-    { label: "Dose Interval", path: "/admin/setup/pharmacy/dose-interval" },
-    { label: "Dose Duration", path: "/admin/setup/pharmacy/dose-duration" },
+    { label: "Dose", path: "/admin/setup/pharmacy/dose" },
     { label: "Unit", path: "/admin/setup/pharmacy/unit" },
     { label: "Company", path: "/admin/setup/pharmacy/company" },
     { label: "Medicine Group", path: "/admin/setup/pharmacy/medicine-group" },
   ];
 
   return (
-    <div className="bg-white rounded-md border shadow-sm">
+    <div className="bg-white rounded-md ">
       <ul className="text-sm">
         {menus.map((menu) => (
           <li key={menu.path}>
@@ -24,8 +23,8 @@ export default function MedicineSidebarMenu() {
                 relative block px-5 py-3 transition-all duration-200
                 ${
                   isActive
-                    ? "bg-gradient-to-r from-[#6046B5]/10 to-[#8A63D2]/10 text-[#6046B5] font-semibold"
-                    : "text-gray-700 hover:bg-gray-100"
+                   ? "bg-purple-200 text-purple-600 font-bold"
+                    : "hover:bg-purple-100 hover:text-purple-500"
                 }
               `
               }
