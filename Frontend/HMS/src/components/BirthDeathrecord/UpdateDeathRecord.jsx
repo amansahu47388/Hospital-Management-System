@@ -1,5 +1,7 @@
 import { X, UploadCloud } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getDeathRecordDetail, updateDeathRecord } from "../../api/birthDeathApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function UpdateDeathRecord({
   open,
@@ -7,6 +9,8 @@ export default function UpdateDeathRecord({
   record,
   onSave,
 }) {
+  const notify = useNotify();
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     caseId: "",
     patientName: "",
@@ -16,19 +20,38 @@ export default function UpdateDeathRecord({
     attachment: null,
   });
 
-  /* preload data (same as birth edit) */
+  // Fetch full record details when modal opens
   useEffect(() => {
-    if (record) {
-      setForm({
-        caseId: record.caseId || "",
-        patientName: record.patientName || "",
-        deathDate: record.deathDate || "",
-        guardianName: record.guardianName || "",
-        report: record.report || "",
-        attachment: null,
-      });
+    if (open && record?.id) {
+      const fetchDetail = async () => {
+        try {
+          const response = await getDeathRecordDetail(record.id);
+          const data = response.data;
+          
+          // Convert backend snake_case to frontend camelCase
+          // Format death_date from backend to date format (YYYY-MM-DD)
+          let deathDateFormatted = "";
+          if (data.death_date) {
+            const date = new Date(data.death_date);
+            deathDateFormatted = date.toISOString().split('T')[0];
+          }
+
+          setForm({
+            caseId: data.case_id || "",
+            patientName: data.patient_name || "",
+            deathDate: deathDateFormatted,
+            guardianName: data.guardian_name || "",
+            report: data.report || "",
+            attachment: null, // Don't pre-fill file
+          });
+        } catch (error) {
+          console.error("Failed to load death record detail:", error);
+          notify("error", "Failed to load death record details");
+        }
+      };
+      fetchDetail();
     }
-  }, [record]);
+  }, [open, record, notify]);
 
   if (!open) return null;
 
@@ -38,13 +61,41 @@ export default function UpdateDeathRecord({
   };
 
   const handleFileChange = (e) => {
-    setForm({ ...form, attachment: e.target.files[0] });
+    setForm({ ...form, attachment: e.target.files[0] || null });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(form);
-    onClose();
+
+    // Validation
+    if (!form.patientName || !form.deathDate) {
+      notify("error", "Please fill in all required fields (Patient Name and Death Date)");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Map frontend field names to backend field names
+      const data = {
+        case_id: form.caseId || "",
+        patient_name: form.patientName,
+        death_date: form.deathDate,
+        guardian_name: form.guardianName || "",
+        report: form.report || "",
+        attachment: form.attachment,
+      };
+
+      await updateDeathRecord(record.id, data);
+      notify("success", "Death record updated successfully");
+      onSave?.();
+      onClose();
+    } catch (error) {
+      const errorMsg = error?.response?.data?.error || error?.message || "Failed to update death record";
+      notify("error", errorMsg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,10 +114,10 @@ export default function UpdateDeathRecord({
 
           {/* GRID 1 */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input label="Case ID *" name="caseId" value={form.caseId} onChange={handleChange} />
-            <Input label="Patient Name *" name="patientName" value={form.patientName} disabled />
-            <Input label="Death Date *" name="deathDate" value={form.deathDate} onChange={handleChange} />
-            <Input label="Guardian Name *" name="guardianName" value={form.guardianName} onChange={handleChange} />
+            <Input label="Case ID" name="caseId" value={form.caseId} onChange={handleChange} />
+            <Input label="Patient Name *" name="patientName" value={form.patientName} onChange={handleChange} />
+            <Input label="Death Date *" type="date" name="deathDate" value={form.deathDate} onChange={handleChange} />
+            <Input label="Guardian Name" name="guardianName" value={form.guardianName} onChange={handleChange} />
           </div>
 
           {/* GRID 2 */}
@@ -79,9 +130,10 @@ export default function UpdateDeathRecord({
           <div className="flex justify-end">
             <button
               type="submit"
-              className=" bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded hover:bg-blue-700"
+              disabled={loading}
+              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
 

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
-import { getAmbulanceBillDetail, updateAmbulanceBill } from "../../api/ambulanceApi";
+import { X, Printer, Trash2 } from "lucide-react";
+import { 
+  getAmbulanceBillDetail, 
+  getAmbulanceBillTransactions,
+  createAmbulanceBillTransaction,
+  deleteAmbulanceBillTransaction
+} from "../../api/ambulanceApi";
 import { useNotify } from "../../context/NotificationContext";
 
 const formatAmount = (value) => {
@@ -11,7 +16,8 @@ const formatAmount = (value) => {
 
 /* ---------- Reusable Row ---------- */
 const InfoRow = ({ label, value }) => (
-  <div className="flex justify-between text-sm py-1 border-b">
+  <div className="flex justify-between text-sm py-1 border-b-2 border-gray-300">
+
     <span className="text-gray-600">{label}</span>
     <span className="font-medium text-gray-900">{value || "-"}</span>
   </div>
@@ -21,6 +27,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
   const notify = useNotify();
   const [loading, setLoading] = useState(false);
   const [bill, setBill] = useState(null);
+  const [transactions, setTransactions] = useState([]);
   const [form, setForm] = useState({
     date: "",
     amount: "",
@@ -31,8 +38,10 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
   useEffect(() => {
     if (open && billId) {
       loadBill();
+      loadTransactions();
     } else {
       setBill(null);
+      setTransactions([]);
       setForm({ date: "", amount: "", mode: "cash", note: "" });
     }
   }, [open, billId]);
@@ -44,18 +53,28 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
       const billData = res.data;
       setBill(billData);
       
-      // Pre-fill form with current bill data
+      // Pre-fill form with current date and balance
       setForm({
-        date: billData.date || new Date().toISOString().split('T')[0],
-        amount: billData.balance || billData.net_amount || "",
-        mode: billData.payment_mode || "cash",
-        note: billData.note || "",
+        date: new Date().toISOString().split('T')[0],
+        amount: billData.balance || "",
+        mode: "cash",
+        note: "",
       });
     } catch (error) {
       notify("error", "Failed to load bill details");
       onClose();
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadTransactions = async () => {
+    try {
+      const res = await getAmbulanceBillTransactions(billId);
+      setTransactions(res.data || []);
+    } catch (error) {
+      console.error("Failed to load transactions:", error);
+      setTransactions([]);
     }
   };
 
@@ -66,43 +85,102 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
   };
 
   const handleSubmit = async () => {
-    if (!bill || !form.date) {
-      notify("error", "Please fill in all required fields");
+    if (!bill || !form.date || !form.amount || parseFloat(form.amount) <= 0) {
+      notify("error", "Please fill in all required fields with valid amount");
       return;
     }
 
     try {
       setLoading(true);
       
-      // Calculate new paid amount if payment amount is provided
-      let newPaidAmount = parseFloat(bill.paid_amount) || 0;
-      if (form.amount && parseFloat(form.amount) > 0) {
-        newPaidAmount = parseFloat(bill.paid_amount) + parseFloat(form.amount);
-      }
-      
-      const updateData = {
-        date: form.date,
-        note: form.note || bill.note || "",
-        payment_mode: form.mode,
-        total_amount: bill.total_amount || 0,
-        discount: bill.discount || 0,
-        tax: bill.tax || 0,
-        paid_amount: newPaidAmount,
+      // Create transaction
+      const transactionData = {
+        date: new Date(`${form.date}T${new Date().toTimeString().split(' ')[0]}`).toISOString(),
+        payment_mode: form.mode.toLowerCase(),
+        amount: parseFloat(form.amount),
+        note: form.note || "",
       };
 
-      await updateAmbulanceBill(bill.id, updateData);
-      notify("success", "Bill updated successfully");
-      onSuccess?.();
+      const res = await createAmbulanceBillTransaction(billId, transactionData);
+      
+      // Update bill amounts from response
+      if (res.data.bill) {
+        setBill(prev => ({
+          ...prev,
+          paid_amount: res.data.bill.paid_amount,
+          balance: res.data.bill.balance
+        }));
+      }
+      
+      // Reload transactions and bill
+      await loadTransactions();
+      await loadBill();
+      
+      // Reset form
+      setForm({
+        date: new Date().toISOString().split('T')[0],
+        amount: "",
+        mode: "cash",
+        note: "",
+      });
+      
+      notify("success", "Transaction added successfully");
     } catch (error) {
-      notify("error", error?.response?.data?.message || error?.response?.data?.error || "Failed to update bill");
+      notify("error", error?.response?.data?.message || error?.response?.data?.error || "Failed to add transaction");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDeleteTransaction = async (transactionId) => {
+    if (!window.confirm("Are you sure you want to delete this transaction?")) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await deleteAmbulanceBillTransaction(billId, transactionId);
+      
+      // Update bill amounts from response
+      if (res.data.bill) {
+        setBill(prev => ({
+          ...prev,
+          paid_amount: res.data.bill.paid_amount,
+          balance: res.data.bill.balance
+        }));
+      }
+      
+      // Reload transactions
+      await loadTransactions();
+      notify("success", "Transaction deleted successfully");
+    } catch (error) {
+      notify("error", error?.response?.data?.message || "Failed to delete transaction");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePrint = (transaction) => {
+    // Placeholder for print functionality
+    window.print();
+  };
+
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   if (loading && !bill) {
     return (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
         <div className="bg-white p-6 rounded">Loading...</div>
       </div>
     );
@@ -111,8 +189,9 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
   if (!bill) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-5xl rounded shadow-lg">
+        <div className="fixed inset-0 bg-black/40 z-50">
+      <div className="bg-white w-full h-full flex flex-col">
+
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-2 bg-blue-500 text-white">
           <h2 className="text-sm font-semibold">Payments</h2>
@@ -137,13 +216,13 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
 
           {/* Amount Summary */}
           <div className="col-span-1 space-y-1">
-          <InfoRow label="Amount" value={`$${formatAmount(bill.total_amount)}`} />
-<InfoRow label="Discount" value={`$${formatAmount(bill.discount)}`} />
-<InfoRow label="Tax" value={`$${formatAmount(bill.tax)}`} />
-<InfoRow label="Net Amount" value={`$${formatAmount(bill.net_amount)}`} />
-<InfoRow label="Paid Amount" value={`$${formatAmount(bill.paid_amount)}`} />
-<InfoRow label="Balance Amount" value={`$${formatAmount(bill.balance)}`} />
-</div>
+            <InfoRow label="Amount" value={`$${formatAmount(bill.total_amount)}`} />
+            <InfoRow label="Discount" value={`$${formatAmount(bill.discount)}`} />
+            <InfoRow label="Tax" value={`$${formatAmount(bill.tax)}`} />
+            <InfoRow label="Net Amount" value={`$${formatAmount(bill.net_amount)}`} />
+            <InfoRow label="Paid Amount" value={`$${formatAmount(bill.paid_amount)}`} />
+            <InfoRow label="Balance Amount" value={`$${formatAmount(bill.balance)}`} />
+          </div>
           {/* Payment Form */}
           <div className="col-span-1 space-y-3">
             <div>
@@ -176,10 +255,10 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
                 onChange={handleChange}
                 className="w-full border rounded px-2 py-1 text-sm"
               >
-                <option>Cash</option>
-                <option>UPI</option>
-                <option>Card</option>
-                <option>Bank Transfer</option>
+                <option value="cash">Cash</option>
+                <option value="upi">UPI</option>
+                <option value="card">Card</option>
+                <option value="bank_transfer">Bank Transfer</option>
               </select>
             </div>
 
@@ -207,38 +286,72 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
                 disabled={loading}
                 className="bg-blue-500 text-white text-sm px-4 py-1 rounded hover:bg-blue-600 disabled:opacity-50"
               >
-                {loading ? "Saving..." : "Save"}
+                {loading ? "Adding..." : "Add Payment"}
               </button>
             </div>
           </div>
         </div>
 
         {/* Transaction History */}
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-4 flex-1 overflow-auto">
           <h3 className="text-sm font-semibold mb-2">Transaction History</h3>
 
           <table className="w-full text-sm border">
             <thead className="bg-gray-100">
               <tr>
                 <th className="border px-2 py-1 text-left">Transaction ID</th>
-                <th className="border px-2 py-1">Date</th>
-                <th className="border px-2 py-1">Mode</th>
-                <th className="border px-2 py-1">Amount ($)</th>
-                <th className="border px-2 py-1">Note</th>
-                <th className="border px-2 py-1">Action</th>
+                <th className="border px-2 py-1 text-center">Date</th>
+                <th className="border px-2 py-1 text-center">Mode</th>
+                <th className="border px-2 py-1 text-center">Amount ($)</th>
+                <th className="border px-2 py-1 text-center">Note</th>
+                <th className="border px-2 py-1 text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="border px-2 py-1">TRANID11750</td>
-                <td className="border px-2 py-1 text-center">
-                  01/12/2026 04:58 PM
-                </td>
-                <td className="border px-2 py-1 text-center">Cash</td>
-                <td className="border px-2 py-1 text-center">$172.50</td>
-                <td className="border px-2 py-1 text-center">—</td>
-                <td className="border px-2 py-1 text-center">🖨️ 🗑️</td>
-              </tr>
+              {transactions.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="border px-2 py-4 text-center text-gray-500">
+                    No transactions found
+                  </td>
+                </tr>
+              ) : (
+                transactions.map((transaction) => (
+                  <tr key={transaction.id} className="hover:bg-gray-50">
+                    <td className="border px-2 py-1">{transaction.transaction_id || `#${transaction.id}`}</td>
+                    <td className="border px-2 py-1 text-center">
+                      {formatDateTime(transaction.date)}
+                    </td>
+                    <td className="border px-2 py-1 text-center">
+                      {transaction.payment_mode_display || transaction.payment_mode || "-"}
+                    </td>
+                    <td className="border px-2 py-1 text-center">
+                      ${formatAmount(transaction.amount)}
+                    </td>
+                    <td className="border px-2 py-1 text-center">
+                      {transaction.note || "—"}
+                    </td>
+                    <td className="border px-2 py-1 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => handlePrint(transaction)}
+                          className="text-purple-600 hover:text-purple-800 p-1"
+                          title="Print"
+                        >
+                          <Printer size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTransaction(transaction.id)}
+                          className="text-red-600 hover:text-red-800 p-1"
+                          title="Delete"
+                          disabled={loading}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -7,7 +7,7 @@ import DeathRecordDetails from "../../components/BirthDeathrecord/DeathRecordDet
 import UpdateDeathRecord from "../../components/BirthDeathrecord/UpdateDeathRecord";
 
 export default function DeathRecordPage() {
-  const { records, search, setSearch, deleteRecord } = useDeathRecords();
+  const { records, search, setSearch, deleteRecord, refresh } = useDeathRecords();
 
   const [data, setData] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
@@ -130,7 +130,14 @@ export default function DeathRecordPage() {
           </div>
 
           {/* MODALS */}
-          <AddDeathRecord open={openAdd} onClose={() => setOpenAdd(false)} />
+          <AddDeathRecord 
+            open={openAdd} 
+            onClose={() => setOpenAdd(false)}
+            onSuccess={() => {
+              refresh();
+              setOpenAdd(false);
+            }}
+          />
 
           <DeathRecordDetails
             open={openDetails}
