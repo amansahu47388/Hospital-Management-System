@@ -54,7 +54,7 @@ export default function ChargeCategoryList() {
       <div className="min-h-screen p-2">
 
         {/* HEADER */}
-        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center">
+        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
           <h2 className="text-lg font-semibold">Charge Category List</h2>
 
           <button

@@ -1,68 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
-import AddBedGroupModal from "../../../components/Setup/Bed/AddBedGroupModal";
+import AddBedGroup from "../../../components/Setup/Bed/AddBedGroup";
+import {
+  getBedGroups,
+  deleteBedGroup,
+} from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 export default function BedGroupList() {
+  const notify = useNotify();
+
   const [openModal, setOpenModal] = useState(false);
+  const [bedGroups, setBedGroups] = useState([]);
+  const [editData, setEditData] = useState(null);
 
-  const bedGroups = [
-    {
-      id: 1,
-      name: "VIP Ward",
-      floor: "Ground Floor",
-      description:
-        "A palliative or hospice unit is where end-of-life care is provided.",
-    },
-    {
-      id: 2,
-      name: "Private Ward",
-      floor: "3rd Floor",
-      description:
-        "The operating room (OR) is where both inpatient and outpatient surgeries are performed.",
-    },
-    {
-      id: 3,
-      name: "General Ward Male",
-      floor: "3rd Floor",
-      description: "",
-    },
-    {
-      id: 4,
-      name: "ICU",
-      floor: "2nd Floor",
-      description:
-        "The intensive care unit (ICU) is where you're sent if you require close monitoring.",
-    },
-    {
-      id: 5,
-      name: "NICU",
-      floor: "2nd Floor",
-      description:
-        "Neonatal intensive care unit depending on facility type.",
-    },
-    {
-      id: 6,
-      name: "AC (Normal)",
-      floor: "1st Floor",
-      description: "",
-    },
-    {
-      id: 7,
-      name: "Non AC",
-      floor: "4th Floor",
-      description: "",
-    },
-  ];
-
-  const handleEdit = (group) => {
-    console.log("Edit:", group);
+  const fetchGroups = async () => {
+    try {
+      const res = await getBedGroups();
+      setBedGroups(res.data);
+    } catch {
+      notify("error", "Failed to load bed groups");
+    }
   };
 
-  const handleDelete = (group) => {
-    if (window.confirm(`Delete ${group.name}?`)) {
-      console.log("Delete:", group);
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
+  const handleEdit = (group) => {
+    setEditData(group);
+    setOpenModal(true);
+  };
+
+  const handleDelete = async (group) => {
+    if (!window.confirm(`Delete ${group.name}?`)) return;
+
+    try {
+      await deleteBedGroup(group.id);
+      notify("success","Bed group deleted");
+      fetchGroups();
+    } catch {
+      notify( "error", "Delete failed");
     }
   };
 
@@ -70,24 +50,23 @@ export default function BedGroupList() {
     <AdminLayout>
       <div className="min-h-screen p-2">
 
-        {/* HEADER */}
-        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center">
+        <div className="bg-white rounded-md p-3 mb-4 flex justify-between">
           <h2 className="text-lg font-semibold">Bed Group List</h2>
-
           <button
-            onClick={() => setOpenModal(true)}
-            className="flex items-center gap-2
-            bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-            text-white px-4 py-2 rounded-md"
+            onClick={() => {
+              setEditData(null);
+              setOpenModal(true);
+            }}
+            className="flex items-center gap-2 bg-gradient-to-b
+            from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded-md"
           >
             <Plus size={16} /> Add Bed Group
           </button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4">
-
+        <div className="flex gap-4">
           {/* LEFT MENU */}
-          <div className="w-full md:w-64 bg-white rounded-md p-3">
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
             <ul className="space-y-1 text-sm">
               {[
                 { label: "Bed Status", path: "/admin/setup/bed-status" },
@@ -100,12 +79,9 @@ export default function BedGroupList() {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `block px-3 py-2 rounded
-                      ${
-                        isActive
-                          ? "bg-blue-50 text-blue-600 font-semibold"
-                          : "hover:bg-gray-100"
-                      }`
+                      isActive
+                        ? "block px-3 py-2 rounded bg-purple-200 text-purple-600 font-bold"
+                        : "block px-3 py-2 rounded hover:bg-purple-100"
                     }
                   >
                     {item.label}
@@ -115,47 +91,31 @@ export default function BedGroupList() {
             </ul>
           </div>
 
-          {/* TABLE */}
-          <div className="flex-1 bg-white rounded-md overflow-x-auto">
+
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="px-3 py-2 text-left">Name</th>
                   <th className="px-3 py-2 text-left">Floor</th>
                   <th className="px-3 py-2 text-left">Description</th>
-                  <th className="px-3 py-2 text-center">Action</th>
+                  <th className="px-3 py-2 text-left">Action</th>
                 </tr>
               </thead>
-
               <tbody>
-                {bedGroups.map((group) => (
-                  <tr
-                    key={group.id}
-                    className="border-b hover:bg-gray-50 group"
-                  >
-                    <td className="px-3 py-2 text-blue-600 font-medium">
-                      {group.name}
-                    </td>
-                    <td className="px-3 py-2">{group.floor}</td>
-                    <td className="px-3 py-2 max-w-xl truncate">
-                      {group.description}
-                    </td>
-
-                    <td className="px-3 py-2 text-center">
-                      <div className="flex justify-center gap-3">
-                        <button
-                          onClick={() => handleEdit(group)}
-                          className="text-blue-600 hover:text-blue-800
-                          opacity-0 group-hover:opacity-100 transition"
-                        >
+                {bedGroups.map(group => (
+                  <tr key={group.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 font-medium">{group.name}</td>
+                    <td className="px-3 py-2 font-medium">{group.floor_name}</td>
+                    <td className="px-3 py-2 font-medium">{group.description}</td>
+                    <td className="px-3 py-2 font-medium">
+                      <div className="flex  gap-3">
+                        <button onClick={() => handleEdit(group)}
+                          className="text-purple-600 hover:text-purple-800">
                           <Pencil size={16} />
                         </button>
-
-                        <button
-                          onClick={() => handleDelete(group)}
-                          className="text-red-600 hover:text-red-800
-                          opacity-0 group-hover:opacity-100 transition"
-                        >
+                        <button onClick={() => handleDelete(group)}
+                          className="text-red-600 hover:text-red-800">
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -164,20 +124,15 @@ export default function BedGroupList() {
                 ))}
               </tbody>
             </table>
-
-            <div className="px-3 py-2 text-xs text-gray-500">
-              Records: 1 to {bedGroups.length} of {bedGroups.length}
-            </div>
           </div>
-
         </div>
 
-        {/* ADD BED GROUP MODAL */}
-        <AddBedGroupModal
+        <AddBedGroup
           open={openModal}
           onClose={() => setOpenModal(false)}
+          editData={editData}
+          refresh={fetchGroups}
         />
-
       </div>
     </AdminLayout>
   );

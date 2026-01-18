@@ -4,6 +4,9 @@ import uuid
 from .models import *
 
 
+#***********************************************************************************#
+#                     HOSPITAL CHARGE SETUP SERIALIZERS                                #
+#***********************************************************************************#
 
 class ChargeUnitSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,6 +38,45 @@ class HospitalChargesSerializer(serializers.ModelSerializer):
     class Meta:
         model = HospitalCharges
         fields = "__all__"
+
+
+
+
+#***********************************************************************************#
+#                     HOSPITAL BED SETUP SERIALIZERS                                #
+#***********************************************************************************#
+
+class FloorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Floor
+        fields = "__all__"
+
+
+class BedTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BedType
+        fields = "__all__"
+
+
+class BedGroupSerializer(serializers.ModelSerializer):
+    floor_name = serializers.CharField(source="floor.floor_name", read_only=True)
+    bed_type_name = serializers.CharField(source="bed_type.bad_type", read_only=True)
+
+    class Meta:
+        model = BedGroup
+        fields = "__all__"
+
+
+class BedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bed
+        fields = "__all__"
+
+
+
+
+
+
 
 
 

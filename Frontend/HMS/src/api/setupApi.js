@@ -1,7 +1,7 @@
 import api from "./axiosInstance"
 
 // ***************************************************************************** //
-//                           CHARGES SETUP API                                 //
+//                             CHARGES SETUP API                                 //
 // ******************************************************************************//  
 export const getChargeUnits = () =>{
   return api.get("/setup/charge-units/");
@@ -32,7 +32,6 @@ export const updateTaxCategory = (id, data) =>{
 export const deleteTaxCategory = (id) =>{
   return api.delete(`/setup/charge-tax/${id}/delete/`);
 };
-
 
 // Charge Type APIs
 export const getChargeTypes = () =>{
@@ -89,11 +88,90 @@ export const deleteHospitalCharge = (id) =>{
 
 
 
-export const getSymptoms = () => {
-  return api.get("setup/symptoms/");
+
+
+// ***************************************************************************** //
+//                             BAD SETUP API                                     //
+// ******************************************************************************//
+// Floor APIs
+export const getFloors = () => {
+  return api.get("/setup/floors/");
+}
+
+export const createFloor = (data) => {
+  return api.post("/setup/floors/create/", data);
 };
 
-export const getBeds = () => {
-  return api.get("setup/beds/");
+export const updateFloor = (id, data) =>{
+  return api.put(`/setup/floors/${id}/update/`, data);
+};
+
+export const deleteFloor = (id) =>{
+  return api.delete(`/setup/floors/${id}/delete/`);
+};
+
+// Bed Type APIs
+/* -------- BED TYPE -------- */
+export const getBedTypes = () => {
+  return api.get("/setup/bed-types/");
+};
+
+export const createBedType = (data) =>{
+  return api.post("/setup/bed-type/create/", data);
+};
+
+export const updateBedType = (id, data) =>{
+  return api.put(`/setup/bed-type/${id}/update/`, data);
+};
+
+export const deleteBedType = (id) =>{
+  return api.delete(`/setup/bed-type/${id}/delete/`);
+};
+
+/* -------- BED GROUP -------- */
+export const getBedGroups = () =>{
+  return api.get("/setup/bed-groups/");
+};
+
+export const createBedGroup = (data) =>{
+  api.post("/setup/bed-groups/create/", data);
+}
+
+export const updateBedGroup = (id, data) =>{
+  api.put(`/setup/bed-groups/${id}/update/`, data);
+};
+
+export const deleteBedGroup = (id) =>{
+  api.delete(`/setup/bed-groups/${id}/delete/`);
+};
+
+/* -------- BED -------- */
+export const getBeds = () =>{
+  return api.get("/setup/beds/");
+};
+
+export const createBed = (data) =>{
+  return api.post("/setup/bed/create/", data);
+};
+
+export const updateBed = (id, data) =>{
+  return api.put(`/setup/bed/${id}/update/`, data);
+};
+
+export const deleteBed = (id) =>{
+  return api.delete(`/setup/bed/${id}/delete/`);
+};
+
+
+
+
+
+
+
+
+
+
+export const getSymptoms = () => {
+  return api.get("setup/symptoms/");
 };
 

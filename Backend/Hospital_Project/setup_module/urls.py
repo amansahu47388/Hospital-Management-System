@@ -1,29 +1,29 @@
 from django.urls import path
 from .views import *
 urlpatterns = [
+
+    # *********************************************************************************************#
+    #                            HOSPITAL CHARGES SETUP ROUTES                                     #
+    # *********************************************************************************************#
     path("charge-units/", ChargeUnitAPI.as_view(), name="charge-unts"),
     path("charge-units/create/", ChargeUnitAPI.as_view(), name="charge-unts-create"),
     path("charge-units/<int:pk>/update/", ChargeUnitAPI.as_view(), name="charge-unts-update"),
     path("charge-units/<int:pk>/delete/", ChargeUnitAPI.as_view(), name="charge-unts-delete"),
-
 
     path("charge-type/", ChargeTypeAPI.as_view(), name="charge-type"),
     path("charge-type/create/", ChargeTypeAPI.as_view(), name="charge-type-create"),
     path("charge-type/<int:pk>/update/", ChargeTypeAPI.as_view(), name="charge-type-update"),
     path("charge-type/<int:pk>/delete/", ChargeTypeAPI.as_view(), name="charge-type-delete"),
 
-
     path("charge-categories/", ChargeCategoryAPI.as_view(), name="charge-categories"),
     path("charge-category/create/", ChargeCategoryAPI.as_view(), name="charge-category-create"),
     path("charge-category/<int:pk>/update/", ChargeCategoryAPI.as_view(), name="charge-category-update"),
     path("charge-category/<int:pk>/delete/", ChargeCategoryAPI.as_view(), name="charge-category-delete"),
 
-
     path("charge-tax/", ChargeTaxAPI.as_view(), name="charge-tax"),
     path("charge-tax/create/", ChargeTaxAPI.as_view(), name="charge-tax-create"),
     path("charge-tax/<int:pk>/update/", ChargeTaxAPI.as_view(), name="charge-tax-update"),
     path("charge-tax/<int:pk>/delete/", ChargeTaxAPI.as_view(), name="charge-tax-delete"),
-
 
     path("charges/", HospitalChargesAPIView.as_view(), name="hospital-charges-list"),
     path("charges/create/", HospitalChargesAPIView.as_view(), name="hospital-charges-create"),
@@ -32,10 +32,46 @@ urlpatterns = [
 
 
 
+    # *********************************************************************************************#
+    #                            HOSPITAL BAD SETUP ROUTES                                     #
+    # *********************************************************************************************#
+
+    path("floors/", FloorAPI.as_view(), name="floor-list"),
+    path("floors/create/", FloorAPI.as_view(), name="floor-create"),
+    path("floors/<int:pk>/update/", FloorAPI.as_view(), name="floor-update"),
+    path("floors/<int:pk>/delete/", FloorAPI.as_view(), name="floor-delete"),
+
+    path("bed-types/", BedTypeAPI.as_view(), name="bed-type-list"),
+    path("bed-type/create/", BedTypeAPI.as_view(), name="bed-type-create"),
+    path("bed-type/<int:pk>/update/", BedTypeAPI.as_view(), name="bed-type-update"),
+    path("bed-type/<int:pk>/delete/", BedTypeAPI.as_view(), name="bed-type-delete"),
+
+    path("bed-groups/", BedGroupAPI.as_view(), name="bed-groups-list"),
+    path("bed-groups/create/", BedGroupAPI.as_view(), name="bed-groups-create"),
+    path("bed-groups/<int:pk>/update/", BedGroupAPI.as_view(), name="bed-groups-update"),
+    path("bed-groups/<int:pk>/delete/", BedGroupAPI.as_view(), name="bed-groups-delete"),
+
+    path("beds/", BedAPI.as_view(), name="bed-list"),
+    path("bed/create/", BedAPI.as_view(), name="bed-create"),
+    path("bed/<int:pk>/update/", BedAPI.as_view(), name="bed-update"),
+    path("bed/<int:pk>/delete/", BedAPI.as_view(), name="bed-delete"),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     path("charges/", HospitalChargesListAPIView.as_view(), name="hospital-charges-list"),
     path("symptoms/", SymptomListAPIView.as_view(), name="symptom-list"),
-    # path("charge-categories/", ChargeCategoryListAPIView.as_view(), name="charge-category-list"),
     path("beds/", BedListAPIView.as_view(), name="bed-list"),
     
 ]
