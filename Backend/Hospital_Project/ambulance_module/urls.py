@@ -1,27 +1,8 @@
 from django.urls import path
 
-from .views import (
-    # Ambulance CRUD
-    AmbulanceListAPIView,
-    AmbulanceCreateAPIView,
-    AmbulanceUpdateAPIView,
-    AmbulanceDeleteAPIView,
-    AmbulanceDetailAPIView,
+from .views import *
+  
     
-
-    # Bills
-    AmbulanceBillListAPIView,
-    AmbulanceBillDetailAPIView,
-    GenerateAmbulanceBillAPIView,
-    AmbulanceBillUpdateView,
-    AmbulanceBillDeleteView,
-    
-    # Transactions
-    AmbulanceBillTransactionListAPIView,
-    AmbulanceBillTransactionCreateAPIView,
-    AmbulanceBillTransactionDeleteAPIView,
-)
-
 urlpatterns = [
     # Ambulance management
     path('ambulance/', AmbulanceListAPIView.as_view()),

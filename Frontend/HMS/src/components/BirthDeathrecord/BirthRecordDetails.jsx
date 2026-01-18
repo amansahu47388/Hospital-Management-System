@@ -3,7 +3,6 @@ import { X, Printer, Pencil, Trash2 } from "lucide-react";
 import {
   getBirthRecordDetail,
   deleteBirthRecord,
-  UpdateBirthRecord,
 } from "../../api/birthDeathApi";
 import { useNotify } from "../../context/NotificationContext";
 
