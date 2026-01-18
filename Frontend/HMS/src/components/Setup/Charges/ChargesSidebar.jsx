@@ -10,18 +10,18 @@ export default function ChargesSidebar() {
   ];
 
   return (
-    <div className="w-full md:w-64 bg-white rounded-md p-3">
+    <div className="w-full md:w-64 bg-white rounded-md shadow h-fit sticky top-6">
       <ul className="space-y-1 text-sm">
         {menuItems.map((item) => (
           <li key={item.label}>
             <NavLink
               to={item.path}
               className={({ isActive }) =>
-                `block px-3 py-2 rounded
+                `block px-3 py-2 rounded 
                 ${
                   isActive
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "hover:bg-gray-100"
+                    ? "bg-gray-200 text-purple-600 font-bold"
+                    : "hover:bg-gray-100 hover:text-purple-500"
                 }`
               }
             >

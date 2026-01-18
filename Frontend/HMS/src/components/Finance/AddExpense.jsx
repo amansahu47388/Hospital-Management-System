@@ -1,76 +1,128 @@
 import { X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { getExpenseHeads, createExpense } from "../../api/financeApi";
+import { useNotify } from "../../context/NotificationContext";
 
-export default function AddExpense({ open, onClose }) {
+export default function AddExpense({ open, onClose, refresh }) {
+  const notify = useNotify();
+  const fetched = useRef(false);
+
+  const [expenseHeads, setExpenseHeads] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    expense_head: "",
+    name: "",
+    date: "",
+    amount: "",
+    description: "",
+  });
+
+  // 🔹 Fetch expense heads (ONLY ONCE)
+  useEffect(() => {
+    if (!open || fetched.current) return;
+
+    fetched.current = true;
+
+    getExpenseHeads()
+      .then((res) => setExpenseHeads(res.data))
+      .catch(() =>
+        notify("error", "Failed to load expense heads")
+      );
+  }, [open]);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    if (!form.expense_head || !form.name || !form.amount || !form.date) {
+      notify("warning", "Please fill all required fields");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await createExpense(form);
+      notify("success", "Expense added successfully");
+      onClose();
+      refresh && refresh();
+    } catch (err) {
+      notify(
+        "error",
+        err.response?.data?.detail || "Failed to add expense"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-2 sm:px-4">
-      <div className="w-full max-w-4xl bg-white rounded-md shadow-lg overflow-hidden max-h-[95vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-2">
+      <div className="w-full max-w-4xl bg-white rounded-md shadow-lg flex flex-col">
 
         {/* HEADER */}
         <div className="flex justify-between items-center px-4 py-3 text-white
-          bg-gradient-to-b from-[#6046B5] to-[#8A63D2] sticky top-0 z-10">
+          bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
           <h3 className="font-semibold">Add Expense</h3>
-          <button onClick={onClose} className="p-1 rounded hover:bg-white/10">
-            <X />
-          </button>
+          <button onClick={onClose}><X /></button>
         </div>
 
         {/* BODY */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            <div>
-              <label className="text-sm font-medium">Expense Head *</label>
-              <select className="w-full mt-1 border rounded px-3 py-2">
-                <option>Select</option>
-                <option>Equipments</option>
-                <option>Fuel Charge</option>
-                <option>Electricity Bill</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Name *</label>
-              <input className="w-full mt-1 border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Invoice Number</label>
-              <input className="w-full mt-1 border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Date *</label>
-              <input
-                type="date"
-                className="w-full mt-1 border rounded px-3 py-2 bg-gray-100"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Amount ($) *</label>
-              <input className="w-full mt-1 border rounded px-3 py-2" />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="text-sm font-medium">Description</label>
-              <textarea
-                rows={3}
-                className="w-full mt-1 border rounded px-3 py-2"
-              />
-            </div>
-
+          <div>
+            <label>Expense Head *</label>
+            <select
+              name="expense_head"
+              value={form.expense_head}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded"
+            >
+              <option value="">Select</option>
+              {expenseHeads.map((h) => (
+                <option key={h.id} value={h.id}>{h.name}</option>
+              ))}
+            </select>
           </div>
+
+          <div>
+            <label>Name *</label>
+            <input name="name" onChange={handleChange}
+              className="w-full border px-3 py-2 rounded" />
+          </div>
+
+          <div>
+            <label>Date *</label>
+            <input type="date" name="date" onChange={handleChange}
+              className="w-full border px-3 py-2 rounded" />
+          </div>
+
+          <div>
+            <label>Amount *</label>
+            <input type="number" name="amount" onChange={handleChange}
+              className="w-full border px-3 py-2 rounded" />
+          </div>
+
+          <div className="md:col-span-2">
+            <label>Description</label>
+            <textarea name="description" onChange={handleChange}
+              className="w-full border px-3 py-2 rounded" />
+          </div>
+
         </div>
 
         {/* FOOTER */}
-        <div className="sticky bottom-0 z-10 flex justify-end px-4 py-3 border-t bg-gray-50">
+        <div className="flex justify-end p-4 border-t">
           <button
+            disabled={loading}
+            onClick={handleSubmit}
             className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-            text-white px-6 py-2 rounded-md"
+            text-white px-6 py-2 rounded disabled:opacity-50"
           >
-            Save
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
 
