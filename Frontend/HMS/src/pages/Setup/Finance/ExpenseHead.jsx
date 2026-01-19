@@ -1,42 +1,91 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
 import FinanceSidebarMenu from "../../../components/Setup/Finance/FinanceSidebarMenu";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 
-export default function ExpenseHead() {
-  const [list, setList] = useState([
-    { id: 1, name: "Building rent", desc: "" },
-    { id: 2, name: "Equipments", desc: "" },
-    { id: 3, name: "Electricity Bill", desc: "" },
-    { id: 4, name: "Telephone Bill", desc: "" },
-    { id: 5, name: "Power Generator Fuel Charge", desc: "" },
-    { id: 6, name: "Tea Expense", desc: "" },
-  ]);
+import {
+  getExpenseHeads,
+  createExpenseHead,
+  updateExpenseHead,
+  deleteExpenseHead,
+} from "../../../api/financeApi";
 
+import { useNotify } from "../../../context/NotificationContext";
+
+export default function ExpenseHead() {
+  const notify = useNotify();
+
+  const [list, setList] = useState([]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ id: null, name: "", desc: "" });
 
+  /* ---------- LOAD DATA ---------- */
+  const loadData = async () => {
+    try {
+      const res = await getExpenseHeads();
+      setList(res.data);
+    } catch (err) {
+      notify("error", "Failed to load expense heads");
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  /* ---------- MODAL ---------- */
   const openAdd = () => {
     setForm({ id: null, name: "", desc: "" });
     setOpen(true);
   };
 
   const openEdit = (row) => {
-    setForm(row);
+    setForm({
+      id: row.id,
+      name: row.name,
+      desc: row.description || "",
+    });
     setOpen(true);
   };
 
-  const saveData = () => {
-    if (form.id) {
-      setList((p) => p.map((r) => (r.id === form.id ? form : r)));
-    } else {
-      setList((p) => [...p, { ...form, id: Date.now() }]);
+  /* ---------- SAVE ---------- */
+  const saveData = async () => {
+    if (!form.name?.trim()) {
+      notify("error", "Expense head is required");
+      return;
     }
-    setOpen(false);
+
+    try {
+      if (form.id) {
+        await updateExpenseHead(form.id, {
+          name: form.name.trim(),
+          description: form.desc,
+        });
+        notify("success", "Expense head updated successfully");
+      } else {
+        await createExpenseHead({
+          name: form.name.trim(),
+          description: form.desc,
+        });
+        notify("success", "Expense head created successfully");
+      }
+      setOpen(false);
+      loadData();
+    } catch (err) {
+      const msg = err.response?.data?.name || err.response?.data?.detail || "Something went wrong";
+      notify("error", msg);
+    }
   };
 
-  const deleteRow = (id) => {
-    setList((p) => p.filter((r) => r.id !== id));
+  /* ---------- DELETE ---------- */
+  const deleteRow = async (id) => {
+    try {
+      await deleteExpenseHead(id);
+      notify("success", "Expense head deleted");
+      loadData();
+    } catch (err) {
+      notify("error", "Delete failed");
+    }
   };
 
   return (
@@ -71,7 +120,10 @@ export default function ExpenseHead() {
               </thead>
               <tbody>
                 {list.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
+                  <tr
+                    key={row.id}
+                    className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0"
+                  >
                     <td className="px-3 py-2">{row.name}</td>
                     <td className="px-3 py-2">
                       <div className="flex gap-3">
@@ -91,6 +143,13 @@ export default function ExpenseHead() {
                     </td>
                   </tr>
                 ))}
+                {!list.length && (
+                  <tr>
+                    <td colSpan="2" className="px-3 py-6 text-center text-gray-400">
+                      No data found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -102,8 +161,10 @@ export default function ExpenseHead() {
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-2">
           <div className="w-full max-w-lg bg-white rounded-md shadow-lg overflow-hidden">
             {/* MODAL HEADER */}
-            <div className="flex justify-between items-center px-4 py-3 text-white
-              bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
+            <div
+              className="flex justify-between items-center px-4 py-3 text-white
+              bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
+            >
               <h2 className="font-semibold">
                 {form.id ? "Edit Expense Head" : "Add Expense Head"}
               </h2>
@@ -123,7 +184,9 @@ export default function ExpenseHead() {
                 </label>
                 <input
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, name: e.target.value })
+                  }
                   placeholder="Enter expense head"
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                 />
@@ -134,7 +197,9 @@ export default function ExpenseHead() {
                 </label>
                 <textarea
                   value={form.desc}
-                  onChange={(e) => setForm({ ...form, desc: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, desc: e.target.value })
+                  }
                   placeholder="Enter description"
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition min-h-[100px]"
                 />
