@@ -26,10 +26,22 @@ class MedicineCategoryAPI(APIView):
         serializer.save()
         return Response(serializer.data, status=201)
 
+    def put(self, request, pk):
+        instance = get_object_or_404(MedicineCategory, pk=pk)
+        serializer = MedicineCategorySerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        instance = get_object_or_404(MedicineCategory, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 # ----------------- COMPANY LIST -----------------
-class CompanyListAPIView(APIView):
+class CompanyAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -37,11 +49,27 @@ class CompanyListAPIView(APIView):
         serializer = CompanySerializer(qs, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = CompanySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
 
+    def put(self, request, pk):
+        instance = get_object_or_404(Company, pk=pk)
+        serializer = CompanySerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        instance = get_object_or_404(Company, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # ----------------- GROUP LIST -----------------
-class MedicineGroupListAPIView(APIView):
+class MedicineGroupAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -49,11 +77,28 @@ class MedicineGroupListAPIView(APIView):
         serializer = MedicineGroupSerializer(qs, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = MedicineGroupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
+
+    def put(self, request, pk):
+        instance = get_object_or_404(MedicineGroup, pk=pk)
+        serializer = MedicineGroupSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        instance = get_object_or_404(MedicineGroup, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
 # ----------------- UNIT LIST -----------------
-class UnitListAPIView(APIView):
+class UnitAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -61,11 +106,27 @@ class UnitListAPIView(APIView):
         serializer = UnitSerializer(qs, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = UnitSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
 
+    def put(self, request, pk):
+        instance = get_object_or_404(Unit, pk=pk)
+        serializer = UnitSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        instance = get_object_or_404(Unit, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # ----------------- SUPPLIER LIST -----------------
-class SupplierListAPIView(APIView):
+class SupplierAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -73,12 +134,29 @@ class SupplierListAPIView(APIView):
         serializer = SupplierSerializer(qs, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = SupplierSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
+
+    def put(self, request, pk):
+        instance = get_object_or_404(Supplier, pk=pk)
+        serializer = SupplierSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        instance = get_object_or_404(Supplier, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
 
 # ----------------- MEDICINE DOSAGE LIST -----------------
-class MedicineDosageListAPIView(APIView):
+class MedicineDosageAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -89,18 +167,53 @@ class MedicineDosageListAPIView(APIView):
         serializer = MedicineDosageSerializer(qs, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = MedicineDosageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
+
+    def put(self, request, pk):
+        instance = get_object_or_404(MedicineDosage, pk=pk)
+        serializer = MedicineDosageSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        instance = get_object_or_404(MedicineDosage, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
 
 # ----------------- DOSAGE LIST -----------------
-class DosageListAPIView(APIView):
+class DosageAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         qs = Dosage.objects.filter(is_active=True).order_by("dosage_interval")
         serializer = DosageSerializer(qs, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        serializer = DosageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
+
+    def put(self, request, pk):
+        instance = get_object_or_404(Dosage, pk=pk)
+        serializer = DosageSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        instance = get_object_or_404(Dosage, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

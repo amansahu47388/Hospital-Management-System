@@ -62,10 +62,10 @@ urlpatterns = [
 #                            OPERATIONS SETUP ROUTES                                #
 #***********************************************************************************#
 
-path("operation-setup/", OperationSetupAPI.as_view(), name="operation-setup-list"),
-path("operation-setup/create/", OperationSetupAPI.as_view(), name="operation-setup-create"),
-path("operation-setup/<int:pk>/update/", OperationSetupAPI.as_view(), name="operation-setup-update"),
-path("operation-setup/<int:pk>/delete/", OperationSetupAPI.as_view(), name="operation-setup-delete"),
+    path("operation-setup/", OperationSetupAPI.as_view(), name="operation-setup-list"),
+    path("operation-setup/create/", OperationSetupAPI.as_view(), name="operation-setup-create"),
+    path("operation-setup/<int:pk>/update/", OperationSetupAPI.as_view(), name="operation-setup-update"),
+    path("operation-setup/<int:pk>/delete/", OperationSetupAPI.as_view(), name="operation-setup-delete"),
 
 
 
@@ -74,13 +74,11 @@ path("operation-setup/<int:pk>/delete/", OperationSetupAPI.as_view(), name="oper
 #***********************************************************************************#
 #                            SYMPTOM SETUP ROUTES                                #
 #***********************************************************************************#
-
-
-    path("symptoms-setup/", SymptomAPI.as_view(), name="symptoms-setup-list"),
-    path("symptoms-setup/create/", SymptomAPI.as_view(), name="symptoms-setup-create"),
-    path("symptoms-setup/<int:pk>/update/", SymptomAPI.as_view(), name="symptoms-setup-update"),
-    path("symptoms-setup/<int:pk>/delete/", SymptomAPI.as_view(), name="symptoms-setup-delete"),
-    path("symptoms-types/", SymptomTypeAPI.as_view(), name="symptoms-types"),
+   
+    path("symptoms/", SymptomAPI.as_view(), name="symptoms-list"),
+    path("symptoms/create/", SymptomAPI.as_view(), name="symptoms-create"),
+    path("symptoms/<int:pk>/update/", SymptomAPI.as_view(), name="symptoms-update"),
+    path("symptoms/<int:pk>/delete/", SymptomAPI.as_view(), name="symptoms-delete"),
 
 
 

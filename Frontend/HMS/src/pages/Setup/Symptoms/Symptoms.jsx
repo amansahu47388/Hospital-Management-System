@@ -3,7 +3,7 @@ import AdminLayout from "../../../layout/AdminLayout";
 import SymptomsSidebarMenu from "../../../components/Setup/Symptoms/SymptomsSidebarMenu";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 
-export default function SymptomsHead() {
+export default function Symptoms() {
   const [rows, setRows] = useState([
     {
       id: 1,
