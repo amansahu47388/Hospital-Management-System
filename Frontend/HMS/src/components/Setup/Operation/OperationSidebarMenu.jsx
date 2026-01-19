@@ -2,8 +2,8 @@ import { NavLink } from "react-router-dom";
 
 export default function OperationSidebarMenu() {
   return (
-    <div className="bg-white  rounded-md shadow h-fit sticky top-6">
-      <ul className=" text-sm">
+    <div className="bg-white rounded-md h-fit sticky top-6">
+      <ul className="divide-y text-sm">
         <li>
           <NavLink
             to="/admin/setup/operation/operation-list"
