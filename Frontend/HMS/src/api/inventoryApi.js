@@ -1,16 +1,63 @@
 import api from "./axiosInstance"
 
+//  Category
 export const getCategories = () => {
     return api.get("/inventory/categories/");
-}
+};
 
+export const createCategory = (data) => {
+    return api.post("/inventory/categories/create/", data);
+};
+
+export const updateCategory = (id, data) => {
+    return api.put(`/inventory/categories/${id}/update/`, data);
+};
+
+export const deleteCategory = (id) => { 
+    return api.delete(`/inventory/categories/${id}/delete/`);
+};
+
+
+
+// Supplier
 export const getSuppliers = () => {
     return api.get("/inventory/suppliers/");
-}
+};
 
+export const createSupplier = (data) => {
+    return api.post("/inventory/suppliers/create/", data);
+};
+
+export const updateSupplier = (id, data) => {
+    return api.put(`/inventory/suppliers/${id}/update/`, data);
+};
+
+export const deleteSupplier = (id) => { 
+    return api.delete(`/inventory/suppliers/${id}/delete/`);
+};
+
+
+
+
+// Store
 export const getStores = () => {
     return api.get("/inventory/stores/");
-}
+};
+
+export const createStore = (data) => {
+    return api.post("/inventory/stores/create/", data);
+};
+
+export const updateStore = (id, data) => {
+    return api.put(`/inventory/stores/${id}/update/`, data);
+};
+
+export const deleteStore = (id) => { 
+    return api.delete(`/inventory/stores/${id}/delete/`);
+};
+
+
+
 
 
 
@@ -32,6 +79,8 @@ export const deleteItem = (id) => {
 
 
 
+
+// Item Stock
 export const getItemStock = () => {
     return api.get("/inventory/stock/");
 }
@@ -52,6 +101,8 @@ export const deleteItemStock = (id) => {
   return api.delete(`/inventory/stock/${id}/delete/`);
 };
 
+
+// Issue Item
 export const getIssueItems = () =>{ 
    return api.get("/inventory/issueitems/")
 }

@@ -33,7 +33,7 @@ urlpatterns = [
 
 
     # *********************************************************************************************#
-    #                            HOSPITAL BAD SETUP ROUTES                                     #
+    #                            BAD SETUP ROUTES                                     #
     # *********************************************************************************************#
 
     path("floors/", FloorAPI.as_view(), name="floor-list"),
@@ -55,6 +55,35 @@ urlpatterns = [
     path("bed/create/", BedAPI.as_view(), name="bed-create"),
     path("bed/<int:pk>/update/", BedAPI.as_view(), name="bed-update"),
     path("bed/<int:pk>/delete/", BedAPI.as_view(), name="bed-delete"),
+
+
+
+#***********************************************************************************#
+#                            OPERATIONS SETUP ROUTES                                #
+#***********************************************************************************#
+
+path("operation-setup/", OperationSetupAPI.as_view(), name="operation-setup-list"),
+path("operation-setup/create/", OperationSetupAPI.as_view(), name="operation-setup-create"),
+path("operation-setup/<int:pk>/update/", OperationSetupAPI.as_view(), name="operation-setup-update"),
+path("operation-setup/<int:pk>/delete/", OperationSetupAPI.as_view(), name="operation-setup-delete"),
+
+
+
+
+
+#***********************************************************************************#
+#                            SYMPTOM SETUP ROUTES                                #
+#***********************************************************************************#
+
+
+    path("symptoms-setup/", SymptomAPI.as_view(), name="symptoms-setup-list"),
+    path("symptoms-setup/create/", SymptomAPI.as_view(), name="symptoms-setup-create"),
+    path("symptoms-setup/<int:pk>/update/", SymptomAPI.as_view(), name="symptoms-setup-update"),
+    path("symptoms-setup/<int:pk>/delete/", SymptomAPI.as_view(), name="symptoms-setup-delete"),
+    path("symptoms-types/", SymptomTypeAPI.as_view(), name="symptoms-types"),
+
+
+
 
 
 

@@ -48,7 +48,7 @@ class HospitalCharges(models.Model):
     
 
 #***********************************************************************************#
-#                     Hospital BAD Setup Models                                     #
+#                   BAD Setup Models                                     #
 #***********************************************************************************#
 
 class Floor(models.Model):
@@ -103,9 +103,18 @@ class Bed(models.Model):
 
 
 
+#***********************************************************************************#
+#                      OPERATIONS SETUP MODELS                                     #
+#***********************************************************************************#
 
+class OperationSetup(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    operation_type = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-
+    def __str__(self):
+        return self.name
 
 
 

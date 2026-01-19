@@ -22,6 +22,22 @@ class ItemCategoryAPI(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
+    def put(self, request, pk):
+        category = get_object_or_404(ItemCategory, pk=pk)
+        serializer = ItemCategorySerializer(category, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        category = get_object_or_404(ItemCategory, pk=pk)
+        category.delete()
+        return Response(
+            {"message": "Category deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
 
 # -------------------------------
 # STORE CRUD
@@ -38,6 +54,22 @@ class ItemStoreAPI(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, 400)
 
+    def put(self, request, pk):
+        store = get_object_or_404(ItemStore, pk=pk)
+        serializer = ItemStoreSerializer(store, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+        store = get_object_or_404(ItemStore, pk=pk)
+        store.delete()
+        return Response(
+            {"message": "Store deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
 
 # -------------------------------
 # SUPPLIER CRUD
@@ -53,6 +85,24 @@ class ItemSupplierAPI(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, 400)
+
+    def put(self, request, pk):
+        supplier = get_object_or_404(ItemSupplier, pk=pk)
+        serializer = ItemSupplierSerializer(supplier, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        supplier = get_object_or_404(ItemSupplier, pk=pk)
+        supplier.delete()
+        return Response(
+            {"message": "Supplier deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
 
 
 # -------------------------------
