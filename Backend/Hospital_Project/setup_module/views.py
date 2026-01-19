@@ -389,10 +389,10 @@ class OperationSetupAPI(APIView):
 
     def get(self, request, pk=None):
         if pk:
-            obj = get_object_or_404(OperationSetup, pk=pk, is_active=True)
+            obj = get_object_or_404(OperationSetup, pk=pk)
             return Response(OperationSetupSerializer(obj).data)
 
-        qs = OperationSetup.objects.filter(is_active=True)
+        qs = OperationSetup.objects.filter()
         return Response(OperationSetupSerializer(qs, many=True).data)
 
     def post(self, request):
@@ -407,11 +407,10 @@ class OperationSetupAPI(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-
+    
     def delete(self, request, pk):
         obj = get_object_or_404(OperationSetup, pk=pk)
-        obj.is_active = False   # Soft delete
-        obj.save()
+        obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -422,7 +421,9 @@ class OperationSetupAPI(APIView):
 
 
 
-
+#***********************************************************************************#
+#                      OPERATIONS SETUP APIVIEW                                     #
+#***********************************************************************************#
 
 class SymptomAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -458,14 +459,25 @@ class SymptomAPI(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SymptomTypeAPI(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        # Extract unique symptom types
-        types = Symptom.objects.values_list('symptom_type', flat=True).distinct()
-        type_list = [{'id': idx + 1, 'name': t} for idx, t in enumerate(types) if t]
-        return Response(type_list)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class SymptomListAPIView(APIView):

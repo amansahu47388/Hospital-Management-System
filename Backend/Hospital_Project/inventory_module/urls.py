@@ -7,7 +7,7 @@ urlpatterns = [
     path("inventory/categories/create/", ItemCategoryAPI.as_view(), name="item-categories-create"),
     path("inventory/categories/<int:pk>/update/", ItemCategoryAPI.as_view(), name="item-categories-update"),
     path("inventory/categories/<int:pk>/detail/", ItemCategoryAPI.as_view(), name="item-categories-detail"),
-    path("inventory/categories/<int:pk>/delete/", ItemCategoryAPI.as_view(), name="item-categories-delete")
+    path("inventory/categories/<int:pk>/delete/", ItemCategoryAPI.as_view(), name="item-categories-delete"),
 
     path("inventory/stores/", ItemStoreAPI.as_view(), name="item-stores"),
     path("inventory/stores/create/", ItemStoreAPI.as_view(), name="item-stores-create"),

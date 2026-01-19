@@ -298,7 +298,7 @@ function Sidebar() {
                           { label: "Pharmacy", path: "/admin/setup/pharmacy/medicine-category" },
                           { label: "Pathology", path: "/admin/setup/pathology/category" },
                           { label: "Radiology", path: "/admin/setup/radiology/category" },
-                          { label: "Symptoms", path: "/admin/setup/symptoms/symptoms-head" },
+                          { label: "Symptoms", path: "/admin/setup/symptoms" },
                           { label: "Findings", path: "/admin/setup/finding" },
                           { label: "Vitals", path: "/admin/setup/vitals" },
                           { label: "Finance", path: "/admin/setup/finance/income-head" },

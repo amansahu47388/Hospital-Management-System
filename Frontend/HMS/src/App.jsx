@@ -91,8 +91,7 @@ import PathologyParameter from "./pages/Setup/Pathology/PathologyParameter";
 import RadiologyCategory from "./pages/Setup/Radiology/RadiologyCategory";
 import RadiologyParameter from "./pages/Setup/Radiology/RadiologyParameter"; 
 import RadiologyUnit from "./pages/Setup/Radiology/RadiologyUnit";
-import SymptomsHead from "./pages/Setup/Symptoms/SymptomsHead";
-import SymptomsType from "./pages/Setup/Symptoms/SymptomsType";
+import Symptoms from "./pages/Setup/Symptoms/Symptoms";
 import FindingCategory from "./pages/Setup/Finding/FindingCategory";
 import FindingSetup from "./pages/Setup/Finding/FindingSetup";
 import VitalList from "./pages/Setup/Vital/VitalList";
@@ -246,8 +245,7 @@ function App() {
           <Route path="/admin/setup/radiology/category" element={<RadiologyCategory />} />  
           <Route path="/admin/setup/radiology/unit" element={<RadiologyUnit />} />
           <Route path="/admin/setup/radiology/parameter" element={<RadiologyParameter />} />
-          <Route path="/admin/setup/symptoms/symptoms-head" element={<SymptomsHead />} />
-          <Route path="/admin/setup/symptoms/symptoms-type" element={<SymptomsType />} />
+          <Route path="/admin/setup/symptoms" element={<Symptoms />} />
           <Route path="/admin/setup/finding" element={<FindingSetup />} />
           <Route path="/admin/setup/finding/category" element={<FindingCategory />} />
           <Route path="/admin/setup/vitals" element={<VitalList />} />

@@ -5,8 +5,7 @@ export default function SymptomsSidebarMenu() {
     <div className="bg-white rounded-md ">
       <ul className="text-sm">
         {[
-          { label: "Symptoms Head", path: "/admin/setup/symptoms/symptoms-head" },
-          { label: "Symptoms Type", path: "/admin/setup/symptoms/symptoms-type" },
+          { label: "Symptoms", path: "/admin/setup/symptoms" },
         ].map((item) => (
           <li key={item.label}>
             <NavLink

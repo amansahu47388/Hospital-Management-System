@@ -4,22 +4,7 @@ import json
 from datetime import datetime
 from django.db import transaction, models
 from django.utils import timezone
-from .models import (
-    MedicineCategory,
-    Company,
-    MedicineGroup,
-    Unit,
-    Supplier,
-    MedicineDosage,
-    Dosage,
-    Medicine,
-    MedicineBatch,
-    MedicineStock,
-    PharmacyPurchase,
-    PharmacyPurchaseItem,
-    PharmacyBill,
-    PharmacyBillItem
-)
+from .models import *
 
 
 # ----------------- CATEGORY -----------------
@@ -105,52 +90,18 @@ class MedicineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Medicine
-        fields = [
-            "id",
-            "name",
-            "category",
-            "category_name",
-            "company",
-            "company_name",
-            "group",
-            "group_name",
-            "unit",
-            "unit_name",
-            "composition",
-            "min_level",
-            "reorder_level",
-            "tax",
-            "box_packing",
-            "vat_account",
-            "rack_number",
-            "note",
-            "image",
-            "is_active",
-            "available_qty",
+        fields = [ "id", "name", "category", "category_name", "company", "company_name", "group", "group_name",
+            "unit", "unit_name", "composition", "min_level", "reorder_level", "tax", "box_packing", "vat_account",
+            "rack_number", "note",  "image",  "is_active",  "available_qty",
         ]
 
 
 class MedicineCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medicine
-        fields = [
-            "name",
-            "category",
-            "company",
-            "group",
-            "unit",
-            "composition",
-            "min_level",
-            "reorder_level",
-            "tax",
-            "box_packing",
-            "vat_account",
-            "rack_number",
-            "note",
-            "image",
-            "is_active",
+        fields = [ "name", "category", "company", "group", "unit", "composition", "min_level", "reorder_level",
+            "tax",  "box_packing",  "vat_account", "rack_number", "note", "image", "is_active",
         ]
-
 
     def create(self, validated_data):
         request = self.context.get("request")
@@ -172,18 +123,8 @@ class MedicineStockDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MedicineStock
-        fields = [
-            "id",
-            "batch_no",
-            "expiry_date",
-            'created_at',
-            "mrp",
-            "purchase_price",
-            "sale_price",
-            "tax_percentage",
-            "total_qty",
-            "available_qty",
-            "reserved_qty",
+        fields = [ "id", "batch_no", "expiry_date", 'created_at', "mrp", "purchase_price", "sale_price",
+            "tax_percentage", "total_qty", "available_qty", "reserved_qty",
         ]
 
 
@@ -203,21 +144,9 @@ class PharmacyPurchaseItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PharmacyPurchaseItem
-        fields = [
-            "id",
-            "medicine",
-            "medicine_name",
-            "category_name",
-            "box_packing",
-            "batch",
-            "batch_no",
-            "expiry_date",
-            "mrp",
-            "quantity",
-            "purchase_price",
-            "sale_price",
-            "tax_percentage",
-            "amount",
+        fields = [ "id", "medicine", "medicine_name", "category_name", "box_packing", "batch",
+            "batch_no", "expiry_date", "mrp", "quantity", "purchase_price",
+            "sale_price", "tax_percentage", "amount",
         ]
 
 
@@ -233,25 +162,10 @@ class PharmacyPurchaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PharmacyPurchase
-        fields = [
-            "id",
-            "supplier",
-            "supplier_name",
-            "supplier_contact",
-            "contact_person_name",
-            "contact_person_phone",
-            "drug_license_number",
-            "address",
-            "bill_no",
-            "purchase_date",
-            "total_amount",
-            "discount_amount",
-            "tax_amount",
-            "net_amount",
-            "payment_mode",
-            "payment_amount",
-            "note",
-            "items",
+        fields = [ "id", "supplier", "supplier_name", "supplier_contact", "contact_person_name",
+            "contact_person_phone", "drug_license_number", "address", "bill_no", "purchase_date",
+            "total_amount", "discount_amount", "tax_amount", "net_amount", "payment_mode",
+            "payment_amount", "note", "items",
         ]
 
 
@@ -259,17 +173,8 @@ class PharmacyPurchaseCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PharmacyPurchase
         fields = [
-            "supplier",
-            "bill_no",
-            "purchase_date",
-            "total_amount",
-            "discount_amount",
-            "tax_amount",
-            "net_amount",
-            "payment_mode",
-            "payment_amount",
-            "note",
-            "attachment",
+            "supplier", "bill_no", "purchase_date", "total_amount", "discount_amount",
+            "tax_amount", "net_amount", "payment_mode", "payment_amount", "note", "attachment",
         ]
 
     def create(self, validated_data):

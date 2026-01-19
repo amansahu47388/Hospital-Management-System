@@ -179,15 +179,12 @@ export const createOperationSetup = (data) => {
 };
 
 export const updateOperationSetup = (id, data) => {
-  return api.put(`/setup/operation-setup/${id}/update/`, data);
+  return api.put(`setup/operation-setup/${id}/update/`, data);
 };
 
 export const deleteOperationSetup = (id) => {
-  return api.delete(`/setup/operation-setup/${id}/delete/`);
+  return api.delete(`setup/operation-setup/${id}/delete/`);
 };
-
-
-
 
 
 
@@ -200,22 +197,18 @@ export const deleteOperationSetup = (id) => {
 // ******************************************************************************//
 
 export const getSymptoms = () => {
-  return api.get("setup/symptoms-setup/");
+  return api.get("setup/symptoms/");
 };
 
 export const createSymptom = (data) => {
-  return api.post("setup/symptoms-setup/create/", data);
+  return api.post("setup/symptoms/create/", data);
 };
 
 export const updateSymptom = (id, data) => {
-  return api.put(`/setup/symptoms-setup/${id}/update/`, data);
+  return api.put(`setup/symptoms/${id}/update/`, data);
 };
 
 export const deleteSymptom = (id) => {
-  return api.delete(`/setup/symptoms-setup/${id}/delete/`);
-};
-
-export const getSymptomTypes = () => {
-  return api.get("setup/symptoms-types/");
+  return api.delete(`setup/symptoms/${id}/delete/`);
 };
 

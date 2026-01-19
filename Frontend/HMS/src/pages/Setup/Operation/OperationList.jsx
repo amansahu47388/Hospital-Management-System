@@ -27,7 +27,7 @@ export default function OperationList() {
 
   const [selectedId, setSelectedId] = useState(null);
 
-  const { notifySuccess, notifyError } = useNotify();
+  const notify = useNotify();
 
   /* -------------------- FETCH -------------------- */
   const fetchOperations = async () => {
@@ -36,7 +36,7 @@ export default function OperationList() {
       const res = await getOperationSetups();
       setOperations(res.data);
     } catch {
-      notifyError("Failed to fetch operations");
+      notify("error", "Failed to fetch operations");
     } finally {
       setTableLoading(false);
     }
@@ -49,19 +49,20 @@ export default function OperationList() {
   /* -------------------- ADD -------------------- */
   const handleAdd = async () => {
     if (!form.name.trim()) {
-      notifyError("Operation name is required");
+      notify("error", "Operation name is required");
       return;
     }
 
     setActionLoading(true);
     try {
       await createOperationSetup(form);
-      notifySuccess("Operation added successfully");
+      notify("success", "Operation added successfully");
       setShowAdd(false);
       resetForm();
-      fetchOperations();
+      // Automatic Refresh
+      window.location.reload();
     } catch (err) {
-      notifyError(err.response?.data?.name?.[0] || "Failed to add operation");
+      notify("error", err.response?.data?.name?.[0] || "Failed to add operation");
     } finally {
       setActionLoading(false);
     }
@@ -70,19 +71,20 @@ export default function OperationList() {
   /* -------------------- UPDATE -------------------- */
   const handleEdit = async () => {
     if (!form.name.trim()) {
-      notifyError("Operation name is required");
+      notify("error", "Operation name is required");
       return;
     }
 
     setActionLoading(true);
     try {
       await updateOperationSetup(selectedId, form);
-      notifySuccess("Operation updated successfully");
+      notify("success", "Operation updated successfully");
       setShowEdit(false);
       resetForm();
-      fetchOperations();
+      // Automatic Refresh
+      window.location.reload();
     } catch {
-      notifyError("Failed to update operation");
+      notify("error", "Failed to update operation");
     } finally {
       setActionLoading(false);
     }
@@ -95,10 +97,11 @@ export default function OperationList() {
 
     try {
       await deleteOperationSetup(id);
-      notifySuccess("Operation deleted successfully");
-      fetchOperations();
+      notify("success", "Operation deleted successfully");
+      // Automatic Refresh
+      window.location.reload();
     } catch {
-      notifyError("Failed to delete operation");
+      notify("error", "Failed to delete operation");
     }
   };
 
@@ -167,7 +170,7 @@ export default function OperationList() {
                     operations.map((row) => (
                       <tr
                         key={row.id}
-                        className="border-b hover:bg-gray-50"
+                        className="border-b border-gray-200 hover:bg-gray-50"
                       >
                         <td className="px-3 py-2">{row.name}</td>
                         <td className="px-3 py-2">
