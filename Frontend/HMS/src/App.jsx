@@ -78,7 +78,6 @@ import PurposeList from "./pages/Setup/Front_Office/PurposeList";
 import ComplaintType from "./pages/Setup/Front_Office/ComplaintType";
 import Source from "./pages/Setup/Front_Office/Source";
 import OperationList from "./pages/Setup/Operation/OperationList";
-import OperationCategory from "./pages/Setup/Operation/OperationCategory";
 import MedicineCategory from "./pages/Setup/Pharmacy/MedicineCategory";
 import Supplier from "./pages/Setup/Pharmacy/Supplier";
 import DoseInterval from "./pages/Setup/Pharmacy/Dose";
@@ -234,7 +233,6 @@ function App() {
           <Route path="/admin/setup/front-office/complain-type" element={<ComplaintType />} />
           <Route path="/admin/setup/front-office/source" element={<Source />} />
           <Route path="/admin/setup/operation/operation-list" element={<OperationList />} />
-          <Route path="/admin/setup/operation/operation-category" element={<OperationCategory />} />
           <Route path="/admin/setup/pharmacy/medicine-category" element={<MedicineCategory />} />
           <Route path="/admin/setup/pharmacy/supplier" element={<Supplier />} />
           <Route path="/admin/setup/pharmacy/dose" element={<DoseInterval />} />

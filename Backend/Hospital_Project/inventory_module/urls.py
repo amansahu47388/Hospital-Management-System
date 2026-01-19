@@ -4,8 +4,25 @@ from .views import *
 urlpatterns = [
 
     path("inventory/categories/", ItemCategoryAPI.as_view(), name="item-categories"),
+    path("inventory/categories/create/", ItemCategoryAPI.as_view(), name="item-categories-create"),
+    path("inventory/categories/<int:pk>/update/", ItemCategoryAPI.as_view(), name="item-categories-update"),
+    path("inventory/categories/<int:pk>/detail/", ItemCategoryAPI.as_view(), name="item-categories-detail"),
+    path("inventory/categories/<int:pk>/delete/", ItemCategoryAPI.as_view(), name="item-categories-delete")
+
     path("inventory/stores/", ItemStoreAPI.as_view(), name="item-stores"),
+    path("inventory/stores/create/", ItemStoreAPI.as_view(), name="item-stores-create"),
+    path("inventory/stores/<int:pk>/update/", ItemStoreAPI.as_view(), name="item-stores-update"),
+    path("inventory/stores/<int:pk>/detail/", ItemStoreAPI.as_view(), name="item-stores-detail"),
+    path("inventory/stores/<int:pk>/delete/", ItemStoreAPI.as_view(), name="item-stores-delete"),
+
+
+
     path("inventory/suppliers/", ItemSupplierAPI.as_view(), name="item-suppliers"),
+    path("inventory/suppliers/create/", ItemSupplierAPI.as_view(), name="item-suppliers-create"),
+    path("inventory/suppliers/<int:pk>/update/", ItemSupplierAPI.as_view(), name="item-suppliers-update"),
+    path("inventory/suppliers/<int:pk>/detail/", ItemSupplierAPI.as_view(), name="item-suppliers-detail"),
+    path("inventory/suppliers/<int:pk>/delete/", ItemSupplierAPI.as_view(), name="item-suppliers-delete"),
+
 
     path("inventory/items/", ItemAPI.as_view(), name="items"),
     path("inventory/items/create/", ItemAPI.as_view(), name="items-create"),   
