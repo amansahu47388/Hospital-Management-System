@@ -4,9 +4,11 @@ import { Trash2, Plus, Pencil } from "lucide-react";
 import UpdateItem from "../../components/Inventory/UpdateItem";
 import AddItem from "../../components/Inventory/AddItem";
 import { getItems, deleteItem } from "../../api/inventoryApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function ItemListPage() {
   const [items, setItems] = useState([]);
+  const notify = useNotify();
   const searchRef = useRef("");
   const [, forceRender] = useState(0);
   const [search, setSearch] = useState("");
@@ -38,12 +40,17 @@ export default function ItemListPage() {
 
 
 
-  /* DELETE */
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this item?")) return;
+const handleDelete = async (id) => {
+  if (!window.confirm("Delete this item?")) return;
+
+  try {
     await deleteItem(id);
+    notify("success", "Item deleted successfully");
     fetchItems();
-  };
+  } catch (err) {
+    notify("error", "Failed to delete item");
+  }
+};
 
   return (
     <AdminLayout>

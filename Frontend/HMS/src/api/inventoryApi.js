@@ -5,6 +5,7 @@ export const getCategories = () => {
     return api.get("/inventory/categories/");
 };
 
+
 export const createCategory = (data) => {
     return api.post("/inventory/categories/create/", data);
 };
