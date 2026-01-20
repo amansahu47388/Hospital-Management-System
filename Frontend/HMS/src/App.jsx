@@ -86,13 +86,10 @@ import Company from "./pages/Setup/Pharmacy/Company";
 import Unit from "./pages/Setup/Pharmacy/Unit";           
 import MedicineGroup from "./pages/Setup/Pharmacy/MedicineGroup";
 import PathologyCategory from "./pages/Setup/Pathology/PathologyCategory";
-import PathologyUnit from "./pages/Setup/Pathology/PathologyUnit";
 import PathologyParameter from "./pages/Setup/Pathology/PathologyParameter";
 import RadiologyCategory from "./pages/Setup/Radiology/RadiologyCategory";
 import RadiologyParameter from "./pages/Setup/Radiology/RadiologyParameter"; 
-import RadiologyUnit from "./pages/Setup/Radiology/RadiologyUnit";
 import Symptoms from "./pages/Setup/Symptoms/Symptoms";
-import FindingCategory from "./pages/Setup/Finding/FindingCategory";
 import FindingSetup from "./pages/Setup/Finding/FindingSetup";
 import VitalList from "./pages/Setup/Vital/VitalList";
 import IncomeHead from "./pages/Setup/Finance/IncomeHead";
@@ -240,14 +237,11 @@ function App() {
           <Route path="/admin/setup/pharmacy/unit" element={<Unit />} />
           <Route path="/admin/setup/pharmacy/medicine-group" element={<MedicineGroup />} />
           <Route path="/admin/setup/pathology/category" element={<PathologyCategory />} />
-          <Route path="/admin/setup/pathology/unit" element={<PathologyUnit />} />
           <Route path="/admin/setup/pathology/parameter" element={<PathologyParameter />} />
           <Route path="/admin/setup/radiology/category" element={<RadiologyCategory />} />  
-          <Route path="/admin/setup/radiology/unit" element={<RadiologyUnit />} />
           <Route path="/admin/setup/radiology/parameter" element={<RadiologyParameter />} />
           <Route path="/admin/setup/symptoms" element={<Symptoms />} />
           <Route path="/admin/setup/finding" element={<FindingSetup />} />
-          <Route path="/admin/setup/finding/category" element={<FindingCategory />} />
           <Route path="/admin/setup/vitals" element={<VitalList />} />
           <Route path="/admin/setup/finance/income-head" element={<IncomeHead />} />
           <Route path="/admin/setup/finance/expense-head" element={<ExpenseHead />} />

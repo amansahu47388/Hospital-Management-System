@@ -31,8 +31,8 @@ export default function DeathRecordPage() {
     setOpenEdit(true);
   };
 
-  const handleSave = (updatedData) => {
-    console.log("UPDATE DEATH RECORD API", updatedData);
+  const handleSave = () => {
+    refresh();
     setOpenEdit(false);
   };
 
@@ -52,7 +52,7 @@ export default function DeathRecordPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-white gap-3 p-4">
             <div>
               <h2 className="text-black text-xl font-semibold pb-4">Death Record</h2>
-             <input
+              <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
@@ -92,10 +92,10 @@ export default function DeathRecordPage() {
                     <td className="px-3 py-2">{item.id}</td>
                     <td className="px-3 py-2 text-center">{item.caseId}</td>
                     <td className="px-3 py-2">{item.generatedBy}</td>
-                    <td className="px-3 py-2">{item.patient}</td>
-                    <td className="px-3 py-2">{item.guardian}</td>
-                    <td className="px-3 py-2">{item.gender}</td>
-                    <td className="px-3 py-2">{item.date}</td>
+                    <td className="px-3 py-2">{item.patientName}</td>
+                    <td className="px-3 py-2">{item.guardianName}</td>
+                    <td className="px-3 py-2">{item.gender || "-"}</td>
+                    <td className="px-3 py-2">{item.deathDate}</td>
                     <td className="px-3 py-2">{item.report}</td>
 
                     {/* ACTIONS */}
@@ -130,8 +130,8 @@ export default function DeathRecordPage() {
           </div>
 
           {/* MODALS */}
-          <AddDeathRecord 
-            open={openAdd} 
+          <AddDeathRecord
+            open={openAdd}
             onClose={() => setOpenAdd(false)}
             onSuccess={() => {
               refresh();
@@ -143,6 +143,14 @@ export default function DeathRecordPage() {
             open={openDetails}
             onClose={() => setOpenDetails(false)}
             record={selectedRecord}
+            onEdit={(rec) => {
+              setOpenDetails(false);
+              handleEdit(rec);
+            }}
+            onDelete={(rec) => {
+              setOpenDetails(false);
+              handleDelete(rec);
+            }}
           />
 
           <UpdateDeathRecord

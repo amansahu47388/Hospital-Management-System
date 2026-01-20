@@ -7,10 +7,6 @@ export default function PathologySidebarMenu() {
       path: "/admin/setup/pathology/category",
     },
     {
-      label: "Unit",
-      path: "/admin/setup/pathology/unit",
-    },
-    {
       label: "Pathology Parameter",
       path: "/admin/setup/pathology/parameter",
     },

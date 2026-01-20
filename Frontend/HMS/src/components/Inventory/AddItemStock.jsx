@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import {getCategories,getItems,getSuppliers,getStores,createItemStock,} from "../../api/inventoryApi";
+import { getCategories, getItems, getSuppliers, getStores, createItemStock, } from "../../api/inventoryApi";
 import { useNotify } from "../../context/NotificationContext";
 
 export default function AddItemStock({ open, onClose, refresh }) {
@@ -26,21 +26,21 @@ export default function AddItemStock({ open, onClose, refresh }) {
   });
 
   useEffect(() => {
-  if (!open) return;
+    if (!open) return;
 
-  Promise.all([
-    getCategories(),
-    getItems(),
-    getSuppliers(),
-    getStores(),
-  ]).then(([c, i, s, st]) => {
-    setCategories(c.data);
-    setItems(i.data);
-    setFilteredItems(i.data);   // initially all
-    setSuppliers(s.data);
-    setStores(st.data);
-  });
-}, [open]);
+    Promise.all([
+      getCategories(),
+      getItems(),
+      getSuppliers(),
+      getStores(),
+    ]).then(([c, i, s, st]) => {
+      setCategories(c.data);
+      setItems(i.data);
+      setFilteredItems(i.data);   // initially all
+      setSuppliers(s.data);
+      setStores(st.data);
+    });
+  }, [open]);
 
 
   if (!open) return null;
@@ -48,7 +48,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.category || !form.item || !form.supplier || !form.quantity || !form.purchase_price || !form.date) {
+    if (!form.item || !form.supplier || !form.store || !form.quantity || !form.purchase_price || !form.stock_date) {
       notify("error", "Please fill all required fields");
       return;
     }
@@ -57,12 +57,14 @@ export default function AddItemStock({ open, onClose, refresh }) {
     Object.entries(form).forEach(([k, v]) => v && fd.append(k, v));
 
     try {
-      await createItemStock(fd);
-      notify("success", "Item stock added successfully");
+      const response = await createItemStock(fd);
+      const message = response?.data?.message || "Item stock added successfully";
+      notify("success", message);
       refresh?.();
       onClose();
-    } catch {
-      notify("error", "Failed to add item stock");
+    } catch (error) {
+      const errorMsg = error?.response?.data?.error || error?.message || "Failed to add item stock";
+      notify("error", errorMsg);
     }
   };
 
@@ -87,25 +89,25 @@ export default function AddItemStock({ open, onClose, refresh }) {
               <label className="text-sm font-medium">
                 Item Category <span className="text-red-500">*</span>
               </label>
-             <select
-              className="w-full border rounded px-3 py-2 mt-1"
-              value={form.category}
-              onChange={(e) => {
-                const categoryId = e.target.value;
+              <select
+                className="w-full border rounded px-3 py-2 mt-1"
+                value={form.category}
+                onChange={(e) => {
+                  const categoryId = e.target.value;
 
-                setForm({
-                  ...form,
-                  category: categoryId,
-                  item: "",          // reset selected item
-                });
+                  setForm({
+                    ...form,
+                    category: categoryId,
+                    item: "",          // reset selected item
+                  });
 
-                const filtered = items.filter(
-                  (i) => String(i.category) === String(categoryId)
-                );
+                  const filtered = items.filter(
+                    (i) => String(i.category) === String(categoryId)
+                  );
 
-                setFilteredItems(filtered);
-              }}
-            >
+                  setFilteredItems(filtered);
+                }}
+              >
                 <option value="">Select</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -191,7 +193,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium"> 
+              <label className="text-sm font-medium">
                 Date <span className="text-red-500">*</span></label>
               <input
                 type="date"
@@ -222,13 +224,13 @@ export default function AddItemStock({ open, onClose, refresh }) {
                 onChange={(e) => setForm({ ...form, document: e.target.files[0] })}
               />
               <label htmlFor="docUpload" className="cursor-pointer">
-                 {form.document ? (
-                <span className="text-purple-600 font-medium">
-                📄 {form.document.name}
-                </span>
-            ) : (
-                <span>Drop a file here or click</span>
-            )}
+                {form.document ? (
+                  <span className="text-purple-600 font-medium">
+                    📄 {form.document.name}
+                  </span>
+                ) : (
+                  <span>Drop a file here or click</span>
+                )}
               </label>
             </div>
           </div>

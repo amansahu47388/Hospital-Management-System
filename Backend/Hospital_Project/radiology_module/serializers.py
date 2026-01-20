@@ -13,36 +13,46 @@ class RadiologyCategorySerializer(serializers.ModelSerializer):
 class RadiologyParameterSerializer(serializers.ModelSerializer):
     class Meta:
         model = RadiologyParameter
-        fields = ["parameter_name", "reference_range", "unit"]
+        fields = ["id", "parameter_name", "reference_range", "unit", "description"]
+        read_only_fields = ("created_at", "updated_at")
 
 
 class RadiologyTestCreateSerializer(serializers.ModelSerializer):
-    parameters = RadiologyParameterSerializer(many=True)
+    parameter_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False
+    )
 
     class Meta:
         model = RadiologyTest
         fields = [
-            "test_name", "short_name", "test_type", "category",
+            "id", "test_name", "short_name", "test_type", "category",
             "sub_category", "method", "report_days", "charges", "tax",
-            "standard_charge", "total_amount", "parameters"
+            "standard_charge", "total_amount", "parameter_ids"
         ]
 
     def create(self, validated_data):
-        parameters_data = validated_data.pop("parameters")
+        parameter_ids = validated_data.pop("parameter_ids", [])
         test = RadiologyTest.objects.create(**validated_data)
-
-        for param in parameters_data:
-            RadiologyParameter.objects.create(
-                radiology_test=test,
-                **param
-            )
+        
+        # Set many-to-many relationship
+        if parameter_ids:
+            test.parameters.set(parameter_ids)
+        
         return test
+
+
+class RadiologyParameterNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RadiologyParameter
+        fields = ["id", "parameter_name", "reference_range", "unit", "description"]
 
 
 class RadiologyTestListSerializer(serializers.ModelSerializer):
     category_name = serializers.SerializerMethodField()
     charge_name = serializers.SerializerMethodField()
-    parameters = RadiologyParameterSerializer(many=True, read_only=True)
+    parameters = RadiologyParameterNestedSerializer(many=True, read_only=True)
 
     def get_category_name(self, obj):
         return obj.category.category_name if obj.category else None
@@ -60,20 +70,33 @@ class RadiologyTestListSerializer(serializers.ModelSerializer):
         ]
 
 
-class RadiologyTestUpdateSerializer(RadiologyTestCreateSerializer):
-    def update(self, instance, validated_data):
-        parameters_data = validated_data.pop("parameters")
+class RadiologyTestUpdateSerializer(serializers.ModelSerializer):
+    parameter_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False
+    )
 
+    class Meta:
+        model = RadiologyTest
+        fields = [
+            "test_name", "short_name", "test_type", "category",
+            "sub_category", "method", "report_days", "charges",
+            "tax", "standard_charge", "total_amount", "parameter_ids"
+        ]
+    
+    def update(self, instance, validated_data):
+        parameter_ids = validated_data.pop("parameter_ids", None)
+
+        # Update main test fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
 
-        instance.parameters.all().delete()
-        for param in parameters_data:
-            RadiologyParameter.objects.create(
-                radiology_test=instance,
-                **param
-            )
+        # Update many-to-many relationship
+        if parameter_ids is not None:
+            instance.parameters.set(parameter_ids)
+
         return instance
 
 class RadiologyBillItemSerializer(serializers.ModelSerializer):

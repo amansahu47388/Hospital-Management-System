@@ -190,10 +190,8 @@ export const deleteOperationSetup = (id) => {
 
 
 
-
-
 // ***************************************************************************** //
-//                             SYMPTOMS SETUP API                                       //
+//                             SYMPTOMS SETUP API                                //
 // ******************************************************************************//
 
 export const getSymptoms = () => {
@@ -212,3 +210,49 @@ export const deleteSymptom = (id) => {
   return api.delete(`setup/symptoms/${id}/delete/`);
 };
 
+
+
+
+
+// ***************************************************************************** //
+//                              VITALS SETUP API                                //
+// ******************************************************************************//
+
+export const getVitals = () => {
+  return api.get("setup/vitals/");
+};
+
+export const createVital = (data) => {
+  return api.post("setup/vitals/create/", data);
+};
+
+export const updateVital = (id, data) => {
+  return api.put(`setup/vitals/${id}/update/`, data);
+};
+
+export const deleteVital = (id) => {
+  return api.delete(`setup/vitals/${id}/delete/`);
+};
+
+
+
+
+// ***************************************************************************** //
+//                              FINDINGS SETUP API                                //
+// ******************************************************************************//
+
+export const getFindings = () => {
+  return api.get("setup/findings/");
+};
+
+export const createFinding = (data) => {
+  return api.post("setup/findings/create/", data);
+};
+
+export const updateFinding = (id, data) => {
+  return api.put(`setup/findings/${id}/update/`, data);
+};
+
+export const deleteFinding = (id) => {
+  return api.delete(`setup/findings/${id}/delete/`);
+};  

@@ -12,10 +12,9 @@ import UpdatePharmacyBill from "../../components/Pharmacy/UpdatePharmacyBill";
 
 export default function PharmacyBillList() {
   const notify = useNotify();
-  const refreshRef = useRef(null);
   const isFetching = useRef(false);
   const navigate = useNavigate();
-
+  const hasFetched = useRef(false);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(100);
   const [bills, setBills] = useState([]);
@@ -27,18 +26,10 @@ export default function PharmacyBillList() {
 
 
   useEffect(() => {
-    if (refreshRef.current) clearInterval(refreshRef.current);
-
-    fetchBills();   // initial call
-
-    refreshRef.current = setInterval(() => {
-      fetchBills();
-    }, 15000);
-
-    return () => clearInterval(refreshRef.current);
-  }, [limit]);
-
-
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+    fetchBills();  
+  }, []);
 
 
   const fetchBills = async () => {
@@ -83,10 +74,10 @@ export default function PharmacyBillList() {
     try {
       setLoading(true);
       await deletePharmacyBill(id);
-      notify("success", "Bill deleted successfully");
+      notify("success","Bill deleted successfully");
       fetchBills();
     } catch (err) {
-      notify("error", "Failed to delete bill");
+      notify("error","Failed to delete bill");
     } finally {
       setLoading(false);
     }
@@ -96,7 +87,7 @@ export default function PharmacyBillList() {
     try {
       setLoading(true);
       const res = await generatePharmacyBillApi(data);
-      notify("success", "Bill generated successfully");
+      notify("success","Bill generated successfully");
       fetchBills();
       return res.data;
     } catch (err) {
@@ -104,7 +95,7 @@ export default function PharmacyBillList() {
         err?.response?.data?.detail ||
         err?.response?.data?.non_field_errors?.[0] ||
         "Failed to generate bill";
-      notify("error", msg);
+      notify("error",msg);
       throw err;
     } finally {
       setLoading(false);

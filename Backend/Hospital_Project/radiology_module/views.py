@@ -74,7 +74,7 @@ class RadiologyParameterListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        params = RadiologyParameter.objects.all()
+        params = RadiologyParameter.objects.all().order_by('parameter_name')
         serializer = RadiologyParameterSerializer(params, many=True)
         return Response(serializer.data)
 

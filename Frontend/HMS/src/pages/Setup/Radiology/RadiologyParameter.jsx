@@ -147,9 +147,9 @@ export default function RadiologyParameter() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })} />
               <input placeholder="Unit" className="border p-2 rounded" value={form.unit}
                 onChange={(e) => setForm({ ...form, unit: e.target.value })} />
-              <input placeholder="From" className="border p-2 rounded" value={form.rangeFrom}
+              <input placeholder="Range From" className="border p-2 rounded" value={form.rangeFrom}
                 onChange={(e) => setForm({ ...form, rangeFrom: e.target.value })} />
-              <input placeholder="To" className="border p-2 rounded" value={form.rangeTo}
+              <input placeholder="Range To" className="border p-2 rounded" value={form.rangeTo}
                 onChange={(e) => setForm({ ...form, rangeTo: e.target.value })} />
               <textarea placeholder="Description" className="border p-2 rounded md:col-span-2"
                 value={form.desc} onChange={(e) => setForm({ ...form, desc: e.target.value })} />

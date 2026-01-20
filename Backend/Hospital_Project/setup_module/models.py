@@ -120,7 +120,7 @@ class OperationSetup(models.Model):
 
 
 #***********************************************************************************#
-#                      SYMPTOMS SETUP MODELS                                     #
+#                      SYMPTOMS SETUP MODELS                                        #
 #***********************************************************************************#
 
 class Symptom(models.Model):
@@ -136,3 +136,29 @@ class Symptom(models.Model):
 
 
 
+#***********************************************************************************#
+#                      FINDING SETUP MODELS                                         #
+#***********************************************************************************#
+
+class Finding(models.Model):
+    finding_name = models.CharField(max_length=100, unique=True)
+    finding_category = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.finding_name
+
+
+
+
+#***********************************************************************************#
+#                       VITALS SETUP MODELS                                         #
+#***********************************************************************************#
+
+class Vital(models.Model):
+    vital_name = models.CharField(max_length=100, unique=True)
+    reference_range = models.CharField(max_length=100, blank=True, null=True)
+    unit = models.CharField(max_length=50, blank=True, null=True)
+    
+    def __str__(self):
+        return self.vital_name

@@ -30,27 +30,29 @@ export default function UpdateBirthRecord({ open, onClose, record, onSave }) {
         try {
           const response = await getBirthRecordDetail(record.id);
           const data = response.data;
-          
-          // Convert backend snake_case to frontend camelCase
-          // Format birth_date from backend to datetime-local format
+
+          // data.birthDateRaw is ISO string from backend
           let birthDateFormatted = "";
-          if (data.birth_date) {
-            const date = new Date(data.birth_date);
-            birthDateFormatted = date.toISOString().slice(0, 16);
+          if (data.birthDateRaw) {
+            const date = new Date(data.birthDateRaw);
+            // Adjust for local time to avoid shift
+            const tzOffset = date.getTimezoneOffset() * 60000;
+            const localDate = new Date(date.getTime() - tzOffset);
+            birthDateFormatted = localDate.toISOString().slice(0, 16);
           }
 
           setForm({
-            childName: data.child_name || "",
+            childName: data.childName || "",
             gender: data.gender || "",
             weight: data.weight || "",
             birthDate: birthDateFormatted,
             phone: data.phone || "",
             address: data.address || "",
-            caseId: data.case_id || "",
-            motherName: data.mother_name || "",
-            fatherName: data.father_name || "",
+            caseId: data.caseId || "",
+            motherName: data.motherName || "",
+            fatherName: data.fatherName || "",
             report: data.report || "",
-            childPhoto: null, // Don't pre-fill files
+            childPhoto: null,
             motherPhoto: null,
             fatherPhoto: null,
             documentPhoto: null,
@@ -87,7 +89,7 @@ export default function UpdateBirthRecord({ open, onClose, record, onSave }) {
 
     try {
       setLoading(true);
-      
+
       // Map frontend field names to backend field names
       const data = {
         child_name: form.childName,

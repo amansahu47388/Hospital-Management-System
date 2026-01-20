@@ -128,3 +128,27 @@ class BedSerializers(serializers.ModelSerializer):
         ]
 
 
+
+#***********************************************************************************#
+#                     FINDING SETUP SERIALIZERS                                     #
+#***********************************************************************************#
+
+class FindingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Finding
+        fields = "__all__"
+
+
+
+
+#***********************************************************************************#
+#                     VITAL SETUP SERIALIZERS                                       #
+#***********************************************************************************#
+
+class VitalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vital
+        fields = "__all__"
+
+# For backward compatibility with views using "VitalsSerializer"
+VitalsSerializer = VitalSerializer

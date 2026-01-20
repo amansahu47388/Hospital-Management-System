@@ -7,16 +7,122 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils import timezone
 from .models import PathologyCategory, PathologyParameter, PathologyTest, PathologyBill, PathologyBillItem
-from .serializers import (
-    PathologyTestCreateSerializer, PathologyTestListSerializer, PathologyTestUpdateSerializer,
-    PathologyBillCreateSerializer, PathologyBillListSerializer, PathologyBillDetailSerializer
-)
+from .serializers import *
 from opd_ipd_module.models import Prescription
 from django.db import transaction
 
 
 
+#***********************************************************************************#
+#                               PATHOLOGY CATEGORY API                              #
+#***********************************************************************************#
+class PathologyCategoryAPI(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        data = PathologyCategory.objects.values("id", "category_name")
+        return Response(data)
+
+    def post(self, request):
+        serializer = PathologyCategorySerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save(created_by=request.user)
+        return Response(
+            {"message": "Pathology category created successfully"},
+            status=status.HTTP_201_CREATED
+        )
+
+    def put(self, request, pk):
+        category = get_object_or_404(PathologyCategory, pk=pk)
+
+        serializer = PathologyCategorySerializer(
+            category, data=request.data
+        )
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+
+        serializer.save()
+        return Response(
+            {"message": "Pathology category updated successfully"},
+            status=200
+        )
+
+    def delete(self, request, pk):
+        category = get_object_or_404(PathologyCategory, pk=pk)
+
+        category.delete()
+
+        return Response(
+            {"message": "Pathology category deleted successfully"},
+            status=status.HTTP_200_OK
+        )
+
+
+
+
+
+
+
+#***********************************************************************************#
+#                               PATHOLOGY PARAMETER API                              #
+#***********************************************************************************#
+class PathologyParameterAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset = PathologyParameter.objects.all().order_by('parameter_name')
+        serializer = PathologyParameterSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = PathologyParameterSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save(created_by=request.user)
+        return Response(
+            {"message": "Pathology parameter created successfully"},
+            status=status.HTTP_201_CREATED
+        )
+
+    def put(self, request, pk):
+        parameter = get_object_or_404(PathologyParameter, pk=pk)
+
+        serializer = PathologyParameterSerializer(
+            parameter, data=request.data
+        )
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+
+        serializer.save()
+        return Response(
+            {"message": "Pathology parameter updated successfully"},
+            status=200
+        )
+
+    def delete(self, request, pk):
+        parameter = get_object_or_404(PathologyParameter, pk=pk)
+
+        parameter.delete()
+
+        return Response(
+            {"message": "Pathology parameter deleted successfully"},
+            status=status.HTTP_200_OK
+        )
+
+
+
+
+
+
+
+#***********************************************************************************#
+#                               PATHOLOGY TEST API                              #
+#***********************************************************************************#
 class PathologyTestCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -33,8 +139,6 @@ class PathologyTestCreateAPIView(APIView):
         )
 
 
-
-
 class PathologyTestListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -47,33 +151,6 @@ class PathologyTestListAPIView(APIView):
 
         serializer = PathologyTestListSerializer(queryset, many=True)
         return Response(serializer.data)
-
-
-
-
-
-
-
-class PathologyCategoryListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        data = PathologyCategory.objects.values("id", "category_name")
-        return Response(data)
-
-
-
-
-class PathologyParameterListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        data = PathologyParameter.objects.values(
-            "id", "parameter_name", "reference_range", "unit", "description"
-        )
-        return Response(data)
-
-
 
 
 
@@ -111,6 +188,15 @@ class PathologyTestUpdateAPIView(APIView):
         )
 
 
+
+
+
+
+
+
+#***********************************************************************************#
+#                               PATHOLOGY BILL API                              #
+#***********************************************************************************#
 class GeneratePathologyBillAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

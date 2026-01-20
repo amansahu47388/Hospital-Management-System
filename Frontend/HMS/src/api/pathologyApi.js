@@ -1,15 +1,56 @@
 import api from "./axiosInstance"
 
-export const createPathologyTest = (data) => {
-  return api.post("pathology/pathology-test/create/", data);
+// ***************************************************************************** //
+//                            PATHOLOGY CATEGORY API                             //
+// ******************************************************************************//
+
+export const getPathologyCategory = () => {
+  return api.get("pathology/category");
 };
+
+export const createPathologyCategory = (data) => {
+  return api.post("pathology/category/create/", data);
+};
+
+export const updatePathologyCategory = (id, payload) => {
+  return api.put(`pathology/category/${id}/update/`, payload);
+};
+
+export const deletePathologyCategory = (id) => {
+  return api.delete(`pathology/category/${id}/delete/`);
+};
+
+
+// ***************************************************************************** //
+//                            PATHOLOGY PARAMETER API                            //
+// ******************************************************************************//
 
 export const getPathologyParameters = () => {
   return api.get("pathology/parameter");
 };
 
-export const getPathologyCategory = () => {
-  return api.get("pathology/category");
+export const createPathologyParameter = (data) => {
+  return api.post("pathology/parameter/create/", data);
+};
+
+export const updatePathologyParameter = (id, payload) => {
+  return api.put(`pathology/parameter/${id}/update/`, payload);
+};
+
+export const deletePathologyParameter = (id) => {
+  return api.delete(`pathology/parameter/${id}/delete/`);
+};
+
+
+
+
+
+// ***************************************************************************** //
+//                            PATHOLOGY TEST API                                 //
+// ******************************************************************************//
+
+export const createPathologyTest = (data) => {
+  return api.post("pathology/pathology-test/create/", data);
 };
 
 export const getPathologyTests = () => {
@@ -23,6 +64,13 @@ export const deletePathologyTest = (id) => {
 export const updatePathologyTest = (id, payload) => {
   return api.put(`pathology/pathology-test/${id}/update/`, payload);
 };
+
+
+
+
+// ***************************************************************************** //
+//                            PATHOLOGY BILL API                                 //
+// ******************************************************************************//
 
 export const createPathologyBill = async (payload) => {
   return api.post("pathology/pathology-bill/create/", payload);

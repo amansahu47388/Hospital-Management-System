@@ -72,7 +72,7 @@ urlpatterns = [
 
 
 #***********************************************************************************#
-#                            SYMPTOM SETUP ROUTES                                #
+#                            SYMPTOM SETUP ROUTES                                   #
 #***********************************************************************************#
    
     path("symptoms/", SymptomAPI.as_view(), name="symptoms-list"),
@@ -83,12 +83,27 @@ urlpatterns = [
 
 
 
+#***********************************************************************************#
+#                            VITALS SETUP ROUTES                                    #
+#***********************************************************************************#
+
+    path("vitals/", VitalAPI.as_view(), name="vitals-list"),
+    path("vitals/create/", VitalAPI.as_view(), name="vitals-create"),
+    path("vitals/<int:pk>/update/", VitalAPI.as_view(), name="vitals-update"),
+    path("vitals/<int:pk>/delete/", VitalAPI.as_view(), name="vitals-delete"),
 
 
 
 
 
+#***********************************************************************************#
+#                            FINDING SETUP ROUTES                                    #
+#***********************************************************************************#
 
+    path("findings/", FindingAPI.as_view(), name="findings-list"),
+    path("findings/create/", FindingAPI.as_view(), name="findings-create"),
+    path("findings/<int:pk>/update/", FindingAPI.as_view(), name="findings-update"),
+    path("findings/<int:pk>/delete/", FindingAPI.as_view(), name="findings-delete"),
 
 
 
