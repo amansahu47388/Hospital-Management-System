@@ -53,7 +53,7 @@ class SupplierSerializer(serializers.ModelSerializer):
 
 # ----------------- MEDICINE DOSAGE -----------------
 class MedicineDosageSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source="category_name.name", read_only=True)
+    category_name_label = serializers.CharField(source="category_name.category_name", read_only=True)
     unit_name = serializers.CharField(source="unit.unit_name", read_only=True)
 
     class Meta:
@@ -61,6 +61,7 @@ class MedicineDosageSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "category_name",
+            "category_name_label",
             "dosage",
             "unit",
             "unit_name",
