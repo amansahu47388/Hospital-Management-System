@@ -201,18 +201,49 @@ class ItemStockAPI(APIView):
         if serializer.is_valid():
             updated = serializer.save()
 
-            # 🔴 Reverse old stock
-            old_store_stock = ItemStoreStock.objects.get(item=old_item, store=old_store)
-            old_store_stock.quantity -= old_qty
-            old_store_stock.save()
+            # Check if item and store are the same
+            if updated.item == old_item and updated.store == old_store:
+                # Same item & store: just update the difference
+                store_stock = ItemStoreStock.objects.get(item=old_item, store=old_store)
+                quantity_diff = updated.quantity - old_qty
+                
+                # Validate that we won't go negative
+                if store_stock.quantity + quantity_diff < 0:
+                    # Rollback the stock update
+                    stock.quantity = old_qty
+                    stock.save()
+                    return Response({
+                        "error": f"Insufficient stock. Current stock: {store_stock.quantity}, trying to reduce by: {abs(quantity_diff)}"
+                    }, status=400)
+                
+                store_stock.quantity += quantity_diff
+                store_stock.save()
+            else:
+                # Different item or store: reverse old and add new
+                # 🔴 Reverse old stock - check first
+                old_store_stock = ItemStoreStock.objects.get(item=old_item, store=old_store)
+                
+                # Validate that old store has enough stock
+                if old_store_stock.quantity < old_qty:
+                    # Rollback the stock update
+                    stock.item = old_item
+                    stock.store = old_store
+                    stock.quantity = old_qty
+                    stock.save()
+                    return Response({
+                        "error": f"Insufficient stock in {old_store.store_name}. Available: {old_store_stock.quantity}, required: {old_qty}"
+                    }, status=400)
+                
+                old_store_stock.quantity -= old_qty
+                old_store_stock.save()
 
-            # 🟢 Add to new store/item
-            new_store_stock, _ = ItemStoreStock.objects.get_or_create(
-                item=updated.item,
-                store=updated.store
-            )
-            new_store_stock.quantity += updated.quantity
-            new_store_stock.save()
+                # 🟢 Add to new store/item
+                new_store_stock, _ = ItemStoreStock.objects.get_or_create(
+                    item=updated.item,
+                    store=updated.store
+                )
+                new_store_stock.quantity += updated.quantity
+                new_store_stock.save()
 
             return Response(ItemStockSerializer(updated).data)
 

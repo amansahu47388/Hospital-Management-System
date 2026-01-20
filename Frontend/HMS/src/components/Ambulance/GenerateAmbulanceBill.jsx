@@ -270,7 +270,18 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
               <label className="block text-sm font-medium text-gray-700 mb-1">Charge Name</label>
               <select
                 value={selectedCharge}
-                onChange={(e) => setSelectedCharge(e.target.value)}
+                onChange={(e) => {
+                  const chargeId = e.target.value;
+                  setSelectedCharge(chargeId);
+                  const chargeObj = charges.find(c => c.id === parseInt(chargeId));
+                  if (chargeObj) {
+                    setTotalAmount(chargeObj.charge_amount || "");
+                    setTaxPercent(chargeObj.tax || "");
+                  } else {
+                    setTotalAmount("");
+                    setTaxPercent("");
+                  }
+                }}
                 className="w-full border px-3 py-2 rounded"
               >
                 <option value="">Select Charge</option>

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import IpdPatientUpdateAPIView, OpdPatientCreateAPIView, OpdPatientListAPIView, OpdPatientDetailAPIView, OpdPatientUpdateAPIView, OpdPatientDeleteAPIView, IpdPatientCreateAPIView, IpdPatientListAPIView, IpdPatientDetailAPIView, IpdPatientDeleteAPIView, IpdDischargeCreateAPIView, IpdDischargedPatientListAPIView, IpdDischargeRevertAPIView
+from .views import *
 
 urlpatterns = [
     # OPD Patient URLs
@@ -22,4 +22,10 @@ urlpatterns = [
 
 
 
+    # Prescription URLs
+    path("prescriptions/", PrescriptionAPI.as_view(), name="prescription-list"),
+    path("prescriptions/create/", PrescriptionAPI.as_view(), name="prescription-create"),
+    path("prescriptions/<int:pk>/", PrescriptionAPI.as_view(), name="prescription-detail"),
+    path("prescriptions/<int:pk>/delete/", PrescriptionAPI.as_view(), name="prescription-delete"),
 ]
+

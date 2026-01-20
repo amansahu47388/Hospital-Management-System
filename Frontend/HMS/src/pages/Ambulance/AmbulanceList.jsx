@@ -155,7 +155,7 @@ export default function AmbulanceList() {
                       <td className="px-3 py-2">{ambulance.vehicle_type}</td>
                       <td className="px-3 py-2">
                         <div className="flex gap-2">
-                        <button
+                          <button
                             onClick={() => {
                               setSelectedId(ambulance.id);
                               setEditOpen(true);
@@ -202,6 +202,11 @@ export default function AmbulanceList() {
         onSuccess={loadAmbulances}
       />
 
-    </AdminLayout> 
+      <AddAmbulance
+        open={open}
+        onClose={() => setOpen(false)}
+        onSuccess={loadAmbulances}
+      />
+    </AdminLayout>
   );
 }

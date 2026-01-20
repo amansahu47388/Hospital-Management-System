@@ -7,10 +7,6 @@ export default function RadiologySidebarMenu() {
       path: "/admin/setup/radiology/category",
     },
     {
-      label: "Unit",
-      path: "/admin/setup/radiology/unit",
-    },
-    {
       label: "Radiology Parameter",
       path: "/admin/setup/radiology/parameter",
     },

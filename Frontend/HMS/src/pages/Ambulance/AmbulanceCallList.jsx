@@ -125,7 +125,7 @@ export default function AmbulanceCallList() {
                     key={i}
                     className="border-b border-gray-200 text-sm hover:bg-purple-50 transition-colors"
                   >
-                    <td className="px-2 py-3 ">{row.id}</td>
+                    <td className="px-2 py-3 ">{row.billNo}</td>
                     <td className="px-2 py-3 ">{row.caseId}</td>
                     <td className="px-2 py-3 ">{row.patient}</td>
                     <td className="px-2 py-3 ">{row.generatedBy}</td>

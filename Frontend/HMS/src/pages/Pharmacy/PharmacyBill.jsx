@@ -1,10 +1,10 @@
-import React, {useState, useEffect, useRef, useMemo} from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import GeneratePharmacyBill from "../../components/Pharmacy/GeneratePharmacyBill";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useNotify } from "../../context/NotificationContext";
-import {getPharmacyBills,deletePharmacyBill,generatePharmacyBill as generatePharmacyBillApi,} from "../../api/pharmacyApi";
+import { getPharmacyBills, deletePharmacyBill, generatePharmacyBill as generatePharmacyBillApi, } from "../../api/pharmacyApi";
 import PharmacyBillDetail from "../../components/Pharmacy/PharmacyBillDetails";
 import UpdatePharmacyBill from "../../components/Pharmacy/UpdatePharmacyBill";
 
@@ -12,10 +12,9 @@ import UpdatePharmacyBill from "../../components/Pharmacy/UpdatePharmacyBill";
 
 export default function PharmacyBillList() {
   const notify = useNotify();
-  const refreshRef = useRef(null);
   const isFetching = useRef(false);
   const navigate = useNavigate();
-
+  const hasFetched = useRef(false);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(100);
   const [bills, setBills] = useState([]);
@@ -24,56 +23,48 @@ export default function PharmacyBillList() {
   const [viewBill, setViewBill] = useState(null);
   const [editBill, setEditBill] = useState(null);
 
-  
-
-useEffect(() => {
-  if (refreshRef.current) clearInterval(refreshRef.current);
-
-  fetchBills();   // initial call
-
-  refreshRef.current = setInterval(() => {
-    fetchBills();
-  }, 15000);
-
-  return () => clearInterval(refreshRef.current);
-}, [limit]);
 
 
+  useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+    fetchBills();  
+  }, []);
 
 
-const fetchBills = async () => {
-  if (isFetching.current) return;
+  const fetchBills = async () => {
+    if (isFetching.current) return;
 
-  isFetching.current = true;
-  setLoading(true);
+    isFetching.current = true;
+    setLoading(true);
 
-  try {
-    const res = await getPharmacyBills({ limit });
-    setBills(Array.isArray(res.data) ? res.data : []);
-  } catch {
-    notify("error", "Failed to load pharmacy bills");
-    setBills([]);
-  } finally {
-    isFetching.current = false;
-    setLoading(false);
-  }
-};
+    try {
+      const res = await getPharmacyBills({ limit });
+      setBills(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      notify("error", "Failed to load pharmacy bills");
+      setBills([]);
+    } finally {
+      isFetching.current = false;
+      setLoading(false);
+    }
+  };
 
 
 
 
-const filteredBills = useMemo(() => {
-  if (!search) return bills;
+  const filteredBills = useMemo(() => {
+    if (!search) return bills;
 
-  const term = search.toLowerCase();
+    const term = search.toLowerCase();
 
-  return bills.filter(b =>
-    String(b.id).includes(term) ||
-    b.patient_name?.toLowerCase().includes(term) ||
-    b.doctor_name?.toLowerCase().includes(term) ||
-    b.created_by_name?.toLowerCase().includes(term)
-  );
-}, [bills, search]);
+    return bills.filter(b =>
+      String(b.id).includes(term) ||
+      b.patient_name?.toLowerCase().includes(term) ||
+      b.doctor_name?.toLowerCase().includes(term) ||
+      b.created_by_name?.toLowerCase().includes(term)
+    );
+  }, [bills, search]);
 
 
 
@@ -83,10 +74,10 @@ const filteredBills = useMemo(() => {
     try {
       setLoading(true);
       await deletePharmacyBill(id);
-      notify.success("Bill deleted successfully");
+      notify("success","Bill deleted successfully");
       fetchBills();
     } catch (err) {
-      notify.error("Failed to delete bill");
+      notify("error","Failed to delete bill");
     } finally {
       setLoading(false);
     }
@@ -96,7 +87,7 @@ const filteredBills = useMemo(() => {
     try {
       setLoading(true);
       const res = await generatePharmacyBillApi(data);
-      notify.success("Bill generated successfully");
+      notify("success","Bill generated successfully");
       fetchBills();
       return res.data;
     } catch (err) {
@@ -104,7 +95,7 @@ const filteredBills = useMemo(() => {
         err?.response?.data?.detail ||
         err?.response?.data?.non_field_errors?.[0] ||
         "Failed to generate bill";
-      notify.error(msg);
+      notify("error",msg);
       throw err;
     } finally {
       setLoading(false);
@@ -119,7 +110,7 @@ const filteredBills = useMemo(() => {
             Loading...
           </div>
         </div>
-        )}
+      )}
       <div className="min-h-screen">
         <div className="bg-white rounded shadow overflow-hidden">
 
@@ -133,7 +124,7 @@ const filteredBills = useMemo(() => {
               <div className="flex gap-2">
                 <button
                   onClick={() =>
-                   setOpenGenerateBill(true)}
+                    setOpenGenerateBill(true)}
                   className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                              text-white px-3 py-2 rounded text-sm
                              hover:opacity-90"
@@ -258,7 +249,7 @@ const filteredBills = useMemo(() => {
                             className="text-blue-600"
                             onClick={() => setViewBill(row)}
                           >
-                            <Eye size={18}/>
+                            <Eye size={18} />
                           </button>
 
                           <button
@@ -266,7 +257,7 @@ const filteredBills = useMemo(() => {
                             className="text-purple-600"
                             onClick={() => setEditBill(row)}
                           >
-                            <Pencil size={18}/>
+                            <Pencil size={18} />
                           </button>
 
                           <button
@@ -274,7 +265,7 @@ const filteredBills = useMemo(() => {
                             className="text-red-600"
                             onClick={() => deleteBill(row.id)}
                           >
-                            <Trash2 size={18}/>
+                            <Trash2 size={18} />
                           </button>
                         </div>
                       </td>
@@ -284,26 +275,26 @@ const filteredBills = useMemo(() => {
               </tbody>
             </table>
           </div>
-        <GeneratePharmacyBill
-          open={openGenerateBill}
-          onClose={() => setOpenGenerateBill(false)}
-          onSuccess={fetchBills}
-          onSave={createBill}
-        />
-        {viewBill && (
-          <PharmacyBillDetail
-            bill={viewBill}
-            onClose={() => setViewBill(null)}
+          <GeneratePharmacyBill
+            open={openGenerateBill}
+            onClose={() => setOpenGenerateBill(false)}
+            onSuccess={fetchBills}
+            onSave={createBill}
           />
-        )}
+          {viewBill && (
+            <PharmacyBillDetail
+              bill={viewBill}
+              onClose={() => setViewBill(null)}
+            />
+          )}
 
-        {editBill && (
-          <UpdatePharmacyBill
-            bill={editBill}
-            onClose={() => setEditBill(null)}
-            onUpdated={fetchBills}
-          />
-        )}
+          {editBill && (
+            <UpdatePharmacyBill
+              bill={editBill}
+              onClose={() => setEditBill(null)}
+              onUpdated={fetchBills}
+            />
+          )}
 
 
         </div>
