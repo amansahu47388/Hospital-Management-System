@@ -1,24 +1,87 @@
-# apps/appointments/views.py
+from rest_framework.views import APIView
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Appointment
-from .serializers import AppointmentSerializer
+from .models import *
+from .serializers import *
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
-from  users.models import User
-from rest_framework.views import APIView
+from users.models import User
 
 
+
+# Appointment Priority
+class AppointmentPriorityAPIView(APIView):
+    def get(self, request):
+        appointments = AppointmentPriority.objects.all()
+        serializer = AppointmentPrioritySerializer(appointments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = AppointmentPrioritySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        appointment = AppointmentPriority.objects.get(pk=pk)
+        serializer = AppointmentPrioritySerializer(appointment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        appointment = AppointmentPriority.objects.get(pk=pk)
+        appointment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# Appointment Shift
+class AppointmentShiftAPIView(APIView):
+    def get(self, request):
+        appointments = AppointmentShift.objects.all()
+        serializer = AppointmentShiftSerializer(appointments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = AppointmentShiftSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        appointment = AppointmentShift.objects.get(pk=pk)
+        serializer = AppointmentShiftSerializer(appointment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        appointment = AppointmentShift.objects.get(pk=pk)
+        appointment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# Appointment
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Appointment.objects.select_related('patient', 'doctor', 'created_by').all()
+        queryset = Appointment.objects.select_related(
+            'patient', 
+            'doctor', 
+            'created_by', 
+            'shift', 
+            'appontmet_priority',
+            'charge'
+        ).all()
         
         # Filter by status if provided
         status_filter = self.request.query_params.get('status', None)
@@ -50,7 +113,6 @@ class AppointmentViewSet(viewsets.ModelViewSet):
                 Q(patient__first_name__icontains=search) |
                 Q(patient__last_name__icontains=search) |
                 Q(patient__email__icontains=search) |
-                Q(appointment_no__icontains=search) |
                 Q(doctor__full_name__icontains=search) |
                 Q(doctor__email__icontains=search)
             )
@@ -162,24 +224,6 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-
-# class DoctorListAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         # Include related doctor profile fields so frontend can auto-fill fees and department
-#         from django.db.models import F
-#         doctors = (
-#             User.objects.filter(role="doctor", is_active=True)
-#             .annotate(
-#                 consultation_fee=F('doctor_profile__consultation_fee'),
-#                 department=F('doctor_profile__department')
-#             )
-#             .values("id", "full_name", "email", "consultation_fee", "department")
-#         )
-
-#         return Response(doctors)
-
 class DoctorListAPIView(APIView):
     def get(self, request):
         doctors = User.objects.filter(
@@ -201,7 +245,12 @@ class AppointmentListAPIView(APIView):
 
     def get(self, request):
         queryset = Appointment.objects.select_related(
-            "patient", "doctor", "created_by"
+            "patient", 
+            "doctor", 
+            "created_by",
+            "shift",
+            "appontmet_priority",
+            "charge"
         ).order_by("-created_at")
 
         serializer = AppointmentSerializer(queryset, many=True)

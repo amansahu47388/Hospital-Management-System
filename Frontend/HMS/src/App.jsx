@@ -95,7 +95,6 @@ import VitalList from "./pages/Setup/Vital/VitalList";
 import IncomeHead from "./pages/Setup/Finance/IncomeHead";
 import ExpenseHead from "./pages/Setup/Finance/ExpenseHead";
 import Slots from "./pages/Setup/Appointment/Slots";
-import DoctorShift from "./pages/Setup/Appointment/DoctorShift";
 import Shift from "./pages/Setup/Appointment/Shift";
 import AppointmentPriority from "./pages/Setup/Appointment/AppointmentPriority";
 import ItemCategory from "./pages/Setup/Inventory/ItemCategory";
@@ -246,7 +245,6 @@ function App() {
           <Route path="/admin/setup/finance/income-head" element={<IncomeHead />} />
           <Route path="/admin/setup/finance/expense-head" element={<ExpenseHead />} />
           <Route path="/admin/setup/appointment/slots" element={<Slots />} />
-          <Route path="/admin/setup/appointment/doctor-shift" element={<DoctorShift />} />
           <Route path="/admin/setup/appointment/shift" element={<Shift />} />
           <Route path="/admin/setup/appointment/priority" element={<AppointmentPriority />} />
           <Route path="/admin/setup/inventory/item-category" element={<ItemCategory />} />

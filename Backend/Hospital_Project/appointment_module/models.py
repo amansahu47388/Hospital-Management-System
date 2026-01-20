@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from users.models import User
 from patient_module.models import Patient
+from setup_module.models import HospitalCharges
 
 
 class AppointmentPriority(models.Model):
@@ -20,6 +21,20 @@ class AppointmentShift(models.Model):
         return self.shift
 
 
+# class AppointmentSlot(models.Model):
+#     charges = models.ForeignKey(HospitalCharges, on_delete=models.CASCADE, related_name="appointment_slots")
+#     Doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="appointment_slots", limit_choices_to={"role": "doctor"})
+#     shift = models.ForeignKey(AppointmentShift, on_delete=models.CASCADE, related_name="appointment_slots")
+#     consultant_duration_minutes = models.IntegerField() 
+    
+#     def __str__(self):
+#         return self.Doctor
+
+
+
+
+
+
 class Appointment(models.Model):
     CHOOOSE_SOURCE = (
         ("online", "Online"),
@@ -36,6 +51,7 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="appointments_as_doctor", limit_choices_to={"role": "doctor"})
     shift = models.ForeignKey(AppointmentShift, on_delete=models.CASCADE, related_name="appointments", blank=True, null=True)
     appontmet_priority = models.ForeignKey(AppointmentPriority, on_delete=models.CASCADE, related_name="appointments", blank=True, null=True)
+    charge = models.ForeignKey(HospitalCharges, on_delete=models.SET_NULL, related_name="appointments", blank=True, null=True)
     appointment_date = models.DateTimeField()
     phone = models.CharField(max_length=15, blank=True, null=True)
     source = models.CharField(max_length=10, choices=CHOOOSE_SOURCE, default='offline')

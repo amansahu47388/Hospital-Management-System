@@ -6,7 +6,6 @@ export default function SlotsSidebarMenu() {
       <ul className="text-sm">
         {[
           { name: "Slots", path: "/admin/setup/appointment/slots" },
-          { name: "Doctor Shift", path: "/admin/setup/appointment/doctor-shift" },
           { name: "Shift", path: "/admin/setup/appointment/shift" },
           { name: "Appointment Priority", path: "/admin/setup/appointment/priority" },
         ].map((item) => (
