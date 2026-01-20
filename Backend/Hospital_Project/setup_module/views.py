@@ -475,7 +475,7 @@ class FindingAPI(APIView):
             serializer = FindingSerializer(obj)
             return Response(serializer.data)
 
-        queryset = Finding.objects.all().order_by("finding_title")
+        queryset = Finding.objects.all().order_by("finding_name")
         serializer = FindingSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -499,6 +499,39 @@ class FindingAPI(APIView):
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class FindingCategoryAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk=None):
+        if pk:
+            obj = get_object_or_404(FindingCategory, pk=pk)
+            serializer = FindingCategorySerializer(obj)
+            return Response(serializer.data)
+
+        queryset = FindingCategory.objects.all().order_by("-created_at")
+        serializer = FindingCategorySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = FindingCategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        obj = get_object_or_404(FindingCategory, pk=pk)
+        serializer = FindingCategorySerializer(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        obj = get_object_or_404(FindingCategory, pk=pk)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 
@@ -512,31 +545,31 @@ class VitalAPI(APIView):
 
     def get(self, request, pk=None):
         if pk:
-            obj = get_object_or_404(Vitals, pk=pk)
-            serializer = VitalsSerializer(obj)
+            obj = get_object_or_404(Vital, pk=pk)
+            serializer = VitalSerializer(obj)
             return Response(serializer.data)
 
-        queryset = Vitals.objects.all().order_by("vitals_title")
-        serializer = VitalsSerializer(queryset, many=True)
+        queryset = Vital.objects.all().order_by("vital_name")
+        serializer = VitalSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = VitalsSerializer(data=request.data)
+        serializer = VitalSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
-        obj = get_object_or_404(Vitals, pk=pk)
-        serializer = VitalsSerializer(obj, data=request.data, partial=True)
+        obj = get_object_or_404(Vital, pk=pk)
+        serializer = VitalSerializer(obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        obj = get_object_or_404(Vitals, pk=pk)
+        obj = get_object_or_404(Vital, pk=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

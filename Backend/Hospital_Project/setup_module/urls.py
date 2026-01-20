@@ -105,6 +105,11 @@ urlpatterns = [
     path("findings/<int:pk>/update/", FindingAPI.as_view(), name="findings-update"),
     path("findings/<int:pk>/delete/", FindingAPI.as_view(), name="findings-delete"),
 
+    path("finding-categories/", FindingCategoryAPI.as_view(), name="finding-categories-list"),
+    path("finding-categories/create/", FindingCategoryAPI.as_view(), name="finding-categories-create"),
+    path("finding-categories/<int:pk>/update/", FindingCategoryAPI.as_view(), name="finding-categories-update"),
+    path("finding-categories/<int:pk>/delete/", FindingCategoryAPI.as_view(), name="finding-categories-delete"),
+
 
 
 

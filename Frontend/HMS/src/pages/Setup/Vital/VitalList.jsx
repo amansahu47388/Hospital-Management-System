@@ -1,20 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
 import VitalSidebarMenu from "../../../components/Setup/Vital/VitalSidebarMenu";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { useNotify } from "../../../context/NotificationContext";
+import {
+  getVitals,
+  createVital,
+  updateVital,
+  deleteVital
+} from "../../../api/setupApi";
 
 export default function VitalList() {
-  const [vitals, setVitals] = useState([
-    { id: 1, name: "Height", from: "1", to: "200", unit: "Centimeters" },
-    { id: 2, name: "Weight", from: "0", to: "150", unit: "Kilograms" },
-    { id: 3, name: "Pulse", from: "70", to: "100", unit: "Beats per min" },
-    { id: 4, name: "Temperature", from: "95.8", to: "99.3", unit: "Fahrenheit" },
-    { id: 5, name: "BP", from: "90/60", to: "140/90", unit: "mmHg" },
-  ]);
-
+  const notify = useNotify();
+  const [vitals, setVitals] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     id: null,
-    name: "",
+    vital_name: "",
     from: "",
     to: "",
     unit: "",
@@ -22,33 +24,94 @@ export default function VitalList() {
 
   const [openModal, setOpenModal] = useState(false);
 
+  useEffect(() => {
+    fetchVitals();
+  }, []);
+
+  const fetchVitals = async () => {
+    try {
+      setLoading(true);
+      const res = await getVitals();
+      setVitals(res.data);
+    } catch (err) {
+      notify("error", "Failed to fetch vitals");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   /* ---------- OPEN ADD ---------- */
   const openAdd = () => {
-    setForm({ id: null, name: "", from: "", to: "", unit: "" });
+    setForm({ id: null, vital_name: "", from: "", to: "", unit: "" });
     setOpenModal(true);
   };
 
   /* ---------- OPEN EDIT ---------- */
   const openEdit = (row) => {
-    setForm(row);
+    const range = row.reference_range || "";
+    let from = "";
+    let to = "";
+    if (range.includes("-")) {
+      [from, to] = range.split("-").map((s) => s.trim());
+    } else {
+      from = range;
+    }
+    setForm({
+      id: row.id,
+      vital_name: row.vital_name,
+      from: from,
+      to: to,
+      unit: row.unit,
+    });
     setOpenModal(true);
   };
 
   /* ---------- SAVE ---------- */
-  const saveVital = () => {
-    if (form.id) {
-      setVitals((prev) =>
-        prev.map((v) => (v.id === form.id ? form : v))
-      );
-    } else {
-      setVitals((prev) => [...prev, { ...form, id: Date.now() }]);
+  const saveVital = async () => {
+    if (!form.vital_name) {
+      notify("warning", "Vital Name is required");
+      return;
     }
-    setOpenModal(false);
+
+    const reference_range = form.from && form.to ? `${form.from} - ${form.to}` : form.from || form.to || "";
+    const submitData = {
+      vital_name: form.vital_name,
+      reference_range: reference_range,
+      unit: form.unit,
+    };
+
+    try {
+      setLoading(true);
+      if (form.id) {
+        await updateVital(form.id, submitData);
+        notify("success", "Vital updated successfully");
+      } else {
+        await createVital(submitData);
+        notify("success", "Vital created successfully");
+      }
+      setOpenModal(false);
+      fetchVitals();
+    } catch (err) {
+      notify("error", "Failed to save vital");
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* ---------- DELETE ---------- */
-  const deleteVital = (id) => {
-    setVitals((prev) => prev.filter((v) => v.id !== id));
+  const removeVital = async (id) => {
+    if (window.confirm("Are you sure you want to delete this vital?")) {
+      try {
+        setLoading(true);
+        await deleteVital(id);
+        notify("success", "Vital deleted successfully");
+        fetchVitals();
+      } catch (err) {
+        notify("error", "Failed to delete vital");
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -87,31 +150,39 @@ export default function VitalList() {
               </thead>
 
               <tbody>
-                {vitals.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
-                    <td className="px-3 py-2">{row.name}</td>
-                    <td className="px-3 py-2">
-                      {row.from} - {row.to}
-                    </td>
-                    <td className="px-3 py-2">{row.unit}</td>
-                    <td className="px-3 py-2">
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => openEdit(row)}
-                          className="text-purple-600 hover:text-purple-800 transition"
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          onClick={() => deleteVital(row.id)}
-                          className="text-red-600 hover:text-red-800 transition"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+                {loading ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4">Loading...</td>
                   </tr>
-                ))}
+                ) : vitals.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4 text-gray-400">No records found</td>
+                  </tr>
+                ) : (
+                  vitals.map((row) => (
+                    <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
+                      <td className="px-3 py-2">{row.vital_name}</td>
+                      <td className="px-3 py-2">{row.reference_range}</td>
+                      <td className="px-3 py-2">{row.unit}</td>
+                      <td className="px-3 py-2">
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => openEdit(row)}
+                            className="text-purple-600 hover:text-purple-800 transition"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            onClick={() => removeVital(row.id)}
+                            className="text-red-600 hover:text-red-800 transition"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -143,9 +214,9 @@ export default function VitalList() {
                   Vital Name <span className="text-red-500">*</span>
                 </label>
                 <input
-                  value={form.name}
+                  value={form.vital_name || ""}
                   onChange={(e) =>
-                    setForm({ ...form, name: e.target.value })
+                    setForm({ ...form, vital_name: e.target.value })
                   }
                   className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                   placeholder="Enter vital name"

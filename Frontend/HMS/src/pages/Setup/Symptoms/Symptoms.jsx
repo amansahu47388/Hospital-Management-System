@@ -1,29 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
 import SymptomsSidebarMenu from "../../../components/Setup/Symptoms/SymptomsSidebarMenu";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { useNotify } from "../../../context/NotificationContext";
+import {
+  getSymptoms,
+  createSymptom,
+  updateSymptom,
+  deleteSymptom
+} from "../../../api/setupApi";
 
 export default function Symptoms() {
-  const [rows, setRows] = useState([
-    {
-      id: 1,
-      head: "Thirst",
-      type: "Eating or weight problems",
-      desc: "Thirst is the feeling of needing to drink something."
-    },
-    {
-      id: 2,
-      head: "Feeling sad or down",
-      type: "Emotional problems",
-      desc: "Personality change in a way that seems different."
-    }
-  ]);
-
-  const [form, setForm] = useState({ id: null, head: "", type: "", desc: "" });
+  const notify = useNotify();
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ id: null, symptom_title: "", symptom_type: "", description: "" });
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    fetchSymptoms();
+  }, []);
+
+  const fetchSymptoms = async () => {
+    try {
+      setLoading(true);
+      const res = await getSymptoms();
+      setRows(res.data);
+    } catch (err) {
+      notify("error", "Failed to fetch symptoms");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openAdd = () => {
-    setForm({ id: null, head: "", type: "", desc: "" });
+    setForm({ id: null, symptom_title: "", symptom_type: "", description: "" });
     setOpen(true);
   };
 
@@ -32,17 +43,43 @@ export default function Symptoms() {
     setOpen(true);
   };
 
-  const save = () => {
-    if (form.id) {
-      setRows((p) => p.map((r) => (r.id === form.id ? form : r)));
-    } else {
-      setRows((p) => [...p, { ...form, id: Date.now() }]);
+  const save = async () => {
+    if (!form.symptom_title || !form.symptom_type) {
+      notify("warning", "Symptoms Head and Type are required");
+      return;
     }
-    setOpen(false);
+
+    try {
+      setLoading(true);
+      if (form.id) {
+        await updateSymptom(form.id, form);
+        notify("success", "Symptom updated successfully");
+      } else {
+        await createSymptom(form);
+        notify("success", "Symptom created successfully");
+      }
+      setOpen(false);
+      fetchSymptoms();
+    } catch (err) {
+      notify("error", "Failed to save symptom");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const remove = (id) => {
-    setRows((p) => p.filter((r) => r.id !== id));
+  const remove = async (id) => {
+    if (window.confirm("Are you sure you want to delete this symptom?")) {
+      try {
+        setLoading(true);
+        await deleteSymptom(id);
+        notify("success", "Symptom deleted successfully");
+        fetchSymptoms();
+      } catch (err) {
+        notify("error", "Failed to delete symptom");
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -81,29 +118,39 @@ export default function Symptoms() {
               </thead>
 
               <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
-                    <td className="px-3 py-2">{r.head}</td>
-                    <td className="px-3 py-2">{r.type}</td>
-                    <td className="px-3 py-2">{r.desc}</td>
-                    <td className="px-3 py-2">
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => openEdit(r)}
-                          className="text-purple-600 hover:text-purple-800"
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          onClick={() => remove(r.id)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+                {loading ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4">Loading...</td>
                   </tr>
-                ))}
+                ) : rows.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4 text-gray-400">No records found</td>
+                  </tr>
+                ) : (
+                  rows.map((r) => (
+                    <tr key={r.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
+                      <td className="px-3 py-2">{r.symptom_title}</td>
+                      <td className="px-3 py-2">{r.symptom_type}</td>
+                      <td className="px-3 py-2">{r.description}</td>
+                      <td className="px-3 py-2">
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => openEdit(r)}
+                            className="text-purple-600 hover:text-purple-800"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            onClick={() => remove(r.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -132,8 +179,8 @@ export default function Symptoms() {
                 </label>
                 <input
                   placeholder="Symptoms Head"
-                  value={form.head}
-                  onChange={(e) => setForm({ ...form, head: e.target.value })}
+                  value={form.symptom_title || ""}
+                  onChange={(e) => setForm({ ...form, symptom_title: e.target.value })}
                   className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                 />
               </div>
@@ -144,8 +191,8 @@ export default function Symptoms() {
                 </label>
                 <input
                   placeholder="Symptoms Type"
-                  value={form.type}
-                  onChange={(e) => setForm({ ...form, type: e.target.value })}
+                  value={form.symptom_type || ""}
+                  onChange={(e) => setForm({ ...form, symptom_type: e.target.value })}
                   className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                 />
               </div>
@@ -156,8 +203,8 @@ export default function Symptoms() {
                 </label>
                 <textarea
                   placeholder="Description"
-                  value={form.desc}
-                  onChange={(e) => setForm({ ...form, desc: e.target.value })}
+                  value={form.description || ""}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
                   rows={3}
                 />

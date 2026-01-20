@@ -140,6 +140,13 @@ class Symptom(models.Model):
 #                      FINDING SETUP MODELS                                         #
 #***********************************************************************************#
 
+class FindingCategory(models.Model):
+    category_name = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.category_name
+
 class Finding(models.Model):
     finding_name = models.CharField(max_length=100, unique=True)
     finding_category = models.CharField(max_length=100, blank=True, null=True)
