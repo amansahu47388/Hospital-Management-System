@@ -96,7 +96,6 @@ import VitalList from "./pages/Setup/Vital/VitalList";
 import IncomeHead from "./pages/Setup/Finance/IncomeHead";
 import ExpenseHead from "./pages/Setup/Finance/ExpenseHead";
 import Slots from "./pages/Setup/Appointment/Slots";
-import DoctorShift from "./pages/Setup/Appointment/DoctorShift";
 import Shift from "./pages/Setup/Appointment/Shift";
 import AppointmentPriority from "./pages/Setup/Appointment/AppointmentPriority";
 import ItemCategory from "./pages/Setup/Inventory/ItemCategory";
@@ -169,91 +168,89 @@ function App() {
             <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
 
             {/* Birth - Death Routes */}
-            <Route path="/admin/birth-death-record/birth-record" element={<BirthRecord />} />
-            <Route path="/admin/birth-death-record/death-record" element={<DeathRecord />} />
+          <Route path="/admin/birth-death-record/birth-record" element={<BirthRecord/>} />
+          <Route path="/admin/birth-death-record/death-record" element={<DeathRecord/>} />
 
-            {/* Inventory Routes */}
-            <Route path="/admin/Inventory/Item-Stock" element={<ItemStockPage />} />
-            <Route path="/admin/Inventory/Issue-Item" element={<IssueItemPage />} />
-            <Route path="/admin/Inventory/Item-List" element={<ItemListPage />} />
+          {/* Inventory Routes */}
+          <Route path="/admin/Inventory/Item-Stock"   element={<ItemStockPage/>} />   
+          <Route path="/admin/Inventory/Issue-Item"   element={<IssueItemPage/>} />
+          <Route path="/admin/Inventory/Item-List"   element={<ItemListPage/>} />
 
-            {/* Front Office Routes */}
-            <Route path="/admin/front-office/visitor-list" element={<VisitorList />} />
-            <Route path="/admin/front-office/postal-receive" element={<PostalReceive />} />
-            <Route path="/admin/front-office/postal-dispatch" element={<PostalDispatch />} />
-            <Route path="/admin/front-office/complain-list" element={<ComplainList />} />
+          {/* Front Office Routes */}
+          <Route path="/admin/front-office/visitor-list"   element={<VisitorList/>} />
+          <Route path="/admin/front-office/postal-receive"   element={<PostalReceive/>} />
+          <Route path="/admin/front-office/postal-dispatch"   element={<PostalDispatch/>} />
+          <Route path="/admin/front-office/complain-list"   element={<ComplainList/>} />
 
-            {/* Finance Routes */}
-            <Route path="/admin/finance/income-list" element={<IncomeList />} />
-            <Route path="/admin/finance/expense-list" element={<ExpenseList />} />
+          {/* Finance Routes */}
+          <Route path="/admin/finance/income-list"   element={<IncomeList/>} />
+          <Route path="/admin/finance/expense-list"   element={<ExpenseList/>} />
 
-            {/* Calendar Routes */}
-            <Route path="/admin/Calendar" element={<CelenderPage />} />
+          {/* Calendar Routes */}
+          <Route path="/admin/Calendar"   element={<CelenderPage/>} />
 
 
 
-            {/* Bad Setup Routes */}
-            <Route path="/admin/setup/bed-status" element={<BedStatus />} />
-            <Route path="/admin/setup/bed" element={<BedList />} />
-            <Route path="/admin/setup/bed-type" element={<BedTypeList />} />
-            <Route path="/admin/setup/bed-group" element={<BedGroupList />} />
-            <Route path="/admin/setup/floor" element={<FloorList />} />
+          {/* Bad Setup Routes */}
+          <Route path="/admin/setup/bed-status" element={<BedStatus />}/>
+          <Route path="/admin/setup/bed" element={<BedList />} />
+          <Route path="/admin/setup/bed-type" element={<BedTypeList />} />
+          <Route path="/admin/setup/bed-group" element={<BedGroupList />} />
+          <Route path="/admin/setup/floor" element={<FloorList />} />
 
-            {/* Hospital charges Setup Routes */}
-            <Route path="/admin/setup/charges-details" element={<ChargesDetailsList />} />
-            <Route path="/admin/setup/charge-category" element={<ChargeCategoryList />} />
-            <Route path="/admin/setup/charge-type" element={<ChargeTypeList />} />
-            <Route path="/admin/setup/tax-category" element={<TaxCategoryList />} />
-            <Route path="/admin/setup/unit-type" element={<UnitTypeList />} />
+          {/* Hospital charges Setup Routes */}
+          <Route path="/admin/setup/charges-details" element={<ChargesDetailsList />} />
+          <Route path="/admin/setup/charge-category" element={<ChargeCategoryList />} />
+          <Route path="/admin/setup/charge-type" element={<ChargeTypeList />} />
+          <Route path="/admin/setup/tax-category" element={<TaxCategoryList />} />
+          <Route path="/admin/setup/unit-type" element={<UnitTypeList />} />  
 
-            {/* Header Footer Setup Routes */}
-            <Route path="/admin/setup/appointment-header-footer" element={<AppointmentHeaderFooter />} />
-            <Route path="/admin/setup/opd-prescription-header-footer" element={<OpdPrescriptionHeaderFooter />} />
-            <Route path="/admin/setup/opd-bill-header-footer" element={<OpdBillHeaderFooter />} />
-            <Route path="/admin/setup/ipd-prescription-header-footer" element={<IpdPrescriptionHeaderFooter />} />
-            <Route path="/admin/setup/ipd-bill-header-footer" element={<IpdBillHeaderFooter />} />
-            <Route path="/admin/setup/payslip-header-footer" element={<PaySlipHeaderFooter />} />
-            <Route path="/admin/setup/pharmacy-bill-header-footer" element={<PharmacyBillHeaderFooter />} />
-            <Route path="/admin/setup/bill-summary-header-footer" element={<BillSummaryHeaderFooter />} />
-            <Route path="/admin/setup/payment-receipt-header-footer" element={<PaymentReceiptHeaderFooter />} />
-            <Route path="/admin/setup/birth-record-header-footer" element={<BirthRecordHeaderFooter />} />
-            <Route path="/admin/setup/death-record-header-footer" element={<DeathRecordHeaderFooter />} />
-            <Route path="/admin/setup/radiology-header-footer" element={<RadiologyHeaderFooter />} />
-            <Route path="/admin/setup/pathology-header-footer" element={<PathologyHeaderFooter />} />
-            <Route path="/admin/setup/operation-header-footer" element={<OperationHeaderFooter />} />
-            <Route path="/admin/setup/ambulance-header-footer" element={<AmbulanceHeaderFooter />} />
-            <Route path="/admin/setup/obstetric-history-header-footer" element={<ObstetricHistoryHeaderFooter />} />
-            <Route path="/admin/setup/opd-antenatal-finding-header-footer" element={<OpdAntenatalFindingHeaderFooter />} />
-            <Route path="/admin/setup/ipd-antenatal-finding-header-footer" element={<IpdAntenatalFindingHeaderFooter />} />
-            <Route path="/admin/setup/discharge-card-header-footer" element={<DischargeCardHeaderFooter />} />
-            <Route path="/admin/setup/front-office/purpose-list" element={<PurposeList />} />
-            <Route path="/admin/setup/front-office/complain-type" element={<ComplaintType />} />
-            <Route path="/admin/setup/front-office/source" element={<Source />} />
-            <Route path="/admin/setup/operation/operation-list" element={<OperationList />} />
-            <Route path="/admin/setup/pharmacy/medicine-category" element={<MedicineCategory />} />
-            <Route path="/admin/setup/pharmacy/supplier" element={<Supplier />} />
-            <Route path="/admin/setup/pharmacy/dose" element={<DoseInterval />} />
-            <Route path="/admin/setup/pharmacy/medicine-dosage" element={<MedicineDosage />} />
-            <Route path="/admin/setup/pharmacy/company" element={<Company />} />
-            <Route path="/admin/setup/pharmacy/unit" element={<Unit />} />
-            <Route path="/admin/setup/pharmacy/medicine-group" element={<MedicineGroup />} />
-            <Route path="/admin/setup/pathology/category" element={<PathologyCategory />} />
-            <Route path="/admin/setup/pathology/parameter" element={<PathologyParameter />} />
-            <Route path="/admin/setup/radiology/category" element={<RadiologyCategory />} />
-            <Route path="/admin/setup/radiology/parameter" element={<RadiologyParameter />} />
-            <Route path="/admin/setup/symptoms" element={<Symptoms />} />
-            <Route path="/admin/setup/finding" element={<FindingSetup />} />
-            <Route path="/admin/setup/finding-category" element={<FindingCategory />} />
-            <Route path="/admin/setup/vitals" element={<VitalList />} />
-            <Route path="/admin/setup/finance/income-head" element={<IncomeHead />} />
-            <Route path="/admin/setup/finance/expense-head" element={<ExpenseHead />} />
-            <Route path="/admin/setup/appointment/slots" element={<Slots />} />
-            <Route path="/admin/setup/appointment/doctor-shift" element={<DoctorShift />} />
-            <Route path="/admin/setup/appointment/shift" element={<Shift />} />
-            <Route path="/admin/setup/appointment/priority" element={<AppointmentPriority />} />
-            <Route path="/admin/setup/inventory/item-category" element={<ItemCategory />} />
-            <Route path="/admin/setup/inventory/item-store" element={<ItemStore />} />
-            <Route path="/admin/setup/inventory/item-supplier" element={<ItemSupplier />} />
+          {/* Header Footer Setup Routes */}
+          <Route path="/admin/setup/appointment-header-footer" element={<AppointmentHeaderFooter />} />
+          <Route path="/admin/setup/opd-prescription-header-footer" element={<OpdPrescriptionHeaderFooter />} />
+          <Route path="/admin/setup/opd-bill-header-footer" element={<OpdBillHeaderFooter />} />
+          <Route path="/admin/setup/ipd-prescription-header-footer" element={<IpdPrescriptionHeaderFooter />} />  
+          <Route path="/admin/setup/ipd-bill-header-footer" element={<IpdBillHeaderFooter />} />
+          <Route path="/admin/setup/payslip-header-footer" element={<PaySlipHeaderFooter />} />
+          <Route path="/admin/setup/pharmacy-bill-header-footer" element={<PharmacyBillHeaderFooter />} />
+          <Route path="/admin/setup/bill-summary-header-footer" element={<BillSummaryHeaderFooter />} />
+          <Route path="/admin/setup/payment-receipt-header-footer" element={<PaymentReceiptHeaderFooter />} />
+          <Route path="/admin/setup/birth-record-header-footer" element={<BirthRecordHeaderFooter />} />
+          <Route path="/admin/setup/death-record-header-footer" element={<DeathRecordHeaderFooter />} />
+          <Route path="/admin/setup/radiology-header-footer" element={<RadiologyHeaderFooter />} />
+          <Route path="/admin/setup/pathology-header-footer" element={<PathologyHeaderFooter />} />
+          <Route path="/admin/setup/operation-header-footer" element={<OperationHeaderFooter />} />
+          <Route path="/admin/setup/ambulance-header-footer" element={<AmbulanceHeaderFooter />} /> 
+          <Route path="/admin/setup/obstetric-history-header-footer" element={<ObstetricHistoryHeaderFooter />} />
+          <Route path="/admin/setup/opd-antenatal-finding-header-footer" element={<OpdAntenatalFindingHeaderFooter />} />
+          <Route path="/admin/setup/ipd-antenatal-finding-header-footer" element={<IpdAntenatalFindingHeaderFooter />} />
+          <Route path="/admin/setup/discharge-card-header-footer" element={<DischargeCardHeaderFooter />} />
+          <Route path="/admin/setup/front-office/purpose-list" element={<PurposeList />} />
+          <Route path="/admin/setup/front-office/complain-type" element={<ComplaintType />} />
+          <Route path="/admin/setup/front-office/source" element={<Source />} />
+          <Route path="/admin/setup/operation/operation-list" element={<OperationList />} />
+          <Route path="/admin/setup/pharmacy/medicine-category" element={<MedicineCategory />} />
+          <Route path="/admin/setup/pharmacy/supplier" element={<Supplier />} />
+          <Route path="/admin/setup/pharmacy/dose" element={<DoseInterval />} />
+          <Route path="/admin/setup/pharmacy/medicine-dosage" element={<MedicineDosage />} />
+          <Route path="/admin/setup/pharmacy/company" element={<Company />} />
+          <Route path="/admin/setup/pharmacy/unit" element={<Unit />} />
+          <Route path="/admin/setup/pharmacy/medicine-group" element={<MedicineGroup />} />
+          <Route path="/admin/setup/pathology/category" element={<PathologyCategory />} />
+          <Route path="/admin/setup/pathology/parameter" element={<PathologyParameter />} />
+          <Route path="/admin/setup/radiology/category" element={<RadiologyCategory />} />  
+          <Route path="/admin/setup/radiology/parameter" element={<RadiologyParameter />} />
+          <Route path="/admin/setup/symptoms" element={<Symptoms />} />
+          <Route path="/admin/setup/finding" element={<FindingSetup />} />
+          <Route path="/admin/setup/vitals" element={<VitalList />} />
+          <Route path="/admin/setup/finance/income-head" element={<IncomeHead />} />
+          <Route path="/admin/setup/finance/expense-head" element={<ExpenseHead />} />
+          <Route path="/admin/setup/appointment/slots" element={<Slots />} />
+          <Route path="/admin/setup/appointment/shift" element={<Shift />} />
+          <Route path="/admin/setup/appointment/priority" element={<AppointmentPriority />} />
+          <Route path="/admin/setup/inventory/item-category" element={<ItemCategory />} />
+          <Route path="/admin/setup/inventory/item-store" element={<ItemStore />} />
+          <Route path="/admin/setup/inventory/item-supplier" element={<ItemSupplier />} />
           </Routes>
 
 

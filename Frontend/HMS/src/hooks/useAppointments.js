@@ -33,17 +33,18 @@ export function useAppointments() {
       // Transform the data to match the table format
       const transformedData = response.data.map(appointment => ({
         id: appointment.id,
-        patient_name: appointment.patient_details?.full_name || 'N/A',
+        patient_name: appointment.patient_details?.full_name || appointment.patient?.full_name || 'N/A',
         appointment_no: appointment.appointment_no,
         created_by: appointment.created_by_name || 'N/A',
-        appointment_date: `${new Date(appointment.appointment_date).toLocaleDateString()} ${new Date(appointment.appointment_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
+        appointment_date: appointment.appointment_date ? `${new Date(appointment.appointment_date).toLocaleDateString()} ${new Date(appointment.appointment_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}` : 'N/A',
         phone: appointment.patient_details?.phone || appointment.phone || 'N/A',
         gender: appointment.patient_details?.gender || 'N/A',
         // Provide both a normalized doctor_name and the full doctor_details object
         doctor_name: appointment.doctor_name || appointment.doctor_details?.full_name || 'N/A',
         doctor_details: appointment.doctor_details || null,
-        source: appointment.source,
-        priority: appointment.appontmet_priority,
+        source: appointment.source || 'N/A',
+        priority: appointment.priority_details?.priority || appointment.appontmet_priority || 'N/A',
+        shift: appointment.shift_details?.shift || appointment.shift?.shift || 'N/A',
         live_consultant: appointment.live_consultation ? 'Yes' : 'No',
         alternate_address: appointment.patient_details?.address || 'N/A',
         fees: appointment.fees,
@@ -51,10 +52,10 @@ export function useAppointments() {
         paid: appointment.fees, // You might want to add payment tracking
         status: appointment.status,
         department: appointment.doctor_details?.department || 'N/A',
-        shift: appointment.shift,
-        slot: appointment.slot,
         reason: appointment.reason,
         payment_mode: appointment.payment_modee,
+        // Keep original data as well for detail modals
+        ...appointment
       }));
 
       setAppointments(transformedData);

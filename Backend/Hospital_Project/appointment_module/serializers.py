@@ -1,8 +1,22 @@
-# apps/appointments/serializers.py
 from rest_framework import serializers
-from .models import Appointment
 from patient_module.models import Patient
 from users.models import User
+from appointment_module.models import *
+from setup_module.serializers import HospitalChargesSerializer
+
+
+
+class AppointmentPrioritySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppointmentPriority
+        fields = ['id', 'priority']
+
+
+class AppointmentShiftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppointmentShift
+        fields = ['id', 'shift', 'time_from', 'time_to']
+
 
 class PatientSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
@@ -13,6 +27,7 @@ class PatientSerializer(serializers.ModelSerializer):
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
 
 class DoctorSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
@@ -28,6 +43,9 @@ class DoctorSerializer(serializers.ModelSerializer):
 class AppointmentSerializer(serializers.ModelSerializer):
     patient_details = PatientSerializer(source='patient', read_only=True)
     doctor_details = DoctorSerializer(source='doctor', read_only=True)
+    shift_details = AppointmentShiftSerializer(source='shift', read_only=True)
+    priority_details = AppointmentPrioritySerializer(source='appontmet_priority', read_only=True)
+    charge_details = HospitalChargesSerializer(source='charge', read_only=True)
     doctor_name = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
 
@@ -39,7 +57,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = "__all__"
-        read_only_fields = ("id", "appointment_no", "created_at", "created_by")
+        read_only_fields = ("id", "created_at", "created_by")
 
     def get_doctor_name(self, obj):
         if obj.doctor:
@@ -51,7 +69,20 @@ class AppointmentSerializer(serializers.ModelSerializer):
             return obj.created_by.full_name or obj.created_by.email
         return None
 
-    def create(self, validated_data):
-        import uuid
-        validated_data["appointment_no"] = f"APP{uuid.uuid4().hex[:8].upper()}"
-        return super().create(validated_data)
+    def get_priority_details(self, obj):
+        if obj.appontmet_priority:
+            return {
+                "id": obj.appontmet_priority.id,
+                "priority": obj.appontmet_priority.priority
+            }
+        return None
+    
+    def get_shift_details(self, obj):
+        if obj.shift:
+            return {
+                "id": obj.shift.id,
+                "shift": obj.shift.shift,
+                "time_from": obj.shift.time_from,
+                "time_to": obj.shift.time_to
+            }
+        return None

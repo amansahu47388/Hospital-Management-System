@@ -130,3 +130,77 @@ export const getPastAppointments = async () => {
   return await appointmentAPI.get('past/');
 };
 
+
+
+
+
+// =======================
+// SHIFT ENDPOINTS
+// =======================
+export const getShifts = async () => {
+  return await appointmentAPI.get("appointment-shift/");
+};
+
+export const createShift = async (shiftData) => {
+  return await appointmentAPI.post("appointment-shift/create/", shiftData);
+};
+
+export const updateShift = async (shiftId, shiftData) => {
+  if (!shiftId) throw new Error('Shift ID is required');
+  return await appointmentAPI.put(`appointment-shift/${shiftId}/update/`, shiftData);
+};
+
+export const deleteShift = async (shiftId) => {
+  if (!shiftId) throw new Error('Shift ID is required');
+  return await appointmentAPI.delete(`appointment-shift/${shiftId}/delete/`);
+};
+
+
+
+
+
+// =======================
+// PRIORITY ENDPOINTS
+// =======================
+export const getPriorities = async () => {
+  return await appointmentAPI.get("appointment-priority/");
+};
+
+export const createPriority = async (priorityData) => {
+  return await appointmentAPI.post("appointment-priority/create/", priorityData);
+};
+
+export const updatePriority = async (priorityId, priorityData) => {
+  if (!priorityId) throw new Error('Priority ID is required');
+  return await appointmentAPI.put(`appointment-priority/${priorityId}/update/`, priorityData);
+};
+
+export const deletePriority = async (priorityId) => {
+  if (!priorityId) throw new Error('Priority ID is required');
+  return await appointmentAPI.delete(`appointment-priority/${priorityId}/delete/`);
+};
+
+
+
+
+
+// =======================
+// SLOT ENDPOINTS
+// =======================
+// export const getAppointmentSlots = async () => {
+//   return await appointmentAPI.get("appointment-slot/");
+// };
+
+// export const createAppointmentSlot = async (appointmentSlotData) => {
+//   return await appointmentAPI.post("appointment-slot/create/", appointmentSlotData);
+// };
+
+// export const updateAppointmentSlot = async (appointmentSlotId, appointmentSlotData) => {
+//   if (!appointmentSlotId) throw new Error('Appointment Slot ID is required');
+//   return await appointmentAPI.patch(`appointment-slot/${appointmentSlotId}/update/`, appointmentSlotData);
+// };
+
+// export const deleteAppointmentSlot = async (appointmentSlotId) => {
+//   if (!appointmentSlotId) throw new Error('Appointment Slot ID is required');
+//   return await appointmentAPI.delete(`appointment-slot/${appointmentSlotId}/delete/`);
+// };

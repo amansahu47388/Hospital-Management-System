@@ -1,5 +1,6 @@
 import { X, Pencil, Trash2 } from "lucide-react";
 import { deleteAppointment } from "../../api/appointmentApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function AppointmentDetailsModal({
   open,
@@ -8,44 +9,49 @@ export default function AppointmentDetailsModal({
   onEdit,
   onDeleteSuccess,
 }) {
+  const notify = useNotify();
+
   if (!open || !data) return null;
+
+  const handleDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete appointment APP-${data.id}?`)) {
+      try {
+        await deleteAppointment(data.id);
+        notify('success', 'Appointment deleted successfully');
+        onDeleteSuccess && onDeleteSuccess();
+        onClose();
+      } catch (error) {
+        console.error("Error deleting appointment:", error);
+        notify('error', 'Failed to delete appointment');
+      }
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="bg-white w-[900px] rounded shadow-lg">
+      <div className="bg-white w-[900px] max-h-[90vh] overflow-y-auto rounded-lg shadow-lg">
 
         {/* ===== HEADER ===== */}
-        <div className="flex justify-between items-center bg-purple-600 text-white px-4 py-3 rounded-t">
-          <h2 className="font-semibold text-sm">Appointment Details</h2>
+        <div className="flex justify-between items-center bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 rounded-t-lg">
+          <h2 className="font-semibold text-lg">Appointment Details</h2>
 
           <div className="flex gap-3">
             {/* EDIT */}
             <button
               title="Edit"
-              onClick={() => onEdit(data)}
+              onClick={() => onEdit && onEdit(data)}
               className="hover:text-gray-200"
             >
-              <Pencil size={16} />
+              <Pencil size={18} />
             </button>
 
             {/* DELETE */}
             <button
               title="Delete"
-              onClick={async () => {
-                if (window.confirm("Are you sure you want to delete this appointment?")) {
-                  try {
-                    await deleteAppointment(data.id);
-                    onDeleteSuccess && onDeleteSuccess();
-                    onClose();
-                  } catch (error) {
-                    console.error("Error deleting appointment:", error);
-                    alert("Failed to delete appointment");
-                  }
-                }
-              }}
+              onClick={handleDelete}
               className="hover:text-gray-200"
             >
-              <Trash2 size={16} />
+              <Trash2 size={18} />
             </button>
 
             {/* CLOSE */}
@@ -54,48 +60,101 @@ export default function AppointmentDetailsModal({
               onClick={onClose}
               className="hover:text-gray-200"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
         </div>
 
         {/* ===== BODY ===== */}
-        <div className="p-6 text-sm">
-          <div className="grid grid-cols-2 gap-y-3 gap-x-12">
+        <div className="p-6">
+          <div className="grid grid-cols-3 gap-6">
 
-            {/* LEFT COLUMN */}
-            <p><b>Patient Name</b><br />{data.patient_name}</p>
-            <p><b>Appointment No</b><br />{data.appointment_no}</p>
+            {/* Patient Info */}
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Patient Name</p>
+              <p className="font-medium">{data.patient_details?.full_name || "—"}</p>
+            </div>
 
-            <p><b>Age</b><br />{data.age || "-"}</p>
-            <p><b>Appointment S.No.</b><br />{data.serial_no || "-"}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Appointment No</p>
+              <p className="font-medium">APP-{data.id}</p>
+            </div>
 
-            <p><b>Email</b><br />{data.email || "-"}</p>
-            <p><b>Appointment Date</b><br />{data.appointment_date}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Gender</p>
+              <p className="font-medium capitalize">{data.patient_details?.gender || "—"}</p>
+            </div>
 
-            <p><b>Phone</b><br />{data.phone}</p>
-            <p><b>Appointment Priority</b><br />{data.priority}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Appointment Date</p>
+              <p className="font-medium">{new Date(data.appointment_date).toLocaleString()}</p>
+            </div>
 
-            <p><b>Gender</b><br />{data.gender}</p>
-            <p><b>Shift</b><br />{data.shift || "-"}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Phone</p>
+              <p className="font-medium">{data.phone || "—"}</p>
+            </div>
 
-            <p><b>Doctor</b><br />{data.doctor}</p>
-            <p><b>Slot</b><br />{data.slot || "-"}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Priority</p>
+              <p className="font-medium">{data.priority_details?.priority || "—"}</p>
+            </div>
 
-            <p><b>Department</b><br />{data.department || "-"}</p>
-            <p><b>Amount</b><br />${data.fees}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Shift</p>
+              <p className="font-medium">{data.shift_details?.shift || "—"}</p>
+            </div>
 
-            <p><b>Live Consultation</b><br />{data.live_consultant}</p>
-            <p><b>Status</b><br />{data.status}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Doctor</p>
+              <p className="font-medium">{data.doctor_name || "—"}</p>
+            </div>
 
-            <p><b>Payment Note</b><br />{data.payment_note || "-"}</p>
-            <p><b>Payment Mode</b><br />{data.payment_mode || "-"}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Department</p>
+              <p className="font-medium">{data.department || "—"}</p>
+            </div>
 
-            <p><b>Message</b><br />{data.message || "-"}</p>
-            <p><b>Transaction ID</b><br />{data.transaction_id || "-"}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Fees</p>
+              <p className="font-medium">${data.fees}</p>
+            </div>
 
-            <p><b>Source</b><br />{data.source}</p>
-            <p><b>Collected By</b><br />{data.collected_by || "-"}</p>
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Status</p>
+              <p className={`font-medium capitalize px-2 py-1 rounded text-xs inline-block ${data.status === "approved"
+                  ? "bg-green-100 text-green-800"
+                  : data.status === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : data.status === "scheduled"
+                      ? "bg-blue-100 text-blue-800"
+                      : data.status === "cancelled"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-gray-100 text-gray-800"
+                }`}>
+                {data.status}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Payment Mode</p>
+              <p className="font-medium capitalize">{data.payment_mode || "—"}</p>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Source</p>
+              <p className="font-medium capitalize">{data.source}</p>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 uppercase mb-1">Created By</p>
+              <p className="font-medium">{data.created_by_name || "—"}</p>
+            </div>
+
+            <div className="col-span-3">
+              <p className="text-xs text-gray-500 uppercase mb-1">Reason</p>
+              <p className="font-medium">{data.reason || "—"}</p>
+            </div>
 
           </div>
         </div>

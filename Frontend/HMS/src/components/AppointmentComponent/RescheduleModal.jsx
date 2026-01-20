@@ -1,23 +1,31 @@
 import { useState, useEffect } from "react";
-import { getDoctors, rescheduleAppointment } from "../../api/appointmentApi";
+import { getDoctors, rescheduleAppointment, getShifts, getPriorities } from "../../api/appointmentApi";
 
 export default function RescheduleModal({ open, onClose, data, onSuccess }) {
   if (!open || !data) return null;
 
   const [doctors, setDoctors] = useState([]);
+  const [shifts, setShifts] = useState([]);
+  const [priorities, setPriorities] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch doctors
+  // Fetch initial data
   useEffect(() => {
-    const fetchDoctors = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getDoctors();
-        setDoctors(response.data);
+        const [docsRes, shiftsRes, prioritiesRes] = await Promise.all([
+          getDoctors(),
+          getShifts(),
+          getPriorities()
+        ]);
+        setDoctors(docsRes.data);
+        setShifts(shiftsRes.data);
+        setPriorities(prioritiesRes.data);
       } catch (error) {
-        console.error("Error fetching doctors:", error);
+        console.error("Error fetching data:", error);
       }
     };
-    if (open) fetchDoctors();
+    if (open) fetchData();
   }, [open]);
 
   const [form, setForm] = useState({
@@ -26,11 +34,9 @@ export default function RescheduleModal({ open, onClose, data, onSuccess }) {
     shift: "",
     slot: "",
     appointment_date: "",
-    priority: "Normal",
-    discount: "",
+    appontmet_priority: "",
     status: "",
-    live_consultant: "No",
-    message: "",
+    reason: "", // backend has 'reason', not 'message'
   });
 
   // Safe date formatter
@@ -44,21 +50,18 @@ export default function RescheduleModal({ open, onClose, data, onSuccess }) {
   // Load data when modal opens
   useEffect(() => {
     if (data) {
-      const doctor = doctors.find(d => d.full_name === data.doctor);
       setForm({
-        doctor: doctor ? doctor.id : "",
+        doctor: data.doctor || "",
         fees: data.fees || "",
         shift: data.shift || "",
         slot: data.slot || "",
         appointment_date: formatDateTimeLocal(data.appointment_date),
-        priority: data.priority || "Normal",
-        discount: data.discount || "",
+        appontmet_priority: data.appontmet_priority || "",
         status: data.status || "",
-        live_consultant: data.live_consultant || "No",
-        message: data.message || "",
+        reason: data.reason || "",
       });
     }
-  }, [data, doctors]);
+  }, [data]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -67,12 +70,22 @@ export default function RescheduleModal({ open, onClose, data, onSuccess }) {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await rescheduleAppointment(data.id, form);
+      // Prepare data for backend
+      const submitData = {
+        ...form,
+        doctor: parseInt(form.doctor) || null,
+        shift: parseInt(form.shift) || null,
+        appontmet_priority: parseInt(form.appontmet_priority) || null,
+        fees: parseFloat(form.fees) || 0,
+        appointment_date: new Date(form.appointment_date).toISOString()
+      };
+
+      await rescheduleAppointment(data.id, submitData);
       onSuccess && onSuccess();
       onClose();
     } catch (error) {
       console.error("Error rescheduling appointment:", error);
-      alert("Failed to reschedule appointment");
+      alert("Failed to reschedule appointment: " + (error.response?.data ? JSON.stringify(error.response.data) : error.message));
     } finally {
       setLoading(false);
     }
@@ -109,9 +122,9 @@ export default function RescheduleModal({ open, onClose, data, onSuccess }) {
 
           <select name="shift" value={form.shift} onChange={handleChange} className="border p-2">
             <option value="">Select Shift</option>
-            <option value="morning">Morning</option>
-            <option value="afternoon">Afternoon</option>
-            <option value="evening">Evening</option>
+            {shifts.map(s => (
+              <option key={s.id} value={s.id}>{s.shift}</option>
+            ))}
           </select>
 
           <select name="slot" value={form.slot} onChange={handleChange} className="border p-2">
@@ -138,19 +151,12 @@ export default function RescheduleModal({ open, onClose, data, onSuccess }) {
             className="border p-2"
           />
 
-          <select name="priority" value={form.priority} onChange={handleChange} className="border p-2">
-            <option>Normal</option>
-            <option>High</option>
-            <option>Emergency</option>
+          <select name="appontmet_priority" value={form.appontmet_priority} onChange={handleChange} className="border p-2">
+            <option value="">Select Priority</option>
+            {priorities.map(p => (
+              <option key={p.id} value={p.id}>{p.priority}</option>
+            ))}
           </select>
-
-          <input
-            name="discount"
-            value={form.discount}
-            onChange={handleChange}
-            placeholder="Discount %"
-            className="border p-2"
-          />
 
           <select name="status" value={form.status} onChange={handleChange} className="border p-2">
             <option value="">Select Status</option>
@@ -160,21 +166,11 @@ export default function RescheduleModal({ open, onClose, data, onSuccess }) {
             <option value="cancelled">Cancelled</option>
           </select>
 
-          <select
-            name="live_consultant"
-            value={form.live_consultant}
-            onChange={handleChange}
-            className="border p-2 col-span-3"
-          >
-            <option>No</option>
-            <option>Yes</option>
-          </select>
-
           <textarea
-            name="message"
-            value={form.message}
+            name="reason"
+            value={form.reason}
             onChange={handleChange}
-            placeholder="Message"
+            placeholder="Reason"
             className="border p-2 col-span-3"
           />
         </div>
