@@ -90,7 +90,7 @@ export default function ItemStore() {
               </thead>
               <tbody>
                 {stores.map(row => (
-                  <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
+                  <tr key={row.id} className="hover:bg-gray-100 border-b border-gray-200 ">
                     <td className="px-3 py-2">{row.store_name}</td>
                     <td className="px-3 py-2">{row.store_code}</td>
                     <td className="px-3 py-2">

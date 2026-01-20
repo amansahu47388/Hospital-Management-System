@@ -136,7 +136,7 @@ export default function PathologyCategory() {
                 <tbody>
                   {categories.length > 0 ? (
                     categories.map((row) => (
-                      <tr key={row.id} className="hover:bg-gray-50 border-b last:border-0">
+                      <tr key={row.id} className="hover:bg-gray-100 border-b border-gray-200">
                         <td className="px-3 py-2 text-left">{row.category_name}</td>
                         <td className="px-3 py-2 text-left">
                           <div className="flex gap-3">

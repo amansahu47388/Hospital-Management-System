@@ -138,7 +138,7 @@ export default function ItemSupplier() {
               </thead>
               <tbody>
                 {suppliers.map((s) => (
-                  <tr key={s.id} className="border-b">
+                  <tr key={s.id} className="border-b border-gray-200">
                     <td className="px-3 py-2">{s.supplier_name}</td>
                     <td className="px-3 py-2">{s.phone}</td>
                     <td className="px-3 py-2">{s.contact_person}</td>

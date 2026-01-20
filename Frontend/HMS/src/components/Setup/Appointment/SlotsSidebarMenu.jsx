@@ -5,7 +5,6 @@ export default function SlotsSidebarMenu() {
     <div className="bg-white rounded-md shadow h-fit sticky top-6">
       <ul className="text-sm">
         {[
-          { name: "Slots", path: "/admin/setup/appointment/slots" },
           { name: "Shift", path: "/admin/setup/appointment/shift" },
           { name: "Appointment Priority", path: "/admin/setup/appointment/priority" },
         ].map((item) => (
