@@ -17,7 +17,7 @@ import OpdPatient from "./pages/OPD/OpdPatient";
 import IpdPatient from "./pages/IPD/IpdPatient";
 import AddOpd from "./pages/OPD/AddOpd";
 import AddIpd from "./pages/IPD/AddIpd";
-import UpdatePatient from "./components/PatientComponent/UpdatePatient"; 
+import UpdatePatient from "./components/PatientComponent/UpdatePatient";
 import AdminProfile from "./pages/AdminModule/AdminProfie";
 import DischargePatients from "./pages/IPD/DischargePatients";
 import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
@@ -29,9 +29,9 @@ import MedicineStock from "./pages/Pharmacy/MedicineStock";
 import MedicinePurchaseList from "./pages/Pharmacy/MedicinePurchaseList";
 import AmbulanceCallList from "./pages/Ambulance/AmbulanceCallList";
 import AmbulanceList from "./pages/Ambulance/AmbulanceList";
-import BirthRecord  from "./pages/BirthDeathRecord/BirthRecord";
+import BirthRecord from "./pages/BirthDeathRecord/BirthRecord";
 import DeathRecord from "./pages/BirthDeathRecord/DeathRecord";
-import ItemStockPage from "./pages/Inventory/ItemStockPage"; 
+import ItemStockPage from "./pages/Inventory/ItemStockPage";
 import IssueItemPage from "./pages/Inventory/IssueItemPage";
 import ItemListPage from "./pages/Inventory/ItemListPage";
 import CelenderPage from "./pages/Celender/CalendarPage";
@@ -58,7 +58,7 @@ import UnitTypeList from "./pages/Setup/Charges/UnitTypeList";
 import AppointmentHeaderFooter from "./pages/Setup/Header_Footer/AppointmentHeaderFooter";
 import OpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/OpdPrescriptionHeaderFooter";
 import OpdBillHeaderFooter from "./pages/Setup/Header_Footer/OpdBillHeaderFooter";
-import IpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/IpdPrescriptionHeaderFooter";  
+import IpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/IpdPrescriptionHeaderFooter";
 import IpdBillHeaderFooter from "./pages/Setup/Header_Footer/IpdBillHeaderFooter";
 import PaySlipHeaderFooter from "./pages/Setup/Header_Footer/PayslipHeaderFooter";
 import PharmacyBillHeaderFooter from "./pages/Setup/Header_Footer/PharmacyBillHeaderFooter";
@@ -73,7 +73,7 @@ import AmbulanceHeaderFooter from "./pages/Setup/Header_Footer/OperationHeaderFo
 import ObstetricHistoryHeaderFooter from "./pages/Setup/Header_Footer/ObstetricHistoryHeaderFooter";
 import OpdAntenatalFindingHeaderFooter from "./pages/Setup/Header_Footer/OpdAntenatalFindingHeaderFooter";
 import IpdAntenatalFindingHeaderFooter from "./pages/Setup/Header_Footer/IpdAntenatalFindingHeaderFooter";
-import DischargeCardHeaderFooter from "./pages/Setup/Header_Footer/DischargeCardHeaderFooter"; 
+import DischargeCardHeaderFooter from "./pages/Setup/Header_Footer/DischargeCardHeaderFooter";
 import PurposeList from "./pages/Setup/Front_Office/PurposeList";
 import ComplaintType from "./pages/Setup/Front_Office/ComplaintType";
 import Source from "./pages/Setup/Front_Office/Source";
@@ -81,16 +81,17 @@ import OperationList from "./pages/Setup/Operation/OperationList";
 import MedicineCategory from "./pages/Setup/Pharmacy/MedicineCategory";
 import Supplier from "./pages/Setup/Pharmacy/Supplier";
 import DoseInterval from "./pages/Setup/Pharmacy/Dose";
-import MedicineDosage from "./pages/Setup/Pharmacy/MedicineDosage"; 
-import Company from "./pages/Setup/Pharmacy/Company";   
-import Unit from "./pages/Setup/Pharmacy/Unit";           
+import MedicineDosage from "./pages/Setup/Pharmacy/MedicineDosage";
+import Company from "./pages/Setup/Pharmacy/Company";
+import Unit from "./pages/Setup/Pharmacy/Unit";
 import MedicineGroup from "./pages/Setup/Pharmacy/MedicineGroup";
 import PathologyCategory from "./pages/Setup/Pathology/PathologyCategory";
 import PathologyParameter from "./pages/Setup/Pathology/PathologyParameter";
 import RadiologyCategory from "./pages/Setup/Radiology/RadiologyCategory";
-import RadiologyParameter from "./pages/Setup/Radiology/RadiologyParameter"; 
+import RadiologyParameter from "./pages/Setup/Radiology/RadiologyParameter";
 import Symptoms from "./pages/Setup/Symptoms/Symptoms";
 import FindingSetup from "./pages/Setup/Finding/FindingSetup";
+import FindingCategory from "./pages/Setup/Finding/FindingCategory";
 import VitalList from "./pages/Setup/Vital/VitalList";
 import IncomeHead from "./pages/Setup/Finance/IncomeHead";
 import ExpenseHead from "./pages/Setup/Finance/ExpenseHead";
@@ -105,67 +106,67 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <BrowserRouter>
-        <Routes>
-          {/* Home Routes */}
-          <Route path="/" element={<Home />} /> 
+          <Routes>
+            {/* Home Routes */}
+            <Route path="/" element={<Home />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/profile" element={<AdminProfile />} />
-          {/* <Route path="/admin/profile/edit" element={<UpdateAdminProfile />} />
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/admin/profile" element={<AdminProfile />} />
+            {/* <Route path="/admin/profile/edit" element={<UpdateAdminProfile />} />
           <Route path="/admin/profile/change-password" element={<ChangePassword />} /> */}
 
 
-          {/* Auth Routes */}
-          <Route path="/login" element={<UserLogin />} />
-          <Route path="/signup" element={<UserSignup />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/signup" element={<AdminSignup />} />
+            {/* Auth Routes */}
+            <Route path="/login" element={<UserLogin />} />
+            <Route path="/signup" element={<UserSignup />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/signup" element={<AdminSignup />} />
 
 
-          {/* Patient Routes */}
-          <Route path="/admin/patients" element={<PatientDashboard />} />
-          <Route path="/admin/patients/add" element={<AddPatient />} />
-          <Route path="/admin/patients/:id" element={<PatientDetail />} />
-          <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
-
-            
-          {/* Appointment Routes */}
-          <Route path="/admin/appointments" element={<Appointment />} />
-          <Route path="/admin/appointments/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
-          <Route path="/admin/appointments/patient-queue" element={<PatientQueue />} />
+            {/* Patient Routes */}
+            <Route path="/admin/patients" element={<PatientDashboard />} />
+            <Route path="/admin/patients/add" element={<AddPatient />} />
+            <Route path="/admin/patients/:id" element={<PatientDetail />} />
+            <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
 
 
-          {/* OPD and IPD Routes */}
-          <Route path="/admin/opd-patients" element={<OpdPatient />} />
-          <Route path="/admin/ipd-patients" element={<IpdPatient />} />
-          <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
-          <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
-          <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
-          <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
-          <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
+            {/* Appointment Routes */}
+            <Route path="/admin/appointments" element={<Appointment />} />
+            <Route path="/admin/appointments/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
+            <Route path="/admin/appointments/patient-queue" element={<PatientQueue />} />
 
 
-          {/* Pathology Routes */}
-          <Route path="/admin/pathology-bills" element={<PathologyBill />} />
-          <Route path="/admin/pathology-tests" element={<PathologyTest />} />
+            {/* OPD and IPD Routes */}
+            <Route path="/admin/opd-patients" element={<OpdPatient />} />
+            <Route path="/admin/ipd-patients" element={<IpdPatient />} />
+            <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
+            <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
+            <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
+            <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
+            <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
 
 
-          {/* Radiology Routes */}
-          <Route path="/admin/radiology-bills" element={<RadiologyBill />} />
-          <Route path="/admin/radiology-tests" element={<RadiologyTest />} />
+            {/* Pathology Routes */}
+            <Route path="/admin/pathology-bills" element={<PathologyBill />} />
+            <Route path="/admin/pathology-tests" element={<PathologyTest />} />
 
 
-          {/* Pharmacy Routes */}
-          <Route path="/admin/pharmacy-bills" element={<PharmacyBill />} />
-          <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
-          <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
+            {/* Radiology Routes */}
+            <Route path="/admin/radiology-bills" element={<RadiologyBill />} />
+            <Route path="/admin/radiology-tests" element={<RadiologyTest />} />
 
 
-          {/* Ambulance Routes */}
-          <Route path="/admin/ambulance" element={<AmbulanceCallList />} />
-          <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
-            
+            {/* Pharmacy Routes */}
+            <Route path="/admin/pharmacy-bills" element={<PharmacyBill />} />
+            <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
+            <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
+
+
+            {/* Ambulance Routes */}
+            <Route path="/admin/ambulance" element={<AmbulanceCallList />} />
+            <Route path="/admin/ambulance-list" element={<AmbulanceList />} />
+
             {/* Birth - Death Routes */}
           <Route path="/admin/birth-death-record/birth-record" element={<BirthRecord/>} />
           <Route path="/admin/birth-death-record/death-record" element={<DeathRecord/>} />

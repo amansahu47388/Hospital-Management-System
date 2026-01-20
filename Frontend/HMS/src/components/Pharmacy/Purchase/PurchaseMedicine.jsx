@@ -159,8 +159,8 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
   const handleSave = async () => {
     if (loading) return;
 
-    if (!supplierId) {
-      notify("warning", "Supplier is required");
+    if (!supplierId  || !billNo) {
+      notify("warning", "fill all required fields");
       return;
     }
 

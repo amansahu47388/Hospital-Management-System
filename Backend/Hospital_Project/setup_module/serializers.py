@@ -133,6 +133,11 @@ class BedSerializers(serializers.ModelSerializer):
 #                     FINDING SETUP SERIALIZERS                                     #
 #***********************************************************************************#
 
+class FindingCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FindingCategory
+        fields = "__all__"
+
 class FindingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Finding

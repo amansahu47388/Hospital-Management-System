@@ -255,4 +255,21 @@ export const updateFinding = (id, data) => {
 
 export const deleteFinding = (id) => {
   return api.delete(`setup/findings/${id}/delete/`);
+};
+
+// Finding Category APIs
+export const getFindingCategories = () => {
+  return api.get("setup/finding-categories/");
+};
+
+export const createFindingCategory = (data) => {
+  return api.post("setup/finding-categories/create/", data);
+};
+
+export const updateFindingCategory = (id, data) => {
+  return api.put(`setup/finding-categories/${id}/update/`, data);
+};
+
+export const deleteFindingCategory = (id) => {
+  return api.delete(`setup/finding-categories/${id}/delete/`);
 };  
