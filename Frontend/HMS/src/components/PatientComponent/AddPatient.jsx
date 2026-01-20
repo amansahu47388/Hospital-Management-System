@@ -291,9 +291,9 @@ function AddPatient({ open, onClose }) {
                   onChange={handleChange}
                   error={errors.gender}
                   options={[
-                    { value: "M", label: "Male" },
-                    { value: "F", label: "Female" },
-                    { value: "O", label: "Other" },
+                    { value: "Male", label: "Male" },
+                    { value: "Female", label: "Female" },
+                    { value: "Other", label: "Other" },
                   ]}
                 />
                 <SelectField

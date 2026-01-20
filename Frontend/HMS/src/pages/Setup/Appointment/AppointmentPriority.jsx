@@ -1,45 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
 import { useNotify } from "../../../context/NotificationContext";
 import SlotsSidebarMenu from "../../../components/Setup/Appointment/SlotsSidebarMenu";
+import { getPriorities, createPriority, updatePriority, deletePriority } from "../../../api/appointmentApi";
 
 
 export default function AppointmentPriority() {
   const notify = useNotify();
 
-  const [rows, setRows] = useState([
-    { id: 1, name: "Normal" },
-    { id: 2, name: "Urgent" },
-    { id: 3, name: "Very Urgent" },
-    { id: 4, name: "Low" },
-  ]);
-
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ id: null, name: "" });
+  const [form, setForm] = useState({ id: null, priority: "" });
 
-  const save = () => {
-    if (!form.name.trim()) {
+  useEffect(() => {
+    fetchPriorities();
+  }, []);
+
+  const fetchPriorities = async () => {
+    setLoading(true);
+    try {
+      const response = await getPriorities();
+      setRows(response.data);
+    } catch (err) {
+      console.error("Error fetching priorities:", err);
+      notify("error", "Failed to fetch priorities");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const save = async () => {
+    if (!form.priority.trim()) {
       notify("error", "Priority name is required");
       return;
     }
 
-    if (form.id) {
-      setRows(rows.map(r => (r.id === form.id ? form : r)));
-      notify("success", "Priority updated successfully");
-    } else {
-      setRows([...rows, { ...form, id: Date.now() }]);
-      notify("success", "Priority added successfully");
+    try {
+      if (form.id) {
+        await updatePriority(form.id, { priority: form.priority });
+        notify("success", "Priority updated successfully");
+      } else {
+        await createPriority({ priority: form.priority });
+        notify("success", "Priority added successfully");
+      }
+      fetchPriorities();
+      setOpen(false);
+      setForm({ id: null, priority: "" });
+    } catch (err) {
+      console.error("Error saving priority:", err);
+      notify("error", "Failed to save priority");
     }
-    setOpen(false);
-    setForm({ id: null, name: "" });
   };
 
-  const handleDelete = (row) => {
-    if (!window.confirm(`Delete ${row.name}?`)) return;
-    setRows(rows.filter(r => r.id !== row.id));
-    notify("success", "Priority deleted successfully");
+  const handleDelete = async (row) => {
+    if (!window.confirm(`Delete ${row.priority}?`)) return;
+    try {
+      await deletePriority(row.id);
+      notify("success", "Priority deleted successfully");
+      fetchPriorities();
+    } catch (err) {
+      console.error("Error deleting priority:", err);
+      notify("error", "Failed to delete priority");
+    }
   };
 
   return (
@@ -52,7 +77,7 @@ export default function AppointmentPriority() {
 
           <button
             onClick={() => {
-              setForm({ id: null, name: "" });
+              setForm({ id: null, priority: "" });
               setOpen(true);
             }}
             className="flex items-center gap-2 bg-gradient-to-b
@@ -78,8 +103,8 @@ export default function AppointmentPriority() {
               <tbody>
                 {rows.length > 0 ? (
                   rows.map(r => (
-                    <tr key={r.id} className="hover:bg-gray-50 border-b last:border-0">
-                      <td className="px-3 py-2 text-left text-purple-600 font-medium">{r.name}</td>
+                    <tr key={r.id} className="hover:bg-gray-50 border-b border-gray-200">
+                      <td className="px-3 py-2 text-left text-purple-600 font-medium">{r.priority}</td>
                       <td className="px-3 py-2 text-left">
                         <div className="flex gap-3">
                           <button
@@ -127,8 +152,8 @@ export default function AppointmentPriority() {
                 <input
                   className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition"
                   placeholder="Enter priority name"
-                  value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
+                  value={form.priority}
+                  onChange={e => setForm({ ...form, priority: e.target.value })}
                 />
               </div>
 

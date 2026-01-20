@@ -1,19 +1,5 @@
 from django.urls import path
-from .views import (
-    # Birth Records
-    BirthRecordListAPIView,
-    BirthRecordDetailAPIView,
-    BirthRecordCreateAPIView,
-    BirthRecordUpdateAPIView,
-    BirthRecordDeleteAPIView,
-    
-    # Death Records
-    DeathRecordListAPIView,
-    DeathRecordDetailAPIView,
-    DeathRecordCreateAPIView,
-    DeathRecordUpdateAPIView,
-    DeathRecordDeleteAPIView,
-)
+from .views import *
 
 urlpatterns = [
     # Birth Records

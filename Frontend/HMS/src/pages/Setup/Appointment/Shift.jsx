@@ -1,42 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
 import { useNotify } from "../../../context/NotificationContext";
 import SlotsSidebarMenu from "../../../components/Setup/Appointment/SlotsSidebarMenu";
+import { getShifts, createShift, updateShift, deleteShift } from "../../../api/appointmentApi";
 
 export default function Shift() {
   const notify = useNotify();
 
-  const [rows, setRows] = useState([
-    { id: 1, name: "Morning", from: "10:00 AM", to: "12:30 PM" },
-    { id: 2, name: "Evening", from: "04:00 PM", to: "07:00 PM" },
-  ]);
-
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ id: null, name: "", from: "", to: "" });
+  const [form, setForm] = useState({ id: null, shift: "", time_from: "", time_to: "" });
 
-  const save = () => {
-    if (!form.name.trim() || !form.from.trim() || !form.to.trim()) {
+  useEffect(() => {
+    fetchShifts();
+  }, []);
+
+  const fetchShifts = async () => {
+    setLoading(true);
+    try {
+      const response = await getShifts();
+      setRows(response.data);
+    } catch (err) {
+      console.error("Error fetching shifts:", err);
+      notify("error", "Failed to fetch shifts");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const save = async () => {
+    if (!form.shift.trim() || !form.time_from.trim() || !form.time_to.trim()) {
       notify("error", "All fields are required");
       return;
     }
 
-    if (form.id) {
-      setRows(rows.map(r => (r.id === form.id ? form : r)));
-      notify("success", "Shift updated successfully");
-    } else {
-      setRows([...rows, { ...form, id: Date.now() }]);
-      notify("success", "Shift added successfully");
+    try {
+      const payload = {
+        shift: form.shift,
+        time_from: form.time_from,
+        time_to: form.time_to,
+      };
+
+      if (form.id) {
+        await updateShift(form.id, payload);
+        notify("success", "Shift updated successfully");
+      } else {
+        await createShift(payload);
+        notify("success", "Shift added successfully");
+      }
+      fetchShifts();
+      setOpen(false);
+      setForm({ id: null, shift: "", time_from: "", time_to: "" });
+    } catch (err) {
+      console.error("Error saving shift:", err);
+      notify("error", "Failed to save shift");
     }
-    setOpen(false);
-    setForm({ id: null, name: "", from: "", to: "" });
   };
 
-  const handleDelete = (row) => {
-    if (!window.confirm(`Delete ${row.name} shift?`)) return;
-    setRows(rows.filter(r => r.id !== row.id));
-    notify("success", "Shift deleted successfully");
+  const handleDelete = async (row) => {
+    if (!window.confirm(`Delete ${row.shift} shift?`)) return;
+    try {
+      await deleteShift(row.id);
+      notify("success", "Shift deleted successfully");
+      fetchShifts();
+    } catch (err) {
+      console.error("Error deleting shift:", err);
+      notify("error", "Failed to delete shift");
+    }
   };
 
   return (
@@ -49,7 +82,7 @@ export default function Shift() {
 
           <button
             onClick={() => {
-              setForm({ id: null, name: "", from: "", to: "" });
+              setForm({ id: null, shift: "", time_from: "", time_to: "" });
               setOpen(true);
             }}
             className="flex items-center gap-2 bg-gradient-to-b
@@ -63,7 +96,6 @@ export default function Shift() {
         <div className="flex gap-4">
 
           <SlotsSidebarMenu />
-
 
           {/* TABLE */}
           <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
@@ -79,10 +111,10 @@ export default function Shift() {
               <tbody>
                 {rows.length > 0 ? (
                   rows.map(r => (
-                    <tr key={r.id} className="hover:bg-gray-50 border-b last:border-0">
-                      <td className="px-3 py-2 text-left text-purple-600 font-medium">{r.name}</td>
-                      <td className="px-3 py-2 text-left">{r.from}</td>
-                      <td className="px-3 py-2 text-left">{r.to}</td>
+                    <tr key={r.id} className="hover:bg-gray-50 border-b border-gray-200">
+                      <td className="px-3 py-2 text-left text-purple-600 font-medium">{r.shift}</td>
+                      <td className="px-3 py-2 text-left">{r.time_from}</td>
+                      <td className="px-3 py-2 text-left">{r.time_to}</td>
                       <td className="px-3 py-2 text-left">
                         <div className="flex gap-3">
                           <button
@@ -131,8 +163,8 @@ export default function Shift() {
                   <input
                     className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition"
                     placeholder="e.g., Morning, Evening"
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
+                    value={form.shift}
+                    onChange={e => setForm({ ...form, shift: e.target.value })}
                   />
                 </div>
                 <div>
@@ -140,8 +172,8 @@ export default function Shift() {
                   <input
                     type="time"
                     className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition"
-                    value={form.from}
-                    onChange={e => setForm({ ...form, from: e.target.value })}
+                    value={form.time_from}
+                    onChange={e => setForm({ ...form, time_from: e.target.value })}
                   />
                 </div>
                 <div>
@@ -149,8 +181,8 @@ export default function Shift() {
                   <input
                     type="time"
                     className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition"
-                    value={form.to}
-                    onChange={e => setForm({ ...form, to: e.target.value })}
+                    value={form.time_to}
+                    onChange={e => setForm({ ...form, time_to: e.target.value })}
                   />
                 </div>
               </div>
