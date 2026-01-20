@@ -27,7 +27,7 @@ import {
   Menu,
   ChevronDown,
   ChevronUp,
-  ChevronRight ,
+  ChevronRight,
   CreditCard,
 } from "lucide-react";
 
@@ -41,29 +41,29 @@ const navItems = [
   { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
   { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
   { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
-   { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
- 
-   
-   
+  { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
+
+
+
   // { to: "/multi-branch", label: "Multi Branch", Icon: Building2 },
   // { to: "/lab", label: "Lab", Icon: FlaskConical },
   // { to: "/ward", label: "Ward", Icon: Bed },
   // { to: "/blood-bank", label: "Blood Bank", Icon: Droplet },
   // { to: "/treatment", label: "Treatment", Icon: Stethoscope },
-  
-   
+
+
   { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
-   { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },   
+  { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },
   //{ to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
   //{ to: "/Duty-Roster", label: "Duty Roster", Icon: ClipboardList },
- // { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
+  // { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
   //{ to: "/Referral", label: "Referral", Icon: UserCheck },
   //{ to: "/TPA-Management", label: "TPA Management", Icon: Building2 },
   { to: "/Finance", label: "Finance", Icon: BarChart3 },
- 
+
   //{ to: "/Messaging", label: "Messaging", Icon: MessageCircle },
   //{ to: "/Download-Calendar", label: "Download Calendar", Icon: FileDown },
- 
+
   //{ to: "/Front-CMS", label: "Front CMS", Icon: Monitor },
   //{ to: "/Live-Consultation", label: "Live Consultation", Icon: Stethoscope },
   //{ to: "/Reports", label: "Reports", Icon: BarChart3 },
@@ -74,7 +74,7 @@ function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [birthDeathRecordOpen, setBirthDeathRecordOpen] = useState(false);
- 
+
   const [financeOpen, setFinanceOpen] = useState(false);
   const [setupOpen, setSetupOpen] = useState(false);
   const handleToggle = () => {
@@ -89,26 +89,26 @@ function Sidebar() {
     setBirthDeathRecordOpen(!birthDeathRecordOpen);
   };
 
-  
+
 
   const toggleFinance = () => {
     setFinanceOpen(!financeOpen);
   };
   const toggleSetup = () => {
-  setSetupOpen(!setupOpen);
-};
+    setSetupOpen(!setupOpen);
+  };
 
-  
+
   // Close submenu when sidebar collapses
   useEffect(() => {
     if (collapsed) {
       setBirthDeathRecordOpen(false);
-     
+
       setFinanceOpen(false);
       setSetupOpen(false);
     }
   }, [collapsed]);
-  
+
 
   return (
     <div className="relative">
@@ -117,14 +117,13 @@ function Sidebar() {
         onClick={handleToggle}
         className="absolute  top-4 -right-10 z-50 p-1  cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
-      <Menu />
+        <Menu />
       </button>
-     
+
       {/* SIDEBAR */}
       <aside
-        className={`fixed md:relative top-0 left-0 z-40 ${
-          collapsed ? "w-20" : "w-64"
-        } h-screen overflow-y-auto
+        className={`fixed md:relative top-0 left-0 z-40 ${collapsed ? "w-20" : "w-64"
+          } h-screen overflow-y-auto
         text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
         transition-transform duration-1000 md:transition-all md:duration-1000
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
@@ -150,10 +149,9 @@ function Sidebar() {
                       end
                       className={({ isActive }) =>
                         `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
-                        ${
-                          isActive
-                            ? "!text-white bg-white/10 rounded-md"
-                            : "!text-white hover:!text-gray-200"
+                        ${isActive
+                          ? "!text-white bg-white/10 rounded-md"
+                          : "!text-white hover:!text-gray-200"
                         }`
                       }
                     >
@@ -166,11 +164,10 @@ function Sidebar() {
                       <button
                         onClick={toggleBirthDeathRecord}
                         className={`w-full flex items-center justify-between py-2 px-2 transition-all duration-700
-                        ${
-                          birthDeathRecordOpen
+                        ${birthDeathRecordOpen
                             ? "bg-white/10 rounded-md"
                             : "hover:text-gray-200"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-4">
                           <FileBadge size={20} />
@@ -220,11 +217,10 @@ function Sidebar() {
                     <button
                       onClick={toggleFinance}
                       className={`w-full flex items-center justify-between py-2 px-2 transition-all duration-700
-                      ${
-                        financeOpen
+                      ${financeOpen
                           ? "bg-white/10 rounded-md"
                           : "hover:text-gray-200"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-4">
                         <BarChart3 size={20} />
@@ -302,7 +298,7 @@ function Sidebar() {
                           { label: "Findings", path: "/admin/setup/finding" },
                           { label: "Vitals", path: "/admin/setup/vitals" },
                           { label: "Finance", path: "/admin/setup/finance/income-head" },
-                          {label: "Inventory", path: "/admin/setup/inventory/item-category" },
+                          { label: "Inventory", path: "/admin/setup/inventory/item-category" },
                           { label: "Appointment", path: "/admin/setup/appointment/slots" },
                           { label: "Custom Fields", path: "/admin/setup/Custom Fields" },
 
@@ -334,10 +330,9 @@ function Sidebar() {
                   end
                   className={({ isActive }) =>
                     `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
-                    ${
-                      isActive
-                        ? "!text-white bg-white/10 rounded-md"
-                        : "!text-white hover:!text-gray-200"
+                    ${isActive
+                      ? "!text-white bg-white/10 rounded-md"
+                      : "!text-white hover:!text-gray-200"
                     }`
                   }
                 >
