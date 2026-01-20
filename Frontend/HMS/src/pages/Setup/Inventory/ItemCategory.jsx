@@ -106,7 +106,7 @@ export default function ItemCategory() {
               </thead>
               <tbody>
                 {items.map((row) => (
-                  <tr key={row.id} className="border-b">
+                  <tr key={row.id} className="border-b border-gray-200">
                     <td className="px-3 py-2">{row.name}</td>
                     <td className="px-3 py-2">
                       <div className="flex gap-3">

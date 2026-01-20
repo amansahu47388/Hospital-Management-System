@@ -4,7 +4,7 @@ from .views import *
 urlpatterns = [
     
 #***********************************************************************************#
-#                            PATHOLOGY PARAMETER SETUP ROUTES                                #
+#                            PATHOLOGY PARAMETER SETUP ROUTES                       #
 #***********************************************************************************#
     path("pathology/parameter", PathologyParameterAPI.as_view(), name="pathology-parameter"),
     path("pathology/parameter/create/", PathologyParameterAPI.as_view(), name="pathology-parameter-create"),
@@ -16,7 +16,7 @@ urlpatterns = [
 
     
 #***********************************************************************************#
-#                                PATHOLOGY CATEGORY ROUTES                                #
+#                                PATHOLOGY CATEGORY ROUTES                          #
 #***********************************************************************************#
     path("pathology/category", PathologyCategoryAPI.as_view(), name="pathology-category"),
     path("pathology/category/create/", PathologyCategoryAPI.as_view(), name="pathology-category-create"),

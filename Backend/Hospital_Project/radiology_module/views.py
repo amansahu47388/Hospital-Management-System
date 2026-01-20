@@ -6,15 +6,67 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Q
-from .models import RadiologyBill, RadiologyBillItem, RadiologyTest, RadiologyCategory, RadiologyParameter
-from .serializers import (
-    RadiologyTestCreateSerializer,
-    RadiologyTestListSerializer,
-    RadiologyTestUpdateSerializer,
-   RadiologyBillCreateSerializer, RadiologyBillListSerializer, RadiologyBillDetailSerializer
-)
+from .models import *
+from .serializers import *
 from opd_ipd_module.models import Prescription
 from django.db import transaction
+
+class RadiologyCategoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = RadiologyCategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(created_by=request.user)
+        return Response({"message": "Radiology category created successfully"}, status=201)
+
+    def get(self, request):
+        categories = RadiologyCategory.objects.all()
+        serializer = RadiologyCategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        category = get_object_or_404(RadiologyCategory, pk=pk)
+        serializer = RadiologyCategorySerializer(category, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Radiology category updated successfully"})
+
+    def delete(self, request, pk):
+        category = get_object_or_404(RadiologyCategory, pk=pk)
+        category.delete()
+        return Response({"message": "Radiology category deleted successfully"})
+
+
+
+class RadiologyParameterAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = RadiologyParameterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(created_by=request.user)
+        return Response({"message": "Radiology parameter created successfully"}, status=201)
+
+    def get(self, request):
+        parameters = RadiologyParameter.objects.all()
+        serializer = RadiologyParameterSerializer(parameters, many=True)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        parameter = get_object_or_404(RadiologyParameter, pk=pk)
+        serializer = RadiologyParameterSerializer(parameter, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Radiology parameter updated successfully"})
+
+    def delete(self, request, pk):
+        parameter = get_object_or_404(RadiologyParameter, pk=pk)
+        parameter.delete()
+        return Response({"message": "Radiology parameter deleted successfully"})
+
+
+
 
 class RadiologyTestCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -61,22 +113,22 @@ from .models import RadiologyCategory, RadiologyParameter
 from .serializers import RadiologyCategorySerializer, RadiologyParameterSerializer
 
 
-class RadiologyCategoryListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+# class RadiologyCategoryListAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        categories = RadiologyCategory.objects.all()
-        serializer = RadiologyCategorySerializer(categories, many=True)
-        return Response(serializer.data)
+#     def get(self, request):
+#         categories = RadiologyCategory.objects.all()
+#         serializer = RadiologyCategorySerializer(categories, many=True)
+#         return Response(serializer.data)
 
 
-class RadiologyParameterListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+# class RadiologyParameterListAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        params = RadiologyParameter.objects.all().order_by('parameter_name')
-        serializer = RadiologyParameterSerializer(params, many=True)
-        return Response(serializer.data)
+#     def get(self, request):
+#         params = RadiologyParameter.objects.all().order_by('parameter_name')
+#         serializer = RadiologyParameterSerializer(params, many=True)
+#         return Response(serializer.data)
 
 class GenerateRadiologyBillAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -155,8 +207,6 @@ class PrescriptionSearchAPIView(APIView):
         try:
             prescription = Prescription.objects.get(id=prescription_id)
             
-            # Try to get patient from related pathology bills or other sources
-            # For now, return basic prescription info
             return Response({
                 "id": prescription.id,
                 "created_at": prescription.created_at,

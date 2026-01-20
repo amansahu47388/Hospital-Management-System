@@ -153,7 +153,7 @@ export default function PathologyParameter() {
                 <tbody>
                   {list.length > 0 ? (
                     list.map((p) => (
-                      <tr key={p.id} className="hover:bg-gray-50 border-b last:border-0">
+                      <tr key={p.id} className="hover:bg-gray-100 border-b border-gray-200">
                         <td className="px-3 py-2 text-left text-purple-600 font-medium">{p.parameter_name}</td>
                         <td className="px-3 py-2 text-left">{p.reference_range}</td>
                         <td className="px-3 py-2 text-left">{p.unit}</td>
