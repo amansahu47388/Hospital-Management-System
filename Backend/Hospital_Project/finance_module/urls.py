@@ -3,9 +3,17 @@ from .views import *
 
 urlpatterns = [
     path("finance/incomehead/", IncomeHeadView.as_view(), name="incomehead"),
+    path("finance/incomehead/create/", IncomeHeadView.as_view(), name="incomehead-create"),
+    path("finance/incomehead/<int:pk>/update/", IncomeHeadView.as_view(), name="incomehead-update"),
+    path("finance/incomehead/<int:pk>/details/", IncomeHeadView.as_view(), name="incomehead-details"),
+    path("finance/incomehead/<int:pk>/delete/", IncomeHeadView.as_view(), name="incomehead-delete"),
 
     
     path("finance/expensehead/", ExpenseHeadView.as_view(), name="expensehead"),
+    path("finance/expensehead/create/", ExpenseHeadView.as_view(), name="expensehead-create"),
+    path("finance/expensehead/<int:pk>/update/", ExpenseHeadView.as_view(), name="expensehead-update"),
+    path("finance/expensehead/<int:pk>/details/", ExpenseHeadView.as_view(), name="expensehead-details"),
+    path("finance/expensehead/<int:pk>/delete/", ExpenseHeadView.as_view(), name="expensehead-delete"),
 
 
     path("finance/income/", IncomeAPI.as_view(), name="income"),

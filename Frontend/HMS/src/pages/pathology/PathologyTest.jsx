@@ -73,7 +73,7 @@ const handleDelete = async (id) => {
       <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
 
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center bg-white p-4 shadow md:justify-between gap-4 mb-6">
           <h1 className="text-xl font-semibold text-gray-800">
             Pathology Test
           </h1>

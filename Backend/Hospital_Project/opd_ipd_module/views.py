@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import ProtectedError
 from .serializers import IpdPatientCreateSerializer, IpdPatientListSerializer, IpdPatientListSerializer, IpdPatientSerializer, OpdPatientSerializer, OpdPatientCreateSerializer , OpdPatientListSerializer, IpdDischargeSerializer
 from django.utils.timezone import now
-from .serializers import OpdPatientUpdateSerializer , IpdPatientUpdateSerializer, IpdDischargedListSerializer
+from .serializers import OpdPatientUpdateSerializer , IpdPatientUpdateSerializer, IpdDischargedListSerializer, PrescriptionSerializer
 from rest_framework.views import APIView
 
 
@@ -210,3 +210,28 @@ class IpdDischargeRevertAPIView(APIView):
             {"detail": "Discharge reverted successfully"},
             status=status.HTTP_200_OK
         )
+
+
+class PrescriptionAPI(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, pk=None):
+        if pk:
+            obj = get_object_or_404(Prescription, pk=pk)
+            serializer = PrescriptionSerializer(obj)
+            return Response(serializer.data)
+        queryset = Prescription.objects.all().order_by("-created_at")
+        serializer = PrescriptionSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = PrescriptionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        obj = get_object_or_404(Prescription, pk=pk)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

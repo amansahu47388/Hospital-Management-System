@@ -33,7 +33,7 @@ urlpatterns = [
 
 
     # *********************************************************************************************#
-    #                            HOSPITAL BAD SETUP ROUTES                                     #
+    #                            BAD SETUP ROUTES                                     #
     # *********************************************************************************************#
 
     path("floors/", FloorAPI.as_view(), name="floor-list"),
@@ -58,10 +58,57 @@ urlpatterns = [
 
 
 
+#***********************************************************************************#
+#                            OPERATIONS SETUP ROUTES                                #
+#***********************************************************************************#
+
+    path("operation-setup/", OperationSetupAPI.as_view(), name="operation-setup-list"),
+    path("operation-setup/create/", OperationSetupAPI.as_view(), name="operation-setup-create"),
+    path("operation-setup/<int:pk>/update/", OperationSetupAPI.as_view(), name="operation-setup-update"),
+    path("operation-setup/<int:pk>/delete/", OperationSetupAPI.as_view(), name="operation-setup-delete"),
 
 
 
 
+
+#***********************************************************************************#
+#                            SYMPTOM SETUP ROUTES                                   #
+#***********************************************************************************#
+   
+    path("symptoms/", SymptomAPI.as_view(), name="symptoms-list"),
+    path("symptoms/create/", SymptomAPI.as_view(), name="symptoms-create"),
+    path("symptoms/<int:pk>/update/", SymptomAPI.as_view(), name="symptoms-update"),
+    path("symptoms/<int:pk>/delete/", SymptomAPI.as_view(), name="symptoms-delete"),
+
+
+
+
+#***********************************************************************************#
+#                            VITALS SETUP ROUTES                                    #
+#***********************************************************************************#
+
+    path("vitals/", VitalAPI.as_view(), name="vitals-list"),
+    path("vitals/create/", VitalAPI.as_view(), name="vitals-create"),
+    path("vitals/<int:pk>/update/", VitalAPI.as_view(), name="vitals-update"),
+    path("vitals/<int:pk>/delete/", VitalAPI.as_view(), name="vitals-delete"),
+
+
+
+
+
+#***********************************************************************************#
+#                            FINDING SETUP ROUTES                                    #
+#***********************************************************************************#
+
+    path("findings/", FindingAPI.as_view(), name="findings-list"),
+    path("findings/create/", FindingAPI.as_view(), name="findings-create"),
+    path("findings/<int:pk>/update/", FindingAPI.as_view(), name="findings-update"),
+    path("findings/<int:pk>/delete/", FindingAPI.as_view(), name="findings-delete"),
+
+    path("finding-categories/", FindingCategoryAPI.as_view(), name="finding-categories-list"),
+    path("finding-categories/create/", FindingCategoryAPI.as_view(), name="finding-categories-create"),
+    path("finding-categories/<int:pk>/update/", FindingCategoryAPI.as_view(), name="finding-categories-update"),
+    path("finding-categories/<int:pk>/delete/", FindingCategoryAPI.as_view(), name="finding-categories-delete"),
 
 
 

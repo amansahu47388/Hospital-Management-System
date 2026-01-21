@@ -37,8 +37,6 @@ class Unit(models.Model):
 
 
 
-
-
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=255,unique=True)
     supplier_contact = models.CharField(max_length=20,help_text="Supplier main contact number")

@@ -6,52 +6,61 @@ from django.utils import timezone
 
 
 
+#***********************************************************************************#
+#                               PATHOLOGY CATEGORY SERIALIZE                        #
+#***********************************************************************************#
 class PathologyCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = PathologyCategory
         fields = ["id", "category_name"]
+        read_only_fields = ("created_at", "updated_at")
 
 
 
 
-
+#***********************************************************************************#
+#                               PATHOLOGY PARAMETER SERIALIZE                       #
+#***********************************************************************************#
 class PathologyParameterSerializer(serializers.ModelSerializer):
     class Meta:
         model = PathologyParameter
-        fields = ["parameter_name", "reference_range", "unit"]
+        fields = ["id", "parameter_name", "reference_range", "unit", "description"]
+        read_only_fields = ("created_at", "updated_at")
 
     def validate_reference_range(self, value):
         if not value:
             raise serializers.ValidationError("Reference range is required")
         return value
+    
 
 
 
 
-
-
+#***********************************************************************************#
+#                               PATHOLOGY TEST SERIALIZE                            #
+#***********************************************************************************#
 class PathologyTestCreateSerializer(serializers.ModelSerializer):
-    parameters = PathologyParameterSerializer(many=True)
+    parameter_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False
+    )
 
     class Meta:
         model = PathologyTest
-        fields = ["id", "test_name", "short_name", "test_type", "category", "sub_category", "method", "report_days", "charges", "tax",
-            "standard_charge", "total_amount", "parameters",
-        ]
+        fields = ["id", "test_name", "short_name", "test_type", "category", "sub_category", 
+                  "method", "report_days", "charges", "tax", "standard_charge", "total_amount", 
+                  "parameter_ids"]
 
     def create(self, validated_data):
-        parameters_data = validated_data.pop("parameters")
-
+        parameter_ids = validated_data.pop("parameter_ids", [])
+        
         pathology_test = PathologyTest.objects.create(**validated_data)
-
-        for param in parameters_data:
-            PathologyParameter.objects.create(
-                pathology_test=pathology_test,
-                parameter_name=param["parameter_name"],
-                reference_range=param["reference_range"],
-                unit=param["unit"],
-            )
-
+        
+        # Set many-to-many relationship
+        if parameter_ids:
+            pathology_test.parameters.set(parameter_ids)
+        
         return pathology_test
     
 
@@ -62,7 +71,7 @@ class PathologyTestCreateSerializer(serializers.ModelSerializer):
 class PathologyParameterNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = PathologyParameter
-        fields = ["parameter_name", "reference_range", "unit"]
+        fields = ["id", "parameter_name", "reference_range", "unit", "description"]
     
 
 
@@ -85,31 +94,29 @@ class PathologyTestListSerializer(serializers.ModelSerializer):
 
 
 class PathologyTestUpdateSerializer(serializers.ModelSerializer):
-    parameters = PathologyParameterSerializer(many=True)
+    parameter_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False
+    )
 
     class Meta:
         model = PathologyTest
-        fields = ["test_name","short_name","test_type","category","sub_category","method","report_days","charges",
-            "tax", "standard_charge", "total_amount", "parameters",
-        ]
+        fields = ["test_name", "short_name", "test_type", "category", "sub_category", 
+                  "method", "report_days", "charges", "tax", "standard_charge", 
+                  "total_amount", "parameter_ids"]
+    
     def update(self, instance, validated_data):
-        parameters_data = validated_data.pop("parameters")
+        parameter_ids = validated_data.pop("parameter_ids", None)
 
         # Update main test fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
 
-        # Remove old parameters
-        instance.parameters.all().delete()
-        # Recreate parameters
-        for param in parameters_data:
-            PathologyParameter.objects.create(
-                pathology_test=instance,
-                parameter_name=param["parameter_name"],
-                reference_range=param["reference_range"],
-                unit=param["unit"],
-            )
+        # Update many-to-many relationship
+        if parameter_ids is not None:
+            instance.parameters.set(parameter_ids)
 
         return instance
 
@@ -119,15 +126,17 @@ class PathologyTestUpdateSerializer(serializers.ModelSerializer):
 
 
 
+
+
+#***********************************************************************************#
+#                               PATHOLOGY BILL SERIALIZE                            #
+#***********************************************************************************#
 class PathologyBillItemSerializer(serializers.ModelSerializer):
     test_name = serializers.CharField(source="test.test_name", read_only=True)
     
     class Meta:
         model = PathologyBillItem
         fields = ["id", "test", "test_name", "price", "tax", "report_days", "report_date"]
-
-
-
 
 
 

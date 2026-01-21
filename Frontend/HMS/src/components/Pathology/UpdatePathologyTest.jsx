@@ -38,25 +38,32 @@ export default function UpdatePathologyTest({ open, onClose, test }) {
 
   /* ================= PREFILL ================= */
   useEffect(() => {
-  if (!open || !test) return;
+    if (!open || !test) return;
 
-  setFormData({
-    test_name: test.test_name || "",
-    short_name: test.short_name || "",
-    test_type: test.test_type || "",
-    category: test.category?.id || "",
-    sub_category: test.sub_category || "",
-    method: test.method || "",
-    report_days: test.report_days || "",
-    charge_category: test.charge_category || "",
-    charges: test.charges?.id || "",
-    tax: test.tax || "",
-    standard_charge: test.standard_charge || "",
-    amount: test.total_amount || "",
-  });
+    setFormData({
+      test_name: test.test_name || "",
+      short_name: test.short_name || "",
+      test_type: test.test_type || "",
+      category: test.category?.id || "",
+      sub_category: test.sub_category || "",
+      method: test.method || "",
+      report_days: test.report_days || "",
+      charge_category: test.charge_category || "",
+      charges: test.charges?.id || "",
+      tax: test.tax || "",
+      standard_charge: test.standard_charge || "",
+      amount: test.total_amount || "",
+    });
 
-  setParameters(test.parameters || []);
-}, [open, test]);
+    // Map parameters to include parameter_id for dropdown
+    const mappedParams = (test.parameters || []).map(p => ({
+      parameter_id: p.id,
+      parameter_name: p.parameter_name,
+      reference_range: p.reference_range,
+      unit: p.unit,
+    }));
+    setParameters(mappedParams);
+  }, [open, test]);
 
 
   /* ================= FETCH SETUP ================= */
@@ -131,48 +138,44 @@ export default function UpdatePathologyTest({ open, onClose, test }) {
 
   /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const payload = {
-    test_name: formData.test_name,
-    short_name: formData.short_name,
-    test_type: formData.test_type,
-    category: formData.category,
-    sub_category: formData.sub_category,
-    method: formData.method,
-    report_days: Number(formData.report_days || 0),
-    charges: formData.charges,
-    tax: Number(formData.tax || 0),
-    standard_charge: Number(formData.standard_charge || 0),
-    total_amount: Number(formData.amount || 0),
-    parameters: parameters
-      .filter(p => p.parameter_name && p.reference_range && p.unit)
-      .map(p => ({
-        parameter_name: p.parameter_name,
-        reference_range: p.reference_range,
-        unit: p.unit,
-      })),
+    const payload = {
+      test_name: formData.test_name,
+      short_name: formData.short_name,
+      test_type: formData.test_type,
+      category: formData.category,
+      sub_category: formData.sub_category,
+      method: formData.method,
+      report_days: Number(formData.report_days || 0),
+      charges: formData.charges,
+      tax: Number(formData.tax || 0),
+      standard_charge: Number(formData.standard_charge || 0),
+      total_amount: Number(formData.amount || 0),
+      parameter_ids: parameters
+        .filter(p => p.parameter_id)
+        .map(p => Number(p.parameter_id)),
+    };
+
+    try {
+      setLoading(true);
+      await updatePathologyTest(test.id, payload);
+      notify("success", "Pathology test updated successfully");
+      onClose();
+    } catch (err) {
+      console.error("UPDATE ERROR:", err.response?.data || err);
+      notify("error", "Update failed. Check console.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  try {
-    setLoading(true);
-    await updatePathologyTest(test.id, payload);
-    notify("success", "Pathology test updated successfully");
-    onClose();
-  } catch (err) {
-    console.error("UPDATE ERROR:", err.response?.data || err);
-    notify("error", "Update failed. Check console.");
-  } finally {
-    setLoading(false);
-  }
-};
 
-
-const calculateTotalAmount = (standard, tax) => {
-  const std = Number(standard || 0);
-  const tx = Number(tax || 0);
-  return +(std + (std * tx) / 100).toFixed(2);
-};
+  const calculateTotalAmount = (standard, tax) => {
+    const std = Number(standard || 0);
+    const tx = Number(tax || 0);
+    return +(std + (std * tx) / 100).toFixed(2);
+  };
 
 
 
@@ -231,23 +234,23 @@ const calculateTotalAmount = (standard, tax) => {
                 name="charges"
                 value={formData.charges}
                 onChange={(e) => {
-                    const found = filteredCharges.find(
+                  const found = filteredCharges.find(
                     (c) => String(c.id) === String(e.target.value)
-                    );
+                  );
 
-                    if (found) {
+                  if (found) {
                     const total = calculateTotalAmount(found.charge_amount, found.tax);
 
                     setFormData({
-                        ...formData,
-                        charges: found.id,
-                        tax: found.tax,
-                        standard_charge: found.charge_amount,
-                        amount: total,
+                      ...formData,
+                      charges: found.id,
+                      tax: found.tax,
+                      standard_charge: found.charge_amount,
+                      amount: total,
                     });
-                    }
+                  }
                 }}
-                >
+              >
                 <option value="">Select</option>
                 {filteredCharges.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -256,9 +259,9 @@ const calculateTotalAmount = (standard, tax) => {
                 ))}
               </Select>
 
-            <Input label="Tax (%)" value={formData.tax} disabled />
-            <Input label="Standard Charge ($)" value={formData.standard_charge} disabled />
-            <Input label="Total Amount ($)" value={formData.amount} disabled />
+              <Input label="Tax (%)" value={formData.tax} disabled />
+              <Input label="Standard Charge ($)" value={formData.standard_charge} disabled />
+              <Input label="Total Amount ($)" value={formData.amount} disabled />
 
             </div>
 

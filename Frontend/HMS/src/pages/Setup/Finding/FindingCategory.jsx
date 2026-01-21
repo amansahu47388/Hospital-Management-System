@@ -1,168 +1,205 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
 import FindingSidebarMenu from "../../../components/Setup/Finding/FindingSidebarMenu";
+import { useNotify } from "../../../context/NotificationContext";
+import {
+    getFindingCategories,
+    createFindingCategory,
+    updateFindingCategory,
+    deleteFindingCategory,
+} from "../../../api/setupApi";
 
 export default function FindingCategory() {
-  const [categories, setCategories] = useState([
-    { id: 1, name: "Fever" },
-    { id: 2, name: "Typhidot (or Widal Test)" },
-    { id: 3, name: "Skin Problem" },
-    { id: 4, name: "Bone Density Problems" },
-    { id: 5, name: "Hair Problems" },
-    { id: 6, name: "Eye Diseases" },
-    { id: 7, name: "Nose Diseases" },
-  ]);
+    const notify = useNotify();
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [form, setForm] = useState({ category_name: "" });
+    const [openModal, setOpenModal] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
 
-  const [form, setForm] = useState({ id: null, name: "" });
-  const [openModal, setOpenModal] = useState(false);
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
-  const openAdd = () => {
-    setForm({ id: null, name: "" });
-    setOpenModal(true);
-  };
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+            const res = await getFindingCategories();
+            setCategories(res.data);
+        } catch (err) {
+            notify("error", "Failed to fetch categories");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const openEdit = (row) => {
-    setForm(row);
-    setOpenModal(true);
-  };
+    const openAdd = () => {
+        setForm({ category_name: "" });
+        setIsEdit(false);
+        setOpenModal(true);
+    };
 
-  const saveCategory = () => {
-    if (form.id) {
-      setCategories((prev) =>
-        prev.map((c) => (c.id === form.id ? form : c))
-      );
-    } else {
-      setCategories((prev) => [
-        ...prev,
-        { ...form, id: Date.now() },
-      ]);
-    }
-    setOpenModal(false);
-  };
+    const openEdit = (row) => {
+        setForm(row);
+        setIsEdit(true);
+        setOpenModal(true);
+    };
 
-  const deleteCategory = (id) => {
-    setCategories((prev) => prev.filter((c) => c.id !== id));
-  };
+    const saveCategory = async () => {
+        if (!form.category_name) {
+            notify("warning", "Category name is required");
+            return;
+        }
 
-  return (
-    <AdminLayout>
-      <div className="p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 gap-4">
+        try {
+            setLoading(true);
+            if (isEdit) {
+                await updateFindingCategory(form.id, form);
+                notify("success", "Category updated successfully");
+            } else {
+                await createFindingCategory(form);
+                notify("success", "Category created successfully");
+            }
+            setOpenModal(false);
+            fetchCategories();
+        } catch (err) {
+            notify("error", "Failed to save category");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        {/* SIDEBAR */}
-        <FindingSidebarMenu />
+    const deleteCategory = async (id) => {
+        if (window.confirm("Are you sure you want to delete this category?")) {
+            try {
+                setLoading(true);
+                await deleteFindingCategory(id);
+                notify("success", "Category deleted successfully");
+                fetchCategories();
+            } catch (err) {
+                notify("error", "Failed to delete category");
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
 
-        {/* CONTENT */}
-        <div className="lg:col-span-3">
-          {/* HEADER */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-            <h1 className="text-xl font-semibold">
-              Finding Category List
-            </h1>
+    return (
+        <AdminLayout>
+            <div className="min-h-screen p-1">
+                {/* HEADER */}
+                <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
+                    <h2 className="text-lg font-semibold">Finding Category</h2>
 
-            <button
-              onClick={openAdd}
-              className="w-full sm:w-auto flex items-center justify-center gap-2
-              px-4 py-2 text-white rounded
-              bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
-            >
-              <Plus size={16} />
-              Add Finding Category
-            </button>
-          </div>
+                    <button
+                        onClick={openAdd}
+                        className="flex items-center gap-2 bg-gradient-to-b
+            from-[#6046B5] to-[#8A63D2]
+            text-white px-4 py-2 rounded-md transition hover:opacity-90"
+                    >
+                        <Plus size={16} /> Add Finding Category
+                    </button>
+                </div>
 
-          {/* TABLE */}
-          <div className="bg-white rounded shadow overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-3 py-2 text-left">Category</th>
-                  <th className="px-3 py-2 text-left">Action</th>
-                </tr>
-              </thead>
+                <div className="flex gap-4">
+                    {/* LEFT MENU */}
+                    <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
+                        <FindingSidebarMenu />
+                    </div>
 
-              <tbody>
-                {categories.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="group hover:bg-gray-50 transition"
-                  >
-                    <td className="px-3 py-2">{row.name}</td>
+                    {/* TABLE */}
+                    <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
+                        <table className="w-full text-sm">
+                            <thead className="bg-gray-100">
+                                <tr>
+                                    <th className="px-3 py-2 text-left">Category</th>
+                                    <th className="px-3 py-2 text-left">Action</th>
+                                </tr>
+                            </thead>
 
-                    <td className="px-3 py-2">
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                        <button
-                          onClick={() => openEdit(row)}
-                          className="p-1 rounded bg-blue-500 text-white"
-                        >
-                          <Pencil size={14} />
-                        </button>
-
-                        <button
-                          onClick={() => deleteCategory(row.id)}
-                          className="p-1 rounded bg-red-500 text-white"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="px-3 py-2 text-xs text-gray-600">
-              Records: 1 to {categories.length} of {categories.length}
+                            <tbody>
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="2" className="text-center py-4">Loading...</td>
+                                    </tr>
+                                ) : categories.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="2" className="text-center py-4 text-gray-400">No records found</td>
+                                    </tr>
+                                ) : (
+                                    categories.map((row) => (
+                                        <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
+                                            <td className="px-3 py-2">{row.category_name}</td>
+                                            <td className="px-3 py-2">
+                                                <div className="flex gap-3">
+                                                    <button
+                                                        onClick={() => openEdit(row)}
+                                                        className="text-purple-600 hover:text-purple-800 transition"
+                                                    >
+                                                        <Pencil size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => deleteCategory(row.id)}
+                                                        className="text-red-600 hover:text-red-800 transition"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* ADD / EDIT MODAL */}
-      {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2">
-          <div className="w-full max-w-lg bg-white rounded shadow">
-            {/* MODAL HEADER */}
-            <div
-              className="flex justify-between items-center px-4 py-3 text-white rounded-t
-              bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
-            >
-              <h2 className="font-semibold">
-                {form.id ? "Edit Finding Category" : "Add Finding Category"}
-              </h2>
-              <button onClick={() => setOpenModal(false)}>
-                <X />
-              </button>
-            </div>
+            {/* MODAL */}
+            {openModal && (
+                <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-2">
+                    <div className="w-full max-w-lg bg-white rounded-md shadow-lg overflow-hidden">
+                        <div className="flex justify-between items-center px-4 py-3 text-white
+              bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
+                            <h2 className="font-semibold">
+                                {isEdit ? "Edit Finding Category" : "Add Finding Category"}
+                            </h2>
+                            <button
+                                onClick={() => setOpenModal(false)}
+                                className="hover:text-gray-200 transition"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
 
-            {/* MODAL BODY */}
-            <div className="p-4">
-              <label className="text-sm font-medium">
-                Finding Category <span className="text-red-500">*</span>
-              </label>
-              <input
-                value={form.name}
-                onChange={(e) =>
-                  setForm({ ...form, name: e.target.value })
-                }
-                className="w-full mt-1 px-3 py-2 border rounded
-                focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
-              />
-            </div>
+                        <div className="p-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Finding Category <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                value={form.category_name || ""}
+                                onChange={(e) =>
+                                    setForm({ ...form, category_name: e.target.value })
+                                }
+                                className="w-full mt-1 px-3 py-2 border rounded-md
+                focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                                placeholder="Enter category"
+                            />
+                        </div>
 
-            {/* MODAL FOOTER */}
-            <div className="flex justify-end px-4 py-3 border-t">
-              <button
-                onClick={saveCategory}
-                className="px-6 py-2 text-white rounded
-                bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </AdminLayout>
-  );
+                        <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+                            <button
+                                onClick={saveCategory}
+                                className="px-6 py-2 text-white rounded-md
+                bg-gradient-to-b from-[#6046B5] to-[#8A63D2] transition hover:opacity-90"
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </AdminLayout>
+    );
 }

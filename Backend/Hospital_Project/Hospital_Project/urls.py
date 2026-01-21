@@ -8,7 +8,6 @@ urlpatterns = [
     path('auth/', include('users.urls')),
     path('api/admin/patients/', include('patient_module.urls')),
     path('api/admin/', include('admin_module.urls')),
-    path('api/admin/doctors/', include('doctor_module.urls')),
     path('api/admin/appointments/', include('appointment_module.urls')),
     path("api/admin/", include("opd_ipd_module.urls")),
     path("api/admin/", include('pathology_module.urls')),
@@ -20,6 +19,7 @@ urlpatterns = [
     path("api/admin/", include("inventory_module.urls")),
     path('api/admin/',include('front_office_module.urls')),
     path('api/admin/',include('finance_module.urls')),
+    path('api/admin/',include('birth_death_module.urls')),
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 ]

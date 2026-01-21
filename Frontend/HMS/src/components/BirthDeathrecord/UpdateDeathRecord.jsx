@@ -27,20 +27,20 @@ export default function UpdateDeathRecord({
         try {
           const response = await getDeathRecordDetail(record.id);
           const data = response.data;
-          
+
           // Convert backend snake_case to frontend camelCase
           // Format death_date from backend to date format (YYYY-MM-DD)
           let deathDateFormatted = "";
-          if (data.death_date) {
-            const date = new Date(data.death_date);
+          if (data.deathDate) {
+            const date = new Date(data.deathDate);
             deathDateFormatted = date.toISOString().split('T')[0];
           }
 
           setForm({
-            caseId: data.case_id || "",
-            patientName: data.patient_name || "",
+            caseId: data.caseId || "",
+            patientName: data.patientName || "",
             deathDate: deathDateFormatted,
-            guardianName: data.guardian_name || "",
+            guardianName: data.guardianName || "",
             report: data.report || "",
             attachment: null, // Don't pre-fill file
           });
@@ -75,7 +75,7 @@ export default function UpdateDeathRecord({
 
     try {
       setLoading(true);
-      
+
       // Map frontend field names to backend field names
       const data = {
         case_id: form.caseId || "",

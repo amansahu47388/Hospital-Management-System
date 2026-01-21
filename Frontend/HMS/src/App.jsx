@@ -80,30 +80,23 @@ import PurposeList from "./pages/Setup/Front_Office/PurposeList";
 import ComplaintType from "./pages/Setup/Front_Office/ComplaintType";
 import Source from "./pages/Setup/Front_Office/Source";
 import OperationList from "./pages/Setup/Operation/OperationList";
-import OperationCategory from "./pages/Setup/Operation/OperationCategory";
 import MedicineCategory from "./pages/Setup/Pharmacy/MedicineCategory";
 import Supplier from "./pages/Setup/Pharmacy/Supplier";
-import DoseInterval from "./pages/Setup/Pharmacy/DoseInterval";
+import DoseInterval from "./pages/Setup/Pharmacy/Dose";
 import MedicineDosage from "./pages/Setup/Pharmacy/MedicineDosage";
 import Company from "./pages/Setup/Pharmacy/Company";
 import Unit from "./pages/Setup/Pharmacy/Unit";
-import DoseDuration from "./pages/Setup/Pharmacy/DoseDuration";
 import MedicineGroup from "./pages/Setup/Pharmacy/MedicineGroup";
 import PathologyCategory from "./pages/Setup/Pathology/PathologyCategory";
-import PathologyUnit from "./pages/Setup/Pathology/PathologyUnit";
 import PathologyParameter from "./pages/Setup/Pathology/PathologyParameter";
 import RadiologyCategory from "./pages/Setup/Radiology/RadiologyCategory";
 import RadiologyParameter from "./pages/Setup/Radiology/RadiologyParameter";
-import RadiologyUnit from "./pages/Setup/Radiology/RadiologyUnit";
-import SymptomsHead from "./pages/Setup/Symptoms/SymptomsHead";
-import SymptomsType from "./pages/Setup/Symptoms/SymptomsType";
-import FindingCategory from "./pages/Setup/Finding/FindingCategory";
+import Symptoms from "./pages/Setup/Symptoms/Symptoms";
 import FindingSetup from "./pages/Setup/Finding/FindingSetup";
+import FindingCategory from "./pages/Setup/Finding/FindingCategory";
 import VitalList from "./pages/Setup/Vital/VitalList";
 import IncomeHead from "./pages/Setup/Finance/IncomeHead";
 import ExpenseHead from "./pages/Setup/Finance/ExpenseHead";
-import Slots from "./pages/Setup/Appointment/Slots";
-import DoctorShift from "./pages/Setup/Appointment/DoctorShift";
 import Shift from "./pages/Setup/Appointment/Shift";
 import AppointmentPriority from "./pages/Setup/Appointment/AppointmentPriority";
 import ItemCategory from "./pages/Setup/Inventory/ItemCategory";
@@ -344,6 +337,7 @@ function App() {
 
 
 
+        </Routes>
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>

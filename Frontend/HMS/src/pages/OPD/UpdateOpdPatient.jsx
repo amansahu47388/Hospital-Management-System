@@ -17,10 +17,10 @@ export default function UpdateOpdPatient() {
   const [loading, setLoading] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [symptoms, setSymptoms] = useState([]);
-//   const [formData, setFormData] = useState({});
+  //   const [formData, setFormData] = useState({});
   const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
 
- const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     patient: "",
     doctor: "",
     symptom: "",
@@ -37,6 +37,7 @@ export default function UpdateOpdPatient() {
     casualty: false,
     reference: "",
     previous_medical_issue: "",
+    case_id: "",
   });
 
   /* ================= LOAD DATA ================= */
@@ -62,6 +63,7 @@ export default function UpdateOpdPatient() {
         tax: opd.tax || prev.tax || 0,
         discount: opd.discount || prev.discount || 0,
         total_amount: opd.total_amount || prev.total_amount || 0,
+        case_id: opd.case_id || "",
       }));
 
       setDoctors(docRes.data);
@@ -133,44 +135,44 @@ export default function UpdateOpdPatient() {
     }
   };
 
-  
+
   return (
-     <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
+    <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* ================= HEADER ================= */}
         <div
-            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+          className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                       px-4 py-3 flex items-center relative">
-        
-            <div className="ml-auto flex items-center gap-3">
-              <button
-                onClick={() => setIsAddPatientOpen(true)}
-                className="bg-white text-[#6046B5]
+
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={() => setIsAddPatientOpen(true)}
+              className="bg-white text-[#6046B5]
                           px-4 py-2 text-sm rounded
                           flex items-center gap-2
                           shadow-sm hover:bg-gray-100"
-              >
-                <Plus size={14} /> New Patient
-              </button>
+            >
+              <Plus size={14} /> New Patient
+            </button>
 
-              <X
-                onClick={() => navigate(-1)}
-                className="text-white cursor-pointer hover:opacity-80"
-              />
-            </div>
+            <X
+              onClick={() => navigate(-1)}
+              className="text-white cursor-pointer hover:opacity-80"
+            />
           </div>
+        </div>
 
         <main className="flex-1 overflow-y-auto bg-white">
           {/* ================= FORM ================= */}
           <form onSubmit={handleSubmit}>
-          <div className="p-4 md:p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="p-4 md:p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* LEFT */}
-            <div className="lg:col-span-2 space-y-5">
-                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Symptoms Type</label>
+                {/* LEFT */}
+                <div className="lg:col-span-2 space-y-5">
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Symptoms Type</label>
                       <select
                         className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.symptom_type}
@@ -189,147 +191,155 @@ export default function UpdateOpdPatient() {
                         ))}
                       </select>
 
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Symptoms Title</label>
-                      
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Symptoms Title</label>
+
                       <select
+                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        value={formData.symptom}
+                        onChange={(e) => {
+                          const sym = symptoms.find(s => s.id === Number(e.target.value));
+                          setFormData(prev => ({
+                            ...prev,
+                            symptom: sym.id,
+                            symptom_description: sym.description || ""
+                          }));
+                        }}
+                      >
+                        {/* <option value="">Select Symptom</option> */}
+                        {symptoms
+                          .filter(s => s.symptom_type === formData.symptom_type)
+                          .map(sym => (
+                            <option key={sym.id} value={sym.id}>
+                              {sym.symptom_title}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium mb-1">Symptoms Description</label>
+                      <textarea
+                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        value={formData.symptom_description}
+                        readOnly
+                      />
+                    </div>
+                  </div>
+
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Any Known Allergies</label>
+                      <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        placeholder="Any Known Allergies"
+                        value={formData.allergies}
+                        onChange={(e) => update("allergies", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Previous Medical Issue</label>
+                      <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
+                        value={formData.previousIssue}
+                        onChange={(e) => update("previousIssue", e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* RIGHT */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Appointment Date</label>
+                    <input
+                      type="datetime-local"
                       className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                      value={formData.symptom}
-                      onChange={(e) => {
-                        const sym = symptoms.find(s => s.id === Number(e.target.value));
+                      value={formatDateTimeLocal(formData.appointment_date)}
+                      onChange={(e) =>
                         setFormData(prev => ({
                           ...prev,
-                          symptom: sym.id,
-                          symptom_description: sym.description || ""
-                        }));
-                      }}
+                          appointment_date: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Case ID</label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-600 px-3 py-2 rounded text-sm bg-gray-100"
+                      value={formData.case_id}
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Consultant Doctor</label>
+                    <select
+                      name="doctor"
+                      value={formData.doctor}
+                      onChange={handleInputChange}
+                      className="w-full border px-3 py-2 rounded"
+                      required
                     >
-                      {/* <option value="">Select Symptom</option> */}
-                      {symptoms
-                        .filter(s => s.symptom_type === formData.symptom_type)
-                        .map(sym => (
-                          <option key={sym.id} value={sym.id}>
-                            {sym.symptom_title}
-                          </option>
+                      <option value="">Select Doctor</option>
+                      {doctors.map(doctor => (
+                        <option key={doctor.id} value={doctor.id}>
+                          {doctor.full_name}
+                        </option>
                       ))}
                     </select>
                   </div>
 
-                  <div className="col-span-2">
-                    <label className="block text-sm font-medium mb-1">Symptoms Description</label>
-                    <textarea
-                      className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                      value={formData.symptom_description}
-                      readOnly
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Casualty</label>
+                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        value={formData.casualty}
+                        onChange={(e) =>
+                          setFormData(prev => ({
+                            ...prev,
+                            casualty: e.target.value === "true"
+                          }))
+                        }
+                      >
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Old Patient</label>
+                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        value={formData.old_patient}
+                        onChange={(e) =>
+                          setFormData(prev => ({
+                            ...prev,
+                            old_patient: e.target.value === "true"
+                          }))
+                        }
+                      >
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Reference</label>
+                    <input placeholder="Reference" className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      value={formData.reference}
+                      onChange={(e) => update("reference", e.target.value)}
                     />
                   </div>
-                </div>
-                
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>   
-                    <label className="block text-sm font-medium mb-1">Any Known Allergies</label>
-                    <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                     placeholder="Any Known Allergies"
-                     value={formData.allergies}
-                     onChange={(e) => update("allergies", e.target.value)}
-                     />
-                  </div>    
-                  <div> 
-                    <label className="block text-sm font-medium mb-1">Previous Medical Issue</label>
-                    <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
-                     value={formData.previousIssue}
-                     onChange={(e) => update("previousIssue", e.target.value)}
-                     />
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Appointment Date</label>
-                  <input
-                    type="datetime-local"
-                    className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                    value={formatDateTimeLocal(formData.appointment_date)}
-                    onChange={(e) =>
-                      setFormData(prev => ({
-                        ...prev,
-                        appointment_date: e.target.value
-                      }))
-                    }
-                  />
-
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Consultant Doctor</label>
-                  <select
-                  name="doctor"
-                  value={formData.doctor}
-                  onChange={handleInputChange}
-                  className="w-full border px-3 py-2 rounded"
-                  required
-                >
-                  <option value="">Select Doctor</option>
-                  {doctors.map(doctor => (
-                    <option key={doctor.id} value={doctor.id}>
-                      {doctor.full_name}
-                    </option>
-                  ))}
-                </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Casualty</label>
-                   <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                      value={formData.casualty}
-                      onChange={(e) =>
-                        setFormData(prev => ({
-                          ...prev,
-                          casualty: e.target.value === "true"
-                        }))
-                      }
-                    >
-                      <option value="false">No</option>
-                      <option value="true">Yes</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Old Patient</label>
-                    <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                      value={formData.old_patient}
-                      onChange={(e) =>
-                        setFormData(prev => ({
-                          ...prev,
-                          old_patient: e.target.value === "true"
-                        }))
-                      }
-                    >
-                      <option value="false">No</option>
-                      <option value="true">Yes</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Reference</label>
-                  <input placeholder="Reference" className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                   value={formData.reference}
-                   onChange={(e) => update("reference", e.target.value)}
-                   />
-                </div>
 
 
 
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
                       <label className="block text-sm font-medium mb-1">Payment Mode</label>
                       <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                      value={formData.payment_mode}
-                      onChange={handleInputChange}
-                      name="payment_mode"
+                        value={formData.payment_mode}
+                        onChange={handleInputChange}
+                        name="payment_mode"
                       >
                         <option value="">Select payment Mode</option>
                         <option value="cash">Cash</option>
@@ -339,49 +349,49 @@ export default function UpdateOpdPatient() {
                         <option value="card">Card</option>
                         <option value="other">Other</option>
                       </select>
-                  </div> 
-                    <div>  
-                  <label className="block text-sm font-medium mb-1">Total Amount ($)</label>
-                  <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Total Amount ($)"
-                   value={formData.total_amount}
-                   onChange={(e) => update("total_amount", e.target.value)}
-                   />  
-                 </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>  
-                    <label className="block text-sm font-medium mb-1">Paid Amount ($)</label>
-                    <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Paid Amount ($)"
-                     value={formData.paid_amount}
-                     onChange={(e) => update("paid_amount", e.target.value)}
-                     />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Total Amount ($)</label>
+                      <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Total Amount ($)"
+                        value={formData.total_amount}
+                        onChange={(e) => update("total_amount", e.target.value)}
+                      />
+                    </div>
                   </div>
-                </div>
 
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Paid Amount ($)</label>
+                      <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Paid Amount ($)"
+                        value={formData.paid_amount}
+                        onChange={(e) => update("paid_amount", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* ================= FOOTER ================= */}
-          <div className="bg-gray-100 px-4 py-3 flex justify-end gap-2">
-            {/* <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-1.5 text-sm rounded">
+            {/* ================= FOOTER ================= */}
+            <div className="bg-gray-100 px-4 py-3 flex justify-end gap-2">
+              {/* <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-1.5 text-sm rounded">
               Save & Print
             </button> */}
-           <button
-              type="submit"
-              className="px-6 py-2 rounded text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2] disabled:opacity-50"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : 'Save'}
-            </button>
-          </div>
+              <button
+                type="submit"
+                className="px-6 py-2 rounded text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2] disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : 'Save'}
+              </button>
+            </div>
           </form>
         </main>
       </div>
 
       {/* ================= ADD PATIENT MODAL ================= */}
       <AddPatient open={isAddPatientOpen} onClose={() => setIsAddPatientOpen(false)} />
-    </div>
+    </div >
   );
 }
