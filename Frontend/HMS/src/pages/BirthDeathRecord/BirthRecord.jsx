@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import AdminLayout from "../../layout/AdminLayout";
 import useBirthRecords from "../../hooks/useBirthRecords";
 import AddBirthRecord from "../../components/BirthDeathrecord/AddBirthRecord";
 import BirthRecordDetails from "../../components/BirthDeathrecord/BirthRecordDetails";
 import UpdateBirthRecord from "../../components/BirthDeathrecord/UpdateBirthRecord";
+import { deleteBirthRecord } from "../../api/birthDeathApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function BirthRecord() {
-  const { search, setSearch, data } = useBirthRecords();
+  const { search, setSearch, data, refresh } = useBirthRecords();
+  const notify = useNotify();
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
@@ -16,7 +19,7 @@ export default function BirthRecord() {
   const [records, setRecords] = useState(data || []);
 
   // Sync API data
-  useState(() => {
+  useEffect(() => {
     if (data) setRecords(data);
   }, [data]);
 
@@ -33,17 +36,24 @@ export default function BirthRecord() {
   };
 
   const handleSave = (updated) => {
-    console.log("UPDATE API CALL", updated);
+    // Update is handled in UpdateBirthRecord component
+    refresh();
     setOpenEdit(false);
   };
 
-  const handleDelete = (record) => {
+  const handleDelete = async (record) => {
     if (!record?.id) return;
     const confirmDelete = window.confirm("Are you sure you want to delete this birth record?");
     if (!confirmDelete) return;
 
-    console.log("Deleting record:", record);
-    setRecords((prev) => prev.filter((i) => i.id !== record.id));
+    try {
+      await deleteBirthRecord(record.id);
+      notify("success", "Birth record deleted successfully");
+      refresh();
+    } catch (error) {
+      const errorMsg = error?.response?.data?.error || error?.message || "Failed to delete birth record";
+      notify("error", errorMsg);
+    }
   };
 
   return (
@@ -128,7 +138,14 @@ export default function BirthRecord() {
           </div>
 
           {/* MODALS */}
-          <AddBirthRecord open={openAdd} onClose={() => setOpenAdd(false)} />
+          <AddBirthRecord 
+            open={openAdd} 
+            onClose={() => setOpenAdd(false)}
+            onSuccess={() => {
+              refresh();
+              setOpenAdd(false);
+            }}
+          />
 
           <BirthRecordDetails
             open={openDetails}

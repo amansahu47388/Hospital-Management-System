@@ -73,3 +73,55 @@ class AmbulanceBill(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class AmbulanceBillTransaction(models.Model):
+    PAYMENT_MODE_CHOICES = [
+        ('cash', 'Cash'),
+        ('card', 'Card'),
+        ('upi', 'UPI'),
+        ('bank_transfer', 'Bank Transfer'),
+    ]
+
+    bill = models.ForeignKey(AmbulanceBill, on_delete=models.CASCADE, related_name='transactions')
+    transaction_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    date = models.DateTimeField()
+    payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES, default='cash')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    note = models.TextField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.transaction_id:
+            import uuid
+            self.transaction_id = f"TRANID{uuid.uuid4().hex[:5].upper()}"
+        super().save(*args, **kwargs)
+        
+        # Update bill's paid_amount when transaction is created
+        from django.db.models import Sum
+        bill = self.bill
+        total_paid = bill.transactions.aggregate(
+            total=Sum('amount')
+        )['total'] or 0
+        bill.paid_amount = total_paid
+        bill.balance = bill.net_amount - total_paid
+        bill.save()
+
+    def delete(self, *args, **kwargs):
+        bill = self.bill
+        super().delete(*args, **kwargs)
+        # Recalculate paid_amount after deletion
+        from django.db.models import Sum
+        total_paid = bill.transactions.aggregate(
+            total=Sum('amount')
+        )['total'] or 0
+        bill.paid_amount = total_paid
+        bill.balance = bill.net_amount - total_paid
+        bill.save()
+
+    def __str__(self):
+        return f"Transaction {self.transaction_id} - ${self.amount}"
+
+    class Meta:
+        ordering = ['-date', '-created_at']
+

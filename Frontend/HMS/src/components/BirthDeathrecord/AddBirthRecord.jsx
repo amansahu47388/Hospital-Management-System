@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { X, UploadCloud } from "lucide-react";
+import { createBirthRecord } from "../../api/birthDeathApi";
+import { useNotify } from "../../context/NotificationContext";
 
-export default function AddBirthRecord({ open, onClose }) {
-  if (!open) return null;
+export default function AddBirthRecord({ open, onClose, onSuccess }) {
+  const notify = useNotify();
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     childName: "",
@@ -21,6 +24,8 @@ export default function AddBirthRecord({ open, onClose }) {
     documentPhoto: null,
   });
 
+  if (!open) return null;
+
   /* ---------------- HANDLERS ---------------- */
 
   const handleChange = (e) => {
@@ -30,16 +35,65 @@ export default function AddBirthRecord({ open, onClose }) {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setForm((prev) => ({ ...prev, [name]: files[0] }));
+    setForm((prev) => ({ ...prev, [name]: files[0] || null }));
   };
 
-  const handleSubmit = () => {
-    console.log("Birth Record Form Data:", form);
+  const handleSubmit = async () => {
+    // Validation
+    if (!form.childName || !form.gender || !form.birthDate || !form.motherName) {
+      notify("error", "Please fill in all required fields");
+      return;
+    }
 
-    // 🔗 API integration later
-    // await createBirthRecord(form);
+    try {
+      setLoading(true);
+      
+      // Map frontend field names to backend field names
+      const data = {
+        child_name: form.childName,
+        gender: form.gender,
+        weight: form.weight || "",
+        birth_date: form.birthDate,
+        phone: form.phone || "",
+        address: form.address || "",
+        case_id: form.caseId || "",
+        mother_name: form.motherName,
+        father_name: form.fatherName || "",
+        report: form.report || "",
+        child_photo: form.childPhoto,
+        mother_photo: form.motherPhoto,
+        father_photo: form.fatherPhoto,
+        document_photo: form.documentPhoto,
+      };
 
-    onClose();
+      await createBirthRecord(data);
+      notify("success", "Birth record created successfully");
+      onSuccess?.();
+      onClose();
+      
+      // Reset form
+      setForm({
+        childName: "",
+        gender: "",
+        weight: "",
+        birthDate: "",
+        phone: "",
+        address: "",
+        caseId: "",
+        motherName: "",
+        fatherName: "",
+        report: "",
+        childPhoto: null,
+        motherPhoto: null,
+        fatherPhoto: null,
+        documentPhoto: null,
+      });
+    } catch (error) {
+      const errorMsg = error?.response?.data?.error || error?.message || "Failed to create birth record";
+      notify("error", errorMsg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

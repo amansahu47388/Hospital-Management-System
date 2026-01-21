@@ -151,8 +151,15 @@ export default function AmbulanceCallList() {
                       <div className="flex items-center gap-2">
                         <button
                           title="View"
-                          onClick={() => setViewBillId(row.id)}
-                          className="p-1 rounded hover:bg-blue-100 text-blue-600"
+                          onClick={() => {
+                            if (row.id) {
+                              setViewBillId(row.id);
+                            } else {
+                              console.error("Cannot view bill: row.id is undefined", row);
+                            }
+                          }}
+                          disabled={!row.id}
+                          className="p-1 rounded hover:bg-blue-100 text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Eye size={16} />
                         </button>
@@ -160,18 +167,30 @@ export default function AmbulanceCallList() {
                         <button
                           title="Edit"
                           onClick={() => {
-                            setEditBillId(row.id);
-                            setOpenUpdate(true);
+                            if (row.id) {
+                              setEditBillId(row.id);
+                              setOpenUpdate(true);
+                            } else {
+                              console.error("Cannot edit bill: row.id is undefined", row);
+                            }
                           }}
-                          className="p-1 rounded hover:bg-green-100 text-green-600"
+                          disabled={!row.id}
+                          className="p-1 rounded hover:bg-green-100 text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Pencil size={16} />
                         </button>
 
                         <button
                           title="Delete"
-                          onClick={() => handleDelete(row.id)}
-                          className="p-1 rounded hover:bg-red-100 text-red-600"
+                          onClick={() => {
+                            if (row.id) {
+                              handleDelete(row.id);
+                            } else {
+                              console.error("Cannot delete bill: row.id is undefined", row);
+                            }
+                          }}
+                          disabled={!row.id}
+                          className="p-1 rounded hover:bg-red-100 text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Trash2 size={16} />
                         </button>
