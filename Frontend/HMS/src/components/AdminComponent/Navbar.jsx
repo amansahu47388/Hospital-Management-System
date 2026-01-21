@@ -9,10 +9,10 @@ import {
 import ProfileDropdown from "./AdminProfileDropDown";
 import BedStatusModal from "./BedStatusModal";
 
-function Navbar() {
+function Navbar({ role = "admin" }) {
   const user = {
-    name: "Super Admin",
-    role: "Super Admin",
+    name: role === "admin" ? "Super Admin" : "Patient",
+    role: role === "admin" ? "Super Admin" : "Patient",
     avatar: "https://i.pravatar.cc/150?img=3",
   };
 
@@ -23,7 +23,7 @@ function Navbar() {
     localStorage.removeItem("refresh_token");
     window.location.href = "/admin/login";
   };
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <>
       {/* ================= NAVBAR ================= */}
@@ -52,40 +52,46 @@ function Navbar() {
           </div>
 
           {/* CENTER: SEARCH */}
-          <div className="hidden md:flex flex-1 justify-center">
-            <div className="relative w-full max-w-md">
-              <Search
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
-              <input
-                type="text"
-                placeholder="Search by patient name..."
-                className="
-                  w-full pl-10 pr-4 py-2
-                  rounded-full bg-white text-sm
-                  focus:outline-none focus:ring-2 focus:ring-blue-300
-                "
-              />
+          {role === "admin" && (
+            <div className="hidden md:flex flex-1 justify-center">
+              <div className="relative w-full max-w-md">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <input
+                  type="text"
+                  placeholder="Search by patient name..."
+                  className="
+                    w-full pl-10 pr-4 py-2
+                    rounded-full bg-white text-sm
+                    focus:outline-none focus:ring-2 focus:ring-blue-300
+                  "
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* RIGHT: ICONS + PROFILE */}
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
 
-            {/* BED */}
-            <IconButton
-              icon={Bed}
-              title="Bed Status"
-              onClick={() => setOpenBed(true)}
-            />
+            {role === "admin" && (
+              <>
+                {/* BED */}
+                <IconButton
+                  icon={Bed}
+                  title="Bed Status"
+                  onClick={() => setOpenBed(true)}
+                />
 
-            {/* CALENDAR */}
-            <IconButton
-              onClick={() => navigate("/admin/Calendar")} 
-              icon={CalendarDays}
-              title="Calendar"
-            />
+                {/* CALENDAR */}
+                <IconButton
+                  onClick={() => navigate("/admin/Calendar")}
+                  icon={CalendarDays}
+                  title="Calendar"
+                />
+              </>
+            )}
 
             {/* NOTIFICATION */}
             <div className="relative">

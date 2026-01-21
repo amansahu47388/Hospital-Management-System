@@ -29,9 +29,11 @@ import {
   ChevronUp,
   ChevronRight,
   CreditCard,
+  Video,
+  Download,
 } from "lucide-react";
 
-const navItems = [
+const adminNavItems = [
   { to: "/admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { to: "/admin/patients", label: "Patient", Icon: UserRound },
   { to: "/admin/appointments", label: "Appointment", Icon: Calendar },
@@ -42,16 +44,6 @@ const navItems = [
   { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
   { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
   { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
-
-
-
-  // { to: "/multi-branch", label: "Multi Branch", Icon: Building2 },
-  // { to: "/lab", label: "Lab", Icon: FlaskConical },
-  // { to: "/ward", label: "Ward", Icon: Bed },
-  // { to: "/blood-bank", label: "Blood Bank", Icon: Droplet },
-  // { to: "/treatment", label: "Treatment", Icon: Stethoscope },
-
-
   { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
   { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },
   //{ to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
@@ -70,7 +62,22 @@ const navItems = [
   { to: "/Setup", label: "Setup", Icon: Settings },
 ];
 
-function Sidebar() {
+const patientNavItems = [
+  { to: "/patient-portal/dashboard", label: "Dashboard", Icon: LayoutDashboard },
+  { to: "/patient-portal/appointments", label: "My Appointments", Icon: CalendarDays },
+  { to: "/patient-portal/opd-history/:section", label: "OPD", Icon: Stethoscope },
+  { to: "/patient-portal/ipd-history/:section", label: "IPD", Icon: Bed },
+  { to: "/patient-portal/pharmacy", label: "Pharmacy", Icon: Pill },
+  { to: "/patient-portal/pathology", label: "Pathology", Icon: FlaskConical },
+  { to: "/patient-portal/radiology", label: "Radiology", Icon: FolderGit2 },
+  { to: "/patient-portal/blood-bank", label: "Blood Bank", Icon: Droplet },
+  { to: "/patient-portal/ambulance", label: "Ambulance", Icon: Ambulance },
+  { to: "/patient-portal/live-consultation", label: "Live Consultation", Icon: Video },
+  { to: "/patient-portal/download-center", label: "Download Center", Icon: Download },
+];
+
+function Sidebar({ role = "admin" }) {
+  const navItems = role === "admin" ? adminNavItems : patientNavItems;
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [birthDeathRecordOpen, setBirthDeathRecordOpen] = useState(false);
@@ -141,7 +148,7 @@ function Sidebar() {
           <nav className="space-y-3 text-md font-semibold pb-10">
             {navItems.map(({ to, label, Icon }) => {
               /* FRONT OFFICE + BIRTH & DEATH */
-              if (to === "/admin/front-office/visitor-list") {
+              if (to === "/admin/front-office/visitor-list" && role === "admin") {
                 return (
                   <React.Fragment key={to}>
                     <NavLink
@@ -211,7 +218,7 @@ function Sidebar() {
               }
 
               /* FINANCE MENU WITH SUBMENU */
-              if (to === "/Finance") {
+              if (to === "/Finance" && role === "admin") {
                 return (
                   <React.Fragment key={to}>
                     <button
@@ -263,7 +270,7 @@ function Sidebar() {
               }
 
               /* SETUP MENU WITH SUBMENU */
-              if (to === "/Setup") {
+              if (to === "/Setup" && role === "admin") {
                 return (
                   <React.Fragment key={to}>
                     <button

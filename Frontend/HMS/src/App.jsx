@@ -135,6 +135,13 @@ import OPDPaymentPage from "./pages/OPD/OPDPaymentPage";
 import OPDTimelinePage from "./pages/OPD/OPDTimelinePage";
 import OPDTreatmentHistoryPage from "./pages/OPD/OPDTreatmentHistoryPage";
 import OPDVitalsPage from "./pages/OPD/OPDVitalsPage";
+
+//patient entity routes
+import PatientDashboardPage from "./pages/Patient/PatientDashboardPage";
+import PatientAppointmentsPage from "./pages/Patient/My_Appointment/PatientAppointmentsPage";
+import PatientOPDHistoryPage from "./pages/Patient/OPD/PatientOPDHistoryPage";
+import IPDOverviewPage from "./pages/Patient/IPD/IPDOverviewPage";
+
 function App() {
   return (
     <AuthProvider>
@@ -203,6 +210,17 @@ function App() {
             <Route path="/admin/opd-patients/210/timeline" element={<OPDTimelinePage />} />
             <Route path="/admin/opd-patients/210/treatment-history" element={<OPDTreatmentHistoryPage />} />
             <Route path="/admin/opd-patients/210/vitals" element={<OPDVitalsPage />} />
+           
+           
+
+       
+            {/* Patient Entity Routes */}
+            <Route path="/patient-portal/dashboard" element={<PatientDashboardPage />} />
+            <Route path="/patient-portal/appointments" element={<PatientAppointmentsPage />} />
+
+            <Route path="/patient-portal/opd-history/:section" element={<PatientOPDHistoryPage />} />
+  
+            <Route path="/patient-portal/ipd-history/:section" element={<IPDOverviewPage />} />
             {/* Pathology Routes */}
             <Route path="/admin/pathology-bills" element={<PathologyBill />} />
             <Route path="/admin/pathology-tests" element={<PathologyTest />} />
