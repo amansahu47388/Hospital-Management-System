@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'finance_module',
     'birth_death_module',
     'setup_module',
+    'calendar_module',
 ]
 
 MIDDLEWARE = [

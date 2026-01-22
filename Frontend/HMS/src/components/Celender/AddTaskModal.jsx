@@ -33,12 +33,14 @@ export default function AddTaskModal({ open, onClose, onSave }) {
         </div>
 
         <div className="p-4 space-y-3">
+          <label className="font-medium">Event Title *</label>
           <input
             placeholder="Title"
             className="w-full border px-3 py-2 rounded"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+          <label className="font-medium">Start Date *</label>
           <input
             type="date"
             placeholder="Date"
@@ -46,6 +48,7 @@ export default function AddTaskModal({ open, onClose, onSave }) {
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
+          <label className="font-medium">End Date (optional) *</label>
           <input
             type="date"
             placeholder="End Date (optional)"
@@ -53,6 +56,7 @@ export default function AddTaskModal({ open, onClose, onSave }) {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
+          <label className="font-medium">Start Time *</label>
           <div className="grid grid-cols-2 gap-2">
             <input
               type="time"
@@ -61,6 +65,9 @@ export default function AddTaskModal({ open, onClose, onSave }) {
               value={start}
               onChange={(e) => setStart(e.target.value)}
             />
+          </div>
+          <label className="font-medium">End Time *</label>
+          <div className="grid grid-cols-2 gap-2">
             <input
               type="time"
               placeholder="End Time"

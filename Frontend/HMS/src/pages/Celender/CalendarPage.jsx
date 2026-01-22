@@ -11,7 +11,7 @@ import ShowEventModal from "../../components/Celender/ShowEventModal";
 import useCalendarTasks from "../../hooks/useCalendarTasks";
 import EventModal from "../../components/Celender/EventModal";
 export default function CalendarPage() {
-  const { tasks, addTask, removeTask, updateTask } = useCalendarTasks();
+  const { tasks, addTask, removeTask, updateTask, loading } = useCalendarTasks();
 
   const [view, setView] = useState("month"); // month | week | day
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -35,7 +35,7 @@ export default function CalendarPage() {
   };
 
   const handleToday = () => setCurrentDate(new Date());
- 
+
 
 
   //celender
@@ -65,6 +65,11 @@ export default function CalendarPage() {
   return (
     <AdminLayout>
       <div className="min-h-full  p-1">
+        {loading && (
+          <div className="flex justify-center items-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6046B5]"></div>
+          </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
           {/* CALENDAR */}
@@ -120,7 +125,7 @@ export default function CalendarPage() {
           onDelete={handleDeleteEvent}
         />
 
-        
+
       </div>
     </AdminLayout>
   );
