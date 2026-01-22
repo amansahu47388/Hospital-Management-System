@@ -6,30 +6,46 @@ from opd_ipd_module.models import Prescription
 
 class RadiologyCategory(models.Model):
     category_name = models.CharField(max_length=100)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.category_name
 
 
+
+
+class RadiologyParameter(models.Model):
+    parameter_name = models.CharField(max_length=100, unique=True)
+    reference_range = models.CharField(max_length=100)
+    unit = models.CharField(max_length=50)
+    description = models.TextField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("parameter_name", "unit")
+
+    def __str__(self):
+        return f"{self.parameter_name} - {self.unit}"
+
+
+
+
+
+
 class RadiologyTest(models.Model):
+    parameters = models.ManyToManyField(RadiologyParameter, related_name="tests")
     test_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=50)
     test_type = models.CharField(max_length=50, blank=True)
-    category = models.ForeignKey(
-        RadiologyCategory,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="tests"
-    )
+    category = models.ForeignKey(RadiologyCategory,on_delete=models.SET_NULL,null=True,related_name="tests")
     sub_category = models.CharField(max_length=100, blank=True)
     method = models.CharField(max_length=100, blank=True)
     report_days = models.PositiveIntegerField(null=True, blank=True)
-    charges = models.ForeignKey(
-        HospitalCharges,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="radiology_tests"
-    )
+    charges = models.ForeignKey(HospitalCharges,on_delete=models.SET_NULL,null=True,related_name="radiology_tests")
     tax = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     standard_charge = models.DecimalField(max_digits=10, decimal_places=2)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -41,28 +57,11 @@ class RadiologyTest(models.Model):
         return self.test_name
 
 
-class RadiologyParameter(models.Model):
-    radiology_test = models.ForeignKey(
-        RadiologyTest,
-        on_delete=models.CASCADE,
-        related_name="parameters"
-    )
-    parameter_name = models.CharField(max_length=100)
-    reference_range = models.CharField(max_length=100)
-    unit = models.CharField(max_length=50)
-    description = models.TextField(null=True, blank=True)
-
-    class Meta:
-        unique_together = ("radiology_test", "parameter_name")
-
-    def __str__(self):
-        return f"{self.parameter_name} - {self.radiology_test.test_name}"
-
 
 class RadiologyBill(models.Model):
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="radiology_bills" )
     doctor = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="radiology_bills", limit_choices_to={"role": "doctor"}, null=True, blank=True)
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, related_name="radiology_bills", null=True, blank=True)
+    prescription = models.ForeignKey('opd_ipd_module.Prescription', on_delete=models.SET_NULL, null=True, blank=True, related_name="radiology_bills")
     note = models.TextField(null=True, blank=True)
     previous_report_value = models.BooleanField(default=False)
     payment_mode = models.CharField(max_length=50, null=True, blank=True)

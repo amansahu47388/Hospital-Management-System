@@ -41,45 +41,12 @@ export default function BirthRecordDetails({ open, onClose, record }) {
     window.print();
   };
 
-  const handleEdit = async () => {
-    try {
-      setLoading(true);
-
-      // 👉 example update (you can modify payload later)
-      const payload = {
-        ...displayRecord,
-      };
-
-      await UpdateBirthRecord(displayRecord.id, payload);
-      notify("Birth record updated successfully", "success");
-    } catch (error) {
-      console.error(error);
-      notify("Failed to update birth record", "error");
-    } finally {
-      setLoading(false);
-    }
+  const handleEdit = () => {
+    onEdit?.(record);
   };
 
   const handleDelete = async () => {
-    if (!displayRecord?.id) return;
-
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this birth record?"
-    );
-
-    if (!confirmDelete) return;
-
-    try {
-      setLoading(true);
-      await deleteBirthRecord(displayRecord.id);
-      notify("Birth record deleted successfully", "success");
-      onClose();
-    } catch (error) {
-      console.error(error);
-      notify("Failed to delete birth record", "error");
-    } finally {
-      setLoading(false);
-    }
+    onDelete?.(record);
   };
 
   return (
@@ -145,7 +112,7 @@ export default function BirthRecordDetails({ open, onClose, record }) {
               <Info label="Phone" value={displayRecord.phone || "-"} />
               <Info
                 label="Document"
-                value={displayRecord.document ? "Available" : "-"}
+                value={displayRecord.documentPhoto ? "Available" : "-"}
               />
             </div>
 
@@ -157,7 +124,7 @@ export default function BirthRecordDetails({ open, onClose, record }) {
 
             <div className="space-y-3">
               <Info label="Report" value={displayRecord.report || "-"} />
-              <Info label="Reference No" value={displayRecord.refNo || "-"} />
+              <Info label="Reference No" value={displayRecord.id || "-"} />
             </div>
           </div>
         )}

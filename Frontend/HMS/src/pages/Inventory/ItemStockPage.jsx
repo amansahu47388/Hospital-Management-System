@@ -5,11 +5,12 @@ import AdminLayout from "../../layout/AdminLayout";
 import AddItemStock from "../../components/Inventory/AddItemStock";
 import UpdateItemStock from "../../components/Inventory/UpdateItemStock";
 import { getItemStock, deleteItemStock  } from "../../api/inventoryApi";
+import { useNotify } from "../../context/NotificationContext";
 
 
 export default function ItemStockPage() {
   const navigate = useNavigate();
-
+  const notify = useNotify(); 
   const [search, setSearch] = useState("");
   const [openAdd, setOpenAdd] = useState(false);
   const [data, setData] = useState([]);
@@ -48,12 +49,12 @@ export default function ItemStockPage() {
   try {
     await deleteItemStock(id);
     await loadStock(); // refresh list
+    notify("success", " Stock deleted successfully");
   } catch (err) {
-    alert("Failed to delete stock");
+    notify("error", err.response?.data?.message || "Failed to delete stock");
     console.error(err);
   }
 };
-
 
 
   return (

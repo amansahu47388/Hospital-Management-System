@@ -1,104 +1,175 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
 import ItemSidebarMenu from "../../../components/Setup/Inventory/ItemSidebarMenu";
-import { Plus, Pencil, X } from "lucide-react";
+import { Plus, Pencil, X, Trash2 } from "lucide-react";
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from "../../../api/inventoryApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 export default function ItemCategory() {
-  const [items, setItems] = useState([
-    { id: 1, name: "Syringe Packs", desc: "" },
-    { id: 2, name: "Cotton Packs", desc: "" },
-  ]);
+  const notify = useNotify();
 
+  const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ id: null, name: "", desc: "" });
+  const [form, setForm] = useState({ id: null, name: "", description: "" });
 
-  const save = () => {
-    if (form.id) {
-      setItems(items.map(i => (i.id === form.id ? form : i)));
-    } else {
-      setItems([...items, { ...form, id: Date.now() }]);
+  // 🔹 LOAD DATA
+  const loadData = async () => {
+    try {
+      const res = await getCategories();
+      setItems(res.data);
+    } catch {
+      notify("error", "Failed to load categories");
     }
-    setOpen(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // 🔹 SAVE
+  const save = async () => {
+    if (!form.name.trim()) {
+      notify("error", "Category name is required");
+      return;
+    }
+  
+    const payload = {
+      name: form.name.trim(),
+      description: form.description?.trim() || "",
+    };
+  
+    try {
+      if (form.id) {
+        // Only update if name is changed OR no duplicates
+        await updateCategory(form.id, payload);
+        notify("success", "Category updated successfully");
+      } else {
+        await createCategory(payload);
+        notify("success", "Category created successfully");
+      }
+      setOpen(false);
+      loadData();
+    } catch (err) {
+      console.error(err);
+      const msg = err.response?.data?.name || err.response?.data?.detail || "Error saving category";
+      notify("error", msg);
+    }
+  };
+  
+
+  // 🔹 DELETE
+  const remove = async (id) => {
+    if (!window.confirm("Delete this category?")) return;
+    try {
+      await deleteCategory(id);
+      notify("success", "Category deleted successfully");
+      loadData();
+    } catch {
+      notify("error", "Failed to delete category");
+    }
   };
 
   return (
     <AdminLayout>
-      <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <ItemSidebarMenu />
+      <div className="min-h-screen p-1">
+        <div className="bg-white rounded-md p-3 mb-4 flex justify-between items-center shadow">
+          <h2 className="text-lg font-semibold">Item Category List</h2>
+          <button
+            onClick={() => {
+              setForm({ id: null, name: "", description: "" });
+              setOpen(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 text-white rounded-md
+            bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
+          >
+            <Plus size={16} /> Add Item Category
+          </button>
+        </div>
 
-        <div className="lg:col-span-3 bg-white rounded shadow p-4">
-          <div className="flex justify-between mb-4">
-            <h2 className="font-semibold">Item Category List</h2>
-            <button
-              onClick={() => {
-                setForm({ id: null, name: "", desc: "" });
-                setOpen(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2 text-white rounded
-              bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
-            >
-              <Plus size={16} /> Add Item Category
-            </button>
+        <div className="flex gap-4">
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
+            <ItemSidebarMenu />
           </div>
 
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="text-left px-3 py-2">Item Category</th>
-                <th className="text-left px-3 py-2">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map(row => (
-                <tr key={row.id} className="border-b">
-                  <td className="px-3 py-2 text-blue-600">{row.name}</td>
-                  <td className="px-3 py-2">
-                    <button
-                      onClick={() => {
-                        setForm(row);
-                        setOpen(true);
-                      }}
-                      className="p-1 bg-blue-500 text-white rounded"
-                    >
-                      <Pencil size={14} />
-                    </button>
-                  </td>
+          <div className="flex-1 bg-white rounded-md shadow">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-3 py-2 text-left">Item Category</th>
+                  <th className="px-3 py-2 text-left">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {items.map((row) => (
+                  <tr key={row.id} className="border-b border-gray-200">
+                    <td className="px-3 py-2">{row.name}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            setForm(row);
+                            setOpen(true);
+                          }}
+                          className="text-purple-600"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => remove(row.id)}
+                          className="text-red-600"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       {/* MODAL */}
       {open && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2">
-          <div className="bg-white w-full max-w-lg rounded">
-            <div className="flex justify-between items-center px-4 py-3 text-white
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white w-full max-w-lg rounded-md">
+            <div className="flex justify-between px-4 py-3 text-white
             bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
-              <h3>{form.id ? "Edit" : "Add"} Item Category</h3>
-              <X onClick={() => setOpen(false)} className="cursor-pointer" />
+              <h2>{form.id ? "Edit" : "Add"} Item Category</h2>
+              <button onClick={() => setOpen(false)}>
+                <X size={20} />
+              </button>
             </div>
 
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-4">
               <input
+                className="w-full border px-3 py-2 rounded-md"
                 placeholder="Item Category"
-                className="w-full border px-3 py-2 rounded"
                 value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, name: e.target.value })
+                }
               />
               <textarea
+                className="w-full border px-3 py-2 rounded-md"
                 placeholder="Description"
-                className="w-full border px-3 py-2 rounded"
-                value={form.desc}
-                onChange={e => setForm({ ...form, desc: e.target.value })}
+                value={form.description || ""}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
               />
             </div>
 
-            <div className="flex justify-end p-4 border-t">
+            <div className="flex justify-end px-4 py-3 border-t">
               <button
                 onClick={save}
-                className="px-6 py-2 text-white rounded
+                className="px-6 py-2 text-white rounded-md
                 bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
               >
                 Save

@@ -13,7 +13,7 @@ export const getBirthRecordDetail = (id) => {
 
 export const createBirthRecord = (data) => {
   const formData = new FormData();
-  
+
   // Append all fields
   Object.keys(data).forEach((key) => {
     if (data[key] !== null && data[key] !== undefined && data[key] !== "") {
@@ -24,7 +24,7 @@ export const createBirthRecord = (data) => {
       }
     }
   });
-  
+
   return api.post("/birth-record/create/", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -34,7 +34,7 @@ export const createBirthRecord = (data) => {
 
 export const updateBirthRecord = (id, data) => {
   const formData = new FormData();
-  
+
   Object.keys(data).forEach((key) => {
     if (data[key] !== null && data[key] !== undefined && data[key] !== "") {
       if (data[key] instanceof File) {
@@ -44,8 +44,8 @@ export const updateBirthRecord = (id, data) => {
       }
     }
   });
-  
-  return api.put(`/birth-record/${id}/update/`, formData, {
+
+  return api.patch(`/birth-record/${id}/update/`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -69,7 +69,7 @@ export const getDeathRecordDetail = (id) => {
 
 export const createDeathRecord = (data) => {
   const formData = new FormData();
-  
+
   Object.keys(data).forEach((key) => {
     if (data[key] !== null && data[key] !== undefined && data[key] !== "") {
       if (data[key] instanceof File) {
@@ -79,7 +79,7 @@ export const createDeathRecord = (data) => {
       }
     }
   });
-  
+
   return api.post("/death-record/create/", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -89,7 +89,7 @@ export const createDeathRecord = (data) => {
 
 export const updateDeathRecord = (id, data) => {
   const formData = new FormData();
-  
+
   Object.keys(data).forEach((key) => {
     if (data[key] !== null && data[key] !== undefined && data[key] !== "") {
       if (data[key] instanceof File) {
@@ -99,8 +99,8 @@ export const updateDeathRecord = (id, data) => {
       }
     }
   });
-  
-  return api.put(`/death-record/${id}/update/`, formData, {
+
+  return api.patch(`/death-record/${id}/update/`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

@@ -78,12 +78,14 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
     });
 
     try {
-      await updateItemStock(stock.id, fd);
-      notify("success", "Stock updated successfully");
+      const response = await updateItemStock(stock.id, fd);
+      const message = response?.data?.message || "Stock updated successfully";
+      notify("success", message);
       refresh();
       onClose();
-    } catch {
-      notify("error", "Failed to update stock");
+    } catch (error) {
+      const errorMsg = error?.response?.data?.error || error?.message || "Failed to update stock";
+      notify("error", errorMsg);
     }
   };
 
@@ -164,11 +166,11 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
           {/* ROW 3 */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="text-sm font-medium">Quantity *</label>
+              <label className="text-sm font-medium">Quantity * {form.available_quantity}</label>
               <input
                 type="number"
                 value={form.quantity}
-                onChange={(e)=>setForm({...form,quantity:e.target.value})}
+                onChange={(e) => setForm({ ...form, quantity: e.target.value })}
                 className="w-full border px-3 py-2 rounded mt-1"
               />
             </div>
@@ -178,7 +180,7 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
               <input
                 type="number"
                 value={form.purchase_price}
-                onChange={(e)=>setForm({...form,purchase_price:e.target.value})}
+                onChange={(e) => setForm({ ...form, purchase_price: e.target.value })}
                 className="w-full border px-3 py-2 rounded mt-1"
               />
             </div>
@@ -188,7 +190,7 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
               <input
                 type="date"
                 value={form.stock_date}
-                onChange={(e)=>setForm({...form,stock_date:e.target.value})}
+                onChange={(e) => setForm({ ...form, stock_date: e.target.value })}
                 className="w-full border px-3 py-2 rounded mt-1"
               />
             </div>
@@ -198,36 +200,36 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
             <label className="text-sm font-medium">Description</label>
             <textarea
               value={form.description}
-              onChange={(e)=>setForm({...form,description:e.target.value})}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
               className="w-full border px-3 py-2 rounded mt-1"
             />
           </div>
 
           <div>
-        <label className="text-sm font-medium">Attach Document</label>
+            <label className="text-sm font-medium">Attach Document</label>
 
-        <div className="border border-dashed rounded mt-1 p-4 text-center text-sm text-gray-500 cursor-pointer">
-        <input
-            type="file"
-            id="docUpload"
-            className="hidden"
-            onChange={(e) => {
-                const file = e.target.files[0];
-                setForm({ ...form, document: file });
-            }}
-            />
+            <div className="border border-dashed rounded mt-1 p-4 text-center text-sm text-gray-500 cursor-pointer">
+              <input
+                type="file"
+                id="docUpload"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setForm({ ...form, document: file });
+                }}
+              />
 
-            <label htmlFor="docUpload" className="cursor-pointer block">
-            {form.document ? (
-                <span className="text-purple-600 font-medium">
-                📄 {form.document.name}
-                </span>
-            ) : (
-                <span>Drop a file here or click</span>
-            )}
-            </label>
-        </div>
-        </div>
+              <label htmlFor="docUpload" className="cursor-pointer block">
+                {form.document ? (
+                  <span className="text-purple-600 font-medium">
+                    📄 {form.document.name}
+                  </span>
+                ) : (
+                  <span>Drop a file here or click</span>
+                )}
+              </label>
+            </div>
+          </div>
 
 
           <div className="flex justify-end pt-3">

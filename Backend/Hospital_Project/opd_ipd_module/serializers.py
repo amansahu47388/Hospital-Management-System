@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from .models import OpdPatient, IpdPatient, IpdDischarge
+from .models import OpdPatient, IpdPatient, IpdDischarge, Prescription
 from patient_module.serializers import PatientSerializer
-from setup_module.serializers import BedSerializers
+from setup_module.serializers import BedSerializer
 from users.serializers import UserSerializer
 import uuid
 from django.db import transaction, models
+from django.utils.timezone import now
 
 # OPD Patient Serializers
 class OpdPatientSerializer(serializers.ModelSerializer):
@@ -22,7 +23,7 @@ class OpdPatientSerializer(serializers.ModelSerializer):
             'checkup_id', 'case_id', 'old_patient', 'casualty', 'charge_id', 'charge_category',
             'reference', 'previous_medical_issue', 'created_by', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['opd_id', 'checkup_id',  'created_by', 'created_at', 'updated_at']
+        read_only_fields = ['opd_id', 'case_id', 'checkup_id',  'created_by', 'created_at', 'updated_at']
 
 class OpdPatientCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,11 +34,11 @@ class OpdPatientCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-
-        max_id = OpdPatient.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
-        case_id = f"{max_id + 1:04d}"
-
-        validated_data["case_id"] = case_id
+        max_id = OpdPatient.objects.aggregate(max_id=models.Max('opd_id'))['max_id'] or 0
+        next_id = max_id + 1
+        
+        validated_data["case_id"] = f"CAS{next_id:04d}"
+        validated_data["checkup_id"] = f"CHK{next_id:04d}"
 
         return super().create(validated_data)
 
@@ -75,7 +76,7 @@ class IpdPatientSerializer(serializers.ModelSerializer):
     patient_detail = PatientSerializer(source='patient', read_only=True)
     doctor_detail = UserSerializer(source='doctor', read_only=True)
     created_by = UserSerializer(read_only=True)
-    bed = BedSerializers(read_only=True)
+    bed = BedSerializer(read_only=True)
 
     class Meta:
         model = IpdPatient
@@ -96,11 +97,13 @@ class IpdPatientCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-
-        max_id = OpdPatient.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
-        case_id = f"{max_id + 1:04d}"
-
-        validated_data["case_id"] = case_id
+        max_id = IpdPatient.objects.aggregate(max_id=models.Max('ipd_id'))['max_id'] or 0
+        next_id = max_id + 1
+        
+        validated_data["case_id"] = f"CAS-IPD{next_id:04d}"
+        if not validated_data.get("checkup_id"):
+             validated_data["checkup_id"] = f"CHK-IPD{next_id:04d}"
+             
         return super().create(validated_data)
 
 
@@ -108,7 +111,7 @@ class IpdPatientListSerializer(serializers.ModelSerializer):
     patient_detail = PatientSerializer(source="patient", read_only=True)
     doctor_detail = UserSerializer(source="doctor", read_only=True)
     created_by = UserSerializer(read_only=True)
-    bed = BedSerializers(read_only=True)
+    bed = BedSerializer(read_only=True)
     symptom_name = serializers.CharField(source="symptom.symptom_title", read_only=True)
 
     class Meta:
@@ -210,3 +213,9 @@ class IpdDischargedListSerializer(serializers.ModelSerializer):
         if obj.attachment:
             return obj.attachment.url
         return None
+
+
+class PrescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prescription
+        fields = "__all__"

@@ -158,7 +158,7 @@ export default function VisitorList() {
 
             <tbody>
               {!loading && filteredVisitors.map((v) => (
-                <tr key={v.id} className="hover:bg-gray-100">
+                <tr key={v.id} className="border-b border-gray-200 hover:bg-gray-100">
                   <td className="p-3">{v.purpose_name}</td>
                   <td className="p-3 text-blue-600">{v.name}</td>
                   <td className="p-3">{v.visit_to}</td>

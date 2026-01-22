@@ -17,8 +17,8 @@ export default function PurposeSidebarMenu() {
               className={({ isActive }) =>
                 `block px-3 py-2 rounded ${
                   isActive
-                    ? "bg-blue-100 text-blue-600 font-medium"
-                    : "hover:bg-gray-100"
+                    ? "bg-purple-200 text-purple-600 font-bold"
+                    : "hover:bg-purple-100 hover:text-purple-600"
                 }`
               }
             >

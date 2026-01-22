@@ -55,7 +55,14 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
       amount: test.total_amount || "",
     });
 
-    setParameters(test.parameters || []);
+    // Map parameters to include parameter_id for dropdown
+    const mappedParams = (test.parameters || []).map(p => ({
+      parameter_id: p.id,
+      parameter_name: p.parameter_name,
+      reference_range: p.reference_range,
+      unit: p.unit,
+    }));
+    setParameters(mappedParams);
   }, [open, test]);
 
   /* ================= FETCH SETUP ================= */
@@ -144,15 +151,9 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
       tax: Number(formData.tax || 0),
       standard_charge: Number(formData.standard_charge || 0),
       total_amount: Number(formData.amount || 0),
-      parameters: parameters
-        .filter(
-          (p) => p.parameter_name && p.reference_range && p.unit
-        )
-        .map((p) => ({
-          parameter_name: p.parameter_name,
-          reference_range: p.reference_range,
-          unit: p.unit,
-        })),
+      parameter_ids: parameters
+        .filter(p => p.parameter_id)
+        .map(p => Number(p.parameter_id)),
     };
 
     try {

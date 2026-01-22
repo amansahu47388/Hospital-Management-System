@@ -12,7 +12,7 @@ import {
   FileSpreadsheet,
   Printer,
   Copy,
-  Edit,
+  Pencil,
   Trash2
 } from "lucide-react";
 
@@ -89,7 +89,7 @@ export default function AmbulanceList() {
           </div>
 
           {/* SEARCH + ACTIONS */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3 border-b">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3">
             <input
               type="text"
               placeholder="Search..."
@@ -110,7 +110,7 @@ export default function AmbulanceList() {
           {/* TABLE */}
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-gray-100 ">
                 <tr className="text-left text-gray-700">
                   <th className="px-3 py-2">Vehicle Number</th>
                   <th className="px-3 py-2">Vehicle Model</th>
@@ -141,7 +141,7 @@ export default function AmbulanceList() {
                   filteredData.map((ambulance) => (
                     <tr
                       key={ambulance.id}
-                      className="border-b hover:bg-gray-50"
+                      className="border-b border-gray-200 hover:bg-gray-50"
                     >
                       <td className="px-3 py-2 text-blue-600 cursor-pointer">
                         {ambulance.vehicle_number}
@@ -155,14 +155,14 @@ export default function AmbulanceList() {
                       <td className="px-3 py-2">{ambulance.vehicle_type}</td>
                       <td className="px-3 py-2">
                         <div className="flex gap-2">
-                        <button
+                          <button
                             onClick={() => {
                               setSelectedId(ambulance.id);
                               setEditOpen(true);
                             }}
                             className="p-1 text-blue-600 hover:bg-blue-50 rounded"
                           >
-                            <Edit size={16} />
+                            <Pencil size={16} />
                           </button>
 
                           <button
@@ -202,6 +202,11 @@ export default function AmbulanceList() {
         onSuccess={loadAmbulances}
       />
 
-    </AdminLayout> 
+      <AddAmbulance
+        open={open}
+        onClose={() => setOpen(false)}
+        onSuccess={loadAmbulances}
+      />
+    </AdminLayout>
   );
 }

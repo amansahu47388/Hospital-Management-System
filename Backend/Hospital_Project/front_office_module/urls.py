@@ -3,12 +3,22 @@ from .views import *
 
 urlpatterns = [
     path("front-office/purpose/", PurposeAPI.as_view(), name="purpose"),
+    path("front-office/purpose/create/", PurposeAPI.as_view(), name="purpose-create"),
+    path("front-office/purpose/<int:pk>/update/", PurposeAPI.as_view(), name="purpose-update"),
+    path("front-office/purpose/<int:pk>/delete", PurposeAPI.as_view(), name="purpose-delete"),
 
 
     path("front-office/complain-types/", ComplainTypeAPI.as_view(), name="complain-type"),
+    path("front-office/complain-types/create", ComplainTypeAPI.as_view(), name="complain-type-create"),
+    path("front-office/complain-types/<int:pk>/update/", ComplainTypeAPI.as_view(), name="complain-type-update"),
+    path("front-office/complain-types/<int:pk>/delete/", ComplainTypeAPI.as_view(), name="complain-type-delete"),
 
 
     path("front-office/sources/", SourceAPI.as_view(), name="source"),
+    path("front-office/sources/create/", SourceAPI.as_view(), name="source-create"),
+    path("front-office/sources/<int:pk>/update/", SourceAPI.as_view(), name="source-update"),
+    path("front-office/sources/<int:pk>/delete/", SourceAPI.as_view(), name="source-delete"),
+
 
 
     # Visitor Routes

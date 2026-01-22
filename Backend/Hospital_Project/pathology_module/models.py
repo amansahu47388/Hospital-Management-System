@@ -1,18 +1,37 @@
 from django.db import models
 from setup_module.models import HospitalCharges
 from users.models import User
-from opd_ipd_module.models import Prescription
 
 
 class PathologyCategory(models.Model):
     category_name = models.CharField(max_length=100)
 
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.category_name
     
 
 
+class PathologyParameter(models.Model):
+    parameter_name = models.CharField(max_length=100,unique=True)
+    reference_range = models.CharField(max_length=100)
+    unit = models.CharField(max_length=50)
+    description = models.TextField(null=True, blank=True)
+
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.parameter_name}"
+
+
+
 class PathologyTest(models.Model):
+    parameters = models.ManyToManyField(PathologyParameter, related_name="tests")
     test_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=50)
     test_type = models.CharField(max_length=50, blank=True)
@@ -33,25 +52,12 @@ class PathologyTest(models.Model):
 
 
 
-class PathologyParameter(models.Model):
-    pathology_test = models.ForeignKey(PathologyTest,on_delete=models.CASCADE,related_name="parameters")
-    parameter_name = models.CharField(max_length=100)
-    reference_range = models.CharField(max_length=100)
-    unit = models.CharField(max_length=50)
-    description = models.TextField(null=True, blank=True)
-
-    class Meta:
-        unique_together = ("pathology_test", "parameter_name")
-
-    def __str__(self):
-        return f"{self.parameter_name} - {self.pathology_test.test_name}"
-
 
 
 class PathologyBill(models.Model):
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="pathology_bills" )
     doctor = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="pathology_bills", limit_choices_to={"role": "doctor"}, null=True, blank=True)
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, related_name="pathology_bills", null=True, blank=True)
+    prescription = models.ForeignKey('opd_ipd_module.Prescription', on_delete=models.SET_NULL, null=True, blank=True, related_name="pathology_bills")
     note = models.TextField(null=True, blank=True)
     previous_report_value = models.BooleanField(default=False)
     payment_mode = models.CharField(max_length=50, null=True, blank=True)

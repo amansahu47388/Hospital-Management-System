@@ -2,37 +2,25 @@ import { NavLink } from "react-router-dom";
 
 export default function FindingSidebarMenu() {
   return (
-    <div className="bg-white rounded-md shadow h-fit sticky top-6">
+    <div className="bg-white rounded-md">
       <ul className="text-sm">
-        <li>
-          <NavLink
-            to="/admin/setup/finding"
-            className={({ isActive }) =>
-              `block px-4 py-3 transition ${
+        {[
+          { label: "Finding", path: "/admin/setup/finding" },
+          { label: "Finding Category", path: "/admin/setup/finding-category" },
+        ].map((item) => (
+          <li key={item.label}>
+            <NavLink
+              to={item.path}
+              className={({ isActive }) =>
                 isActive
-                  ? "text-[#6046B5] font-semibold bg-purple-50"
-                  : "hover:bg-gray-100"
-              }`
-            }
-          >
-            Finding
-          </NavLink>
-        </li>
-
-        <li>
-          <NavLink
-            to="/admin/setup/finding/category"
-            className={({ isActive }) =>
-              `block px-4 py-3 transition ${
-                isActive
-                  ? "text-[#6046B5] font-semibold bg-purple-50"
-                  : "hover:bg-gray-100"
-              }`
-            }
-          >
-            Category
-          </NavLink>
-        </li>
+                  ? "block px-3 py-2 rounded bg-purple-200 text-purple-600 font-bold"
+                  : "block px-3 py-2 rounded hover:bg-purple-100 transition hover:text-purple-500"
+              }
+            >
+              {item.label}
+            </NavLink>
+          </li>
+        ))}
       </ul>
     </div>
   );

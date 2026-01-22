@@ -75,6 +75,39 @@ class BedSerializer(serializers.ModelSerializer):
 
 
 
+#***********************************************************************************#
+#                     OPERATIONS SETUP SERIALIZERS                                  #
+#***********************************************************************************#
+
+class OperationSetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OperationSetup
+        fields = "__all__"
+
+    def validate_name(self, value):
+        return value.strip()
+
+
+
+
+       
+#***********************************************************************************#
+#                     SYMPTOM SETUP SERIALIZERS                                  #
+#***********************************************************************************#
+
+class SymptomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Symptom
+        fields = "__all__"
+
+
+
+
+
+
+
+
+
 
 
 
@@ -95,3 +128,32 @@ class BedSerializers(serializers.ModelSerializer):
         ]
 
 
+
+#***********************************************************************************#
+#                     FINDING SETUP SERIALIZERS                                     #
+#***********************************************************************************#
+
+class FindingCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FindingCategory
+        fields = "__all__"
+
+class FindingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Finding
+        fields = "__all__"
+
+
+
+
+#***********************************************************************************#
+#                     VITAL SETUP SERIALIZERS                                       #
+#***********************************************************************************#
+
+class VitalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vital
+        fields = "__all__"
+
+# For backward compatibility with views using "VitalsSerializer"
+VitalsSerializer = VitalSerializer
