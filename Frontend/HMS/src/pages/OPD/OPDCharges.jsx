@@ -1,24 +1,10 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
-import {
-    Search,
-    Plus,
-    Edit2,
-    Trash2,
-    FileText,
-    Download,
-    Copy,
-    FileSpreadsheet,
-    FileIcon as FilePdf,
-    X,
-    Save,
-    ChevronDown,
-    Printer,
-    CheckCircle,
-} from "lucide-react";
+import {Search, Plus, Edit2, Trash2, FileText, Download, Copy, FileSpreadsheet, FileIcon as FilePdf, X,
+    Save, ChevronDown, Printer, CheckCircle,} from "lucide-react";
 
-export default function OPDChargesPage() {
+export default function OPDCharges() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedCharge, setSelectedCharge] = useState(null);
@@ -81,14 +67,12 @@ export default function OPDChargesPage() {
                                         "Charge Category",
                                         "Qty",
                                         "Standard Charge ($)",
-                                        "Applied Charge ($)",
-                                        "TPA Charge ($)",
                                         "Discount",
                                         "Tax",
                                         "Amount ($)",
                                         "Action",
                                     ].map((head) => (
-                                        <th key={head} className="px-4 py-4 text-[11px] font-bold uppercase tracking-wider">
+                                        <th key={head} className="px-4 py-4 text-sm font-bold ">
                                             <div className="flex items-center gap-1">
                                                 {head}
                                                 <ChevronDown size={12} />
@@ -100,21 +84,19 @@ export default function OPDChargesPage() {
                             <tbody className="divide-y divide-gray-100">
                                 {chargesData.map((row, i) => (
                                     <tr key={i} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.date}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">
+                                        <td className="px-4 py-4 text-sm text-gray-600">{row.date}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600">
                                             <div className="font-semibold">{row.chargeName}</div>
                                             <div className="text-[10px] text-gray-400">{row.chargeNote}</div>
                                         </td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.chargeType}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.chargeCategory}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.qty}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.standardCharge.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.appliedCharge.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.tpaCharge.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.discount}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.tax}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600 font-bold">{row.amount.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">
+                                        <td className="px-4 py-4 text-sm text-gray-600">{row.chargeType}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600">{row.chargeCategory}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600">{row.qty}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600">{row.standardCharge.toFixed(2)}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600">{row.discount}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600">{row.tax}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600 font-bold">{row.amount.toFixed(2)}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-600">
                                             <div className="flex gap-2">
                                                 <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500" title="Print">
                                                     <Printer size={14} />
@@ -199,10 +181,6 @@ export default function OPDChargesPage() {
                                     <input type="text" className="w-full p-2 bg-gray-50 border border-gray-300 rounded text-xs outline-none" defaultValue={showEditModal ? "123.00" : "0"} readOnly />
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                    <label className="text-[11px] font-bold text-gray-700">TPA Charge ($)</label>
-                                    <input type="text" className="w-full p-2 bg-gray-50 border border-gray-300 rounded text-xs outline-none" defaultValue="0" readOnly />
-                                </div>
-                                <div className="flex flex-col gap-1">
                                     <label className="text-[11px] font-bold text-gray-700">Qty <span className="text-red-500">*</span></label>
                                     <input type="number" className="w-full p-2 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-purple-500 outline-none" defaultValue="1" />
                                 </div>
@@ -251,7 +229,7 @@ export default function OPDChargesPage() {
                                     </div>
                                     {showAddModal && (
                                         <div className="pt-4 flex justify-end">
-                                            <button className="bg-[#4fb8ea] hover:bg-[#3daadd] text-white px-4 py-1.5 rounded flex items-center gap-1 text-[11px] font-bold shadow-sm">
+                                            <button className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-4 py-1.5 rounded flex items-center gap-1 text-[11px] font-bold shadow-sm">
                                                 <CheckCircle size={14} /> Add
                                             </button>
                                         </div>
@@ -269,7 +247,6 @@ export default function OPDChargesPage() {
                                                 <th className="pb-2">Charge Category</th>
                                                 <th className="pb-2">Charge Name / Note</th>
                                                 <th className="pb-2">Std Charge ($)</th>
-                                                <th className="pb-2">TPA Charge ($)</th>
                                                 <th className="pb-2">Qty</th>
                                                 <th className="pb-2">Total ($)</th>
                                                 <th className="pb-2">Discount ($)</th>
@@ -295,7 +272,7 @@ export default function OPDChargesPage() {
                                     setShowAddModal(false);
                                     setShowEditModal(false);
                                 }}
-                                className="bg-[#4fb8ea] hover:bg-[#3daadd] text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
                             >
                                 <CheckCircle size={16} />
                                 Save

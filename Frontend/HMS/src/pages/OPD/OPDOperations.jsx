@@ -2,24 +2,10 @@ import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
 
-import {
-    Search,
-    Plus,
-    Edit2,
-    Trash2,
-    Eye,
-    FileText,
-    Download,
-    Copy,
-    FileSpreadsheet,
-    FileIcon as FilePdf,
-    X,
-    Save,
-    ChevronDown,
-    Printer,
-} from "lucide-react";
+import {Search,Plus, Edit2,Trash2,Eye,FileText,Download,Copy,FileSpreadsheet,FileIcon as FilePdf,
+    X, Save, ChevronDown, Printer,} from "lucide-react";
 
-export default function OPDOperationsPage() {
+export default function OPDOperations() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
@@ -122,7 +108,7 @@ export default function OPDOperationsPage() {
                                         "OT Technician",
                                         "Action",
                                     ].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">
+                                        <th key={head} className="px-6 py-4 text-sm font-bold text-gray-600 ">
                                             <div className="flex items-center gap-1">
                                                 {head}
                                                 <ChevronDown size={14} />

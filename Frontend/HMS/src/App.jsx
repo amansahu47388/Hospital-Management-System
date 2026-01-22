@@ -114,18 +114,18 @@ import IPDBedHistoryPage from "./pages/IPD/IPDBedHistoryPage";
 import IPDPaymentPage from "./pages/IPD/IPDPaymentPage";
 import IPDTimelinePage from "./pages/IPD/IPDTimelinePage";
 import IPDChargesPage from "./pages/IPD/IPDChargesPage";
-import IPDTreatmentHistoryPage from "./pages/IPD/IPDTreatmentHistoryPage";
-import IPDVitalsPage from "./pages/IPD/IPDVitalsPage";
+import IPDTreatmentHistoryPage from "./pages/IPD/IPDTreatmentHistory";
+import IPDVitalsPage from "./pages/IPD/IPDVitals";
 import OPDComprehensivePage from "./pages/OPD/OPDComprehensivePage";
 import OPDVisitsPage from "./pages/OPD/OPDVisitsPage";
 import OPDMedicationPage from "./pages/OPD/OPDMedicationPage";
-import OPDLabInvestigationPage from "./pages/OPD/OPDLabInvestigationPage";
-import OPDOperationsPage from "./pages/OPD/OPDOperationsPage";
-import OPDChargesPage from "./pages/OPD/OPDChargesPage";
+import OPDLabInvestigationPage from "./pages/OPD/OPDLabInvestigation";
+import OPDOperationsPage from "./pages/OPD/OPDOperations";
+import OPDChargesPage from "./pages/OPD/OPDCharges";
 import OPDPaymentPage from "./pages/OPD/OPDPaymentPage";
 import OPDTimelinePage from "./pages/OPD/OPDTimelinePage";
-import OPDTreatmentHistoryPage from "./pages/OPD/OPDTreatmentHistoryPage";
-import OPDVitalsPage from "./pages/OPD/OPDVitalsPage";
+import OPDTreatmentHistoryPage from "./pages/OPD/OPDTreatmentHistory";
+import OPDVitalsPage from "./pages/OPD/OPDVitals";
 
 
 
@@ -176,16 +176,15 @@ function App() {
             <Route path="/admin/appointments" element={<Appointment />} />
             <Route path="/admin/appointments/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
             <Route path="/admin/appointments/patient-queue" element={<PatientQueue />} />
-
-            {/* OPD and IPD Routes */}
-            <Route path="/admin/opd-patients" element={<OpdPatient />} />
+           
+            {/* IPD Routes */}
             <Route path="/admin/ipd-patients" element={<IpdPatient />} />
             <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
             <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
             <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
             <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
             <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
-            <Route path="/admin/ipd-patients/:ipdId/comprehensive-page" element={<IPDComprehensivePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/profile" element={<IPDComprehensivePage />} />
             <Route path="/admin/ipd-patients/115/nurse-notes" element={<NurseNotesSinglePage />} />
             <Route path="/admin/ipd-patients/115/medication" element={<MedicationSinglePage />} />
             <Route path="/admin/ipd-patients/115/prescription" element={<PrescriptionSinglePage />} />
@@ -199,16 +198,19 @@ function App() {
             <Route path="/admin/ipd-patients/115/charges" element={<IPDChargesPage />} />
             <Route path="/admin/ipd-patients/115/treatment-history" element={<IPDTreatmentHistoryPage />} />
             <Route path="/admin/ipd-patients/115/vitals" element={<IPDVitalsPage />} />
-            <Route path="/admin/opd-patients/210/overview" element={<OPDComprehensivePage />} />
-            <Route path="/admin/opd-patients/210/visits" element={<OPDVisitsPage />} />
-            <Route path="/admin/opd-patients/210/medication" element={<OPDMedicationPage />} />
-            <Route path="/admin/opd-patients/210/lab-investigation" element={<OPDLabInvestigationPage />} />
-            <Route path="/admin/opd-patients/210/operations" element={<OPDOperationsPage />} />
-            <Route path="/admin/opd-patients/210/charges" element={<OPDChargesPage />} />
-            <Route path="/admin/opd-patients/210/payments" element={<OPDPaymentPage />} />
-            <Route path="/admin/opd-patients/210/timeline" element={<OPDTimelinePage />} />
-            <Route path="/admin/opd-patients/210/treatment-history" element={<OPDTreatmentHistoryPage />} />
-            <Route path="/admin/opd-patients/210/vitals" element={<OPDVitalsPage />} />
+            
+            {/* OPD Routes */}
+            <Route path="/admin/opd-patients" element={<OpdPatient />} />
+            <Route path="/admin/opd-patients/:opdId/profile" element={<OPDComprehensivePage />} />
+            <Route path="/admin/opd-patients/:opdId/visits" element={<OPDVisitsPage />} />
+            <Route path="/admin/opd-patients/:opdId/medication" element={<OPDMedicationPage />} />
+            <Route path="/admin/opd-patients/:opdId/lab-investigation" element={<OPDLabInvestigationPage />} />
+            <Route path="/admin/opd-patients/:opdId/operations" element={<OPDOperationsPage />} />
+            <Route path="/admin/opd-patients/:opdId/charges" element={<OPDChargesPage />} />
+            <Route path="/admin/opd-patients/:opdId/payments" element={<OPDPaymentPage />} />
+            <Route path="/admin/opd-patients/:opdId/timeline" element={<OPDTimelinePage />} />
+            <Route path="/admin/opd-patients/:opdId/treatment-history" element={<OPDTreatmentHistoryPage />} />
+            <Route path="/admin/opd-patients/:opdId/vitals" element={<OPDVitalsPage />} />
                        
             {/* Pathology Routes */}
             <Route path="/admin/pathology-bills" element={<PathologyBill />} />

@@ -14,7 +14,7 @@ import {
     Plus
 } from "lucide-react";
 
-export default function OPDLabInvestigationPage() {
+export default function OPDLabInvestigation() {
     const [searchTerm, setSearchTerm] = useState("");
 
     const patientData = {
@@ -61,7 +61,7 @@ export default function OPDLabInvestigationPage() {
                 <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]">
                     {/* Page Header */}
                     <div className="p-4 md:p-6">
-                        <h2 className="text-xl font-bold text-gray-800">Lab Investigation</h2>
+                        <h2 className="text-xl font-bold text-gray-600">Lab Investigation</h2>
                     </div>
 
                     {/* Table Actions */}
@@ -73,7 +73,7 @@ export default function OPDLabInvestigationPage() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     {["Test Name", "Lab", "Sample Collected", "Expected Date", "Approved By", "Action"].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">
+                                        <th key={head} className="px-6 py-4 text-sm font-bold text-gray-600 ">
                                             <div className="flex items-center gap-1">
                                                 {head}
                                                 <ChevronDown size={14} />
