@@ -1,23 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getEvents, createEvent, updateEvent, deleteEvent } from "../api/calendarApi";
 
 export default function useCalendarTasks() {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Doctors Meeting", date: "2026-01-05", endDate: "2026-01-05", start: "2026-01-05T10:00", end: "2026-01-05T11:00", color: "#2563EB", description: "" },
-    { id: 2, title: "HIV Vaccine Awareness Day", date: "2026-01-18", endDate: "2026-01-18", start: "2026-01-18T09:00", end: "2026-01-18T17:00", color: "#EC4899", description: "" },
-    { id: 3, title: "Staff Meeting", date: "2026-01-25", endDate: "2026-01-25", start: "2026-01-25T14:00", end: "2026-01-25T15:00", color: "#16A34A", description: "" },
-  ]);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const addTask = (task) => {
-    setTasks((prev) => [...prev, { id: Date.now(), ...task }]);
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const response = await getEvents();
+      setTasks(response.data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeTask = (id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const addTask = async (task) => {
+    try {
+      const response = await createEvent(task);
+      setTasks((prev) => [...prev, response.data]);
+    } catch (error) {
+      console.error("Error adding event:", error);
+    }
   };
 
-  const updateTask = (updatedTask) => {
-    setTasks((prev) => prev.map((t) => t.id === updatedTask.id ? updatedTask : t));
+  const removeTask = async (id) => {
+    try {
+      await deleteEvent(id);
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+    } catch (error) {
+      console.error("Error removing event:", error);
+    }
   };
 
-  return { tasks, addTask, removeTask, updateTask };
+  const updateTask = async (updatedTask) => {
+    try {
+      const response = await updateEvent(updatedTask.id, updatedTask);
+      setTasks((prev) => prev.map((t) => t.id === updatedTask.id ? response.data : t));
+    } catch (error) {
+      console.error("Error updating event:", error);
+    }
+  };
+
+  return { tasks, addTask, removeTask, updateTask, loading, fetchEvents };
 }

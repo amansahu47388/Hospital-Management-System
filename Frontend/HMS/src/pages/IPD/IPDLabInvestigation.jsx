@@ -1,8 +1,9 @@
 import { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
+import { Eye } from "lucide-react";
 
-export default function LabInvestigationSinglePage() {
+export default function IPDLabInvestigation() {
   const [showView, setShowView] = useState(false);
   const [selected, setSelected] = useState(null);
 
@@ -40,7 +41,7 @@ export default function LabInvestigationSinglePage() {
 
             <h2 className="text-lg font-semibold mb-4">Lab Investigation</h2>
 
-            <table className="w-full border text-sm">
+            <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="p-2">Test Name</th>
@@ -53,7 +54,7 @@ export default function LabInvestigationSinglePage() {
               </thead>
               <tbody>
                 {rows.map(r => (
-                  <tr key={r.id} className="border-t">
+                  <tr key={r.id} className="border-t border-gray-200  ">
                     <td className="p-2">{r.test}</td>
                     <td className="p-2">{r.lab}</td>
                     <td className="p-2">
@@ -73,7 +74,7 @@ export default function LabInvestigationSinglePage() {
                         }}
                         className="text-blue-600 hover:underline"
                       >
-                        View
+                        <Eye size={14} />
                       </button>
                     </td>
                   </tr>

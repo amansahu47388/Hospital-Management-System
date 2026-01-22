@@ -1,8 +1,9 @@
 import { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
+import { Pencil, Trash2 } from "lucide-react";
 
-export default function ConsultantRegisterSinglePage() {
+export default function ConsultantRegister() {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -38,32 +39,35 @@ export default function ConsultantRegisterSinglePage() {
               </button>
             </div>
 
-            <table className="w-full border text-sm">
+            <table className="w-full  text-sm">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="p-2">Applied Date</th>
-                  <th className="p-2">Consultant Doctor</th>
-                  <th className="p-2">Instruction</th>
-                  <th className="p-2">Consultant Date</th>
-                  <th className="p-2 text-center">Action</th>
+                  <th className="p-2 text-left">Applied Date</th>
+                  <th className="p-2 text-left">Consultant Doctor</th>
+                  <th className="p-2 text-left">Instruction</th>
+                  <th className="p-2 text-left">Consultant Date</th>
+                  <th className="p-2 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((row) => (
-                  <tr key={row.id} className="border-t">
-                    <td className="p-2">{row.appliedDate}</td>
-                    <td className="p-2">{row.consultant}</td>
-                    <td className="p-2">{row.instruction}</td>
-                    <td className="p-2">{row.consultantDate}</td>
-                    <td className="p-2 text-center">
+                  <tr key={row.id} className="border-t border-gray-200">
+                    <td className="p-2 text-left">{row.appliedDate}</td>
+                    <td className="p-2 text-left">{row.consultant}</td>
+                    <td className="p-2 text-left">{row.instruction}</td>
+                    <td className="p-2 text-left">{row.consultantDate}</td>
+                    <td className="p-2 text-left flex gap-2">
                       <button
                         onClick={() => {
                           setSelected(row);
                           setShowEdit(true);
                         }}
-                        className="text-blue-600 hover:underline"
+                        className="text-purple-600"
                       >
-                        Edit
+                        <Pencil size={16} />
+                      </button>
+                      <button className="text-red-600">
+                        <Trash2 size={16} />
                       </button>
                     </td>
                   </tr>
@@ -85,11 +89,15 @@ export default function ConsultantRegisterSinglePage() {
               </div>
 
               <div className="bg-white p-6 space-y-4">
+                <label>Applied Date</label>
                 <input className="border p-2 w-full" placeholder="Applied Date *" />
+                <label>Consultant Date</label>
                 <input className="border p-2 w-full" placeholder="Consultant Date *" />
+                <label>Select Consultant</label>
                 <select className="border p-2 w-full">
                   <option>Select Consultant *</option>
                 </select>
+                <label>Instruction</label>
                 <textarea className="border p-2 w-full" placeholder="Instruction *" />
                 <div className="text-right">
                   <button className="bg-[#6046B5] text-white px-4 py-2 rounded">
@@ -113,9 +121,13 @@ export default function ConsultantRegisterSinglePage() {
               </div>
 
               <div className="bg-white p-6 space-y-4">
+                <label>Applied Date</label>
                 <input className="border p-2 w-full" defaultValue={selected?.appliedDate} />
+                <label>Consultant Date</label>
                 <input className="border p-2 w-full" defaultValue={selected?.consultantDate} />
+                <label>Select Consultant</label>
                 <input className="border p-2 w-full" defaultValue={selected?.consultant} />
+                <label>Instruction</label>
                 <textarea className="border p-2 w-full" defaultValue={selected?.instruction} />
                 <div className="text-right">
                   <button className="bg-[#6046B5] text-white px-4 py-2 rounded">

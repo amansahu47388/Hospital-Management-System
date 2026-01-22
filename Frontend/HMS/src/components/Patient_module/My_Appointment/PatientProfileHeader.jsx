@@ -78,20 +78,11 @@ export default function PatientProfileHeader() {
                                 <p className="text-gray-400 font-medium mb-1">Age</p>
                                 <p className="text-gray-700 font-semibold">{displayData.age}</p>
                             </div>
-                            <div className="flex flex-col items-center">
-                                <div className="bg-white border p-1 mb-1">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Barcode-39.svg/1200px-Barcode-39.svg.png" alt="barcode" className="h-6 w-20 grayscale" />
-                                </div>
-                                <span className="text-[10px] font-bold">1</span>
                             </div>
-                        </div>
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-gray-400 font-medium mb-1">Guardian Name</p>
                                 <p className="text-gray-700 font-semibold">{displayData.guardianName}</p>
-                            </div>
-                            <div className="bg-white border p-1">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="qr" className="h-10 w-10 opacity-70" />
                             </div>
                         </div>
                     </div>

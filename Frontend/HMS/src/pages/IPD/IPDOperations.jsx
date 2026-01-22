@@ -1,25 +1,13 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
 
 import {
-    Search,
-    Plus,
-    Edit2,
-    Trash2,
-    Eye,
-    FileText,
-    Download,
-    Copy,
-    FileSpreadsheet,
-    FileIcon as FilePdf,
-    X,
-    Save,
-    ChevronDown,
-    Printer,
+    Search, Plus, Edit2, Trash2, Eye, FileText, Download, Copy, FileSpreadsheet, FileIcon as FilePdf,
+    X, Save, ChevronDown, Printer, CheckCircle,
 } from "lucide-react";
 
-export default function OPDOperationsPage() {
+export default function IPDOperations() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
@@ -86,78 +74,70 @@ export default function OPDOperationsPage() {
     return (
         <AdminLayout>
             <div className="min-h-screen bg-gray-50 pb-10">
-                
-                <div className="mx-4 md:mx-6">
-                    <OPDTabsNavbar />
-                </div>
 
-                <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]">
-                    {/* Page Header */}
-                    <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
+                <IPDTabsNavbar />
+
+                {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
+                {/* Page Header */}
+
+                <div className="p-4 md:p-6 ">
+                    <div className="bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="">
                             <h2 className="text-xl font-bold text-gray-800">Operations</h2>
                         </div>
                         <button
                             onClick={() => setShowAddModal(true)}
-                            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#4c3893] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-semibold"
+                            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-semibold"
                         >
                             <Plus size={18} />
                             Add Operation
                         </button>
                     </div>
 
+
                     {/* Table Actions */}
-                    
+
 
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-gray-100 text-gray-800">
                                 <tr>
-                                    {[
-                                        "Reference No",
-                                        "Operation Date",
-                                        "Operation Name",
-                                        "Operation Category",
-                                        "OT Technician",
-                                        "Action",
-                                    ].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
-                                                {head}
-                                                <ChevronDown size={14} />
-                                            </div>
-                                        </th>
-                                    ))}
+                                    <th className="px-6 py-4 text-sm font-bold">Reference No</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Operation Date</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Operation Name</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Operation Category</th>
+                                    <th className="px-6 py-4 text-sm font-bold">OT Technician</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-100">
                                 {operationsData.length > 0 ? (
                                     operationsData.map((row, i) => (
-                                        <tr key={i} className="hover:bg-gray-50 transition-colors">
+                                        <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
                                             <td className="px-6 py-4 text-sm font-medium text-gray-900">{row.referenceNo}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">{row.date}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600 font-semibold">{row.name}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">{row.category}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">{row.technician}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">
+                                            <td className="px-6 py-4 text-sm ">{row.date}</td>
+                                            <td className="px-6 py-4 text-sm  font-semibold">{row.name}</td>
+                                            <td className="px-6 py-4 text-sm ">{row.category}</td>
+                                            <td className="px-6 py-4 text-sm ">{row.technician}</td>
+                                            <td className="px-6 py-4 text-sm ">
                                                 <div className="flex gap-2">
                                                     <button
                                                         onClick={() => handleOpenDetail(row)}
-                                                        className="p-1.5 hover:bg-gray-100 rounded text-gray-500"
+                                                        className="hover:bg-blue-100 text-blue-500 px-2 py-1 rounded text-xs"
                                                         title="View Detail"
                                                     >
-                                                        <Eye size={16} />
+                                                        <Eye size={14} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleOpenEdit(row)}
-                                                        className="p-1.5 hover:bg-gray-100 rounded text-gray-500"
+                                                        className="hover:bg-purple-100 text-purple-500 px-2 py-1 rounded text-xs"
                                                         title="Edit"
                                                     >
-                                                        <Edit2 size={16} />
+                                                        <Edit2 size={14} />
                                                     </button>
-                                                    <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500" title="Delete">
-                                                        <Trash2 size={16} />
+                                                    <button className="hover:bg-red-100 text-red-500 px-2 py-1 rounded text-xs" title="Delete">
+                                                        <Trash2 size={14} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -166,7 +146,6 @@ export default function OPDOperationsPage() {
                                 ) : (
                                     <tr>
                                         <td colSpan="6" className="px-6 py-20 text-center">
-                                            {/* Similar empty state can go here */}
                                             No data available
                                         </td>
                                     </tr>
@@ -194,7 +173,7 @@ export default function OPDOperationsPage() {
                                 }}
                                 className="text-white/80 hover:text-white transition-colors p-1"
                             >
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -321,9 +300,9 @@ export default function OPDOperationsPage() {
                                     setShowAddModal(false);
                                     setShowEditModal(false);
                                 }}
-                                className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#269a4d] text-white px-8 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-sm"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
                             >
-                                <Save size={18} />
+                                <CheckCircle size={16} />
                                 Save
                             </button>
                         </div>
@@ -344,7 +323,7 @@ export default function OPDOperationsPage() {
                                     onClick={() => setShowDetailModal(false)}
                                     className="text-white p-1"
                                 >
-                                    <X size={28} />
+                                    <X size={24} />
                                 </button>
                             </div>
                         </div>

@@ -291,7 +291,7 @@ function Sidebar({ role = "admin" }) {
                     {setupOpen && !collapsed && (
                       <div className="ml-8 mt-2 space-y-2 ">
                         {[
-                          { label: "Settings", path: "/admin/setup/settings" },
+                          // { label: "Settings", path: "/admin/setup/settings" },
                           { label: "Hospital Charges", path: "/admin/setup/charges-details" },
                           { label: "Bed", path: "/admin/setup/bed-status" },
                           { label: "Print Head. Foot.", path: "/admin/setup/appointment-header-footer" },
@@ -305,9 +305,8 @@ function Sidebar({ role = "admin" }) {
                           { label: "Vitals", path: "/admin/setup/vitals" },
                           { label: "Finance", path: "/admin/setup/finance/income-head" },
                           { label: "Inventory", path: "/admin/setup/inventory/item-category" },
-                          { label: "Appointment", path: "/admin/setup/appointment/slots" },
-                          { label: "Custom Fields", path: "/admin/setup/Custom Fields" },
-
+                          { label: "Appointment", path: "/admin/setup/appointment/shift" },
+                         
                         ].map(({ label, path }) => (
                           <NavLink
                             key={path}

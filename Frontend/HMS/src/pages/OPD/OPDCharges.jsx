@@ -1,24 +1,12 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
+import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
 import {
-    Search,
-    Plus,
-    Edit2,
-    Trash2,
-    FileText,
-    Download,
-    Copy,
-    FileSpreadsheet,
-    FileIcon as FilePdf,
-    X,
-    Save,
-    ChevronDown,
-    Printer,
-    CheckCircle,
+    Search, Plus, Edit2, Trash2, FileText, Download, Copy, FileSpreadsheet, FileIcon as FilePdf, X,
+    Save, ChevronDown, Printer, CheckCircle,
 } from "lucide-react";
 
-export default function OPDChargesPage() {
+export default function OPDCharges() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedCharge, setSelectedCharge] = useState(null);
@@ -47,15 +35,17 @@ export default function OPDChargesPage() {
 
     return (
         <AdminLayout>
-            <div className="min-h-screen bg-gray-50 pb-10">
-                <div className="mx-4 md:mx-6">
+            <div className="min-h-screen bg-gray-50">
+              
                     <OPDTabsNavbar />
-                </div>
+            
 
-                <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]">
+                {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
                     {/* Page Header */}
-                    <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
+                  
+                    <div className="p-4 md:p-6 ">
+                         <div className="bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div className="">
                             <h2 className="text-xl font-bold text-gray-800">Charges</h2>
                         </div>
                         <button
@@ -65,78 +55,60 @@ export default function OPDChargesPage() {
                             <Plus size={18} />
                             Add Charges
                         </button>
-                    </div>
+                        </div>
+                   
 
                     {/* Table Actions */}
-                   
+
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50 text-gray-600">
+                            <thead className="bg-gray-100 text-gray-800">
                                 <tr>
-                                    {[
-                                        "Date",
-                                        "Charge Name / Charge Note",
-                                        "Charge Type",
-                                        "Charge Category",
-                                        "Qty",
-                                        "Standard Charge ($)",
-                                        "Applied Charge ($)",
-                                        "TPA Charge ($)",
-                                        "Discount",
-                                        "Tax",
-                                        "Amount ($)",
-                                        "Action",
-                                    ].map((head) => (
-                                        <th key={head} className="px-4 py-4 text-[11px] font-bold uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
-                                                {head}
-                                                <ChevronDown size={12} />
-                                            </div>
-                                        </th>
-                                    ))}
+                                    <th className="px-4 py-3 text-left text-sm">Date</th>
+                                    <th className="px-4 py-3 text-left text-sm">Charge Name</th>
+                                    <th className="px-4 py-3 text-left text-sm">Charge Type</th>
+                                    <th className="px-4 py-3 text-left text-sm">Charge Category</th>
+                                    <th className="px-4 py-3 text-left text-sm">Standard Charge($)</th>
+                                    <th className="px-4 py-3 text-left text-sm">Discount</th>
+                                    <th className="px-4 py-3 text-left text-sm">Tax</th>
+                                    <th className="px-4 py-3 text-left text-sm">Net Amount ($)</th>
+                                    <th className="px-4 py-3 text-left text-sm">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="bg-white border-b border-gray-200">
                                 {chargesData.map((row, i) => (
-                                    <tr key={i} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.date}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">
-                                            <div className="font-semibold">{row.chargeName}</div>
-                                            <div className="text-[10px] text-gray-400">{row.chargeNote}</div>
-                                        </td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.chargeType}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.chargeCategory}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.qty}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.standardCharge.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.appliedCharge.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.tpaCharge.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.discount}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">{row.tax}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600 font-bold">{row.amount.toFixed(2)}</td>
-                                        <td className="px-4 py-4 text-xs text-gray-600">
+                                    <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
+                                        <td className="px-4 py-4 text-sm ">{row.date}</td>
+                                        <td className="px-4 py-4 text-sm ">{row.chargeName}</td>
+                                        <td className="px-4 py-4 text-sm ">{row.chargeType}</td>
+                                        <td className="px-4 py-4 text-sm ">{row.chargeCategory}</td>
+                                        <td className="px-4 py-4 text-sm ">{row.standardCharge.toFixed(2)}</td>
+                                        <td className="px-4 py-4 text-sm ">{row.discount}</td>
+                                        <td className="px-4 py-4 text-sm ">{row.tax}</td>
+                                        <td className="px-4 py-4 text-sm font-bold">{row.amount.toFixed(2)}</td>
+                                        <td className="px-4 py-4 text-sm ">
                                             <div className="flex gap-2">
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500" title="Print">
-                                                    <Printer size={14} />
-                                                </button>
                                                 <button
                                                     onClick={() => handleOpenEdit(row)}
-                                                    className="p-1.5 hover:bg-gray-100 rounded text-gray-500"
+                                                    className="hover:bg-purple-100 text-purple-500 px-2 py-1 rounded text-xs"
                                                     title="Edit"
                                                 >
                                                     <Edit2 size={14} />
                                                 </button>
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500" title="Delete">
+                                                <button className="hover:bg-red-100 text-red-500 px-2 py-1 rounded text-xs"
+                                                    title="Delete"
+                                                    onClick={() => handleDelete(row.id)}
+                                                >
                                                     <Trash2 size={14} />
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
-                                <tr className="bg-gray-50 font-bold">
-                                    <td colSpan="10" className="px-4 py-3 text-right text-xs">Total :</td>
+                                <tr className="bg-gray-50 font-bold py-4">
+                                    <td colSpan="7" className="px-4 py-3 text-right text-xs">Total :</td>
                                     <td className="px-4 py-3 text-xs">$0.00</td>
-                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -157,7 +129,7 @@ export default function OPDChargesPage() {
                                 {showAddModal ? "Add Charges" : "Edit Charge"}
                             </h3>
                             <div className="flex items-center gap-4">
-                                
+
                                 <button
                                     onClick={() => {
                                         setShowAddModal(false);
@@ -197,14 +169,6 @@ export default function OPDChargesPage() {
                                 <div className="flex flex-col gap-1">
                                     <label className="text-[11px] font-bold text-gray-700">Standard Charge ($)</label>
                                     <input type="text" className="w-full p-2 bg-gray-50 border border-gray-300 rounded text-xs outline-none" defaultValue={showEditModal ? "123.00" : "0"} readOnly />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-[11px] font-bold text-gray-700">TPA Charge ($)</label>
-                                    <input type="text" className="w-full p-2 bg-gray-50 border border-gray-300 rounded text-xs outline-none" defaultValue="0" readOnly />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-[11px] font-bold text-gray-700">Qty <span className="text-red-500">*</span></label>
-                                    <input type="number" className="w-full p-2 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-purple-500 outline-none" defaultValue="1" />
                                 </div>
                             </div>
 
@@ -251,7 +215,7 @@ export default function OPDChargesPage() {
                                     </div>
                                     {showAddModal && (
                                         <div className="pt-4 flex justify-end">
-                                            <button className="bg-[#4fb8ea] hover:bg-[#3daadd] text-white px-4 py-1.5 rounded flex items-center gap-1 text-[11px] font-bold shadow-sm">
+                                            <button className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-4 py-1.5 rounded flex items-center gap-1 text-[11px] font-bold shadow-sm">
                                                 <CheckCircle size={14} /> Add
                                             </button>
                                         </div>
@@ -269,7 +233,6 @@ export default function OPDChargesPage() {
                                                 <th className="pb-2">Charge Category</th>
                                                 <th className="pb-2">Charge Name / Note</th>
                                                 <th className="pb-2">Std Charge ($)</th>
-                                                <th className="pb-2">TPA Charge ($)</th>
                                                 <th className="pb-2">Qty</th>
                                                 <th className="pb-2">Total ($)</th>
                                                 <th className="pb-2">Discount ($)</th>
@@ -295,7 +258,7 @@ export default function OPDChargesPage() {
                                     setShowAddModal(false);
                                     setShowEditModal(false);
                                 }}
-                                className="bg-[#4fb8ea] hover:bg-[#3daadd] text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
                             >
                                 <CheckCircle size={16} />
                                 Save

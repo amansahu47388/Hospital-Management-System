@@ -252,7 +252,7 @@ export default function OpdPatient() {
                         <td className="p-2">OPDN{opd.opd_id}</td>
                         <td
                           className="p-2 text-blue-600 cursor-pointer"
-                          onClick={() => navigate(`/admin/opd-patients/${opd.opd_id}`)}
+                          onClick={() => navigate(`/admin/opd-patients/${opd.opd_id}/profile`)}
                         >
                           {opd.patient_detail.first_name} {opd.patient_detail.last_name}
                         </td>
