@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
 import { Plus, Edit2, Trash2, Pencil } from "lucide-react";
 
 export default function IPDVitals() {
@@ -247,13 +247,13 @@ export default function IPDVitals() {
                               onClick={() => handleEdit(vital)}
                               className="bg-green-100 p-2 rounded text-green-600"
                             >
-                             <Pencil size={16}/>
+                              <Pencil size={16} />
                             </button>
                             <button
                               onClick={() => handleDeleteVital(vital.id)}
                               className="bg-red-100 p-2 rounded text-red-600"
                             >
-                             <Trash2 size={16}/>
+                              <Trash2 size={16} />
                             </button>
                           </div>
                         </td>

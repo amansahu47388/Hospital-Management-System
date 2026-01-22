@@ -25,8 +25,19 @@ urlpatterns = [
     path('patients/<int:patient_id>/operations/<int:pk>/create/',PatientOperationView.as_view(),name='patient-operation-detail'),
     path('patients/<int:patient_id>/operations/<int:pk>/update/',PatientOperationView.as_view(),name='patient-operation-update'),
     path('patients/<int:patient_id>/operations/<int:pk>/delete/',PatientOperationView.as_view(),name='patient-operation-delete'),
-    # 
+  
 
+    # Patient Consultant URLs
+    path('patients/<int:patient_id>/consultants/',PatientConsultantView.as_view(),name='patient-consultant-list-create'),
+    path('patients/<int:patient_id>/consultants/<int:pk>/create/',PatientConsultantView.as_view(),name='patient-consultant-detail'),
+    path('patients/<int:patient_id>/consultants/<int:pk>/update/',PatientConsultantView.as_view(),name='patient-consultant-update'),
+    path('patients/<int:patient_id>/consultants/<int:pk>/delete/',PatientConsultantView.as_view(),name='patient-consultant-delete'),
+
+    # Patient Charges URLs
+    path('patients/<int:patient_id>/charges/',PatientChargesView.as_view(),name='patient-charges-list-create'),
+    path('patients/<int:patient_id>/charges/<int:pk>/create/',PatientChargesView.as_view(),name='patient-charges-detail'),
+    path('patients/<int:patient_id>/charges/<int:pk>/update/',PatientChargesView.as_view(),name='patient-charges-update'),
+    path('patients/<int:patient_id>/charges/<int:pk>/delete/',PatientChargesView.as_view(),name='patient-charges-delete'),
 
 
 

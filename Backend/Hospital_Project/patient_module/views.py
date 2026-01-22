@@ -343,3 +343,114 @@ class PatientOperationView(APIView):
         return Response({"detail": "Operation deleted successfully"})
 
 
+
+
+
+#*******************************************************************************************************#
+#                            Patient Consultant Views
+#*******************************************************************************************************#
+class PatientConsultantView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, patient_id):
+        consultants = PatientConsultant.objects.filter(
+            patient_id=patient_id,
+            is_active=True
+        )
+        serializer = PatientConsultantSerializer(consultants, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, patient_id):
+        data = request.data.copy()
+        data['patient'] = patient_id
+
+        serializer = PatientConsultantSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def get_object(self, patient_id, consultant_id):
+        return PatientConsultant.objects.get(
+            id=consultant_id,
+            patient_id=patient_id,
+            is_active=True
+        )
+
+    def get(self, request, patient_id, consultant_id):
+        consultant = self.get_object(patient_id, consultant_id)
+        serializer = PatientConsultantSerializer(consultant)
+        return Response(serializer.data)
+
+    def put(self, request, patient_id, consultant_id):
+        consultant = self.get_object(patient_id, consultant_id)
+        serializer = PatientConsultantSerializer(
+            consultant, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, patient_id, consultant_id):
+        consultant = self.get_object(patient_id, consultant_id)
+        consultant.is_active = False
+        consultant.save()
+        return Response({"detail": "Consultant deleted successfully"})
+
+
+
+
+
+
+#*******************************************************************************************************#
+#                            Patient Charges Views
+#*******************************************************************************************************#
+class PatientChargesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, patient_id):
+        charges = PatientCharges.objects.filter(
+            patient_id=patient_id,
+            is_active=True
+        )
+        serializer = PatientChargesSerializer(charges, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, patient_id):
+        data = request.data.copy()
+        data['patient'] = patient_id
+
+        serializer = PatientChargesSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def get_object(self, patient_id, charge_id):
+        return PatientCharges.objects.get(
+            id=charge_id,
+            patient_id=patient_id,
+            is_active=True
+        )
+
+    def get(self, request, patient_id, charge_id):
+        charge = self.get_object(patient_id, charge_id)
+        serializer = PatientChargesSerializer(charge)
+        return Response(serializer.data)
+
+    def put(self, request, patient_id, charge_id):
+        charge = self.get_object(patient_id, charge_id)
+        serializer = PatientChargesSerializer(
+            charge, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, patient_id, charge_id):
+        charge = self.get_object(patient_id, charge_id)
+        charge.is_active = False
+        charge.save()
+        return Response({"detail": "Charge deleted successfully"})

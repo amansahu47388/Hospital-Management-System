@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
+import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
 import {
     Search,
     Eye,
@@ -51,39 +51,33 @@ export default function OPDTreatmentHistory() {
     return (
         <AdminLayout>
             <div className="min-h-screen bg-gray-50 pb-10">
-                <div className="mx-4 md:mx-6">
-                    <OPDTabsNavbar />
-                </div>
+                <OPDTabsNavbar />
 
-                <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]">
-                    {/* Page Header */}
-                    <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
+                {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
+                {/* Page Header */}
+
+                <div className="p-4 md:p-6 ">
+                    <div className="bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="">
                             <h2 className="text-xl font-bold text-gray-800">Treatment History</h2>
                         </div>
                     </div>
 
+
                     {/* Table Actions */}
-                    <div className="px-4 md:px-6 pb-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
+                    <div className="p-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100 bg-white">
                         <div className="relative w-full md:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search..."
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+                                className="w-full pl-9 pr-4 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 transition-all text-xs"
                             />
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="flex items-center gap-2 mr-4">
-                                <select className="p-1.5 border border-gray-200 rounded text-xs outline-none">
-                                    <option>100</option>
-                                    <option>50</option>
-                                    <option>25</option>
-                                </select>
-                            </div>
                             {[Copy, FileSpreadsheet, FileText, FilePdf, Printer].map((Icon, i) => (
-                                <button key={i} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-all">
-                                    <Icon size={18} />
+                                <button key={i} className="p-2 hover:bg-gray-100 rounded text-gray-500 transition-all">
+                                    <Icon size={14} />
                                 </button>
                             ))}
                         </div>
@@ -92,47 +86,37 @@ export default function OPDTreatmentHistory() {
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50 text-gray-600">
+                            <thead className="bg-gray-100 text-gray-800">
                                 <tr>
-                                    {[
-                                        "OPD No",
-                                        "Case ID",
-                                        "Appointment Date",
-                                        "Symptoms",
-                                        "Consultant Doctor",
-                                        "Action",
-                                    ].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm font-bold">
-                                            <div className="flex items-center gap-1">
-                                                {head}
-                                                <ChevronDown size={14} />
-                                            </div>
-                                        </th>
-                                    ))}
+                                    <th className="px-6 py-4 text-sm font-bold">OPD No</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Case ID</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Appointment Date</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Symptoms</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Consultant Doctor</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-100">
                                 {treatmentData.map((row, i) => (
-                                    <tr key={i} className="hover:bg-gray-50 transition-colors group">
+                                    <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
                                         <td className="px-6 py-4 text-sm font-bold text-[#3daadd] hover:underline cursor-pointer">{row.opdNo}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 font-semibold">{row.caseId}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                        <td className="px-6 py-4 text-sm font-semibold">{row.caseId}</td>
+                                        <td className="px-6 py-4 text-sm">
                                             {row.date.split(' ').slice(0, 1).join(' ')}
                                             <div className="text-[10px] text-gray-400">{row.date.split(' ').slice(1).join(' ')}</div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 ">
+                                        <td className="px-6 py-4 text-sm">
                                             {row.symptoms}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 font-semibold">{row.consultant}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
-                                            <div className="flex justify-end pr-4">
+                                        <td className="px-6 py-4 text-sm font-semibold">{row.consultant}</td>
+                                        <td className="px-6 py-4 text-sm">
+                                            <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleOpenDetail(row)}
-                                                    className="p-1 px-3 text-purple-600 hover:text-purple-800 "
+                                                    className="hover:bg-blue-100 text-blue-500 px-2 py-1 rounded text-xs"
                                                     title="Show Details"
-                                                    
                                                 >
-                                                   <Eye size={18} />
+                                                    <Eye size={16} />
                                                 </button>
                                             </div>
                                         </td>
@@ -145,7 +129,7 @@ export default function OPDTreatmentHistory() {
                         <div>Records: 1 to {treatmentData.length} of {treatmentData.length}</div>
                         <div className="flex gap-1">
                             <button className="p-1 px-2 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50" disabled>&lt;</button>
-                            <button className="p-1 px-3 bg-blue-50 text-[#3daadd] border border-blue-100 rounded">1</button>
+                            <button className="p-1 px-3 bg-purple-50 text-[#6046B5] border border-purple-100 rounded font-bold">1</button>
                             <button className="p-1 px-2 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50" disabled>&gt;</button>
                         </div>
                     </div>
@@ -167,7 +151,7 @@ export default function OPDTreatmentHistory() {
                                     onClick={() => setShowDetailModal(false)}
                                     className="text-white hover:text-white transition-colors"
                                 >
-                                    <X size={28} />
+                                    <X size={24} />
                                 </button>
                             </div>
                         </div>

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
+import { Pencil,Trash2 } from "lucide-react";
 
-export default function PrescriptionSinglePage() {
+export default function IPDPrescription() {
   const [showAdd, setShowAdd] = useState(false);
   const [showView, setShowView] = useState(false);
 
@@ -27,25 +28,32 @@ export default function PrescriptionSinglePage() {
               </button>
             </div>
 
-            <table className="w-full border text-sm">
+            <table className="w-full  text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="p-2 text-left">Prescription No</th>
                   <th className="p-2 text-left">Date</th>
-                  <th className="p-2 text-center">Action</th>
+                  <th className="p-2 text-left">Finding</th>
+                  <th className="p-2 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t">
+                <tr className="border-t border-gray-200">
                   <td className="p-2">IPDP417</td>
                   <td className="p-2">01/05/2026</td>
-                  <td className="p-2 text-center">
+                  <td className="p-2">Fever</td>
+                  <td className="p-2 text-left flex gap-2">
                     <button
                       onClick={() => setShowView(true)}
                       className="text-blue-600 hover:underline"
                     >
-                      View
+                      <Pencil size={16}/>
                     </button>
+                   <button
+                   className="text-red-600 hover:underline"
+                   >
+                   <Trash2 size={16}/>
+                   </button>
                   </td>
                 </tr>
               </tbody>
@@ -118,7 +126,7 @@ export default function PrescriptionSinglePage() {
                 <div>
                   <label className="font-semibold">Notification To</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
-                    {["Admin","Accountant","Doctor","Pharmacist","Pathologist","Radiologist","Super Admin","Receptionist","Nurse"]
+                    {["Admin", "Accountant", "Doctor", "Pharmacist", "Pathologist", "Radiologist", "Super Admin", "Receptionist", "Nurse"]
                       .map(r => (
                         <label key={r} className="flex gap-2 items-center">
                           <input type="checkbox" /> {r}

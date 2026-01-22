@@ -43,7 +43,7 @@ import IncomeList from "./pages/Finance/IncomeList";
 import ExpenseList from "./pages/Finance/ExpenseList";
 import RadiologyBill from "./pages/radiology/RadiologyBill";
 import RadiologyTest from "./pages/radiology/RadiologyTest";
-import NurseNotesSinglePage from "./pages/IPD/NurseNotesSinglePage";
+import NurseNotesSinglePage from "./pages/IPD/IPDNurseNotes";
 
 
 
@@ -85,6 +85,7 @@ import OperationList from "./pages/Setup/Operation/OperationList";
 import MedicineCategory from "./pages/Setup/Pharmacy/MedicineCategory";
 import Supplier from "./pages/Setup/Pharmacy/Supplier";
 import DoseInterval from "./pages/Setup/Pharmacy/Dose";
+import Dose from "./pages/Setup/Pharmacy/Dose";
 import MedicineDosage from "./pages/Setup/Pharmacy/MedicineDosage";
 import Company from "./pages/Setup/Pharmacy/Company";
 import Unit from "./pages/Setup/Pharmacy/Unit";
@@ -104,26 +105,22 @@ import AppointmentPriority from "./pages/Setup/Appointment/AppointmentPriority";
 import ItemCategory from "./pages/Setup/Inventory/ItemCategory";
 import ItemStore from "./pages/Setup/Inventory/ItemStore";
 import ItemSupplier from "./pages/Setup/Inventory/ItemSupplier";
-import IPDComprehensivePage from "./pages/IPD/IPDComprehensivePage";
-import MedicationSinglePage from "./pages/IPD/MedicationSinglePage";
-import PrescriptionSinglePage from "./pages/IPD/PrescriptionSinglePage";
+import IPDComprehensivePage from "./pages/IPD/IPDComprehensive";
+import PrescriptionSinglePage from "./pages/IPD/IPDPrescription";
 import ConsultantRegisterSinglePage from "./pages/IPD/ConsultantRegister";
-import LabInvestigationSinglePage from "./pages/IPD/LabInvestigationSinglePage";
-import OperationsSinglePage from "./pages/IPD/OperationsSinglePage";
-import IPDBedHistoryPage from "./pages/IPD/IPDBedHistoryPage";
-import IPDPaymentPage from "./pages/IPD/IPDPaymentPage";
-import IPDTimelinePage from "./pages/IPD/IPDTimelinePage";
-import IPDChargesPage from "./pages/IPD/IPDChargesPage";
+import LabInvestigationSinglePage from "./pages/IPD/IPDLabInvestigation";
+import OperationsSinglePage from "./pages/IPD/IPDOperations";
+import IPDBedHistoryPage from "./pages/IPD/IPDBedHistory";
+import IPDPaymentPage from "./pages/IPD/IPDPayment";
+import IPDChargesPage from "./pages/IPD/IPDCharges";
 import IPDTreatmentHistoryPage from "./pages/IPD/IPDTreatmentHistory";
 import IPDVitalsPage from "./pages/IPD/IPDVitals";
-import OPDComprehensivePage from "./pages/OPD/OPDComprehensivePage";
+import OPDComprehensivePage from "./pages/OPD/OPDComprehensive";
 import OPDVisitsPage from "./pages/OPD/OPDVisitsPage";
-import OPDMedicationPage from "./pages/OPD/OPDMedicationPage";
 import OPDLabInvestigationPage from "./pages/OPD/OPDLabInvestigation";
 import OPDOperationsPage from "./pages/OPD/OPDOperations";
 import OPDChargesPage from "./pages/OPD/OPDCharges";
-import OPDPaymentPage from "./pages/OPD/OPDPaymentPage";
-import OPDTimelinePage from "./pages/OPD/OPDTimelinePage";
+import OPDPaymentPage from "./pages/OPD/OPDPayment";
 import OPDTreatmentHistoryPage from "./pages/OPD/OPDTreatmentHistory";
 import OPDVitalsPage from "./pages/OPD/OPDVitals";
 
@@ -185,30 +182,26 @@ function App() {
             <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
             <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
             <Route path="/admin/ipd-patients/:ipdId/profile" element={<IPDComprehensivePage />} />
-            <Route path="/admin/ipd-patients/115/nurse-notes" element={<NurseNotesSinglePage />} />
-            <Route path="/admin/ipd-patients/115/medication" element={<MedicationSinglePage />} />
-            <Route path="/admin/ipd-patients/115/prescription" element={<PrescriptionSinglePage />} />
-            <Route path="/admin/ipd-patients/115/overview" element={<IPDComprehensivePage />} />
-            <Route path="/admin/ipd-patients/115/consultant" element={<ConsultantRegisterSinglePage />} />
-            <Route path="/admin/ipd-patients/115/lab" element={<LabInvestigationSinglePage />} />
-            <Route path="/admin/ipd-patients/115/operations" element={<OperationsSinglePage />} />
-            <Route path="/admin/ipd-patients/115/bed-history" element={<IPDBedHistoryPage />} />
-            <Route path="/admin/ipd-patients/115/payments" element={<IPDPaymentPage />} />
-            <Route path="/admin/ipd-patients/115/timeline" element={<IPDTimelinePage />} />
-            <Route path="/admin/ipd-patients/115/charges" element={<IPDChargesPage />} />
-            <Route path="/admin/ipd-patients/115/treatment-history" element={<IPDTreatmentHistoryPage />} />
-            <Route path="/admin/ipd-patients/115/vitals" element={<IPDVitalsPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/nurse-notes" element={<NurseNotesSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/prescription" element={<PrescriptionSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/overview" element={<IPDComprehensivePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/consultant" element={<ConsultantRegisterSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/lab" element={<LabInvestigationSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/operations" element={<OperationsSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/bed-history" element={<IPDBedHistoryPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/payments" element={<IPDPaymentPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/charges" element={<IPDChargesPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/treatment-history" element={<IPDTreatmentHistoryPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/vitals" element={<IPDVitalsPage />} />
             
             {/* OPD Routes */}
             <Route path="/admin/opd-patients" element={<OpdPatient />} />
             <Route path="/admin/opd-patients/:opdId/profile" element={<OPDComprehensivePage />} />
             <Route path="/admin/opd-patients/:opdId/visits" element={<OPDVisitsPage />} />
-            <Route path="/admin/opd-patients/:opdId/medication" element={<OPDMedicationPage />} />
             <Route path="/admin/opd-patients/:opdId/lab-investigation" element={<OPDLabInvestigationPage />} />
             <Route path="/admin/opd-patients/:opdId/operations" element={<OPDOperationsPage />} />
             <Route path="/admin/opd-patients/:opdId/charges" element={<OPDChargesPage />} />
             <Route path="/admin/opd-patients/:opdId/payments" element={<OPDPaymentPage />} />
-            <Route path="/admin/opd-patients/:opdId/timeline" element={<OPDTimelinePage />} />
             <Route path="/admin/opd-patients/:opdId/treatment-history" element={<OPDTreatmentHistoryPage />} />
             <Route path="/admin/opd-patients/:opdId/vitals" element={<OPDVitalsPage />} />
                        
@@ -294,6 +287,8 @@ function App() {
             <Route path="/admin/setup/opd-antenatal-finding-header-footer" element={<OpdAntenatalFindingHeaderFooter />} />
             <Route path="/admin/setup/ipd-antenatal-finding-header-footer" element={<IpdAntenatalFindingHeaderFooter />} />
             <Route path="/admin/setup/discharge-card-header-footer" element={<DischargeCardHeaderFooter />} />
+            
+            
             <Route path="/admin/setup/front-office/purpose-list" element={<PurposeList />} />
             <Route path="/admin/setup/front-office/complain-type" element={<ComplaintType />} />
             <Route path="/admin/setup/front-office/source" element={<Source />} />
@@ -303,6 +298,7 @@ function App() {
             <Route path="/admin/setup/pharmacy/dose-interval" element={<DoseInterval />} />
             <Route path="/admin/setup/pharmacy/medicine-dosage" element={<MedicineDosage />} />
             <Route path="/admin/setup/pharmacy/company" element={<Company />} />
+            <Route path="/admin/setup/pharmacy/dose" element={<Dose />} />
             <Route path="/admin/setup/pharmacy/unit" element={<Unit />} />
             <Route path="/admin/setup/pharmacy/medicine-group" element={<MedicineGroup />} />
             <Route path="/admin/setup/pathology/category" element={<PathologyCategory />} />

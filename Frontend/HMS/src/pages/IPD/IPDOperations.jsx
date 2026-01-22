@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
 
 import {
     Search, Plus, Edit2, Trash2, Eye, FileText, Download, Copy, FileSpreadsheet, FileIcon as FilePdf,
     X, Save, ChevronDown, Printer, CheckCircle,
 } from "lucide-react";
 
-export default function OPDOperations() {
+export default function IPDOperations() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
@@ -71,18 +71,11 @@ export default function OPDOperations() {
         setShowEditModal(true);
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this operation?")) {
-            // setOperations(operations.filter((op) => op.referenceNo !== id));
-        }
-    };
-
     return (
         <AdminLayout>
             <div className="min-h-screen bg-gray-50 pb-10">
 
-
-                <OPDTabsNavbar />
+                <IPDTabsNavbar />
 
                 {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
                 {/* Page Header */}
@@ -110,24 +103,24 @@ export default function OPDOperations() {
                         <table className="w-full text-left border-collapse">
                             <thead className="bg-gray-100 text-gray-800">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm">Reference No</th>
-                                    <th className="px-4 py-3 text-left text-sm">Operation Date</th>
-                                    <th className="px-4 py-3 text-left text-sm">Operation Name</th>
-                                    <th className="px-4 py-3 text-left text-sm">Operation Category</th>
-                                    <th className="px-4 py-3 text-left text-sm">OT Technician</th>
-                                    <th className="px-4 py-3 text-left text-sm">Action</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Reference No</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Operation Date</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Operation Name</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Operation Category</th>
+                                    <th className="px-6 py-4 text-sm font-bold">OT Technician</th>
+                                    <th className="px-6 py-4 text-sm font-bold">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white border-b border-gray-200">
+                            <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-100">
                                 {operationsData.length > 0 ? (
                                     operationsData.map((row, i) => (
                                         <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
-                                            <td className="px-4 py-4 text-sm font-medium text-gray-900">{row.referenceNo}</td>
-                                            <td className="px-4 py-4 text-sm ">{row.date}</td>
-                                            <td className="px-4 py-4 text-sm  font-semibold">{row.name}</td>
-                                            <td className="px-4 py-4 text-sm ">{row.category}</td>
-                                            <td className="px-4 py-4 text-sm ">{row.technician}</td>
-                                            <td className="px-4 py-4 text-sm ">
+                                            <td className="px-6 py-4 text-sm font-medium text-gray-900">{row.referenceNo}</td>
+                                            <td className="px-6 py-4 text-sm ">{row.date}</td>
+                                            <td className="px-6 py-4 text-sm  font-semibold">{row.name}</td>
+                                            <td className="px-6 py-4 text-sm ">{row.category}</td>
+                                            <td className="px-6 py-4 text-sm ">{row.technician}</td>
+                                            <td className="px-6 py-4 text-sm ">
                                                 <div className="flex gap-2">
                                                     <button
                                                         onClick={() => handleOpenDetail(row)}
@@ -143,11 +136,7 @@ export default function OPDOperations() {
                                                     >
                                                         <Edit2 size={14} />
                                                     </button>
-                                                    <button
-                                                        className="hover:bg-red-100 text-red-500 px-2 py-1 rounded text-xs"
-                                                        title="Delete"
-                                                        onClick={() => handleDelete(row.referenceNo)}
-                                                    >
+                                                    <button className="hover:bg-red-100 text-red-500 px-2 py-1 rounded text-xs" title="Delete">
                                                         <Trash2 size={14} />
                                                     </button>
                                                 </div>
@@ -163,9 +152,6 @@ export default function OPDOperations() {
                                 )}
                             </tbody>
                         </table>
-                    </div>
-                    <div className="p-4 text-xs text-gray-500">
-                        Records: {operationsData.length} to {operationsData.length} of {operationsData.length}
                     </div>
                 </div>
             </div>
@@ -187,7 +173,7 @@ export default function OPDOperations() {
                                 }}
                                 className="text-white/80 hover:text-white transition-colors p-1"
                             >
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -337,7 +323,7 @@ export default function OPDOperations() {
                                     onClick={() => setShowDetailModal(false)}
                                     className="text-white p-1"
                                 >
-                                    <X size={28} />
+                                    <X size={24} />
                                 </button>
                             </div>
                         </div>

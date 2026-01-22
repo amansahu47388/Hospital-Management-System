@@ -1,8 +1,12 @@
 import { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 //import Header from "../../components/Header"; // your existing header
-import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
-export default function NurseNotesSinglePage() {
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
+import { Eye, Trash2 } from "lucide-react";
+
+
+
+export default function IPDNurseNotes() {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
@@ -71,10 +75,10 @@ export default function NurseNotesSinglePage() {
                           }}
                           className="text-sm text-blue-600 hover:underline"
                         >
-                          Edit
+                         <Eye size={16}/>
                         </button>
                         <button className="text-sm text-red-600 hover:underline">
-                          Delete
+                         <Trash2 size={16}/>
                         </button>
                       </div>
                     </div>
