@@ -146,263 +146,104 @@ export default function IPDCombinedPage() {
   // ---------------------------------------------------------------------------
   return (
     <PatientLayout>
-      {/* PAGE BACKGROUND THEME (no gradients on text itself) */}
-      <div className="min-h-screen  py-4 md:py-6">
+      {/* PAGE BACKGROUND THEME */}
+      <div className="min-h-screen ">
         <IPDHeaderNavbar />
-        <div className="max-w-7xl mx-auto px-2 md:px-4 space-y-4 md:space-y-6">
-          {/* TOP HEADER + SUMMARY CARD */}
-          <section className="bg-white rounded-lg shadow-md p-4 md:p-6">
-            {/* Top nav-like row (Overview etc.) */}
-            <div className="flex flex-wrap items-center gap-4 border-b pb-3 mb-4">
-              <span className="flex items-center gap-2 text-blue-600 font-semibold text-sm md:text-base border-b-2 border-blue-500 pb-1">
-                <Eye size={16} /> Overview
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Activity size={16} /> Nurse Notes
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Pill size={16} /> Medication
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <FileText size={16} /> Prescription
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Users size={16} /> Consultant Register
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Beaker size={16} /> Lab Investigation
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Scissors size={16} /> Operations
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Receipt size={16} /> Charges
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <CreditCard size={16} /> Payment
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Home size={16} /> Bed History
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Clock size={16} /> Timeline
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <History size={16} /> Treatment History
-              </span>
-              <span className="flex items-center gap-2 text-gray-600 text-sm md:text-base">
-                <Heart size={16} /> Vitals
-              </span>
-            </div>
 
-            {/* Patient top area */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* LEFT: basic patient details */}
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="w-24 h-24 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
-                    {/* avatar placeholder */}
-                    <User size={48} className="text-gray-500" />
-                  </div>
-                  <div className="space-y-1">
-                    <h2 className="text-lg md:text-xl font-bold text-gray-900">
-                      {patient.name}
-                    </h2>
-                    <p className="text-sm text-gray-700">
-                      <span className="font-semibold">Gender:</span>{" "}
-                      {patient.gender}
-                    </p>
-                    <p className="text-sm text-gray-700">
-                      <span className="font-semibold">Age:</span> {patient.age}
-                    </p>
-                    <p className="text-sm text-gray-700">
-                      <span className="font-semibold">Guardian Name:</span>{" "}
-                      {patient.guardianName}
-                    </p>
-                    <p className="text-sm text-gray-700 flex items-center gap-1">
-                      <Phone size={14} /> {patient.phone}
-                    </p>
-                  </div>
-                </div>
+        <div className="max-w-7xl mx-auto px-2 md:px-0 py-6 space-y-6">
 
-                <div className="grid grid-cols-2 gap-3 text-sm mt-4">
-                  <div>
-                    <p className="font-semibold text-gray-700">Case ID</p>
-                    <p className="text-gray-800">{patient.caseId}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-700">IPD No</p>
-                    <p className="text-gray-800">{patient.ipdNo}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <p className="font-semibold text-gray-700">
-                      Admission Date
-                    </p>
-                    <p className="text-gray-800">{patient.admissionDate}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <p className="font-semibold text-gray-700">Bed</p>
-                    <p className="text-gray-800">{patient.bed}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT: payment / billing summary + simple medication list */}
-              <div className="space-y-4">
-                {/* Top payment bars */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
-                  {[
-                    ["IPD PAYMENT/BILLING", paymentSummary.ipd],
-                    ["PHARMACY PAYMENT/BILLING", paymentSummary.pharmacy],
-                    ["PATHOLOGY PAYMENT/BILLING", paymentSummary.pathology],
-                    ["RADIOLOGY PAYMENT/BILLING", paymentSummary.radiology],
-                    ["BLOOD BANK PAYMENT/BILLING", paymentSummary.bloodBank],
-                    ["AMBULANCE PAYMENT/BILLING", paymentSummary.ambulance],
-                  ].map(([label, item]) => (
-                    <div key={label}>
-                      <p className="font-semibold text-gray-700">{label}</p>
-                      <div className="flex justify-between text-gray-600 mt-1">
-                        <span>{item.percent}</span>
-                        <span>{item.amount}</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-gray-200 rounded-full mt-1 overflow-hidden">
-                        <div
-                          className="h-full bg-sky-500"
-                          style={{ width: item.percent }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Medication table (right side bottom) */}
-                <div id="medication" className="mt-4">
-                  <h3 className="text-sm md:text-base font-bold text-gray-900 mb-2">
-                    MEDICATION
-                  </h3>
-                  <div className="overflow-x-auto border rounded-md">
-                    <table className="min-w-full text-xs md:text-sm">
-                      <thead className="bg-gray-100 text-gray-700 text-left">
-                        <tr>
-                          <th className="px-3 py-2">Date</th>
-                          <th className="px-3 py-2">Medicine Name</th>
-                          <th className="px-3 py-2">Dose</th>
-                          <th className="px-3 py-2">Time</th>
-                          <th className="px-3 py-2">Remark</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {medications.map((m, idx) => (
-                          <tr
-                            key={idx}
-                            className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                          >
-                            <td className="px-3 py-2">{m.date}</td>
-                            <td className="px-3 py-2">{m.name}</td>
-                            <td className="px-3 py-2">{m.dose}</td>
-                            <td className="px-3 py-2">{m.time}</td>
-                            <td className="px-3 py-2">{m.remark}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* CURRENT VITALS + PRESCRIPTION / FINDING */}
-          <section className="bg-white rounded-lg shadow-md p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* CURRENT VITALS + PRESCRIPTION */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* VITALS LEFT */}
-            <div id="vitals">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Heart size={18} className="text-rose-500" />
+            <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+                <Heart size={20} className="text-rose-500" />
                 Current Vitals
               </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Height</span>
-                  <span>{patient.vitals.height}</span>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between p-2 bg-gray-50 rounded-lg">
+                  <span className="text-gray-600">Height</span>
+                  <span className="font-semibold">{patient.vitals.height}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Weight</span>
-                  <span>{patient.vitals.weight}</span>
+                <div className="flex justify-between p-2 bg-white rounded-lg border border-gray-100">
+                  <span className="text-gray-600">Weight</span>
+                  <span className="font-semibold">{patient.vitals.weight}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Pulse</span>
-                  <span>{patient.vitals.pulse}</span>
+                <div className="flex justify-between p-2 bg-gray-50 rounded-lg">
+                  <span className="text-gray-600">Pulse</span>
+                  <span className="font-semibold">{patient.vitals.pulse}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Temperature</span>
-                  <span>{patient.vitals.temperature}</span>
+                <div className="flex justify-between p-2 bg-white rounded-lg border border-gray-100">
+                  <span className="text-gray-600">Temperature</span>
+                  <span className="font-semibold">{patient.vitals.temperature}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>BP</span>
-                  <span>{patient.vitals.bp}</span>
+                <div className="flex justify-between p-2 bg-gray-50 rounded-lg">
+                  <span className="text-gray-600">BP</span>
+                  <span className="font-semibold">{patient.vitals.bp}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>BMI</span>
-                  <span>{patient.vitals.bmi}</span>
+                <div className="flex justify-between p-2 bg-white rounded-lg border border-gray-100">
+                  <span className="text-gray-600">BMI</span>
+                  <span className="font-semibold">{patient.vitals.bmi}</span>
                 </div>
               </div>
 
-              <div className="mt-4" id="allergies">
-                <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-1">
-                  <Activity size={16} /> Known Allergies:
+              <div className="mt-6">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm uppercase tracking-wide">
+                  Known Allergies
                 </h4>
-                <ul className="list-disc list-inside text-sm text-gray-700">
-                  {patient.allergies.map((a, i) => (
-                    <li key={i}>{a}</li>
-                  ))}
-                </ul>
+                <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg border border-red-100 text-sm">
+                  {patient.allergies.join(", ")}
+                </div>
               </div>
 
-              <div className="mt-4" id="finding">
-                <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-1">
-                  <FileText size={16} /> Finding:
+              <div className="mt-6">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm uppercase tracking-wide">
+                  Finding
                 </h4>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <div className="bg-blue-50 text-blue-800 px-4 py-3 rounded-lg border border-blue-100 text-sm leading-relaxed">
                   {patient.finding}
-                </p>
+                </div>
               </div>
 
-              <div className="mt-4" id="symptoms">
-                <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-1">
-                  <Activity size={16} /> Symptoms:
+              <div className="mt-6">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm uppercase tracking-wide">
+                  Symptoms
                 </h4>
-                <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+                <ul className="space-y-2">
                   {patient.symptoms.map((s, i) => (
-                    <li key={i}>{s}</li>
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                      {s}
+                    </li>
                   ))}
                 </ul>
               </div>
             </div>
 
             {/* PRESCRIPTION RIGHT */}
-            <div id="prescription">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <FileText size={18} className="text-blue-600" />
+            <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+                <FileText size={20} className="text-blue-600" />
                 Prescription
               </h3>
-              <div className="overflow-x-auto border rounded-md text-sm">
-                <table className="min-w-full">
-                  <thead className="bg-gray-100 text-left">
+              <div className="overflow-x-auto flex-1">
+                <table className="w-full text-sm text-left">
+                  <thead className="bg-gray-100 text-gray-600 font-medium">
                     <tr>
-                      <th className="px-3 py-2">Prescription No</th>
-                      <th className="px-3 py-2">Date</th>
-                      <th className="px-3 py-2">Finding</th>
+                      <th className="px-4 py-3 rounded-l-lg">Prescription No</th>
+                      <th className="px-4 py-3">Date</th>
+                      <th className="px-4 py-3 rounded-r-lg">Finding</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-100">
                     {prescriptions.map((p, idx) => (
                       <tr
                         key={p.no}
-                        className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                        className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-3 py-2">{p.no}</td>
-                        <td className="px-3 py-2">{p.date}</td>
-                        <td className="px-3 py-2">{p.finding}</td>
+                        <td className="px-4 py-3 font-medium text-indigo-600">{p.no}</td>
+                        <td className="px-4 py-3">{p.date}</td>
+                        <td className="px-4 py-3 text-gray-600 max-w-xs truncate" title={p.finding}>{p.finding}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -412,29 +253,29 @@ export default function IPDCombinedPage() {
           </section>
 
           {/* NURSE NOTES + LAB INVESTIGATIONS */}
-          <section className="bg-white rounded-lg shadow-md p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Nurse Notes */}
-            <div id="nurse-notes">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Activity size={18} className="text-indigo-500" />
+            <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+                <Activity size={20} className="text-indigo-500" />
                 Nurse Notes
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {nurseNotes.map((n, i) => (
                   <div
                     key={i}
-                    className="border rounded-md p-3 bg-gray-50 text-sm"
+                    className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all"
                   >
-                    <div className="flex justify-between text-gray-600 mb-1">
-                      <span>{n.by}</span>
+                    <div className="flex justify-between items-center text-xs text-gray-500 mb-2 uppercase tracking-wide font-semibold">
+                      <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">{n.by}</span>
                       <span>{n.time}</span>
                     </div>
-                    <p className="text-gray-800">
-                      <span className="font-semibold">Note: </span>
+                    <p className="text-gray-800 text-sm mb-2">
+                      <span className="font-semibold text-gray-900">Note: </span>
                       {n.note}
                     </p>
-                    <p className="text-gray-800 mt-1">
-                      <span className="font-semibold">Comment: </span>
+                    <p className="text-gray-600 text-sm italic border-t pt-2 mt-2">
+                      <span className="font-medium not-italic">Comment: </span>
                       {n.comment}
                     </p>
                   </div>
@@ -443,33 +284,31 @@ export default function IPDCombinedPage() {
             </div>
 
             {/* Lab Investigations */}
-            <div id="lab">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Beaker size={18} className="text-green-600" />
+            <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+                <Beaker size={20} className="text-green-600" />
                 Lab Investigations
               </h3>
-              <div className="overflow-x-auto border rounded-md text-sm">
-                <table className="min-w-full">
-                  <thead className="bg-gray-100 text-left">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="bg-gray-100 text-gray-600 font-medium">
                     <tr>
-                      <th className="px-3 py-2">Test Name</th>
-                      <th className="px-3 py-2">Lab</th>
-                      <th className="px-3 py-2">Sample Collected</th>
-                      <th className="px-3 py-2">Expected Date</th>
-                      <th className="px-3 py-2">Approved By</th>
+                      <th className="px-4 py-3 rounded-l-lg">Test Name</th>
+                      <th className="px-4 py-3">Lab</th>
+                      <th className="px-4 py-3">Sample</th>
+                      <th className="px-4 py-3 rounded-r-lg">Expected</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-100">
                     {labInvestigations.map((l, idx) => (
                       <tr
                         key={idx}
-                        className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                        className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-3 py-2">{l.testName}</td>
-                        <td className="px-3 py-2">{l.lab}</td>
-                        <td className="px-3 py-2">{l.sample}</td>
-                        <td className="px-3 py-2">{l.expectedDate}</td>
-                        <td className="px-3 py-2">{l.approvedBy}</td>
+                        <td className="px-4 py-3 font-medium text-gray-800">{l.testName}</td>
+                        <td className="px-4 py-3 text-gray-600">{l.lab}</td>
+                        <td className="px-4 py-3 text-gray-600">{l.sample}</td>
+                        <td className="px-4 py-3 text-gray-600">{l.expectedDate}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -478,42 +317,40 @@ export default function IPDCombinedPage() {
             </div>
           </section>
 
-          {/* OPERATIONS (and you can add Charges / Payments / Timeline / etc. similarly) */}
-          <section className="bg-white rounded-lg shadow-md p-4 md:p-6" id="operations">
-            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <Scissors size={18} className="text-rose-600" />
+          {/* OPERATIONS */}
+          <section className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+              <Scissors size={20} className="text-rose-600" />
               Operation
             </h3>
-            <div className="overflow-x-auto border rounded-md text-sm">
-              <table className="min-w-full">
-                <thead className="bg-gray-100 text-left">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-gray-100 text-gray-600 font-medium">
                   <tr>
-                    <th className="px-3 py-2">Reference No</th>
-                    <th className="px-3 py-2">Operation Date</th>
-                    <th className="px-3 py-2">Operation Name</th>
-                    <th className="px-3 py-2">Operation Category</th>
-                    <th className="px-3 py-2">OT Technician</th>
+                    <th className="px-4 py-3 rounded-l-lg">Reference No</th>
+                    <th className="px-4 py-3">Date</th>
+                    <th className="px-4 py-3">Name</th>
+                    <th className="px-4 py-3">Category</th>
+                    <th className="px-4 py-3 rounded-r-lg">Technician</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {operations.map((o, idx) => (
                     <tr
                       key={o.ref}
-                      className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                      className="hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-3 py-2">{o.ref}</td>
-                      <td className="px-3 py-2">{o.date}</td>
-                      <td className="px-3 py-2">{o.name}</td>
-                      <td className="px-3 py-2">{o.category}</td>
-                      <td className="px-3 py-2">{o.technician}</td>
+                      <td className="px-4 py-3 font-medium text-indigo-600">{o.ref}</td>
+                      <td className="px-4 py-3 text-gray-600">{o.date}</td>
+                      <td className="px-4 py-3 text-gray-800 font-medium">{o.name}</td>
+                      <td className="px-4 py-3 text-gray-600">{o.category}</td>
+                      <td className="px-4 py-3 text-gray-600">{o.technician}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </section>
-
-          {/* You can add similar sections for Charges, Payment, Bed History, Timeline, Treatment History, etc. */}
         </div>
       </div>
     </PatientLayout>

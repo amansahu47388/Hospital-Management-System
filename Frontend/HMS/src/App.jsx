@@ -43,6 +43,8 @@ import IncomeList from "./pages/Finance/IncomeList";
 import ExpenseList from "./pages/Finance/ExpenseList";
 import RadiologyBill from "./pages/radiology/RadiologyBill";
 import RadiologyTest from "./pages/radiology/RadiologyTest";
+import Billing from "./pages/Billing/Billing";
+import BillingDetails from "./pages/Billing/BillingDetails";
 import NurseNotesSinglePage from "./pages/IPD/NurseNotesSinglePage";
 
 
@@ -141,6 +143,22 @@ import PatientDashboardPage from "./pages/Patient/PatientDashboardPage";
 import PatientAppointmentsPage from "./pages/Patient/My_Appointment/PatientAppointmentsPage";
 import PatientOPDHistoryPage from "./pages/Patient/OPD/PatientOPDHistoryPage";
 import IPDOverviewPage from "./pages/Patient/IPD/IPDOverviewPage";
+import NurseNotes from "./pages/Patient/IPD/NurseNotes";
+import IPDMedication from "./pages/Patient/IPD/IPDMedication";
+import IPDPrescription from "./pages/Patient/IPD/IPDPrescription";
+import IPDConsultantRegister from "./pages/Patient/IPD/IPDConsultantRegister";
+import Charges from "./pages/Patient/IPD/Charges";
+import Operations from "./pages/Patient/IPD/Operations";
+import LabInvestigation from "./pages/Patient/IPD/LabInvestigation";
+import Vitals from "./pages/Patient/IPD/Vitals";
+import Payment from "./pages/Patient/IPD/Payment";
+import Timeline from "./pages/Patient/IPD/Timeline";
+import TreatmentHistory from "./pages/Patient/IPD/TreatmentHistory";
+import BedHistory from "./pages/Patient/IPD/BedHistory";
+import Pharmacy from "./pages/Patient/Pharmacy/Pharmacy";
+import Pathology from "./pages/Patient/Pathology/Pathology";
+import Radiology from "./pages/Patient/Radiology/Radiology";
+import Ambulance from "./pages/Patient/Ambulance/Ambulance";
 
 function App() {
   return (
@@ -210,17 +228,32 @@ function App() {
             <Route path="/admin/opd-patients/210/timeline" element={<OPDTimelinePage />} />
             <Route path="/admin/opd-patients/210/treatment-history" element={<OPDTreatmentHistoryPage />} />
             <Route path="/admin/opd-patients/210/vitals" element={<OPDVitalsPage />} />
-           
-           
 
-       
+
+
+
             {/* Patient Entity Routes */}
             <Route path="/patient-portal/dashboard" element={<PatientDashboardPage />} />
             <Route path="/patient-portal/appointments" element={<PatientAppointmentsPage />} />
-
             <Route path="/patient-portal/opd-history/:section" element={<PatientOPDHistoryPage />} />
-  
             <Route path="/patient-portal/ipd-history/:section" element={<IPDOverviewPage />} />
+            <Route path="/patient-portal/ipd-history/nurse-notes" element={<NurseNotes />} />
+            <Route path="/patient-portal/ipd-history/medication" element={<IPDMedication />} />
+            <Route path="/patient-portal/ipd-history/prescription" element={<IPDPrescription />} />
+            <Route path="/patient-portal/ipd-history/consultant-register" element={<IPDConsultantRegister />} />
+            <Route path="/patient-portal/ipd-history/charges" element={<Charges />} />
+            <Route path="/patient-portal/ipd-history/operations" element={<Operations />} />
+            <Route path="/patient-portal/ipd-history/lab-investigation" element={<LabInvestigation />} />
+            <Route path="/patient-portal/ipd-history/vitals" element={<Vitals />} />
+            <Route path="/patient-portal/ipd-history/payment" element={<Payment />} />
+            <Route path="/patient-portal/ipd-history/timeline" element={<Timeline />} />
+            <Route path="/patient-portal/ipd-history/treatment-history" element={<TreatmentHistory />} />
+            <Route path="/patient-portal/ipd-history/bed-history" element={<BedHistory />} />
+
+            <Route path="/patient-portal/pharmacy" element={<Pharmacy />} />
+            <Route path="/patient-portal/pathology" element={<Pathology />} />
+            <Route path="/patient-portal/radiology" element={<Radiology />} />
+            <Route path="/patient-portal/ambulance" element={<Ambulance />} />
             {/* Pathology Routes */}
             <Route path="/admin/pathology-bills" element={<PathologyBill />} />
             <Route path="/admin/pathology-tests" element={<PathologyTest />} />
@@ -229,6 +262,10 @@ function App() {
             {/* Radiology Routes */}
             <Route path="/admin/radiology-bills" element={<RadiologyBill />} />
             <Route path="/admin/radiology-tests" element={<RadiologyTest />} />
+
+            {/* Billing Routes */}
+            <Route path="/admin/billing" element={<Billing />} />
+            <Route path="/admin/billing/details" element={<BillingDetails />} />
 
 
             {/* Pharmacy Routes */}

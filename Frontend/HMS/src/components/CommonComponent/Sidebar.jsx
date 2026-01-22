@@ -43,7 +43,7 @@ const adminNavItems = [
   { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
   { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
   { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
-  { to: "/admin/finance-bills", label: "Billing", Icon: CreditCard },
+  { to: "/admin/billing", label: "Billing", Icon: CreditCard },
   { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
   { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },
   //{ to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
@@ -70,10 +70,9 @@ const patientNavItems = [
   { to: "/patient-portal/pharmacy", label: "Pharmacy", Icon: Pill },
   { to: "/patient-portal/pathology", label: "Pathology", Icon: FlaskConical },
   { to: "/patient-portal/radiology", label: "Radiology", Icon: FolderGit2 },
-  { to: "/patient-portal/blood-bank", label: "Blood Bank", Icon: Droplet },
   { to: "/patient-portal/ambulance", label: "Ambulance", Icon: Ambulance },
-  { to: "/patient-portal/live-consultation", label: "Live Consultation", Icon: Video },
-  { to: "/patient-portal/download-center", label: "Download Center", Icon: Download },
+
+ 
 ];
 
 function Sidebar({ role = "admin" }) {
