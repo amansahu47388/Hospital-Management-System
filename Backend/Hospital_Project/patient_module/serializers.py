@@ -223,3 +223,16 @@ class PatientVitalSerializer(serializers.ModelSerializer):
         model = PatientVital
         fields = "__all__"
         read_only_fields = ('created_by',)
+
+
+
+
+#*******************************************************************************************************#
+#                            Patient Operation Serializer
+#*******************************************************************************************************#
+
+class PatientOperationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientOperaton
+        fields = "__all__"
+        read_only_fields = ('created_by',)
