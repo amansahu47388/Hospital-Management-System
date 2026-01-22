@@ -19,25 +19,22 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-export default function IPDTabsNavbar() {
+export default function IPDNavbar() {
   const scrollContainerRef = useRef(null);
 
   // STATIC FOR NOW
   const ipdId = 115;
 
   const tabs = [
-    { id: "overview", label: "Overview", icon: Eye },
+    { id: "profile", label: "Overview", icon: Eye },
     { id: "nurse-notes", label: "Nurse Notes", icon: MessageSquare },
-    { id: "medication", label: "Medication", icon: Pill },
     { id: "prescription", label: "Prescription", icon: FileText },
     { id: "consultant", label: "Consultant Register", icon: Users },
     { id: "lab", label: "Lab Investigation", icon: Beaker },
     { id: "operations", label: "Operations", icon: Scissors },
     { id: "charges", label: "Charges", icon: Receipt },
     { id: "payments", label: "Payment", icon: CreditCard },
-    
     { id: "bed-history", label: "Bed History", icon: Home },
-    { id: "timeline", label: "Timeline", icon: Clock },
     { id: "treatment-history", label: "Treatment History", icon: History },
     { id: "vitals", label: "Vitals", icon: Heart },
   ];

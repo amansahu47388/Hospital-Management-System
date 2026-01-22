@@ -87,3 +87,57 @@ export const deletePatientOperation = (patientId, operationId) => {
   return api.delete(`patients/${patientId}/operations/${operationId}/delete/`);
 };
 
+
+
+
+
+
+//******************************************************************************************//
+//                                      Patient Consultant API                                 //
+// *****************************************************************************************///
+// 🔹 Get all consultants of a patient
+export const getPatientConsultants = (patientId) => {
+  return api.get(`patients/${patientId}/consultants/`);
+};
+
+// 🔹 Create patient consultant
+export const createPatientConsultant = (patientId, data) => {
+  return api.post(`patients/${patientId}/consultants/0/create/`,data);
+};
+
+// 🔹 Update patient consultant
+export const updatePatientConsultant = (patientId, consultantId, data) => {
+  return api.put(`patients/${patientId}/consultants/${consultantId}/update/`,data);
+};
+
+// 🔹 Delete patient consultant
+export const deletePatientConsultant = (patientId, consultantId) => {
+  return api.delete(`patients/${patientId}/consultants/${consultantId}/delete/`);
+};
+
+
+
+//******************************************************************************************//
+//                                      Patient Charges API                                 //
+// *****************************************************************************************///
+// 🔹 Get all charges of a patient
+export const getPatientCharges = (patientId) => {
+  return api.get(`patients/${patientId}/charges/`);
+};
+
+// 🔹 Create patient charge
+export const createPatientCharge = (patientId, data) => {
+  return api.post(`patients/${patientId}/charges/0/create/`,data);
+};
+
+// 🔹 Update patient charge
+export const updatePatientCharge = (patientId, chargeId, data) => {
+  return api.put(`patients/${patientId}/charges/${chargeId}/update/`,data);
+};
+
+// 🔹 Delete patient charge
+export const deletePatientCharge = (patientId, chargeId) => {
+  return api.delete(`patients/${patientId}/charges/${chargeId}/delete/`);
+};
+
+

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
+import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
 import { ChevronLeft, ChevronRight, Edit2, Trash2, Search } from "lucide-react";
 
 export default function IPDTreatmentHistory() {

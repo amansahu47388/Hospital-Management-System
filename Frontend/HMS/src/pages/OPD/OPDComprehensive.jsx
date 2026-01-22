@@ -22,9 +22,11 @@ import {
 } from "lucide-react";
 import IPDHeader from "../../components/ipd/IPDHeader";
 import IPDProfileModal from "../../components/ipd/IPDProfileModal";
-import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
+import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
 
-export default function IPDComprehensivePage() {
+
+
+export default function OPDComprehensive() {
   // State for patient data (mock data - replace with API calls)
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileEditMode, setProfileEditMode] = useState(false);
@@ -165,104 +167,104 @@ export default function IPDComprehensivePage() {
 
         {/* Tabs Navbar */}
         <div className="mx-4 md:mx-6">
-          <IPDTabsNavbar activeTab={activeTab} onTabChange={setActiveTab} />
+          <OPDTabsNavbar activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
         {/* Tab Content */}
         <div className="bg-white mx-4 md:mx-6 rounded-b-lg shadow-lg p-4 md:p-6">
-            {/* OVERVIEW TAB */}
-            {activeTab === "overview" && (
-              <div className="space-y-6">
-                {/* Patient Info Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
-                    <p className="text-sm text-gray-600 font-medium">Phone</p>
-                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
-                      <Phone size={18} className="text-blue-600" />
-                      {patientData.phone}
-                    </p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-                    <p className="text-sm text-gray-600 font-medium">Email</p>
-                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
-                      <Mail size={18} className="text-green-600" />
-                      {patientData.email}
-                    </p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
-                    <p className="text-sm text-gray-600 font-medium">Address</p>
-                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
-                      <MapPin size={18} className="text-purple-600" />
-                      {patientData.address}
-                    </p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200">
-                    <p className="text-sm text-gray-600 font-medium">Blood Group</p>
-                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
-                      <Droplet size={18} className="text-red-600" />
-                      {patientData.bloodGroup}
-                    </p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
-                    <p className="text-sm text-gray-600 font-medium">Guardian</p>
-                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
-                      <User size={18} className="text-orange-600" />
-                      {patientData.guardianName}
-                    </p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-lg border border-indigo-200">
-                    <p className="text-sm text-gray-600 font-medium">TPA</p>
-                    <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
-                      <DollarSign size={18} className="text-indigo-600" />
-                      {patientData.tpa}
-                    </p>
-                  </div>
+          {/* OVERVIEW TAB */}
+          {activeTab === "overview" && (
+            <div className="space-y-6">
+              {/* Patient Info Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-gray-600 font-medium">Phone</p>
+                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
+                    <Phone size={18} className="text-blue-600" />
+                    {patientData.phone}
+                  </p>
                 </div>
 
-                {/* Allergies and Symptoms Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                      <Activity size={20} className="text-red-600" />
-                      Known Allergies
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {patientData.knownAllergies.map((allergy, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-sm font-medium"
-                        >
-                          {allergy}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+                  <p className="text-sm text-gray-600 font-medium">Email</p>
+                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
+                    <Mail size={18} className="text-green-600" />
+                    {patientData.email}
+                  </p>
+                </div>
 
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                      <TrendingUp size={20} className="text-yellow-600" />
-                      Symptoms
-                    </h3>
-                    <p className="text-gray-700 text-sm leading-relaxed">
-                      {patientData.symptoms.substring(0, 200)}...
-                    </p>
-                    <details className="mt-2">
-                      <summary className="text-blue-600 cursor-pointer text-sm font-medium">
-                        View Full Symptoms
-                      </summary>
-                      <p className="mt-2 text-gray-700 text-sm leading-relaxed">
-                        {patientData.symptoms}
-                      </p>
-                    </details>
-                  </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                  <p className="text-sm text-gray-600 font-medium">Address</p>
+                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
+                    <MapPin size={18} className="text-purple-600" />
+                    {patientData.address}
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200">
+                  <p className="text-sm text-gray-600 font-medium">Blood Group</p>
+                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
+                    <Droplet size={18} className="text-red-600" />
+                    {patientData.bloodGroup}
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
+                  <p className="text-sm text-gray-600 font-medium">Guardian</p>
+                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
+                    <User size={18} className="text-orange-600" />
+                    {patientData.guardianName}
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-lg border border-indigo-200">
+                  <p className="text-sm text-gray-600 font-medium">TPA</p>
+                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
+                    <DollarSign size={18} className="text-indigo-600" />
+                    {patientData.tpa}
+                  </p>
                 </div>
               </div>
-            )}
+
+              {/* Allergies and Symptoms Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Activity size={20} className="text-red-600" />
+                    Known Allergies
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {patientData.knownAllergies.map((allergy, idx) => (
+                      <span
+                        key={idx}
+                        className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-sm font-medium"
+                      >
+                        {allergy}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <TrendingUp size={20} className="text-yellow-600" />
+                    Symptoms
+                  </h3>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    {patientData.symptoms.substring(0, 200)}...
+                  </p>
+                  <details className="mt-2">
+                    <summary className="text-blue-600 cursor-pointer text-sm font-medium">
+                      View Full Symptoms
+                    </summary>
+                    <p className="mt-2 text-gray-700 text-sm leading-relaxed">
+                      {patientData.symptoms}
+                    </p>
+                  </details>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
