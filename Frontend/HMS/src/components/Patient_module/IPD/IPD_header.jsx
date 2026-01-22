@@ -28,8 +28,8 @@ export default function IPDHeaderNavbar() {
     { id: "nurse-notes", label: "Nurse Notes", icon: Activity },
     { id: "medication", label: "Medication", icon: Pill },
     { id: "prescription", label: "Prescription", icon: FileText },
-    { id: "consultant", label: "Consultant Register", icon: Users },
-    { id: "lab", label: "Lab Investigation", icon: Beaker },
+    { id: "consultant-register", label: "Consultant Register", icon: Users },
+    { id: "lab-investigation", label: "Lab Investigation", icon: Beaker },
     { id: "operations", label: "Operations", icon: Scissors },
     { id: "charges", label: "Charges", icon: Receipt },
     { id: "payments", label: "Payment", icon: CreditCard },
@@ -41,7 +41,7 @@ export default function IPDHeaderNavbar() {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] rounded-lg shadow-md overflow-hidden">
+    <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]  rounded-lg shadow-md overflow-hidden">
       <div className="flex items-center gap-2 px-2 md:px-4 py-2">
         {/* Left Scroll */}
         <button
