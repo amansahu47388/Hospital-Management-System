@@ -230,14 +230,14 @@ export default function OPDVitals() {
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleOpenEdit(row)}
-                                                    className="p-1.5 hover:bg-gray-100 rounded text-gray-500"
+                                                    className="bg-green-100 p-2 rounded text-green-600"
                                                     title="Edit"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(row.id)}
-                                                    className="p-1.5 hover:bg-gray-100 rounded text-gray-500"
+                                                    className="bg-red-100 p-2 rounded text-red-600"
                                                     title="Delete"
                                                 >
                                                     <Trash2 size={16} />

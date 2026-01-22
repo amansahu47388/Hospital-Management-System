@@ -100,7 +100,7 @@ class Patient(models.Model):
 
 
 # ******************************************************************************************************#
-#                                       Patien tVital Model
+#                                       PatientVital Model
 # ******************************************************************************************************#
 class PatientVital(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='vitals')

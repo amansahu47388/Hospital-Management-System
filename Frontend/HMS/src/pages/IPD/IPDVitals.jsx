@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Pencil } from "lucide-react";
 
 export default function IPDVitals() {
   const [activeTab, setActiveTab] = useState("vitals");
@@ -216,6 +216,7 @@ export default function IPDVitals() {
                     <th className="px-4 py-3 text-left text-sm font-semibold">Pulse<br />(70 - 100 Beats per)</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Temperature<br />(95.8 - 99.3 Fahrenheit)</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">BP<br />(90/60 - 140/90 mmHg)</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -239,6 +240,22 @@ export default function IPDVitals() {
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-900">
                           {vital.bp && `${vital.bp}`}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleEdit(vital)}
+                              className="bg-green-100 p-2 rounded text-green-600"
+                            >
+                             <Pencil size={16}/>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteVital(vital.id)}
+                              className="bg-red-100 p-2 rounded text-red-600"
+                            >
+                             <Trash2 size={16}/>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
