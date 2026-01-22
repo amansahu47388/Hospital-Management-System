@@ -77,7 +77,7 @@ export default function UserLogin() {
 
         notify("success", isAdmin ? "Admin logged in successfully!" : "Logged in successfully!");
         setTimeout(() => {
-          navigate(isAdmin ? "/admin/dashboard" : "/", { replace: true });
+          navigate(isAdmin ? "/admin/dashboard" : "/patient-portal/dashboard/", { replace: true });
         }, 1500);
       } else {
         notify("error", "Login failed. Please try again.");

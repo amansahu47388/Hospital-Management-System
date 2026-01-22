@@ -15,7 +15,7 @@ import {
     Trash2,
 } from "lucide-react";
 
-export default function OPDTreatmentHistoryPage() {
+export default function OPDTreatmentHistory() {
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedVisit, setSelectedVisit] = useState(null);
 
@@ -102,7 +102,7 @@ export default function OPDTreatmentHistoryPage() {
                                         "Consultant Doctor",
                                         "Action",
                                     ].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm font-bold uppercase tracking-wider">
+                                        <th key={head} className="px-6 py-4 text-sm font-bold">
                                             <div className="flex items-center gap-1">
                                                 {head}
                                                 <ChevronDown size={14} />
@@ -120,7 +120,7 @@ export default function OPDTreatmentHistoryPage() {
                                             {row.date.split(' ').slice(0, 1).join(' ')}
                                             <div className="text-[10px] text-gray-400">{row.date.split(' ').slice(1).join(' ')}</div>
                                         </td>
-                                        <td className="px-6 py-4 text-xs text-gray-600 max-w-xs whitespace-pre-wrap leading-relaxed truncate group-hover:whitespace-normal group-hover:overflow-visible group-hover:z-50 group-hover:bg-gray-50">
+                                        <td className="px-6 py-4 text-sm text-gray-600 ">
                                             {row.symptoms}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-600 font-semibold">{row.consultant}</td>
@@ -128,10 +128,11 @@ export default function OPDTreatmentHistoryPage() {
                                             <div className="flex justify-end pr-4">
                                                 <button
                                                     onClick={() => handleOpenDetail(row)}
-                                                    className="p-1 px-3 bg-gray-100 hover:bg-black hover:text-white rounded text-gray-700 transition-all"
-                                                    title="Show Action Details"
+                                                    className="p-1 px-3 text-purple-600 hover:text-purple-800 "
+                                                    title="Show Details"
+                                                    
                                                 >
-                                                   
+                                                   <Eye size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -156,7 +157,7 @@ export default function OPDTreatmentHistoryPage() {
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden transform transition-all scale-100">
                         {/* Modal Header */}
-                        <div className="bg-[#3daadd] px-6 py-4 flex justify-between items-center">
+                        <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] px-6 py-4 flex justify-between items-center">
                             <h3 className="text-white text-xl font-bold">Visit Details</h3>
                             <div className="flex items-center gap-4 text-white">
                                 <Printer size={20} className="hover:text-white transition-colors cursor-pointer" />

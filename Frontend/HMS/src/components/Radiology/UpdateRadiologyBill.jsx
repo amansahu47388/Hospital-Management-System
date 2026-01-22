@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { X, Search, Plus, Trash2 } from "lucide-react";
 import {
   getRadiologyTests,
   getRadiologyBillDetail,
   updateRadiologyBill,
   searchPrescription,
+  getRadiologyBills,
 } from "../../api/radiologyApi";
 import { searchPatient } from "../../api/patientApi";
 import { getDoctors } from "../../api/appointmentApi";
@@ -30,7 +31,6 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
 
   const [testsList, setTestsList] = useState([]);
   const [tests, setTests] = useState([]);
-
   const [discount, setDiscount] = useState(0);
   const [discountPercent, setDiscountPercent] = useState("");
   const [paidAmount, setPaidAmount] = useState("");
@@ -39,6 +39,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
   const [paymentMode, setPaymentMode] = useState("cash");
 
   const [loading, setLoading] = useState(false);
+  const [bills, setBills] = useState([]);
   const notify = useNotify();
 
   const fetchedRef = useRef(false);
