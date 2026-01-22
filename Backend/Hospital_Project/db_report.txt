@@ -1,3 +1,0 @@
-Listing tables starting with 'radiology_module_':
-Tables: ['radiology_module_radiologycategory', 'radiology_module_radiologytest', 'radiology_module_radiologybill', 'radiology_module_radiologyparameter', 'radiology_module_radiologybillitem']
-------------------------------

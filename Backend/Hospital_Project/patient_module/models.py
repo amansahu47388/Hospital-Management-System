@@ -2,6 +2,9 @@ from django.db import models
 from users.models import User
 import uuid
 from datetime import date
+from setup_module.models import OperationSetup
+
+
 
 # ******************************************************************************************************#
 #                              Patient Model
@@ -130,3 +133,69 @@ class PatientVital(models.Model):
 
 
 
+# ******************************************************************************************************#
+#                                       Patient Operation Model                                              #
+# ******************************************************************************************************#
+
+class PatientOperation(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='operations')
+    operation = models.ForeignKey(OperationSetup, on_delete=models.CASCADE, related_name='operations')
+    doctor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='operations_created')
+    operation_date = models.DateField()
+    assistant_consultant_1 = models.CharField(max_length=100, null=True, blank=True)
+    assistant_consultant_2 = models.CharField(max_length=100, null=True, blank=True)
+    ot_technician = models.CharField(max_length=100, null=True, blank=True)
+    ot_assistant = models.CharField(max_length=100, null=True, blank=True)
+    anesthesia_type = models.CharField(max_length=100, null=True, blank=True)
+    anesthetist = models.CharField(max_length=100, null=True, blank=True)
+    remark = models.TextField(null=True, blank=True)
+    result = models.TextField(null=True, blank=True)
+
+    operation_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='operations_created')
+    is_active = models.BooleanField(default=True) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Patient Operation'
+        verbose_name_plural = 'Patient Operations'
+        indexes = [
+            models.Index(fields=['patient']),
+            models.Index(fields=['operation']),
+        ]
+
+    def __str__(self):
+        return f"{self.patient} - {self.operation}"
+
+
+
+
+# ******************************************************************************************************#
+#                                       Patient Consultant Model                                              #
+# ******************************************************************************************************#
+
+# class PatientConsultant(models.Model):
+#     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='consultants')
+#     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultants_created')
+#     consultant_date = models.DateField()
+#     instruction = models.TextField()
+#     remark = models.TextField(null=True, blank=True)
+#     result = models.TextField(null=True, blank=True)
+
+#     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='consultants_created')
+#     is_active = models.BooleanField(default=True) 
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+#     class Meta:
+#         ordering = ['-created_at']
+#         verbose_name = 'Patient Consultant'
+#         verbose_name_plural = 'Patient Consultants'
+#         indexes = [
+#             models.Index(fields=['patient']),
+#             models.Index(fields=['doctor']),
+#         ]
+
+#     def __str__(self):
+#         return f"{self.patient} - {self.doctor}"

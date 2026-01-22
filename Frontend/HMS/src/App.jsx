@@ -107,7 +107,7 @@ import ItemSupplier from "./pages/Setup/Inventory/ItemSupplier";
 import IPDComprehensivePage from "./pages/IPD/IPDComprehensivePage";
 import MedicationSinglePage from "./pages/IPD/MedicationSinglePage";
 import PrescriptionSinglePage from "./pages/IPD/PrescriptionSinglePage";
-import ConsultantRegisterSinglePage from "./pages/IPD/ConsultantRegisterSinglePage";
+import ConsultantRegisterSinglePage from "./pages/IPD/ConsultantRegister";
 import LabInvestigationSinglePage from "./pages/IPD/LabInvestigationSinglePage";
 import OperationsSinglePage from "./pages/IPD/OperationsSinglePage";
 import IPDBedHistoryPage from "./pages/IPD/IPDBedHistoryPage";

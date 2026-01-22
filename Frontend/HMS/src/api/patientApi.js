@@ -1,84 +1,89 @@
-import axios from 'axios';
+import api from './axiosInstance';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-const patientAPI = axios.create({
-  baseURL: `${API_BASE_URL}/admin/patients`,
-});
 
-// Add token to requests
-patientAPI.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    // Don't set Content-Type for FormData
-    if (!(config.data instanceof FormData)) {
-      config.headers['Content-Type'] = 'application/json';
-    }
-    
-    console.log('📤 API Request:', config.method.toUpperCase(), config.url);
-    return config;
-  },
-  (error) => {
-    console.error('❌ Request error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Handle responses
-patientAPI.interceptors.response.use(
-  (response) => {
-    console.log('📥 API Response:', response.status);
-    return response;
-  },
-  (error) => {
-    console.error('❌ API Error:', error.response?.status, error.response?.data);
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/admin/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
+//******************************************************************************************//
+//                                      Patient API                                         //
+// *****************************************************************************************///
 export const getPatientList = async () => {
-  const response = await patientAPI.get('/');
-  return response;
+  return api.get('patients/');
 };
 
 export const getPatientDetail = async (patientId) => {
   if (!patientId) throw new Error('Patient ID is required');
-  const response = await patientAPI.get(`/${patientId}/`);
-  console.log('Patient data:', response.data);
-  if (response.data.photo) {
-    console.log('Raw photo path:', response.data.photo);
-  }
-  return response;
+  return api.get(`patients/${patientId}/`);
 };
 
 export const createPatient = async (patientData) => {
-  const response = await patientAPI.post('/create/', patientData);
-  return response;
+  return api.post('patients/create/', patientData);
 };
 
 export const updatePatient = async (patientId, patientData) => {
   if (!patientId) throw new Error('Patient ID is required');
-  const response = await patientAPI.patch(`/${patientId}/update/`, patientData);
-  return response;
+  return api.patch(`patients/${patientId}/update/`, patientData);
 };
 
 export const deletePatient = async (patientId) => {
-  const response = await patientAPI.delete(`/${patientId}/delete/`);
-  return response;
+  return api.delete(`patients/${patientId}/delete/`);
 };
 
 export const searchPatient = async (query) => {
-  const response = await patientAPI.get('/search/', {
+  return api.get('patients/search/', {
     params: { q: query },
   });
-  return response;
 };
+
+
+
+
+//******************************************************************************************//
+//                                      Patient Vital API                                   //
+// *****************************************************************************************///
+
+// 🔹 Get all vitals of a patient
+export const getPatientVitals = (patientId) => {
+  return api.get(`patients/${patientId}/vitals/`
+  );
+};
+
+// 🔹 Create patient vital
+export const createPatientVital = (patientId, data) => {
+  return api.post(`patients/${patientId}/vitals/0/create/`,data);
+};
+
+// 🔹 Update patient vital
+export const updatePatientVital = (patientId, vitalId, data) => {
+  return api.put(`patients/${patientId}/vitals/${vitalId}/update/`,data);
+};
+
+// 🔹 Delete patient vital
+export const deletePatientVital = (patientId, vitalId) => {
+  return api.delete(`patients/${patientId}/vitals/${vitalId}/delete/`);
+};
+
+
+
+
+//******************************************************************************************//
+//                                      Patient Operation API                                 //
+// *****************************************************************************************///
+// 🔹 Get all operations of a patient
+export const getPatientOperations = (patientId) => {
+  return api.get(`patients/${patientId}/operations/`);
+};
+
+// 🔹 Create patient operation
+export const createPatientOperation = (patientId, data) => {
+  return api.post(`patients/${patientId}/operations/0/create/`,data);
+};
+
+// 🔹 Update patient operation
+export const updatePatientOperation = (patientId, operationId, data) => {
+  return api.put(`patients/${patientId}/operations/${operationId}/update/`,data);
+};
+
+// 🔹 Delete patient operation
+export const deletePatientOperation = (patientId, operationId) => {
+  return api.delete(`patients/${patientId}/operations/${operationId}/delete/`);
+};
+
