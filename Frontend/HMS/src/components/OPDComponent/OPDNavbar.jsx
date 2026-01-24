@@ -16,21 +16,19 @@ import {
   Heart,
 } from "lucide-react";
 
-export default function OPDTabsNavbar() {
+export default function OPDNavbar() {
   const scrollContainerRef = useRef(null);
 
   // STATIC FOR NOW
   const opdId = 210;
 
   const tabs = [
-    { id: "overview", label: "Overview", icon: Eye },
+    { id: "profile", label: "Overview", icon: Eye },
     { id: "visits", label: "Visits", icon: Calendar },
-    { id: "medication", label: "Medication", icon: Pill },
     { id: "lab-investigation", label: "Lab Investigation", icon: Beaker },
     { id: "operations", label: "Operations", icon: Scissors },
     { id: "charges", label: "Charges", icon: Receipt },
     { id: "payments", label: "Payments", icon: CreditCard },
-    { id: "timeline", label: "Timeline", icon: Clock },
     { id: "treatment-history", label: "Treatment History", icon: History },
     { id: "vitals", label: "Vitals", icon: Heart },
   ];

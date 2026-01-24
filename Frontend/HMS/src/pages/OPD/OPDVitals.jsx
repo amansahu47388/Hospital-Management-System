@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
+import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
 import { Plus, Edit2, Trash2, X, Save, CheckCircle, Calendar, ChevronDown, Trash, } from "lucide-react";
 
 export default function OPDVitals() {
@@ -172,14 +172,14 @@ export default function OPDVitals() {
     return (
         <AdminLayout>
             <div className="min-h-screen bg-gray-50 pb-10">
-                <div className="mx-4 md:mx-6">
-                    <OPDTabsNavbar />
-                </div>
+                <OPDTabsNavbar />
 
-                <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]">
-                    {/* Page Header */}
-                    <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
+                {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
+                {/* Page Header */}
+
+                <div className="p-4 md:p-6 ">
+                    <div className="bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="">
                             <h2 className="text-xl font-bold text-gray-800">Vitals</h2>
                         </div>
                         <button
@@ -197,47 +197,42 @@ export default function OPDVitals() {
                         </button>
                     </div>
 
+
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50 text-gray-600">
+                            <thead className="bg-gray-100 text-gray-800">
                                 <tr>
-                                    {[
-                                        "Date",
-                                        "Height\n(1 - 200 Centimeters)",
-                                        "Weight\n(0 - 150 Kilograms)",
-                                        "Pulse\n(70 - 100 Beats per)",
-                                        "Temperature\n(95.8 - 99.3 Fahrenheit)",
-                                        "BP\n(90/60 - 140/90 mmHg)",
-                                        "Action",
-                                    ].map((head, idx) => (
-                                        <th key={idx} className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">
-                                            {head}
-                                        </th>
-                                    ))}
+                                    <th className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">Date</th>
+                                    <th className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">Height (1 - 200 Centimeters)</th>
+                                    <th className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">Weight (0 - 150 Kilograms)</th>
+                                    <th className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">Pulse (70 - 100 Beats per)</th>
+                                    <th className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">Temperature (95.8 - 99.3 Fahrenheit)</th>
+                                    <th className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">BP (90/60 - 140/90 mmHg)</th>
+                                    <th className="px-6 py-4 text-sm font-bold whitespace-pre-wrap">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-100">
                                 {vitals.map((row) => (
-                                    <tr key={row.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">{row.date}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.height ? `${row.height} (${row.time})` : "-"}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.weight ? `${row.weight} (${row.time})` : "-"}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.pulse ? `${row.pulse} (${row.time})` : "-"}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.temperature ? `${row.temperature} (${row.time})` : "-"}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.bp ? `${row.bp} (${row.time})` : "-"}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                    <tr key={row.id} className="hover:bg-gray-50 transition-colors text-gray-600">
+                                        <td className="px-6 py-4 text-sm font-bold">{row.date}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.height ? `${row.height} (${row.time})` : "-"}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.weight ? `${row.weight} (${row.time})` : "-"}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.pulse ? `${row.pulse} (${row.time})` : "-"}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.temperature ? `${row.temperature} (${row.time})` : "-"}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.bp ? `${row.bp} (${row.time})` : "-"}</td>
+                                        <td className="px-6 py-4 text-sm ">
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleOpenEdit(row)}
-                                                    className="bg-green-100 p-2 rounded text-green-600"
+                                                    className="hover:bg-purple-100 text-purple-500 px-2 py-1 rounded text-xs"
                                                     title="Edit"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(row.id)}
-                                                    className="bg-red-100 p-2 rounded text-red-600"
+                                                    className="hover:bg-red-100 text-red-500 px-2 py-1 rounded text-xs"
                                                     title="Delete"
                                                 >
                                                     <Trash2 size={16} />
@@ -265,7 +260,7 @@ export default function OPDVitals() {
                                 onClick={() => setShowAddModal(false)}
                                 className="text-white/80 hover:text-white transition-colors"
                             >
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -344,7 +339,7 @@ export default function OPDVitals() {
                             </button>
                             <button
                                 onClick={handleAddVital}
-                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-8 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-xs"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
                             >
                                 <CheckCircle size={16} />
                                 Save Records
@@ -367,7 +362,7 @@ export default function OPDVitals() {
                                 onClick={() => setShowEditModal(false)}
                                 className="text-white/80 hover:text-white transition-colors"
                             >
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -445,7 +440,7 @@ export default function OPDVitals() {
                             </button>
                             <button
                                 onClick={handleSaveEdit}
-                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-8 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-xs"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
                             >
                                 <CheckCircle size={16} />
                                 Update Records

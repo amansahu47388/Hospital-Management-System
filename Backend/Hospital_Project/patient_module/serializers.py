@@ -223,3 +223,40 @@ class PatientVitalSerializer(serializers.ModelSerializer):
         model = PatientVital
         fields = "__all__"
         read_only_fields = ('created_by',)
+
+
+
+
+#*******************************************************************************************************#
+#                            Patient Operation Serializer
+#*******************************************************************************************************#
+
+class PatientOperationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientOperation
+        fields = "__all__"
+        read_only_fields = ('created_by',)
+
+
+#*******************************************************************************************************#
+#                            Patient ConsultantRegister Serializer
+#*******************************************************************************************************#
+
+class PatientConsultantRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientConsultant
+        fields = "__all__"
+        read_only_fields = ('created_by',)
+
+
+
+
+#*******************************************************************************************************#
+#                            Patient Charges Serializer
+#*******************************************************************************************************#
+
+class PatientChargesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientCharges
+        fields = "__all__"
+        read_only_fields = ('created_by',)

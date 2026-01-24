@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
+import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
 import {
     Search,
     Plus,
@@ -18,7 +18,7 @@ import {
     CheckCircle,
 } from "lucide-react";
 
-export default function OPDPaymentPage() {
+export default function OPDPayment() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState(null);
@@ -41,14 +41,14 @@ export default function OPDPaymentPage() {
     return (
         <AdminLayout>
             <div className="min-h-screen bg-gray-50 pb-10">
-                <div className="mx-4 md:mx-6">
-                    <OPDTabsNavbar />
-                </div>
+                <OPDTabsNavbar />
 
-                <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]">
-                    {/* Page Header */}
-                    <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
+                {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
+                {/* Page Header */}
+
+                <div className="p-4 md:p-6 ">
+                    <div className="bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="">
                             <h2 className="text-xl font-bold text-gray-800">Payments</h2>
                         </div>
                         <button
@@ -60,68 +60,44 @@ export default function OPDPaymentPage() {
                         </button>
                     </div>
 
+
                     {/* Table Actions */}
-                    <div className="px-4 md:px-6 pb-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
-                        <div className="relative w-full md:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
-                            />
-                        </div>
-                        <div className="flex items-center gap-1">
-                            {[Copy, FileSpreadsheet, FileText, FilePdf, Printer].map((Icon, i) => (
-                                <button key={i} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-all">
-                                    <Icon size={18} />
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+
 
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50 text-gray-600">
+                            <thead className="bg-gray-100 text-gray-800">
                                 <tr>
-                                    {[
-                                        "Transaction ID",
-                                        "Date",
-                                        "Note",
-                                        "Payment Mode",
-                                        "Paid Amount ($)",
-                                        "Action",
-                                    ].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm font-bold uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
-                                                {head}
-                                                <ChevronDown size={14} />
-                                            </div>
-                                        </th>
-                                    ))}
+                                    <th className="px-6 py-4 text-sm">Transaction ID</th>
+                                    <th className="px-6 py-4 text-sm">Date</th>
+                                    <th className="px-6 py-4 text-sm">Note</th>
+                                    <th className="px-6 py-4 text-sm">Payment Mode</th>
+                                    <th className="px-6 py-4 text-sm">Paid Amount ($)</th>
+                                    <th className="px-6 py-4 text-sm">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="bg-white border-b border-gray-200">
                                 {paymentsData.map((row, i) => (
-                                    <tr key={i} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 text-sm text-gray-900 font-medium">{row.transactionId}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.date}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.note || "-"}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.paymentMode}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">{row.paidAmount.toFixed(2)}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                    <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{row.transactionId}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.date}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.note || "-"}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.paymentMode}</td>
+                                        <td className="px-6 py-4 text-sm font-bold">{row.paidAmount.toFixed(2)}</td>
+                                        <td className="px-6 py-4 text-sm ">
                                             <div className="flex gap-2">
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500" title="Print">
-                                                    <Printer size={16} />
-                                                </button>
                                                 <button
                                                     onClick={() => handleOpenEdit(row)}
-                                                    className="p-1.5 hover:bg-gray-100 rounded text-gray-500"
+                                                    className="hover:bg-purple-100 text-purple-500 px-2 py-1 rounded text-xs"
                                                     title="Edit"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500" title="Delete">
+                                                <button
+                                                    className="hover:bg-red-100 text-red-500 px-2 py-1 rounded text-xs"
+                                                    title="Delete"
+                                                >
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
@@ -136,8 +112,8 @@ export default function OPDPaymentPage() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="p-4 text-sm text-gray-500">
-                        Records: 1 to 1 of 1
+                    <div className="p-4 text-xs text-gray-500">
+                        Records: {paymentsData.length} to {paymentsData.length} of {paymentsData.length}
                     </div>
                 </div>
             </div>
@@ -158,7 +134,7 @@ export default function OPDPaymentPage() {
                                 }}
                                 className="text-white/80 hover:text-white transition-colors"
                             >
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -211,9 +187,9 @@ export default function OPDPaymentPage() {
                                     setShowAddModal(false);
                                     setShowEditModal(false);
                                 }}
-                                className="bg-[#4fb8ea] hover:bg-[#3daadd] text-white px-8 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-sm"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
                             >
-                                <CheckCircle size={18} />
+                                <CheckCircle size={16} />
                                 Save
                             </button>
                         </div>

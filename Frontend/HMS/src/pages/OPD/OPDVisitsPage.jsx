@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDTabsNavbar";
+import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
 //import IPDHeader from "../../components/ipd/IPDHeader";
 import {
     FileText,
@@ -16,6 +16,7 @@ import {
     User,
     Save,
     ChevronDown,
+    CheckCircle,
 } from "lucide-react";
 
 export default function OPDVisitsPage() {
@@ -76,86 +77,60 @@ export default function OPDVisitsPage() {
             <div className="min-h-screen bg-gray-50 pb-10">
                 {/* <IPDHeader patient={patientData} onEditClick={() => { }} /> */}
 
-                <div className="mx-4 md:mx-6">
-                    <OPDTabsNavbar />
-                </div>
+                <OPDTabsNavbar />
 
-                <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]">
-                    {/* Page Header */}
-                    <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
+                {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
+                {/* Page Header */}
+
+                <div className="p-4 md:p-6 ">
+                    <div className="bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="">
                             <h2 className="text-xl font-bold text-gray-800">Checkups</h2>
-                            <p className="text-sm text-gray-500 font-medium">{patientData.admission.ipdNumber}</p>
+                            <p className="text-xs text-gray-500 font-medium">{patientData.admission.ipdNumber}</p>
                         </div>
                         <button
                             onClick={() => setShowModal(true)}
-                            className="bg-[#6046B5] hover:bg-[#4c3893] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-semibold"
+                            className=" bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-semibold"
                         >
                             <Plus size={18} />
                             New Checkup
                         </button>
                     </div>
 
+
                     {/* Table Actions */}
-                    <div className="px-4 md:px-6 pb-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
-                        <div className="relative w-full md:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-white">
-                                <option>100</option>
-                                <option>50</option>
-                                <option>25</option>
-                            </select>
-                            <div className="flex gap-1">
-                                {[Copy, FileSpreadsheet, FileText, FilePdf, Download].map((Icon, i) => (
-                                    <button key={i} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-all">
-                                        <Icon size={18} />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+
 
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-gray-100 text-gray-800">
                                 <tr>
-                                    {["OPD Checkup ID", "Appointment Date", "Consultant", "Reference", "Symptoms", "Action"].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
-                                                {head}
-                                                <ChevronDown size={14} />
-                                            </div>
-                                        </th>
-                                    ))}
+                                    <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">OPD Checkup ID</th>
+                                    <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Appointment Date</th>
+                                    <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Consultant</th>
+                                    <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Reference</th>
+                                    <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Symptoms</th>
+                                    <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-100">
                                 {visitsData.map((row, i) => (
-                                    <tr key={i} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
                                         <td className="px-6 py-4 text-sm font-medium text-purple-600">{row.id}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.date}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.consultant}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.reference}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{row.symptoms}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="px-6 py-4 text-sm ">{row.date}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.consultant}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.reference}</td>
+                                        <td className="px-6 py-4 text-sm ">{row.symptoms}</td>
+                                        <td className="px-6 py-4 text-sm ">
                                             <div className="flex gap-2">
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500">
+                                                <button className="hover:bg-blue-100 text-blue-500 px-2 py-1 rounded text-xs">
                                                     <FileText size={16} />
                                                 </button>
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500">
+                                                <button className="hover:bg-purple-100 text-purple-500 px-2 py-1 rounded text-xs">
                                                     <Edit2 size={16} />
                                                 </button>
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-500">
+                                                <button className="hover:bg-red-100 text-red-500 px-2 py-1 rounded text-xs">
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
@@ -169,9 +144,9 @@ export default function OPDVisitsPage() {
                     <div className="p-4 border-t border-gray-100 text-xs text-gray-500 flex justify-between items-center">
                         <span>Records: 1 to 1 of 1</span>
                         <div className="flex gap-2">
-                            <button className="px-2 py-1 border rounded hover:bg-gray-50">&lt;</button>
-                            <button className="px-3 py-1 bg-purple-600 text-white rounded shadow-sm">1</button>
-                            <button className="px-2 py-1 border rounded hover:bg-gray-50">&gt;</button>
+                            <button className="px-2 py-1 border rounded hover:bg-gray-50 disabled:opacity-50" disabled>&lt;</button>
+                            <button className="px-3 py-1 bg-purple-50 text-[#6046B5] border border-purple-100 rounded font-bold shadow-sm">1</button>
+                            <button className="px-2 py-1 border rounded hover:bg-gray-50 disabled:opacity-50" disabled>&gt;</button>
                         </div>
                     </div>
                 </div>
@@ -191,7 +166,7 @@ export default function OPDVisitsPage() {
                                 onClick={() => setShowModal(false)}
                                 className="text-white/80 hover:text-white transition-colors p-1"
                             >
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -324,9 +299,7 @@ export default function OPDVisitsPage() {
                                     </div>
 
                                     <div className="flex flex-col gap-1.5">
-                                        <label className="text-sm font-bold text-gray-700">
-                                            Applied Charge ($) <span className="text-red-500">*</span>
-                                        </label>
+
                                         <input
                                             type="text"
                                             className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm"
@@ -381,9 +354,9 @@ export default function OPDVisitsPage() {
                             </div>
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#269a4d] text-white px-8 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-sm tracking-wide transform active:scale-95"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs"
                             >
-                                <Save size={18} />
+                                <CheckCircle size={16} />
                                 Save
                             </button>
                         </div>
