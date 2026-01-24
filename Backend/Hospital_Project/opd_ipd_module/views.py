@@ -87,6 +87,21 @@ class IpdPatientCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
+        # 1. Check if patient is already admitted
+        patient_id = request.data.get("patient")
+        if patient_id:
+            already_admitted = IpdPatient.objects.filter(
+                patient_id=patient_id, 
+                is_discharged=False
+            ).exists()
+            
+            if already_admitted:
+                return Response(
+                    {"detail": "This patient is already admitted in IPD and has not been discharged yet."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        # 2. Proceed with creation
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             print("❌ IPD CREATE ERROR:", serializer.errors)

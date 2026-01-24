@@ -25,11 +25,15 @@ class PatientSerializer(serializers.ModelSerializer):
     gender = serializers.CharField(source='get_gender_display_value', read_only=True)
     blood_group = serializers.CharField(source='get_blood_group_display_value', read_only=True)
 
+    is_admitted = serializers.SerializerMethodField()
+    is_active_opd = serializers.SerializerMethodField()
+
     class Meta:
         model = Patient
         fields = ['id','first_name', 'last_name', 'full_name', 'email', 'phone', 'address', 'city', 
         'state', 'zip_code', 'date_of_birth', 'age', 'gender', 'blood_group', 'medical_history', 'allergies',
          'emergency_contact_name', 'emergency_contact_phone', 'photo', 'created_by_name', 'created_at', 'updated_at', 'is_active',
+         'is_admitted', 'is_active_opd'
         ]
         read_only_fields = [
             'id',
@@ -74,6 +78,14 @@ class PatientSerializer(serializers.ModelSerializer):
                 # Fallback if no request context
                   return f"{BACKEND_URL}{obj.photo.url}"
         return None
+
+    def get_is_admitted(self, obj):
+        from opd_ipd_module.models import IpdPatient
+        return IpdPatient.objects.filter(patient=obj, is_discharged=False).exists()
+
+    def get_is_active_opd(self, obj):
+        from opd_ipd_module.models import OpdPatient
+        return OpdPatient.objects.filter(patient=obj, appointment_date__date=date.today()).exists()
 
 class PatientCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating patients"""

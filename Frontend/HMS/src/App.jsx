@@ -131,7 +131,6 @@ import PatientAppointmentsPage from "./pages/Patient/My_Appointment/PatientAppoi
 import PatientOPDHistoryPage from "./pages/Patient/OPD/PatientOPDHistoryPage";
 import IPDOverviewPage from "./pages/Patient/IPD/IPDOverviewPage";
 import NurseNotes from "./pages/Patient/IPD/NurseNotes";
-import IPDMedication from "./pages/Patient/IPD/IPDMedication";
 import IPDPrescription from "./pages/Patient/IPD/IPDPrescription";
 import IPDConsultantRegister from "./pages/Patient/IPD/IPDConsultantRegister";
 import Charges from "./pages/Patient/IPD/Charges";
