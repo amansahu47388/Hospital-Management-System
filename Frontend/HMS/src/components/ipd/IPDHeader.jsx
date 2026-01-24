@@ -17,22 +17,22 @@ export default function IPDHeader({ patient, onEditClick }) {
     <div className="mx-4 md:mx-6 mb-6">
       <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-purple-200">
         {/* Top Purple Gradient Bar */}
-        
-<div className="
+
+        <div className="
   bg-gradient-to-r from-[#6046B5] via-[#7C5ACE] to-[#8A63D2]
   px-4 sm:px-6
   py-6
 ">
-  <div className="
+          <div className="
     flex flex-col md:flex-row
     md:items-end
     items-center
     gap-4 md:gap-6
     w-full
   ">
-    {/* Avatar Section */}
-    <div className="flex-shrink-0">
-      <div className="
+            {/* Avatar Section */}
+            <div className="flex-shrink-0">
+              <div className="
         w-20 h-20
         sm:w-24 sm:h-24
         bg-white
@@ -41,41 +41,41 @@ export default function IPDHeader({ patient, onEditClick }) {
         shadow-lg
         flex items-center justify-center
       ">
-        {patient.photo ? (
-          <img
-            src={patient.photo}
-            alt={patient.name}
-            className="w-full h-full rounded-lg object-cover"
-          />
-        ) : (
-          <User size={40} className="sm:size-12 text-[#6046B5]" />
-        )}
-      </div>
-    </div>
+                {patient.photo ? (
+                  <img
+                    src={patient.photo}
+                    alt={patient.name}
+                    className="w-full h-full rounded-lg object-cover"
+                  />
+                ) : (
+                  <User size={40} className="sm:size-12 text-[#6046B5]" />
+                )}
+              </div>
+            </div>
 
-    {/* Quick Info */}
-    <div className="
+            {/* Quick Info */}
+            <div className="
       flex-1
       text-white
       text-center md:text-left
     ">
-      <h1 className="text-xl sm:text-3xl md:text-4xl font-bold">
-        {patient.name}
-      </h1>
-      <p className="text-purple-100 text-xs sm:text-sm md:text-base">
-        IPD #{patient.admission.ipdNumber} • Case #{patient.admission.caseId}
-      </p>
-    </div>
+              <h1 className="text-xl sm:text-3xl md:text-4xl font-bold">
+                {patient.name}
+              </h1>
+              <p className="text-purple-100 text-xs sm:text-sm md:text-base">
+                IPD-ID:{patient.admission.ipdNumber} • Case-ID:{patient.admission.caseId}
+              </p>
+            </div>
 
-    {/* Action Buttons */}
-    <div className="
+            {/* Action Buttons */}
+            <div className="
       flex flex-col sm:flex-row
       gap-2
       w-full md:w-auto
     ">
-      <button
-        onClick={onEditClick}
-        className="
+              <button
+                onClick={onEditClick}
+                className="
           w-full sm:w-auto
           flex items-center justify-center gap-2
           bg-white text-[#6046B5]
@@ -83,29 +83,13 @@ export default function IPDHeader({ patient, onEditClick }) {
           rounded-lg font-semibold
           hover:bg-purple-50 transition
           shadow-lg
-        "
-      >
-        <Edit2 size={18} />
-        <span className="inline md:inline">Edit Profile</span>
-      </button>
-
-      <button
-        className="
-          w-full sm:w-auto
-          flex items-center justify-center gap-2
-          bg-purple-700 text-white
-          px-4 py-2
-          rounded-lg font-semibold
-          hover:bg-purple-800 transition
-          shadow-lg
-        "
-      >
-        <Download size={18} />
-        <span className="inline md:inline">Download</span>
-      </button>
-    </div>
-  </div>
-</div>
+        ">
+                <Edit2 size={18} />
+                <span className="inline md:inline">Edit Profile</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Patient Info Grid */}
         <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -154,8 +138,8 @@ export default function IPDHeader({ patient, onEditClick }) {
               <p className="text-sm text-gray-600 font-medium">Status</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-              <p className="text-sm font-semibold text-gray-900">Active</p>
+              <span className={`w-3 h-3 rounded-full ${patient.status === "Active" ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}></span>
+              <p className="text-sm font-semibold text-gray-900">{patient.status || "Active"}</p>
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Admitted {patient.admission.date}
@@ -164,7 +148,7 @@ export default function IPDHeader({ patient, onEditClick }) {
         </div>
 
         {/* Secondary Info Section */}
-        <div className="px-6 pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="px-6 pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Doctor Info */}
           <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
             <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
@@ -175,13 +159,14 @@ export default function IPDHeader({ patient, onEditClick }) {
             </p>
           </div>
 
-          {/* Insurance Info */}
+          {/* Address    Info */}
           <div className="bg-cyan-50 p-4 rounded-lg border border-cyan-200">
-            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-              Insurance
-            </p>
-            <p className="text-lg font-bold text-cyan-700">{patient.tpa}</p>
-            <p className="text-xs text-gray-600 mt-1">ID: {patient.tpaId}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin size={18} className="text-purple-600" />
+              <p className="text-sm text-gray-600 font-medium">Address</p>
+            </div>
+            <p className="text-lg font-bold text-cyan-700">{patient.address}</p>
+
           </div>
 
           {/* Health Summary */}
@@ -193,12 +178,20 @@ export default function IPDHeader({ patient, onEditClick }) {
               <span className="text-2xl font-bold text-rose-700">
                 {patient.bloodGroup}
               </span>
-              {/* <div className="text-xs">
+              <div className="text-xs">
                 <p className="text-red-600 font-semibold">
-                  ⚠️ {patient.knownAllergies.join(", ")}
+                  {patient.knownAllergies.join(", ")}
                 </p>
-              </div> */}
+              </div>
             </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
+            <p className="text-sm text-gray-600 font-medium">Guardian</p>
+            <p className="text-lg font-semibold text-gray-900 flex items-center gap-2 mt-1">
+              <User size={18} className="text-orange-600" />
+              {patient.guardianName}
+            </p>
           </div>
         </div>
 

@@ -21,7 +21,7 @@ import {
   Save,
 } from "lucide-react";
 import IPDHeader from "../../components/ipd/IPDHeader";
-import IPDProfileModal from "../../components/ipd/IPDProfileModal";
+import IPDProfileModal from "../../components/ipd/IPDProfile";
 import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
 
 

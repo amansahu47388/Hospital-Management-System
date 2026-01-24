@@ -101,10 +101,11 @@ class RadiologyTestUpdateSerializer(serializers.ModelSerializer):
 
 class RadiologyBillItemSerializer(serializers.ModelSerializer):
     test_name = serializers.CharField(source="test.test_name", read_only=True)
+    test_detail = RadiologyTestListSerializer(source="test", read_only=True)
     
     class Meta:
         model = RadiologyBillItem
-        fields = ["id", "test", "test_name", "price", "tax", "report_days", "report_date"]
+        fields = ["id", "test", "test_name", "test_detail", "price", "tax", "report_days", "report_date"]
 
 
 

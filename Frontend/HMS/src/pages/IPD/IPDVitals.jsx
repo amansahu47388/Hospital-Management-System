@@ -1,35 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
-import { Plus, Edit2, Trash2, Pencil } from "lucide-react";
+import { Plus, Trash2, Pencil, Loader2 } from "lucide-react";
+import {
+  getPatientVitals,
+  createPatientVital,
+  updatePatientVital,
+  deletePatientVital
+} from "../../api/patientApi";
+import { getIpdPatientDetail } from "../../api/ipdApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function IPDVitals() {
+  const { ipdId } = useParams();
+  const notify = useNotify();
   const [activeTab, setActiveTab] = useState("vitals");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
-
-  const [vitals, setVitals] = useState([
-    {
-      id: 1,
-      date: "01/19/2026",
-      time: "04:42 PM",
-      height: "12",
-      weight: "",
-      pulse: "",
-      temperature: "",
-      bp: "",
-    },
-    {
-      id: 2,
-      date: "01/09/2026",
-      time: "04:42 PM",
-      height: "",
-      weight: "",
-      pulse: "13",
-      temperature: "",
-      bp: "",
-    },
-  ]);
+  const [loading, setLoading] = useState(false);
+  const [vitals, setVitals] = useState([]);
+  const [editFormData, setEditFormData] = useState(null);
+  const [patientId, setPatientId] = useState(null);
 
   const [newVitalForm, setNewVitalForm] = useState({
     rows: [{ vitalName: "", vitalValue: "" }],
@@ -43,6 +35,64 @@ export default function IPDVitals() {
     "Temperature (95.8 - 99.3 Fahrenheit)",
     "BP (90/60 - 140/90 mmHg)",
   ];
+
+  useEffect(() => {
+    const init = async () => {
+      if (ipdId) {
+        setLoading(true);
+        try {
+          // 1. Fetch IPD Record to get the real Patient ID
+          const ipdRes = await getIpdPatientDetail(ipdId);
+          console.log("📍 Resolved Patient ID:", ipdRes.data.patient);
+          setPatientId(ipdRes.data.patient);
+
+          // 2. Fetch Vitals using the resolved Patient ID
+          await fetchVitals(ipdRes.data.patient);
+        } catch (error) {
+          console.error("Error initializing vitals:", error);
+          notify("error", "Failed to load patient records");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    init();
+  }, [ipdId]);
+
+  const fetchVitals = async (pid = patientId) => {
+    if (!pid) return;
+    setLoading(true);
+    try {
+      const response = await getPatientVitals(pid);
+      const formattedVitals = response.data.map(v => {
+        const d = new Date(v.created_at);
+        return {
+          id: v.id,
+          date: new Date(v.vital_date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }),
+          time: d.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+          height: v.height,
+          weight: v.weight,
+          pulse: v.pulse,
+          temperature: v.temperature,
+          bp: v.bp,
+        }
+      });
+      setVitals(formattedVitals);
+    } catch (error) {
+      console.error("Error fetching vitals:", error);
+      notify("error", "Failed to fetch vitals records");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddRow = () => {
     setNewVitalForm({
@@ -63,55 +113,57 @@ export default function IPDVitals() {
     setNewVitalForm({ ...newVitalForm, rows: updatedRows });
   };
 
-  const handleAddVital = () => {
+  const handleAddVital = async () => {
     const validRows = newVitalForm.rows.filter(r => r.vitalName && r.vitalValue);
     if (validRows.length === 0) {
-      alert("Please add at least one valid vital record");
+      notify("warning", "Please add at least one valid vital record");
       return;
     }
 
-    const dateObj = new Date(newVitalForm.vitalDate);
-    const newEntry = {
-      id: Date.now(),
-      date: dateObj.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }),
-      time: dateObj.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
-    };
+    setLoading(true);
+    try {
+      const dateObj = new Date(newVitalForm.vitalDate);
+      const payload = {
+        vital_date: dateObj.toISOString().slice(0, 10),
+        height: 0,
+        weight: 0,
+        pulse: 0,
+        temperature: 0,
+        bp: "",
+      };
 
-    validRows.forEach(row => {
-      const field = row.vitalName.toLowerCase().split(" ")[0];
-      newEntry[field] = row.vitalValue;
-    });
+      validRows.forEach(row => {
+        const field = row.vitalName.toLowerCase().split(" ")[0];
+        payload[field] = row.vitalValue;
+      });
 
-    setVitals([newEntry, ...vitals]);
-    setNewVitalForm({
-      rows: [{ vitalName: "", vitalValue: "" }],
-      vitalDate: new Date().toISOString().slice(0, 16),
-    });
-    setShowAddModal(false);
+      await createPatientVital(patientId, payload);
+      notify("success", "Vital record added successfully");
+      fetchVitals(patientId);
+      setShowAddModal(false);
+      setNewVitalForm({
+        rows: [{ vitalName: "", vitalValue: "" }],
+        vitalDate: new Date().toISOString().slice(0, 16),
+      });
+    } catch (error) {
+      console.error("Error adding vital:", error);
+      notify("error", error.response?.data?.detail || "Failed to add vital record");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEdit = (vital) => {
     setEditingId(vital.id);
-    // Convert flat vital object back to rows for editing
     const rows = [];
-    if (vital.height) rows.push({ vitalName: "Height (1 - 200 Centimeters)", vitalValue: vital.height });
-    if (vital.weight) rows.push({ vitalName: "Weight (0 - 150 Kilograms)", vitalValue: vital.weight });
-    if (vital.pulse) rows.push({ vitalName: "Pulse (70 - 100 Beats per)", vitalValue: vital.pulse });
-    if (vital.temperature) rows.push({ vitalName: "Temperature (95.8 - 99.3 Fahrenheit)", vitalValue: vital.temperature });
+    if (vital.height > 0) rows.push({ vitalName: "Height (1 - 200 Centimeters)", vitalValue: vital.height });
+    if (vital.weight > 0) rows.push({ vitalName: "Weight (0 - 150 Kilograms)", vitalValue: vital.weight });
+    if (vital.pulse > 0) rows.push({ vitalName: "Pulse (70 - 100 Beats per)", vitalValue: vital.pulse });
+    if (vital.temperature > 0) rows.push({ vitalName: "Temperature (95.8 - 99.3 Fahrenheit)", vitalValue: vital.temperature });
     if (vital.bp) rows.push({ vitalName: "BP (90/60 - 140/90 mmHg)", vitalValue: vital.bp });
 
     if (rows.length === 0) rows.push({ vitalName: "", vitalValue: "" });
 
-    // Format date for datetime-local
-    // Expecting vital.date: "01/19/2026", vital.time: "04:42 PM"
     const [month, day, year] = vital.date.split("/");
     const d = new Date(`${year}-${month}-${day} ${vital.time}`);
     const dateFormatted = d.getTime() ? d.toISOString().slice(0, 16) : "";
@@ -141,44 +193,53 @@ export default function IPDVitals() {
     setEditFormData({ ...editFormData, rows: updatedRows });
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     const validRows = editFormData.rows.filter(r => r.vitalName && r.vitalValue);
-    const dateObj = new Date(editFormData.vitalDate);
+    if (validRows.length === 0) {
+      notify("warning", "Please add at least one valid vital record");
+      return;
+    }
 
-    const updatedVital = {
-      id: editingId,
-      date: dateObj.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }),
-      time: dateObj.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
-      height: "",
-      weight: "",
-      pulse: "",
-      temperature: "",
-      bp: "",
-    };
+    setLoading(true);
+    try {
+      const dateObj = new Date(editFormData.vitalDate);
+      const payload = {
+        vital_date: dateObj.toISOString().slice(0, 10),
+        height: 0,
+        weight: 0,
+        pulse: 0,
+        temperature: 0,
+        bp: "",
+      };
 
-    validRows.forEach(row => {
-      const field = row.vitalName.toLowerCase().split(" ")[0];
-      updatedVital[field] = row.vitalValue;
-    });
+      validRows.forEach(row => {
+        const field = row.vitalName.toLowerCase().split(" ")[0];
+        payload[field] = row.vitalValue;
+      });
 
-    setVitals(
-      vitals.map((vital) => (vital.id === editingId ? updatedVital : vital))
-    );
-    setEditingId(null);
-    setEditFormData(null);
+      await updatePatientVital(patientId, editingId, payload);
+      notify("success", "Vital record updated successfully");
+      fetchVitals(patientId);
+      setEditingId(null);
+      setEditFormData(null);
+    } catch (error) {
+      console.error("Error updating vital:", error);
+      notify("error", error.response?.data?.detail || "Failed to update vital record");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteVital = (id) => {
+  const handleDeleteVitals = async (id) => {
     if (window.confirm("Are you sure you want to delete this vital record?")) {
-      setVitals(vitals.filter((vital) => vital.id !== id));
+      try {
+        await deletePatientVital(patientId, id);
+        notify("success", "Vital record deleted successfully");
+        fetchVitals(patientId);
+      } catch (error) {
+        console.error("Error deleting vital:", error);
+        notify("error", "Failed to delete vital record");
+      }
     }
   };
 
@@ -220,7 +281,16 @@ export default function IPDVitals() {
                   </tr>
                 </thead>
                 <tbody>
-                  {vitals.length > 0 ? (
+                  {loading ? (
+                    <tr>
+                      <td colSpan="7" className="px-4 py-8 text-center">
+                        <div className="flex items-center justify-center gap-2 text-gray-500">
+                          <Loader2 className="animate-spin" size={20} />
+                          <span>Loading vitals...</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : vitals.length > 0 ? (
                     vitals.map((vital) => (
                       <tr key={vital.id} className="border-b border-gray-200 hover:bg-gray-50">
                         <td className="px-4 py-3 text-sm font-semibold text-gray-900">
@@ -250,7 +320,7 @@ export default function IPDVitals() {
                               <Pencil size={16} />
                             </button>
                             <button
-                              onClick={() => handleDeleteVital(vital.id)}
+                              onClick={() => handleDeleteVitals(vital.id)}
                               className="bg-red-100 p-2 rounded text-red-600"
                             >
                               <Trash2 size={16} />
@@ -262,7 +332,7 @@ export default function IPDVitals() {
                   ) : (
                     <tr>
                       <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
-                        No vitals recorded yet
+                        {patientId ? "No vitals recorded yet" : "Resolving Patient..."}
                       </td>
                     </tr>
                   )}
@@ -359,9 +429,14 @@ export default function IPDVitals() {
                 </button>
                 <button
                   onClick={handleAddVital}
-                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm"
+                  disabled={loading}
+                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
                 >
-                  <span>✓</span>
+                  {loading ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <span>✓</span>
+                  )}
                   Save
                 </button>
               </div>
@@ -462,9 +537,14 @@ export default function IPDVitals() {
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm"
+                  disabled={loading}
+                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
                 >
-                  <span>✓</span>
+                  {loading ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <span>✓</span>
+                  )}
                   Save
                 </button>
               </div>

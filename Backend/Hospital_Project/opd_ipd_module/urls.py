@@ -21,11 +21,18 @@ urlpatterns = [
     path("ipd/<int:pk>/discharge/revert/",IpdDischargeRevertAPIView.as_view(),name="ipd-discharge-revert"),
 
 
+    # Nurse Note URLs
+    path("ipd/nurse-note/", NurseNoteAPIView.as_view(), name="ipd-nurse-note-list"),
+    path("ipd/nurse-note/create/", NurseNoteAPIView.as_view(), name="ipd-nurse-note-create"),
+    path("ipd/nurse-note/<int:pk>/", NurseNoteAPIView.as_view(), name="ipd-nurse-note-detail"),
+    path("ipd/nurse-note/<int:pk>/update/", NurseNoteAPIView.as_view(), name="ipd-nurse-note-update"),
+    path("ipd/nurse-note/<int:pk>/delete/", NurseNoteAPIView.as_view(), name="ipd-nurse-note-delete"),
+
 
     # Prescription URLs
-    path("prescriptions/", PrescriptionAPI.as_view(), name="prescription-list"),
-    path("prescriptions/create/", PrescriptionAPI.as_view(), name="prescription-create"),
-    path("prescriptions/<int:pk>/", PrescriptionAPI.as_view(), name="prescription-detail"),
-    path("prescriptions/<int:pk>/delete/", PrescriptionAPI.as_view(), name="prescription-delete"),
+    path("ipd/prescriptions/", PrescriptionAPI.as_view(), name="ipd-prescription-list"),
+    path("ipd/prescriptions/create/", PrescriptionAPI.as_view(), name="ipd-prescription-create"),
+    path("ipd/prescriptions/<int:pk>/", PrescriptionAPI.as_view(), name="ipd-prescription-detail"),
+    path("ipd/prescriptions/<int:pk>/delete/", PrescriptionAPI.as_view(), name="ipd-prescription-delete"),
 ]
 

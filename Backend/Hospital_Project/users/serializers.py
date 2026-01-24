@@ -67,8 +67,8 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
     )
     password = serializers.CharField(write_only=True, min_length=6)
     role = serializers.ChoiceField(
-        choices=['admin', 'doctor', 'accountant', 'pharmacist','receptionist', 'pathologist', 'radiologist', 'staff'],
-        default='staff'
+        choices=['admin', 'doctor', 'accountant', 'pharmacist','receptionist', 'pathologist', 'radiologist', 'nurse'],
+        default='nurse'
     )
 
 

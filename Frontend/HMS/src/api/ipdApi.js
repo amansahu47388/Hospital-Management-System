@@ -4,8 +4,8 @@ export const createIpdPatient = (data) => {
   return api.post("ipd/create/", data);
 };
 
-export const getIpdPatientList = () => {
-  return api.get("ipd/");
+export const getIpdPatientList = (params = {}) => {
+  return api.get("ipd/", { params });
 };
 
 export const getIpdPatientDetail = (ipdId) => {
@@ -42,4 +42,44 @@ export const getDischargedIpdPatients = () => {
 
 export const revertIpdDischarge = (ipdId) => {
   return api.post(`ipd/${ipdId}/discharge/revert/`);
+};
+
+
+
+
+
+export const getPrescriptions = (params) => {
+  return api.get("ipd/prescriptions/", { params });
+};
+
+export const createPrescription = (data) => {
+  return api.post("ipd/prescriptions/create/", data);
+};
+
+export const updatePrescription = (id, data) => {
+  return api.patch(`ipd/prescriptions/${id}/`, data);
+};
+
+export const deletePrescription = (id) => {
+  return api.delete(`ipd/prescriptions/${id}/`);
+};
+
+
+
+
+
+export const getNurseNotes = (params) => {
+  return api.get("ipd/nurse-note/", { params });
+};
+
+export const createNurseNote = (data) => {
+  return api.post("ipd/nurse-note/create/", data);
+};
+
+export const updateNurseNote = (id, data) => {
+  return api.patch(`ipd/nurse-note/${id}/`, data);
+};
+
+export const deleteNurseNote = (id) => {
+  return api.delete(`ipd/nurse-note/${id}/`);
 };

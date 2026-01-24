@@ -41,35 +41,35 @@ export default function GeneratePathologyBill({ open, onClose }) {
 
 
   /* ================= LOAD TESTS ================= */
-useEffect(() => {
-  if (hasFetchedTestsRef.current) return;
-  hasFetchedTestsRef.current = true;
+  useEffect(() => {
+    if (hasFetchedTestsRef.current) return;
+    hasFetchedTestsRef.current = true;
 
-  getPathologyTests()
-    .then((res) => {
-      const data = Array.isArray(res)
-        ? res
-        : res?.results || res?.data || [];
-      setTestsList(data);
-    })
-    .catch(() => setTestsList([]));
-}, []);
+    getPathologyTests()
+      .then((res) => {
+        const data = Array.isArray(res)
+          ? res
+          : res?.results || res?.data || [];
+        setTestsList(data);
+      })
+      .catch(() => setTestsList([]));
+  }, []);
 
 
   /* ================= LOAD DOCTORS ================= */
-useEffect(() => {
-  if (hasFetchedDoctorsRef.current) return;
-  hasFetchedDoctorsRef.current = true;
+  useEffect(() => {
+    if (hasFetchedDoctorsRef.current) return;
+    hasFetchedDoctorsRef.current = true;
 
-  getDoctors()
-    .then((res) => {
-      const data = Array.isArray(res?.data)
-        ? res.data
-        : res?.data?.results || res?.results || [];
-      setDoctors(data);
-    })
-    .catch(() => setDoctors([]));
-}, []);
+    getDoctors()
+      .then((res) => {
+        const data = Array.isArray(res?.data)
+          ? res.data
+          : res?.data?.results || res?.results || [];
+        setDoctors(data);
+      })
+      .catch(() => setDoctors([]));
+  }, []);
 
 
   /* ================= PATIENT SEARCH ================= */
@@ -112,7 +112,7 @@ useEffect(() => {
     };
   }, [patientSearch]);
 
-const filteredPatients = Array.isArray(patients) ? patients : [];
+  const filteredPatients = Array.isArray(patients) ? patients : [];
 
 
   /* ================= SAFE FIND ================= */
@@ -179,7 +179,7 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
       setPrescriptionLoading(true);
       const res = await searchPrescription(prescriptionSearch);
       const data = res?.data || res;
-      
+
       if (data.id) {
         setSelectedPrescription(data);
         // If prescription has patient info, set it
@@ -230,7 +230,7 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
       setLoading(true);
       const res = await createPathologyBill(payload);
       const data = res?.data || res;
-      notify("success",`Bill created successfully (Bill No: ${data.bill_no || data.bill_id})`);
+      notify("success", `Bill created successfully (Bill No: ${data.bill_no || data.bill_id})`);
       // Reset form
       setSelectedPatient(null);
       setSelectedPrescription(null);
@@ -244,15 +244,16 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
       setPaymentMode("cash");
       onClose();
     } catch (err) {
-  const errorMsg =
-    err?.response?.data?.errors
-      ? Object.values(err.response.data.errors).flat().join(", ")
-      : err?.response?.data?.error
-      || err?.message
-      || "Failed to create pathology bill";
+      const errorMsg =
+        err?.response?.data?.errors
+          ? Object.values(err.response.data.errors).flat().join(", ")
+          : err?.response?.data?.error
+          || err?.message
+          || "Failed to create pathology bill";
 
-  notify("error", errorMsg);
-}};
+      notify("error", errorMsg);
+    }
+  };
 
   /* ================= CLOSE DROPDOWN ================= */
   useEffect(() => {
@@ -271,30 +272,25 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
       {/* HEADER */}
       <div className="px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
         <div className="flex items-center gap-3 justify-between">
-          {/* Patient Search Container */}
-          <div className="relative w-full max-w-md patient-search">
-            <div className="flex items-center bg-white rounded-md border border-gray-300 focus-within:ring-2 focus-within:ring-[#8A63D2]">
-              <Search size={16} className="ml-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search patient by name or phone"
-                value={
-                  selectedPatient
-                    ? selectedPatient.full_name || selectedPatient.name
-                    : patientSearch
-                }
-                onChange={(e) => {
-                  setPatientSearch(e.target.value);
-                  setSelectedPatient(null);
-                  setShowPatientDropdown(true);
-                }}
-                className="w-full px-3 py-2 text-sm outline-none rounded-md text-black"
-              />
-            </div>
+          <div className="relative w-full max-w-md patient-search flex gap-4">
+            <input
+              type="text"
+              placeholder="Search patient by name or phone"
+              value={
+                selectedPatient
+                  ? selectedPatient.full_name || selectedPatient.name
+                  : patientSearch
+              }
+              onChange={(e) => {
+                setPatientSearch(e.target.value);
+                setSelectedPatient(null);
+                setShowPatientDropdown(true);
+              }}
+              className="w-full px-3 py-2 bg-white rounded text-black"
+            />
 
-            {/* Dropdown positioned below the input */}
             {showPatientDropdown && !selectedPatient && (
-              <div className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto z-50">
+              <div className="absolute z-30  w-full bg-white border rounded shadow mt-1 max-h-60 overflow-y-auto">
                 {filteredPatients.length === 0 ? (
                   <div className="px-3 py-2 text-sm text-gray-600">
                     {patientLoading ? "Searching..." : "No patient found"}
@@ -311,58 +307,67 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
                           setShowPatientDropdown(false);
                           setPatientSearch("");
                         }}
-                        className="px-4 py-2 text-sm cursor-pointer flex justify-between hover:bg-[#F3EEFF]"
+                        className="px-3 py-2 cursor-pointer hover:bg-indigo-50 text-sm flex gap-4"
                       >
-                        <span className="font-medium text-black">{fullName || `#${patient.id}`}</span>
-                        <span className="text-xs text-gray-400">{contact}</span>
+                        <div className="font-medium text-black">{fullName || `#${patient.id}`}</div>
+                        <div className="text-xs text-black">{contact}</div>
                       </div>
                     );
                   })
                 )}
               </div>
             )}
-          </div>
 
-          {/* Prescription Search */}
-          <div className="flex  items-center min-w-[220px] gap-2">
-            <input 
-              className="px-3 py-2 rounded text-black w-full bg-white border border-gray-300" 
-              placeholder="Search by prescription Id"
-              value={prescriptionSearch}
-              onChange={(e) => setPrescriptionSearch(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handlePrescriptionSearch()}
-            />
-            {/* <button 
-              className="bg-gray-100 p-2 h-10 rounded hover:bg-gray-200"
-              onClick={handlePrescriptionSearch}
-              disabled={prescriptionLoading}
-            >
-              <Search size={18} />
-            </button> */}
+            <div className="flex items-center min-w-[220px]">
+              <input
+                className="px-3 py-2 rounded text-black w-full bg-white"
+                placeholder="Search by prescription Id"
+                value={prescriptionSearch}
+                onChange={(e) => setPrescriptionSearch(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handlePrescriptionSearch()}
+              />
+              <button
+                onClick={handlePrescriptionSearch}
+                disabled={prescriptionLoading}
+                className="
+                  ml-2 h-10 px-4
+                  flex items-center justify-center gap-2
+                  rounded-md
+                  bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                  text-white
+                  shadow-md
+                  transition-all duration-200
+                  hover:scale-105 hover:shadow-lg
+                  active:scale-95
+                  disabled:opacity-60 disabled:cursor-not-allowed
+                "
+              >
+                <Search size={18} />
+              </button>
+            </div>
             {selectedPrescription && (
-              <div className="text-xs bg-white px-2 py-1 rounded text-black whitespace-nowrap">
+              <div className="text-xs bg-white px-2 py-1 rounded text-black flex items-center shadow-sm">
                 Prescription #{selectedPrescription.id} found
               </div>
             )}
           </div>
 
-            {/* RIGHT ACTIONS */}
-            <div className="ml-auto flex items-center gap-3">
-              <button
-                onClick={() => setIsAddPatientOpen(true)}
-                className="bg-white text-[#6046B5]
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={() => setIsAddPatientOpen(true)}
+              className="bg-white text-[#6046B5]
                           px-4 py-2 text-sm rounded
                           flex items-center gap-2
                           shadow-sm hover:bg-gray-100"
-              >
-                <Plus size={14} /> New Patient
-              </button>
+            >
+              <Plus size={14} /> New Patient
+            </button>
 
-              <X
-                onClick={onClose}
-                className="text-white cursor-pointer hover:opacity-80"
-              />
-            </div>
+            <X
+              onClick={onClose}
+              className="text-white cursor-pointer hover:opacity-80"
+            />
+          </div>
         </div>
       </div>
 
@@ -447,7 +452,7 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
             <div className="space-y-4">
               <div>
                 <label>Referral Doctor</label>
-                <select 
+                <select
                   className="w-full border p-2 rounded"
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
@@ -463,7 +468,7 @@ const filteredPatients = Array.isArray(patients) ? patients : [];
 
               <div>
                 <label>Note</label>
-                <textarea 
+                <textarea
                   className="w-full border p-2 rounded h-24"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}

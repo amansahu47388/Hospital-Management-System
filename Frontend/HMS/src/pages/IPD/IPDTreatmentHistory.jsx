@@ -1,26 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
-import { ChevronLeft, ChevronRight, Edit2, Trash2, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Loader2 } from "lucide-react";
+import { getIpdPatientDetail, getIpdPatientList } from "../../api/ipdApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function IPDTreatmentHistory() {
+  const { ipdId } = useParams();
+  const notify = useNotify();
   const [activeTab, setActiveTab] = useState("treatment-history");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(100);
-  const [treatmentHistory, setTreatmentHistory] = useState([
-    {
-      id: 1,
-      ipdNo: "IPDN116",
-      symptoms:
-        "Thirst Thirst is the feeling of needing to drink something. It occurs whenever the body is dehydrated for any reason. Any condition that can result in a loss of body water can lead to thirst or excessive thirst.",
-      consultant: "Amit Singh (9009)",
-      bed: "TF - 107-Private Ward-3rd Floor",
-    },
-  ]);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [treatmentHistory, setTreatmentHistory] = useState([]);
+  const [patientId, setPatientId] = useState(null);
 
-  const [editingId, setEditingId] = useState(null);
-  const [editFormData, setEditFormData] = useState(null);
+  useEffect(() => {
+    const init = async () => {
+      if (ipdId) {
+        setLoading(true);
+        try {
+          const ipdRes = await getIpdPatientDetail(ipdId);
+          const pid = ipdRes.data.patient;
+          setPatientId(pid);
+          fetchHistory(pid);
+        } catch (error) {
+          console.error("Error initializing treatment history:", error);
+          notify("error", "Failed to load patient records");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    init();
+  }, [ipdId]);
+
+  const fetchHistory = async (pid) => {
+    setLoading(true);
+    try {
+      const response = await getIpdPatientList({ patient_id: pid });
+      const formattedData = response.data.map(item => ({
+        id: item.ipd_id,
+        ipdNo: `IPD-${item.ipd_id}`,
+        symptoms: item.symptom_name || "N/A",
+        consultant: item.doctor_detail?.full_name || "N/A",
+        bed: item.bed?.bed_name || "N/A",
+        date: new Date(item.created_at).toLocaleDateString()
+      }));
+      setTreatmentHistory(formattedData);
+    } catch (error) {
+      console.error("Error fetching treatment history:", error);
+      notify("error", "Failed to fetch treatment history");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter data based on search
   const filteredData = treatmentHistory.filter(
@@ -35,27 +71,6 @@ export default function IPDTreatmentHistory() {
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-
-  const handleEdit = (item) => {
-    setEditingId(item.id);
-    setEditFormData({ ...item });
-  };
-
-  const handleSaveEdit = () => {
-    setTreatmentHistory(
-      treatmentHistory.map((item) =>
-        item.id === editingId ? editFormData : item
-      )
-    );
-    setEditingId(null);
-    setEditFormData(null);
-  };
-
-  const handleDeleteTreatment = (id) => {
-    if (window.confirm("Are you sure you want to delete this treatment history?")) {
-      setTreatmentHistory(treatmentHistory.filter((item) => item.id !== id));
-    }
-  };
 
   return (
     <AdminLayout>
@@ -77,7 +92,7 @@ export default function IPDTreatmentHistory() {
                 <Search size={20} className="text-gray-500" />
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Search by IPD No, Symptoms, Doctor or Bed..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -94,29 +109,46 @@ export default function IPDTreatmentHistory() {
                 <thead>
                   <tr className="bg-gray-100 text-gray-900">
                     <th className="px-4 py-3 text-left text-sm font-semibold">IPD No</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Symptoms</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Consultant Doctor</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Bed</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedData.length > 0 ? (
+                  {loading ? (
+                    <tr>
+                      <td colSpan="5" className="px-4 py-12 text-center">
+                        <div className="flex flex-col items-center gap-2 text-gray-500">
+                          <Loader2 className="animate-spin" size={32} />
+                          <span>Loading treatment history...</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : paginatedData.length > 0 ? (
                     paginatedData.map((item) => (
-                      <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                      <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
+                        <td className="px-4 py-3 text-sm font-bold text-[#6046B5]">
                           {item.ipdNo}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">
-                          {item.symptoms.substring(0, 100)}...
+                        <td className="px-4 py-3 text-sm text-gray-600 font-medium">
+                          {item.date}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-900">{item.consultant}</td>
-                        <td className="px-4 py-3 text-sm text-gray-900">{item.bed}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 max-w-xs truncate">
+                          {item.symptoms}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-900 font-medium">{item.consultant}</td>
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded border border-purple-100 font-medium tracking-wide">
+                            {item.bed}
+                          </span>
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="px-4 py-8 text-center text-gray-500">
-                        No treatment history found
+                      <td colSpan="5" className="px-4 py-12 text-center text-gray-500 italic">
+                        No treatment history records found for this patient.
                       </td>
                     </tr>
                   )}
@@ -125,150 +157,52 @@ export default function IPDTreatmentHistory() {
             </div>
 
             {/* Footer */}
-            <div className="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="text-sm text-gray-600">
-                Records: {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
-                {filteredData.length}
-              </div>
+            {filteredData.length > 0 && (
+              <div className="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="text-sm text-gray-600">
+                  Records: {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
+                  {filteredData.length}
+                </div>
 
-              <div className="flex items-center gap-4">
-                <select
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(parseInt(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
+                <div className="flex items-center gap-4">
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(parseInt(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
-                  >
-                    <ChevronLeft size={20} className="text-gray-600" />
-                  </button>
-                  <span className="text-sm font-medium text-gray-900">{currentPage}</span>
-                  <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
-                  >
-                    <ChevronRight size={20} className="text-gray-600" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
+                    >
+                      <ChevronLeft size={20} className="text-gray-600" />
+                    </button>
+                    <span className="text-sm font-bold text-[#6046B5] bg-purple-50 w-8 h-8 flex items-center justify-center rounded-full border border-purple-100">
+                      {currentPage}
+                    </span>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages || totalPages === 0}
+                      className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
+                    >
+                      <ChevronRight size={20} className="text-gray-600" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
-
-        {/* Edit Modal */}
-        {editingId !== null && editFormData && (
-          <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full">
-              {/* Header */}
-              <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 rounded-t-lg flex items-center justify-between">
-                <h2 className="text-xl font-bold">Edit Treatment History</h2>
-                <button
-                  onClick={() => {
-                    setEditingId(null);
-                    setEditFormData(null);
-                  }}
-                  className="text-white hover:bg-white hover:bg-opacity-20 p-1 rounded transition"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Form Content */}
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    IPD No
-                  </label>
-                  <input
-                    type="text"
-                    value={editFormData.ipdNo}
-                    onChange={(e) =>
-                      setEditFormData({ ...editFormData, ipdNo: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Symptoms
-                  </label>
-                  <textarea
-                    value={editFormData.symptoms}
-                    onChange={(e) =>
-                      setEditFormData({ ...editFormData, symptoms: e.target.value })
-                    }
-                    rows="4"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Consultant Doctor
-                    </label>
-                    <input
-                      type="text"
-                      value={editFormData.consultant}
-                      onChange={(e) =>
-                        setEditFormData({ ...editFormData, consultant: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Bed
-                    </label>
-                    <input
-                      type="text"
-                      value={editFormData.bed}
-                      onChange={(e) =>
-                        setEditFormData({ ...editFormData, bed: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer Buttons */}
-              <div className="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3 border-t border-gray-200">
-                <button
-                  onClick={() => {
-                    setEditingId(null);
-                    setEditFormData(null);
-                  }}
-                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition font-medium text-gray-700"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveEdit}
-                  className="px-6 py-2  bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-blue-600 text-white rounded-lg transition font-medium flex items-center gap-2"
-                >
-                  <span>✓</span>
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </AdminLayout>
   );
