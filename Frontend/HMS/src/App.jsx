@@ -46,6 +46,7 @@ import RadiologyTest from "./pages/radiology/RadiologyTest";
 import Billing from "./pages/Billing/Billing";
 import BillingDetails from "./pages/Billing/BillingDetails";
 import NurseNotesSinglePage from "./pages/IPD/IPDNurseNotes";
+import NurseNotesSinglePage from "./pages/IPD/IPDNurseNotes";
 
 
 //setup route paths and components
@@ -131,7 +132,6 @@ import PatientAppointmentsPage from "./pages/Patient/My_Appointment/PatientAppoi
 import PatientOPDHistoryPage from "./pages/Patient/OPD/PatientOPDHistoryPage";
 import IPDOverviewPage from "./pages/Patient/IPD/IPDOverviewPage";
 import NurseNotes from "./pages/Patient/IPD/NurseNotes";
-import IPDMedication from "./pages/Patient/IPD/IPDMedication";
 import IPDPrescription from "./pages/Patient/IPD/IPDPrescription";
 import IPDConsultantRegister from "./pages/Patient/IPD/IPDConsultantRegister";
 import Charges from "./pages/Patient/IPD/Charges";
@@ -196,6 +196,24 @@ function App() {
             <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
             <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
             <Route path="/admin/ipd-patients/:ipdId/comprehensive-page" element={<IPDComprehensivePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/nurse-notes" element={<NurseNotesSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/prescription" element={<PrescriptionSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/profile" element={<IPDComprehensivePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/consultant" element={<ConsultantRegisterSinglePage />} />            <Route path="/admin/ipd-patients/:ipdId/operations" element={<OperationsSinglePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/bed-history" element={<IPDBedHistoryPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/payments" element={<IPDPaymentPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/charges" element={<IPDChargesPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/treatment-history" element={<IPDTreatmentHistoryPage />} />
+            <Route path="/admin/ipd-patients/:ipdId/vitals" element={<IPDVitalsPage />} />
+
+            <Route path="/admin/opd-patients" element={<OpdPatient />} />
+            <Route path="/admin/opd-patients/:opdId/profile" element={<OPDComprehensivePage />} />
+            <Route path="/admin/opd-patients/:opdId/visits" element={<OPDVisitsPage />} />            <Route path="/admin/opd-patients/:opdId/operations" element={<OPDOperationsPage />} />
+            <Route path="/admin/opd-patients/:opdId/charges" element={<OPDChargesPage />} />
+            <Route path="/admin/opd-patients/:opdId/payments" element={<OPDPaymentPage />} />
+            <Route path="/admin/opd-patients/:opdId/treatment-history" element={<OPDTreatmentHistoryPage />} />
+            <Route path="/admin/opd-patients/:opdId/vitals" element={<OPDVitalsPage />} />
+
             <Route path="/admin/ipd-patients/:ipdId/nurse-notes" element={<NurseNotesSinglePage />} />
             <Route path="/admin/ipd-patients/:ipdId/prescription" element={<PrescriptionSinglePage />} />
             <Route path="/admin/ipd-patients/:ipdId/profile" element={<IPDComprehensivePage />} />
@@ -359,10 +377,6 @@ function App() {
             <Route path="/patient-portal/pathology" element={<Pathology />} />
             <Route path="/patient-portal/radiology" element={<Radiology />} />
             <Route path="/patient-portal/ambulance" element={<Ambulance />} />
-
-
-
-
 
 
         </Routes>
