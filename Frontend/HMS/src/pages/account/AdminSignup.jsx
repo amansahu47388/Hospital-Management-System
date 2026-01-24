@@ -35,7 +35,7 @@ export default function AdminSignup() {
     "radiologist",
     "accountant",
     "receptionist",
-    "staff",
+    "nurse",
   ];
 
   /* ===================== VALIDATIONS ===================== */

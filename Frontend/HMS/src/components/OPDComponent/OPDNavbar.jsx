@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { useParams, NavLink } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -17,20 +17,29 @@ import {
 } from "lucide-react";
 
 export default function OPDNavbar() {
+  const { opdId } = useParams();
   const scrollContainerRef = useRef(null);
 
-  // STATIC FOR NOW
-  const opdId = 210;
-
   const tabs = [
-    { id: "profile", label: "Overview", icon: Eye },
-    { id: "visits", label: "Visits", icon: Calendar },
-    { id: "lab-investigation", label: "Lab Investigation", icon: Beaker },
-    { id: "operations", label: "Operations", icon: Scissors },
-    { id: "charges", label: "Charges", icon: Receipt },
-    { id: "payments", label: "Payments", icon: CreditCard },
-    { id: "treatment-history", label: "Treatment History", icon: History },
-    { id: "vitals", label: "Vitals", icon: Heart },
+    { to: `/admin/opd-patients/${opdId}/profile`, label: "Overview", icon: Eye },
+    { to: `/admin/opd-patients/${opdId}/visits`, label: "Visits", icon: Calendar },
+    {
+      to: `/admin/opd-patients/${opdId}/operations`,
+      label: "Operations",
+      icon: Scissors,
+    },
+    { to: `/admin/opd-patients/${opdId}/charges`, label: "Charges", icon: Receipt },
+    {
+      to: `/admin/opd-patients/${opdId}/payments`,
+      label: "Payments",
+      icon: CreditCard,
+    },
+    {
+      to: `/admin/opd-patients/${opdId}/treatment-history`,
+      label: "Treatment History",
+      icon: History,
+    },
+    { to: `/admin/opd-patients/${opdId}/vitals`, label: "Vitals", icon: Heart },
   ];
 
   const scroll = (direction) => {
@@ -62,14 +71,13 @@ export default function OPDNavbar() {
 
             return (
               <NavLink
-                key={tab.id}
-                to={`/admin/opd-patients/${opdId}/${tab.id}`}
+                key={tab.to}
+                to={tab.to}
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg text-sm md:text-base font-medium whitespace-nowrap transition-all
-                  ${
-                    isActive
-                      ? "text-[#6046B5] bg-purple-50 border border-[#6046B5]"
-                      : "text-gray-600 hover:text-[#6046B5] hover:bg-gray-50 border border-transparent"
+                  ${isActive
+                    ? "text-[#6046B5] bg-purple-50 border border-[#6046B5]"
+                    : "text-gray-600 hover:text-[#6046B5] hover:bg-gray-50 border border-transparent"
                   }`
                 }
               >

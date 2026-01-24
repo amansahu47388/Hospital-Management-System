@@ -133,10 +133,11 @@ class PathologyTestUpdateSerializer(serializers.ModelSerializer):
 #***********************************************************************************#
 class PathologyBillItemSerializer(serializers.ModelSerializer):
     test_name = serializers.CharField(source="test.test_name", read_only=True)
+    test_detail = PathologyTestListSerializer(source="test", read_only=True)
     
     class Meta:
         model = PathologyBillItem
-        fields = ["id", "test", "test_name", "price", "tax", "report_days", "report_date"]
+        fields = ["id", "test", "test_name", "test_detail", "price", "tax", "report_days", "report_date"]
 
 
 
@@ -223,7 +224,8 @@ class PathologyBillListSerializer(serializers.ModelSerializer):
         fields = [
             "id", "bill_no", "case_id", "patient", "patient_name", "doctor", "doctor_name",
             "subtotal", "tax", "discount", "total_amount", "paid_amount", "balance",
-            "payment_mode", "created_at", "created_by", "created_by_name", "items_count"
+            "payment_mode", "created_at", "created_by", "created_by_name", "items_count",
+            "items",
         ]
     
     def get_patient_name(self, obj):

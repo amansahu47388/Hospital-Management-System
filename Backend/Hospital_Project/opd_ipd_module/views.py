@@ -1,13 +1,13 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .models import OpdPatient , IpdPatient, IpdDischarge
+from .models import OpdPatient , IpdPatient, IpdDischarge, Prescription
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.db.models import ProtectedError
-from .serializers import IpdPatientCreateSerializer, IpdPatientListSerializer, IpdPatientListSerializer, IpdPatientSerializer, OpdPatientSerializer, OpdPatientCreateSerializer , OpdPatientListSerializer, IpdDischargeSerializer
+from .serializers import *
 from django.utils.timezone import now
-from .serializers import OpdPatientUpdateSerializer , IpdPatientUpdateSerializer, IpdDischargedListSerializer, PrescriptionSerializer
+from .serializers import *
 from rest_framework.views import APIView
 
 
@@ -102,7 +102,22 @@ class IpdPatientListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return IpdPatient.objects.filter(is_discharged=False)
+        patient_id = self.request.query_params.get("patient_id")
+        tab = self.request.query_params.get("tab")
+        
+        qs = IpdPatient.objects.select_related(
+            "patient", "doctor", "created_by", "symptom", "bed"
+        ).order_by("-created_at")
+
+        if patient_id:
+            return qs.filter(patient_id=patient_id)
+            
+        if tab == "discharged":
+            return qs.filter(is_discharged=True)
+            
+        return qs.filter(is_discharged=False)
+
+
 
 class IpdPatientDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = IpdPatient.objects.all()
@@ -211,7 +226,6 @@ class IpdDischargeRevertAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
-
 class PrescriptionAPI(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -220,18 +234,131 @@ class PrescriptionAPI(APIView):
             obj = get_object_or_404(Prescription, pk=pk)
             serializer = PrescriptionSerializer(obj)
             return Response(serializer.data)
-        queryset = Prescription.objects.all().order_by("-created_at")
-        serializer = PrescriptionSerializer(queryset, many=True)
+
+        qs = Prescription.objects.all().order_by("-created_at")
+
+        patient = request.query_params.get("patient")
+        doctor = request.query_params.get("doctor")
+        ipd_patient = request.query_params.get("ipd_patient")
+        opd_patient = request.query_params.get("opd_patient")
+
+        if patient:
+            qs = qs.filter(patient_id=patient)
+
+        if doctor:
+            qs = qs.filter(prescribed_by_id=doctor)
+        
+        if ipd_patient:
+            qs = qs.filter(ipd_patient_id=ipd_patient)
+            
+        if opd_patient:
+            qs = qs.filter(opd_patient_id=opd_patient)
+
+        serializer = PrescriptionSerializer(qs, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = PrescriptionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = PrescriptionSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+        if not serializer.is_valid():
+            print("Prescription Serializer Errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, pk):
+        obj = get_object_or_404(Prescription, pk=pk)
+        serializer = PrescriptionSerializer(
+            obj,
+            data=request.data,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        obj = get_object_or_404(Prescription, pk=pk)
+        serializer = PrescriptionSerializer(
+            obj,
+            data=request.data,
+            partial=True,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     def delete(self, request, pk):
         obj = get_object_or_404(Prescription, pk=pk)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
+class NurseNoteAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, pk=None):
+        if pk:
+            obj = get_object_or_404(NurseNote, pk=pk)
+            serializer = NurseNoteSerializer(obj)
+            return Response(serializer.data)
+
+        qs = NurseNote.objects.all().order_by("-created_at")
+
+        ipd_patient = request.query_params.get("ipd_patient")
+        opd_patient = request.query_params.get("opd_patient")
+
+        if ipd_patient:
+            qs = qs.filter(ipd_patient_id=ipd_patient)
+
+        if opd_patient:
+            qs = qs.filter(opd_patient_id=opd_patient)
+
+        serializer = NurseNoteSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = NurseNoteSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+        if not serializer.is_valid():
+            print("NurseNote Serializer Errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, pk):
+        obj = get_object_or_404(NurseNote, pk=pk)
+        serializer = NurseNoteSerializer(
+            obj,
+            data=request.data,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        obj = get_object_or_404(NurseNote, pk=pk)
+        serializer = NurseNoteSerializer(
+            obj,
+            data=request.data,
+            partial=True,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        obj = get_object_or_404(NurseNote, pk=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

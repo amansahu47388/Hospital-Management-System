@@ -96,5 +96,42 @@ class IpdDischarge(models.Model):
 
 
 class Prescription(models.Model):
-    fnding = models.CharField(null=True, blank=True)
+    patient = models.ForeignKey("patient_module.Patient", on_delete=models.CASCADE, related_name="prescriptions")
+    opd_patient = models.ForeignKey("opd_ipd_module.OpdPatient", on_delete=models.SET_NULL, null=True, blank=True, related_name="prescriptions")
+    ipd_patient = models.ForeignKey("opd_ipd_module.IpdPatient", on_delete=models.SET_NULL, null=True, blank=True, related_name="prescriptions")
+    prescribed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="prescriptions_written", limit_choices_to={"role": "doctor"})
+    findings = models.ForeignKey("setup_module.Finding", on_delete=models.SET_NULL, null=True, blank=True)
+    pathology = models.ManyToManyField("pathology_module.PathologyTest", blank=True, related_name="prescriptions")
+    radiology = models.ManyToManyField("radiology_module.RadiologyTest", blank=True, related_name="prescriptions")
+    finding_description = models.TextField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="prescriptions_created")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Prescription {self.id} - {self.patient}"
+
+
+class PrescriptionMedicine(models.Model):
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, related_name="medicines")
+    medicine_category = models.ForeignKey("pharmacy_module.MedicineCategory", on_delete=models.SET_NULL, null=True, blank=True)
+    medicine = models.ForeignKey("pharmacy_module.Medicine", on_delete=models.SET_NULL, null=True, blank=True)
+    medicine_dosage = models.ForeignKey("pharmacy_module.MedicineDosage", on_delete=models.SET_NULL, null=True, blank=True)
+    dosage = models.ForeignKey("pharmacy_module.Dosage", on_delete=models.SET_NULL, null=True, blank=True)
+    instruction = models.TextField(null=True, blank=True)
+    def __str__(self):
+        return f"{self.medicine} for Prescription {self.prescription.id}"
+
+
+class NurseNote(models.Model):
+    ipd_patient = models.ForeignKey("opd_ipd_module.IpdPatient", on_delete=models.CASCADE, related_name="nurse_notes", null=True, blank=True)
+    opd_patient = models.ForeignKey("opd_ipd_module.OpdPatient", on_delete=models.CASCADE, related_name="nurse_notes", null=True, blank=True)
+    nurse = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="nurse_notes", limit_choices_to={"role": "nurse"})
+    note = models.TextField(null=True, blank=True)
+    comment = models.TextField(null=True, blank=True)
+
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="nurse_notes_created")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f"Nurse Note {self.id} - {self.ipd_patient}"

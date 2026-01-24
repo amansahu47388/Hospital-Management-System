@@ -1,11 +1,234 @@
 from rest_framework import serializers
-from .models import OpdPatient, IpdPatient, IpdDischarge, Prescription
+from django.db import transaction, models
+from django.utils.timezone import now
+import uuid
+
+from .models import OpdPatient, IpdPatient, IpdDischarge, Prescription, PrescriptionMedicine, NurseNote
 from patient_module.serializers import PatientSerializer
 from setup_module.serializers import BedSerializer
 from users.serializers import UserSerializer
-import uuid
-from django.db import transaction, models
-from django.utils.timezone import now
+
+
+class NurseNoteSerializer(serializers.ModelSerializer):
+    nurse_name = serializers.CharField(source="nurse.full_name", read_only=True)
+    formatted_date = serializers.DateTimeField(source="created_at", format="%d/%m/%Y %I:%M %p", read_only=True)
+
+    class Meta:
+        model = NurseNote
+        fields = "__all__"
+        read_only_fields = ("created_by", "created_at", "updated_at")
+
+    def create(self, validated_data):
+        validated_data['created_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+
+class PrescriptionMedicineSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    medicine_name = serializers.CharField(source="medicine.name", read_only=True)
+    category_name = serializers.CharField(source="medicine_category.category_name", read_only=True)
+    dosage_name = serializers.SerializerMethodField()
+    interval_name = serializers.CharField(source="dosage.dosage_interval", read_only=True)
+    duration_name = serializers.CharField(source="dosage.dosage_duration", read_only=True)
+
+    class Meta:
+        model = PrescriptionMedicine
+        exclude = ("prescription",)
+        extra_kwargs = {
+            "medicine_category": {"required": False, "allow_null": True},
+            "medicine": {"required": False, "allow_null": True},
+            "medicine_dosage": {"required": False, "allow_null": True},
+            "dosage": {"required": False, "allow_null": True},
+        }
+
+    def get_dosage_name(self, obj):
+        if obj.medicine_dosage:
+            return f"{obj.medicine_dosage.dosage} {obj.medicine_dosage.unit.unit_name}"
+        return ""
+
+
+class PrescriptionSerializer(serializers.ModelSerializer):
+    medicines = PrescriptionMedicineSerializer(many=True)
+    patient_details = serializers.SerializerMethodField()
+    prescribed_by_details = serializers.SerializerMethodField()
+    consultant_doctor_details = serializers.SerializerMethodField()
+    generated_by_details = serializers.SerializerMethodField()
+    pathology_details = serializers.SerializerMethodField()
+    radiology_details = serializers.SerializerMethodField()
+    symptoms_text = serializers.SerializerMethodField()
+    finding_name = serializers.CharField(source="findings.finding_name", read_only=True)
+
+    class Meta:
+        model = Prescription
+        fields = "__all__"
+        read_only_fields = ("created_by",)
+        extra_kwargs = {
+            "patient": {"required": False, "allow_null": True},
+            "opd_patient": {"required": False, "allow_null": True},
+            "ipd_patient": {"required": False, "allow_null": True},
+            "prescribed_by": {"required": False, "allow_null": True},
+            "findings": {"required": False, "allow_null": True},
+        }
+
+    def get_patient_details(self, obj):
+        if obj.patient:
+            return {
+                "id": obj.patient.id,
+                "name": f"{obj.patient.first_name} {obj.patient.last_name}",
+                "age": obj.patient.age,
+                "gender": obj.patient.gender,
+                "blood_group": obj.patient.blood_group,
+                "phone": obj.patient.phone,
+                "email": obj.patient.email,
+            }
+        return None
+
+    def get_prescribed_by_details(self, obj):
+        if obj.prescribed_by:
+            return {
+                "id": obj.prescribed_by.id,
+                "name": obj.prescribed_by.full_name,
+            }
+        return None
+
+    def get_consultant_doctor_details(self, obj):
+        if obj.ipd_patient and obj.ipd_patient.doctor:
+            return {
+                "id": obj.ipd_patient.doctor.id,
+                "name": obj.ipd_patient.doctor.full_name,
+            }
+        elif obj.opd_patient and obj.opd_patient.doctor:
+            return {
+                "id": obj.opd_patient.doctor.id,
+                "name": obj.opd_patient.doctor.full_name,
+            }
+        return None
+
+    def get_generated_by_details(self, obj):
+        if obj.created_by:
+            return {
+                "id": obj.created_by.id,
+                "name": obj.created_by.full_name,
+            }
+        return None
+
+    def get_pathology_details(self, obj):
+        return [{"id": t.id, "test_name": t.test_name} for t in obj.pathology.all()]
+
+    def get_radiology_details(self, obj):
+        return [{"id": t.id, "test_name": t.test_name} for t in obj.radiology.all()]
+
+    def get_symptoms_text(self, obj):
+        if obj.ipd_patient and obj.ipd_patient.symptom:
+            return obj.ipd_patient.symptom.symptom_title
+        elif obj.opd_patient and obj.opd_patient.symptom:
+            return obj.opd_patient.symptom.symptom_title
+        return ""
+
+    def validate(self, data):
+        opd = data.get("opd_patient")
+        ipd = data.get("ipd_patient")
+        patient = data.get("patient")
+
+        if opd and ipd:
+            raise serializers.ValidationError(
+                "Prescription can be either OPD or IPD, not both."
+            )
+
+        if not opd and not ipd:
+            raise serializers.ValidationError(
+                "Either OPD patient or IPD patient is required."
+            )
+
+        # Automatically set patient from OPD/IPD if not provided
+        if not patient:
+            if opd:
+                data["patient"] = opd.patient
+            elif ipd:
+                data["patient"] = ipd.patient
+            
+            if not data.get("patient"):
+                raise serializers.ValidationError({
+                    "patient": "Patient could not be determined from the provided OPD/IPD patient."
+                })
+
+        return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        medicines_data = validated_data.pop("medicines", [])
+        pathology_data = validated_data.pop("pathology", [])
+        radiology_data = validated_data.pop("radiology", [])
+
+        request = self.context.get("request")
+        user = request.user if request else None
+
+        # If prescribed_by is not provided, use current user
+        if not validated_data.get("prescribed_by"):
+            validated_data["prescribed_by"] = user
+
+        prescription = Prescription.objects.create(
+            **validated_data,
+            created_by=user
+        )
+
+        if pathology_data:
+            prescription.pathology.set(pathology_data)
+        if radiology_data:
+            prescription.radiology.set(radiology_data)
+
+        for med in medicines_data:
+            # Filter out empty medicine rows (where everything is null)
+            if not any(v for k, v in med.items() if k != 'id'):
+                continue
+            med.pop("id", None) # Remove ID if present during creation
+            PrescriptionMedicine.objects.create(
+                prescription=prescription,
+                **med
+            )
+
+        return prescription
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        medicines_data = validated_data.pop("medicines", None)
+        pathology_data = validated_data.pop("pathology", None)
+        radiology_data = validated_data.pop("radiology", None)
+
+        instance = super().update(instance, validated_data)
+
+        if pathology_data is not None:
+            instance.pathology.set(pathology_data)
+        if radiology_data is not None:
+            instance.radiology.set(radiology_data)
+
+        if medicines_data is not None:
+            existing_ids = []
+            for med in medicines_data:
+                med_id = med.get("id")
+                # Filter out empty medicine rows
+                if not any(v for k, v in med.items() if k != 'id'):
+                    continue
+                
+                if med_id:
+                    obj = PrescriptionMedicine.objects.get(id=med_id, prescription=instance)
+                    # Pop ID so it doesn't try to update it
+                    med_copy = med.copy()
+                    med_copy.pop("id", None)
+                    for attr, value in med_copy.items():
+                        setattr(obj, attr, value)
+                    obj.save()
+                    existing_ids.append(obj.id)
+                else:
+                    med_copy = med.copy()
+                    med_copy.pop("id", None)
+                    new_med = PrescriptionMedicine.objects.create(prescription=instance, **med_copy)
+                    existing_ids.append(new_med.id)
+            instance.medicines.exclude(id__in=existing_ids).delete()
+
+        return instance
+
 
 # OPD Patient Serializers
 class OpdPatientSerializer(serializers.ModelSerializer):
@@ -77,12 +300,13 @@ class IpdPatientSerializer(serializers.ModelSerializer):
     doctor_detail = UserSerializer(source='doctor', read_only=True)
     created_by = UserSerializer(read_only=True)
     bed = BedSerializer(read_only=True)
+    symptom_name = serializers.CharField(source="symptom.symptom_title", read_only=True)
 
     class Meta:
         model = IpdPatient
         fields = [
             'ipd_id', 'patient', 'patient_detail', 'appointment_date', 'doctor', 'doctor_detail', 'bed' , 'discharge_date',
-            'symptom','allergies','checkup_id', 'case_id', 'old_patient', 'casualty', 'reference', 'previous_medical_issue', 
+            'symptom', 'symptom_name', 'allergies','checkup_id', 'case_id', 'old_patient', 'casualty', 'reference', 'previous_medical_issue', 
             'credit_limit', 'created_by', 'created_at', 'updated_at'
         ]
         read_only_fields = ['ipd_id', 'checkup_id',  'created_by', 'created_at', 'updated_at']
@@ -215,7 +439,4 @@ class IpdDischargedListSerializer(serializers.ModelSerializer):
         return None
 
 
-class PrescriptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Prescription
-        fields = "__all__"
+

@@ -113,6 +113,10 @@ export const getDoctors = async () => {
   return await appointmentAPI.get("doctors/");
 };
 
+export const getNurses = async () => {
+  return await appointmentAPI.get("nurses/");
+};
+
 
 // =======================
 // FILTERED ENDPOINTS

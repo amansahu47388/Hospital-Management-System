@@ -14,7 +14,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ("radiologist", "Radiologist"),
         ("accountant", "Accountant"),
         ("receptionist", "Receptionist"),
-        ("staff", "Staff"),
+        ("nurse", "Nurse"),
     )
 
     email = models.EmailField(unique=True)

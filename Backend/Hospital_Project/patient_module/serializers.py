@@ -77,6 +77,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
 class PatientCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating patients"""
+    gender = serializers.CharField(required=False)
     
     class Meta:
         model = Patient
@@ -145,9 +146,22 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_gender(self, value):
-        if value not in ['M', 'F', 'O']:
-            raise serializers.ValidationError("Invalid gender choice.")
-        return value
+        # Normalize shorthand to full words
+        gender_map = {
+            'M': 'Male',
+            'F': 'Female',
+            'O': 'Other',
+            'm': 'Male',
+            'f': 'Female',
+            'o': 'Other'
+        }
+        normalized_value = gender_map.get(value, value)
+        
+        valid_genders = ['Male', 'Female', 'Other']
+        if normalized_value not in valid_genders:
+            raise serializers.ValidationError(f"Invalid gender choice. Must be one of {valid_genders}")
+        return normalized_value
+    
 
     def validate_blood_group(self, value):
         valid_groups = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-']
@@ -232,6 +246,10 @@ class PatientVitalSerializer(serializers.ModelSerializer):
 #*******************************************************************************************************#
 
 class PatientOperationSerializer(serializers.ModelSerializer):
+    doctor_name = serializers.CharField(source='doctor.full_name', read_only=True)
+    operation_name = serializers.CharField(source='operation.name', read_only=True)
+    operation_type = serializers.CharField(source='operation.operation_type', read_only=True)
+
     class Meta:
         model = PatientOperation
         fields = "__all__"
@@ -242,7 +260,9 @@ class PatientOperationSerializer(serializers.ModelSerializer):
 #                            Patient ConsultantRegister Serializer
 #*******************************************************************************************************#
 
-class PatientConsultantRegisterSerializer(serializers.ModelSerializer):
+class PatientConsultantSerializer(serializers.ModelSerializer):
+    doctor_name = serializers.CharField(source='doctor.full_name', read_only=True)
+
     class Meta:
         model = PatientConsultant
         fields = "__all__"
@@ -258,5 +278,17 @@ class PatientConsultantRegisterSerializer(serializers.ModelSerializer):
 class PatientChargesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientCharges
+        fields = "__all__"
+        read_only_fields = ('created_by',)
+
+
+
+#*******************************************************************************************************#
+#                            Patient Payment Serializer
+#*******************************************************************************************************#
+
+class PatientPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientPayment
         fields = "__all__"
         read_only_fields = ('created_by',)
