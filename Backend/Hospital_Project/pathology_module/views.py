@@ -230,9 +230,14 @@ class PathologyBillListAPIView(APIView):
 
     def get(self, request):
         search = request.query_params.get("search", "").strip()
+        patient_id = request.query_params.get("patient_id", "").strip()
+        
         queryset = PathologyBill.objects.select_related(
             "patient", "doctor", "created_by"
         ).prefetch_related("items").order_by("-created_at")
+
+        if patient_id:
+            queryset = queryset.filter(patient_id=patient_id)
 
         if search:
             queryset = queryset.filter(

@@ -3,14 +3,15 @@ import AdminLayout from "../../layout/AdminLayout";
 import BillingNavbar from "./BillingNavbar";
 import { Link, useLocation } from "react-router-dom";
 import {
-    FaUser,
-    FaPrint,
-    FaTimes, // Close icon
-    FaMoneyBillWave,
-    FaFileInvoice,
-    FaCheck,
-    FaHospital
-} from "react-icons/fa";
+  User,
+  Printer,
+  X,
+  IndianRupee,
+  FileText,
+  Check,
+  Hospital
+} from "lucide-react";
+
 
 function BillingDetails() {
     const location = useLocation();
@@ -51,7 +52,7 @@ function BillingDetails() {
                             <div className="flex flex-col md:flex-row gap-6 mb-6">
                                 <div className="flex-shrink-0 flex flex-col items-center">
                                     <div className="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 mb-3 overflow-hidden shadow-inner">
-                                        <FaUser className="text-5xl" />
+                                        <User className="text-5xl" />
                                     </div>
                                     <button
                                         onClick={() => setShowSummary(true)}
@@ -85,19 +86,19 @@ function BillingDetails() {
                                     onClick={() => setShowAddPayment(true)}
                                     className="flex items-center px-3 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm rounded hover:bg-[#0b65c2]"
                                 >
-                                    <FaMoneyBillWave className="mr-1" /> Add Payment
+                                    <IndianRupee className="mr-1" /> Add Payment
                                 </button>
                                 <button
                                     onClick={() => setShowViewPayments(true)}
                                     className="flex items-center px-3 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm rounded hover:bg-[#0b65c2]"
                                 >
-                                    <FaFileInvoice className="mr-1" /> View Payments
+                                    <FileText className="mr-1" /> View Payments
                                 </button>
                                 <button
                                     onClick={() => setShowGenerateBill(true)}
                                     className="flex items-center px-3 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm rounded hover:bg-[#0b65c2]"
                                 >
-                                    <FaPrint className="mr-1" /> Generate Bill
+                                    <Printer className="mr-1" /> Generate Bill
                                 </button>
                             </div>
 
@@ -134,7 +135,7 @@ function BillingDetails() {
                                             <td className="px-3 py-2">24.40 (20.00%)</td>
                                             <td className="px-3 py-2">146.40</td>
                                             <td className="px-3 py-2 text-gray-500 cursor-pointer">
-                                                <FaPrint />
+                                                <Printer />
                                             </td>
                                         </tr>
                                         <tr className="bg-gray-100 font-semibold">
@@ -161,8 +162,8 @@ function BillingDetails() {
                         <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                             <h3 className="text-lg font-semibold">Bill Summary</h3>
                             <div className="flex items-center gap-3">
-                                <FaPrint className="cursor-pointer hover:opacity-80" />
-                                <FaTimes className="cursor-pointer hover:opacity-80 text-xl" onClick={() => setShowSummary(false)} />
+                                <Printer className="cursor-pointer hover:opacity-80" />
+                                <Times className="cursor-pointer hover:opacity-80 text-xl" onClick={() => setShowSummary(false)} />
                             </div>
                         </div>
                         {/* Same Body as before */}
@@ -201,7 +202,7 @@ function BillingDetails() {
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-lg animate-zoom-in">
                         <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                             <h3 className="font-semibold text-lg">Add Payment</h3>
-                            <FaTimes className="cursor-pointer hover:opacity-80" onClick={() => setShowAddPayment(false)} />
+                            <X className="cursor-pointer hover:opacity-80" onClick={() => setShowAddPayment(false)} />
                         </div>
                         <div className="p-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -229,7 +230,7 @@ function BillingDetails() {
                             </div>
                             <div className="flex justify-end">
                                 <button className="flex items-center  bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#0b65c2] text-white px-4 py-2 rounded font-medium transition-colors">
-                                    <FaCheck className="mr-2" /> Save
+                                    <Check className="mr-2" /> Save
                                 </button>
                             </div>
                         </div>
@@ -243,7 +244,7 @@ function BillingDetails() {
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl animate-zoom-in">
                         <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                             <h3 className="font-semibold text-lg">Payments</h3>
-                            <FaTimes className="cursor-pointer hover:opacity-80" onClick={() => setShowViewPayments(false)} />
+                            <X className="cursor-pointer hover:opacity-80" onClick={() => setShowViewPayments(false)} />
                         </div>
                         <div className="p-6">
                             <div className="overflow-x-auto">
@@ -263,14 +264,14 @@ function BillingDetails() {
                                             <td className="px-4 py-2">Payment deposit through Paystack TXN ID: 176759547402</td>
                                             <td className="px-4 py-2">Online</td>
                                             <td className="px-4 py-2 text-right">147.60</td>
-                                            <td className="px-4 py-2 text-right"><FaPrint className="inline cursor-pointer text-gray-500 hover:text-black" /></td>
+                                            <td className="px-4 py-2 text-right"><Printer className="inline cursor-pointer text-gray-500 hover:text-black" /></td>
                                         </tr>
                                     </tbody>
                                     <tfoot className="bg-gray-50 font-semibold border-t">
                                         <tr>
                                             <td colSpan="3" className="px-4 py-2 text-right">Total</td>
                                             <td className="px-4 py-2 text-right">$147.60</td>
-                                            <td></td>
+                                            <td><X className="cursor-pointer hover:opacity-80" onClick={() => setShowViewPayments(false)} /></td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -288,8 +289,8 @@ function BillingDetails() {
                         <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                             <h3 className="font-semibold text-lg">Bill</h3>
                             <div className="flex items-center gap-3">
-                                <FaPrint className="cursor-pointer hover:opacity-80" />
-                                <FaTimes className="cursor-pointer hover:opacity-80" onClick={() => setShowGenerateBill(false)} />
+                                <Printer className="cursor-pointer hover:opacity-80" />
+                                <X className="cursor-pointer hover:opacity-80" onClick={() => setShowGenerateBill(false)} />
                             </div>
                         </div>
 
@@ -300,7 +301,7 @@ function BillingDetails() {
                                 <div className="flex items-center mb-4 md:mb-0">
                                     {/* Logo Placeholder */}
                                     <div className="w-10 h-10 bg-red-500 rounded flex items-center justify-center text-white mr-3">
-                                        <FaHospital size={24} />
+                                        <Hospital size={24} />
                                     </div>
                                     <h1 className="text-2xl font-bold uppercase tracking-wide">Smart Hospital & Research Center</h1>
                                 </div>

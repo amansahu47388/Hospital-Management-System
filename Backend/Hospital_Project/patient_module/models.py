@@ -71,20 +71,32 @@ class Patient(models.Model):
 
     @property
     def age(self):
-        """Calculate age from date of birth"""
+        """Calculate detailed age from date of birth"""
         if not self.date_of_birth:
-            return 0
+            return "0 Year"
         
         today = date.today()
-        try:
-            age = today.year - self.date_of_birth.year
+        dob = self.date_of_birth
+        
+        years = today.year - dob.year
+        months = today.month - dob.month
+        days = today.day - dob.day
+        
+        if days < 0:
+            months -= 1
+            # Simple approximation for days in previous month
+            days += 30 
+        
+        if months < 0:
+            years -= 1
+            months += 12
             
-            if (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day):
-                age -= 1
-            
-            return max(0, age)  # Return 0 if negative
-        except (ValueError, TypeError):
-            return 0
+        parts = []
+        if years > 0: parts.append(f"{years} Year")
+        if months > 0: parts.append(f"{months} Month")
+        if days > 0: parts.append(f"{days} Day")
+        
+        return ", ".join(parts) if parts else "0 Day"
 
     def get_gender_display_value(self):
         """Get gender display value"""
@@ -108,11 +120,11 @@ class Patient(models.Model):
 class PatientVital(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='vitals')
     vital_date = models.DateField()
-    height = models.DecimalField(max_digits=5, decimal_places=2)
-    weight = models.DecimalField(max_digits=5, decimal_places=2)
-    pulse = models.IntegerField()
-    temperature = models.DecimalField(max_digits=5, decimal_places=2)
-    bp = models.CharField(max_length=10)
+    height = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pulse = models.IntegerField(null=True, blank=True)
+    temperature = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    bp = models.CharField(max_length=20, null=True, blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='vitals_created')
     is_active = models.BooleanField(default=True) 
@@ -213,15 +225,15 @@ class PatientConsultant(models.Model):
 
 class PatientCharges(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='charges')
-    charge_date = models.DateField()
+    charge_date = models.DateField(null=True, blank=True)
     charge_type = models.CharField(max_length=100)
     charge_category = models.CharField(max_length=100)
     charge_name = models.CharField(max_length=100)
     standard_charge = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.DecimalField(max_digits=10, decimal_places=2) 
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    remark = models.TextField(null=True, blank=True)
-    result = models.TextField(null=True, blank=True)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True) 
+    amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    charge_note = models.TextField(null=True, blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='charges_created')
     is_active = models.BooleanField(default=True) 
@@ -239,3 +251,33 @@ class PatientCharges(models.Model):
 
     def __str__(self):
         return f"{self.patient} - {self.charge_type}"
+
+
+
+# ******************************************************************************************************#
+#                                       Patient Payment Model                                              #
+# ******************************************************************************************************#
+
+class PatientPayment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='payments')
+    payment_date = models.DateField(null=True, blank=True)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    payment_mode = models.CharField(max_length=100)
+    note = models.TextField(null=True, blank=True)
+
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='payments_created')
+    is_active = models.BooleanField(default=True) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Patient Payment'
+        verbose_name_plural = 'Patient Payments'
+        indexes = [
+            models.Index(fields=['patient']),
+            models.Index(fields=['payment_mode']),
+        ]
+
+    def __str__(self):
+        return f"{self.patient} - {self.paid_amount}"

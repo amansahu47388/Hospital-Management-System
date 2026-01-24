@@ -82,8 +82,10 @@ export const createRadiologyBill = async (payload) => {
   return api.post("/radiology/radiology-bill/create/", payload);
 };
 
-export const getRadiologyBills = async (search = "") => {
-  const params = search ? { search } : {};
+export const getRadiologyBills = async (search = "", patientId = "") => {
+  const params = {};
+  if (search) params.search = search;
+  if (patientId) params.patient_id = patientId;
   return api.get("/radiology/radiology-bill/", { params });
 };
 

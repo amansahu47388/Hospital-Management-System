@@ -6,7 +6,7 @@ export default function FindingSidebarMenu() {
       <ul className="text-sm">
         {[
           { label: "Finding", path: "/admin/setup/finding" },
-          { label: "Finding Category", path: "/admin/setup/finding-category" },
+          { label: "Finding Category", path: "/admin/setup/finding/category" },
         ].map((item) => (
           <li key={item.label}>
             <NavLink

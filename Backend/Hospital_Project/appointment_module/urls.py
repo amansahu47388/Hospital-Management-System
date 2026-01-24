@@ -22,6 +22,9 @@ urlpatterns = [
     # Doctors
     path("doctors/", DoctorListAPIView.as_view()),
 
+    # Nurses
+    path("nurses/", NurseListAPIView.as_view()),
+
     # Appointment
     path('', AppointmentViewSet.as_view({'get': 'list'}), name='appointment-list'),
     path('create/', AppointmentCreateAPIView.as_view(), name='appointment-create'),

@@ -23,6 +23,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
 
   const [prescriptionSearch, setPrescriptionSearch] = useState("");
   const [selectedPrescription, setSelectedPrescription] = useState(null);
+  const [prescriptionLoading, setPrescriptionLoading] = useState(false);
 
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
@@ -101,6 +102,60 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
   const findTestById = (id) =>
     testsList.find((t) => t.id === Number(id));
 
+  /* ================= PATIENT SEARCH ================= */
+  useEffect(() => {
+    if (!patientSearch) {
+      setPatients([]);
+      setShowPatientDropdown(false);
+      setPatientLoading(false);
+      return;
+    }
+
+    let active = true;
+    setPatientLoading(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await searchPatient(patientSearch);
+        const payload = res?.data ?? res;
+        const data = Array.isArray(payload)
+          ? payload
+          : payload?.results || payload?.data || [];
+
+        if (!active) return;
+        setPatients(data);
+        setShowPatientDropdown(true);
+      } catch (err) {
+        if (!active) return;
+        console.error("Patient search failed:", err);
+        setPatients([]);
+        setShowPatientDropdown(true);
+      } finally {
+        if (active) setPatientLoading(false);
+      }
+    }, 400);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      setPatientLoading(false);
+    };
+  }, [patientSearch]);
+
+  const filteredPatients = Array.isArray(patients) ? patients : [];
+
+  /* ================= CLOSE DROPDOWN ================= */
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (!e.target.closest(".patient-search")) {
+        setShowPatientDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () =>
+      document.removeEventListener("mousedown", handleClick);
+  }, []);
+
   /* ================= CALCULATIONS ================= */
   const subtotal = useMemo(
     () =>
@@ -140,6 +195,30 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
       prev.map((r) => (r.id === id ? { ...r, testId: value } : r))
     );
 
+  /* ================= PRESCRIPTION SEARCH ================= */
+  const handlePrescriptionSearch = async () => {
+    if (!prescriptionSearch.trim()) {
+      notify("warning", "Please enter a prescription ID");
+      return;
+    }
+
+    try {
+      setPrescriptionLoading(true);
+      const res = await searchPrescription(prescriptionSearch);
+      const data = res?.data || res;
+
+      if (data.id) {
+        setSelectedPrescription(data);
+        notify("success", "Prescription found");
+      }
+    } catch (err) {
+      notify("error", "Prescription not found");
+      setSelectedPrescription(null);
+    } finally {
+      setPrescriptionLoading(false);
+    }
+  };
+
   /* ================= UPDATE ================= */
   const handleUpdate = async () => {
     if (!selectedPatient)
@@ -174,8 +253,8 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
         err?.response?.data?.errors
           ? Object.values(err.response.data.errors).flat().join(", ")
           : err?.response?.data?.error ||
-            err?.message ||
-            "Failed to update pathology bill";
+          err?.message ||
+          "Failed to update pathology bill";
       notify("error", errorMsg);
     } finally {
       setLoading(false);
@@ -186,15 +265,96 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
   return (
     <div className="fixed inset-0 z-50 bg-white flex flex-col">
       {/* HEADER */}
-      <div className="px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2] flex justify-between">
-        <h2 className="font-semibold text-lg">Update Pathology Bill</h2>
-        <X onClick={onClose} className="cursor-pointer" />
+      <div className="px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
+        <div className="flex items-center gap-3 justify-between">
+          <div className="relative w-full max-w-md patient-search flex gap-4">
+            <input
+              type="text"
+              placeholder="Search patient by name or phone"
+              value={
+                selectedPatient
+                  ? selectedPatient.full_name || selectedPatient.name
+                  : patientSearch
+              }
+              onChange={(e) => {
+                setPatientSearch(e.target.value);
+                setSelectedPatient(null);
+                setShowPatientDropdown(true);
+              }}
+              className="w-full px-3 py-2 bg-white rounded text-black"
+            />
+
+            {showPatientDropdown && !selectedPatient && (
+              <div className="absolute z-30  w-full bg-white border rounded shadow mt-1 max-h-60 overflow-y-auto">
+                {filteredPatients.length === 0 ? (
+                  <div className="px-3 py-2 text-sm text-gray-600">
+                    {patientLoading ? "Searching..." : "No patient found"}
+                  </div>
+                ) : (
+                  filteredPatients.map((patient) => {
+                    const fullName = patient.full_name || `${patient.first_name || ""} ${patient.last_name || ""}`.trim();
+                    const contact = patient.phone || patient.mobile || patient.contact || `#${patient.id}`;
+                    return (
+                      <div
+                        key={patient.id}
+                        onClick={() => {
+                          setSelectedPatient({ ...patient, full_name: fullName });
+                          setShowPatientDropdown(false);
+                          setPatientSearch("");
+                        }}
+                        className="px-3 py-2 cursor-pointer hover:bg-indigo-50 text-sm flex gap-4"
+                      >
+                        <div className="font-medium text-black">{fullName || `#${patient.id}`}</div>
+                        <div className="text-xs text-black">{contact}</div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+
+            <div className="flex items-center min-w-[220px]">
+              <input
+                className="px-3 py-2 rounded text-black w-full bg-white"
+                placeholder="Search by prescription Id"
+                value={prescriptionSearch}
+                onChange={(e) => setPrescriptionSearch(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handlePrescriptionSearch()}
+              />
+              <button
+                onClick={handlePrescriptionSearch}
+                disabled={prescriptionLoading}
+                className="
+                  ml-2 h-10 px-4
+                  flex items-center justify-center gap-2
+                  rounded-md
+                  bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                  text-white
+                  shadow-md
+                  transition-all duration-200
+                  hover:scale-105 hover:shadow-lg
+                  active:scale-95
+                  disabled:opacity-60 disabled:cursor-not-allowed
+                "
+              >
+                <Search size={18} />
+              </button>
+            </div>
+            {selectedPrescription && (
+              <div className="text-xs bg-white px-2 py-1 rounded text-black flex items-center shadow-sm">
+                Prescription #{selectedPrescription.id} found
+              </div>
+            )}
+          </div>
+
+          <X onClick={onClose} className="cursor-pointer hover:opacity-80" />
+        </div>
       </div>
 
       {/* BODY – SAME STRUCTURE AS GENERATE PAGE */}
       <div className="p-4 bg-[#f3f3f3] flex-1 overflow-y-auto">
         <div className="bg-white rounded shadow">
-            <div className="grid grid-cols-6 gap-3 px-4 py-2  text-sm font-semibold">
+          <div className="grid grid-cols-6 gap-3 px-4 py-2  text-sm font-semibold">
             <span className="font-bold">Test Name</span>
             <span className="font-bold">Report Days</span>
             <span className="font-bold">Report Date</span>
@@ -248,13 +408,13 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
               + Add
             </button>
           </div>
-            <div className="grid md:grid-cols-2 gap-6 border-t p-4">
+          <div className="grid md:grid-cols-2 gap-6 border-t p-4">
 
             {/* LEFT */}
             <div className="space-y-4">
               <div>
                 <label>Referral Doctor</label>
-                <select 
+                <select
                   className="w-full border p-2 rounded"
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
@@ -270,7 +430,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
 
               <div>
                 <label>Note</label>
-                <textarea 
+                <textarea
                   className="w-full border p-2 rounded h-24"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}

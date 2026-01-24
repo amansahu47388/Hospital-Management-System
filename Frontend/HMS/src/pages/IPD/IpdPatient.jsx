@@ -154,15 +154,15 @@ useEffect(() => {
                           ? `${ipd.patient_detail.first_name} ${ipd.patient_detail.last_name}`
                           : "-"}
                     </td>
-                    <td className="p-2 text-center">{ipd.case_id}</td>
-                    <td className="p-2 text-center">{ipd.patient_detail.gender}</td>
-                    <td className="p-2 text-center">{ipd.patient_detail.phone}</td>
-                    <td className="p-2 text-center">{ipd.created_by?.full_name || "-"}</td>
-                    <td className="p-2 text-center">{ipd.doctor_detail?.full_name || "-"}</td>
-                    <td className="p-2 text-center">{ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"}</td>
-                    <td className="p-2 text-center">{new Date(ipd.created_at).toLocaleString("en-IN")}</td>
-                    <td className="p-2 text-center">{ipd.previous_medical_issue || "-"}</td>
-                    <td className="p-2 text-center">
+                    <td className="p-2 py-4 text-center">{ipd.case_id}</td>
+                    <td className="p-2 py-4 text-center">{ipd.patient_detail.gender}</td>
+                    <td className="p-2 py-4 text-center">{ipd.patient_detail.phone}</td>
+                    <td className="p-2 py-4 text-center">{ipd.created_by?.full_name || "-"}</td>
+                    <td className="p-2 py-4 text-center">{ipd.doctor_detail?.full_name || "-"}</td>
+                    <td className="p-2 py-4 text-center">{ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"}</td>
+                    <td className="p-2 py-4 text-center">{new Date(ipd.created_at).toLocaleString("en-IN")}</td>
+                    <td className="p-2 py-4 text-center">{ipd.previous_medical_issue || "-"}</td>
+                    <td className="p-2 py-4 text-center">
                     <div className="relative inline-flex items-center group">
                       <button
                       title="view"

@@ -238,6 +238,21 @@ class DoctorListAPIView(APIView):
 
         return Response(doctors)
 
+
+class NurseListAPIView(APIView):
+    def get(self, request):
+        nurses = User.objects.filter(
+            role="nurse",
+            is_active=True
+        ).values(
+            "id",
+            "full_name",
+            "phone",
+            "email"
+        )
+
+        return Response(nurses)
+
     
 
 class AppointmentListAPIView(APIView):

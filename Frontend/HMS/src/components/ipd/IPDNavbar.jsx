@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { useParams, NavLink } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -20,23 +20,52 @@ import {
 } from "lucide-react";
 
 export default function IPDNavbar() {
+  const { ipdId } = useParams();
   const scrollContainerRef = useRef(null);
 
-  // STATIC FOR NOW
-  const ipdId = 115;
-
   const tabs = [
-    { id: "profile", label: "Overview", icon: Eye },
-    { id: "nurse-notes", label: "Nurse Notes", icon: MessageSquare },
-    { id: "prescription", label: "Prescription", icon: FileText },
-    { id: "consultant", label: "Consultant Register", icon: Users },
-    { id: "lab", label: "Lab Investigation", icon: Beaker },
-    { id: "operations", label: "Operations", icon: Scissors },
-    { id: "charges", label: "Charges", icon: Receipt },
-    { id: "payments", label: "Payment", icon: CreditCard },
-    { id: "bed-history", label: "Bed History", icon: Home },
-    { id: "treatment-history", label: "Treatment History", icon: History },
-    { id: "vitals", label: "Vitals", icon: Heart },
+    { to: `/admin/ipd-patients/${ipdId}/profile`, label: "Overview", icon: Eye },
+    {
+      to: `/admin/ipd-patients/${ipdId}/nurse-notes`,
+      label: "Nurse Notes",
+      icon: MessageSquare,
+    },
+    {
+      to: `/admin/ipd-patients/${ipdId}/prescription`,
+      label: "Prescription",
+      icon: FileText,
+    },
+    {
+      to: `/admin/ipd-patients/${ipdId}/consultant`,
+      label: "Consultant Register",
+      icon: Users,
+    },
+    {
+      to: `/admin/ipd-patients/${ipdId}/operations`,
+      label: "Operations",
+      icon: Scissors,
+    },
+    {
+      to: `/admin/ipd-patients/${ipdId}/charges`,
+      label: "Charges",
+      icon: Receipt,
+    },
+    {
+      to: `/admin/ipd-patients/${ipdId}/payments`,
+      label: "Payment",
+      icon: CreditCard,
+    },
+    {
+      to: `/admin/ipd-patients/${ipdId}/bed-history`,
+      label: "Bed History",
+      icon: Home,
+    },
+    {
+      to: `/admin/ipd-patients/${ipdId}/treatment-history`,
+      label: "Treatment History",
+      icon: History,
+    },
+    { to: `/admin/ipd-patients/${ipdId}/vitals`, label: "Vitals", icon: Heart },
   ];
 
   const scroll = (direction) => {
@@ -68,13 +97,12 @@ export default function IPDNavbar() {
 
             return (
               <NavLink
-                key={tab.id}
-                to={`/admin/ipd-patients/${ipdId}/${tab.id}`}
+                key={tab.to}
+                to={tab.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all whitespace-nowrap ${
-                    isActive
-                      ? "text-[#6046B5] bg-purple-50 border border-[#6046B5]"
-                      : "text-gray-600 hover:text-[#6046B5] hover:bg-gray-50 border border-transparent"
+                  `flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all whitespace-nowrap ${isActive
+                    ? "text-[#6046B5] bg-purple-50 border border-[#6046B5]"
+                    : "text-gray-600 hover:text-[#6046B5] hover:bg-gray-50 border border-transparent"
                   }`
                 }
               >

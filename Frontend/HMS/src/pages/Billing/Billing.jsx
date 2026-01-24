@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { Link, useNavigate } from "react-router-dom";
 import {
-    FaCalendarAlt,
-    FaStethoscope,
-    FaFlask,
-    FaXRay,
-    FaBars,
-    FaSearch,
-} from "react-icons/fa";
-import { MdLocalPharmacy, MdEmergency } from "react-icons/md";
+  Calendar,
+  Stethoscope,
+  FlaskConical,
+  Scan,
+  Menu,
+  Search,
+  Pill,
+  Siren
+} from "lucide-react";
+
 
 function Billing() {
     const [caseId, setCaseId] = useState("");
@@ -21,7 +23,7 @@ function Billing() {
             id: 1,
             title: "Appointment",
             icon: (
-                <FaCalendarAlt className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
+                <Calendar className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
             ),
             link: "/admin/appointments",
         },
@@ -29,7 +31,7 @@ function Billing() {
             id: 2,
             title: "OPD",
             icon: (
-                <FaStethoscope className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
+                <Stethoscope className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
             ),
             link: "/admin/opd-patients",
         },
@@ -37,7 +39,7 @@ function Billing() {
             id: 3,
             title: "Pathology",
             icon: (
-                <FaFlask className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
+                <FlaskConical className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
             ),
             link: "/admin/pathology-bills",
         },
@@ -45,7 +47,7 @@ function Billing() {
             id: 4,
             title: "Radiology",
             icon: (
-                <FaXRay className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
+                <Scan className="text-4xl mb-4 text-gray-700 group-hover:text-white transition-colors duration-300" />
             ),
             link: "/admin/radiology-bills",
         },
@@ -53,8 +55,8 @@ function Billing() {
 
     const menuModules = [
         ...modules,
-        { id: 5, title: 'Pharmacy', link: '/admin/pharmacy-bills', icon: <MdLocalPharmacy className="mr-2" /> },
-        { id: 6, title: 'Ambulance', link: '/admin/ambulance', icon: <MdEmergency className="mr-2" /> },
+        { id: 5, title: 'Pharmacy', link: '/admin/pharmacy-bills', icon: <Pill className="mr-2" /> },
+        { id: 6, title: 'Ambulance', link: '/admin/ambulance', icon: <Siren className="mr-2" /> },
     ];
 
     const handleSearch = () => {
@@ -100,7 +102,7 @@ function Billing() {
                                     onClick={() => setShowMenu(!showMenu)}
                                     className="p-2 bg-[#6046B5] text-white rounded hover:bg-[#4E379E] transition-colors"
                                 >
-                                    <FaBars />
+                                    <Menu />
                                 </button>
                                 {/* Menu Dropdown */}
                                 {showMenu && (
@@ -147,7 +149,7 @@ function Billing() {
                                         onClick={handleSearch}
                                         className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#0b65c2] text-white px-4 py-2 rounded-r-md text-sm font-medium transition-colors flex items-center"
                                     >
-                                        <span className="mr-1"><FaSearch /></span> Search
+                                        <span className="mr-1"><Search /></span> Search
                                     </button>
                                 </div>
 

@@ -15,7 +15,7 @@ function AddPatient({ open, onClose }) {
     state: "",
     zip_code: "",
     date_of_birth: "",
-    gender: "M",
+    gender: "Male",
     blood_group: "O+",
     medical_history: "",
     allergies: "",
@@ -152,7 +152,7 @@ function AddPatient({ open, onClose }) {
         state: "",
         zip_code: "",
         date_of_birth: "",
-        gender: "M",
+        gender: "Male",
         blood_group: "O+",
         medical_history: "",
         allergies: "",
@@ -201,7 +201,7 @@ function AddPatient({ open, onClose }) {
       state: "",
       zip_code: "",
       date_of_birth: "",
-      gender: "M",
+      gender: "Male",
       blood_group: "O+",
       medical_history: "",
       allergies: "",
@@ -250,7 +250,7 @@ function AddPatient({ open, onClose }) {
                   value={formData.last_name}
                   onChange={handleChange}
                   error={errors.last_name}
-                  
+
                 />
               </div>
 
@@ -455,9 +455,8 @@ function FormField({ label, name, type = "text", value, onChange, error, require
         name={name}
         value={value}
         onChange={onChange}
-        className={`w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none ${
-          error ? "border-red-500" : "border-gray-300"
-        }`}
+        className={`w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none ${error ? "border-red-500" : "border-gray-300"
+          }`}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>

@@ -3,8 +3,8 @@ from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Q
-from .models import Patient
-from .serializers import PatientSerializer, PatientCreateUpdateSerializer
+from .models import *
+from .serializers import *
 
 logger = logging.getLogger(__name__)
 
@@ -240,52 +240,80 @@ class PatientSearchAPIView(APIView):
 class PatientVitalView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, patient_id):
+    def get_object(self, patient_id, pk):
+        try:
+            return PatientVital.objects.get(
+                id=pk,
+                patient_id=patient_id,
+                is_active=True
+            )
+        except PatientVital.DoesNotExist:
+            return None
+
+    def get(self, request, patient_id, pk=None):
+        if pk:
+            vital = self.get_object(patient_id, pk)
+            if not vital:
+                return Response({"detail": "Vital record not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = PatientVitalSerializer(vital)
+            return Response(serializer.data)
+        
         vitals = PatientVital.objects.filter(
             patient_id=patient_id,
             is_active=True
-        )
+        ).order_by('-vital_date', '-created_at')
         serializer = PatientVitalSerializer(vitals, many=True)
         return Response(serializer.data)
 
     def post(self, request, patient_id):
-        data = request.data.copy()
-        data['patient'] = patient_id
+        try:
+            data = request.data.copy()
+            data['patient'] = patient_id
+            
+            logger.info(f"📝 Creating Vital for patient {patient_id}: {data}")
 
-        serializer = PatientVitalSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save(created_by=request.user)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            serializer = PatientVitalSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save(created_by=request.user)
+                logger.info(f"✅ Vital created for patient {patient_id}")
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+            logger.error(f"❌ Vital validation errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"❌ Error creating vital: {str(e)}", exc_info=True)
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def patch(self, request, patient_id, pk):
+        try:
+            vital = self.get_object(patient_id, pk)
+            if not vital:
+                return Response({"detail": "Vital record not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            logger.info(f"📝 Updating Vital {pk} for patient {patient_id}: {request.data}")
 
-    def get_object(self, patient_id, vital_id):
-        return PatientVital.objects.get(
-            id=vital_id,
-            patient_id=patient_id,
-            is_active=True
-        )
+            serializer = PatientVitalSerializer(
+                vital, data=request.data, partial=True
+            )
+            if serializer.is_valid():
+                serializer.save()
+                logger.info(f"✅ Vital {pk} updated")
+                return Response(serializer.data)
+            
+            logger.error(f"❌ Vital update validation errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"❌ Error updating vital: {str(e)}", exc_info=True)
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def get(self, request, patient_id, vital_id):
-        vital = self.get_object(patient_id, vital_id)
-        serializer = PatientVitalSerializer(vital)
-        return Response(serializer.data)
-
-    def put(self, request, patient_id, vital_id):
-        vital = self.get_object(patient_id, vital_id)
-        serializer = PatientVitalSerializer(
-            vital, data=request.data, partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
-    def delete(self, request, patient_id, vital_id):
-        vital = self.get_object(patient_id, vital_id)
+    def delete(self, request, patient_id, pk):
+        vital = self.get_object(patient_id, pk)
+        if not vital:
+            return Response({"detail": "Vital record not found"}, status=status.HTTP_404_NOT_FOUND)
+            
         vital.is_active = False
         vital.save()
-        return Response({"detail": "Vital deleted successfully"})
+        return Response({"detail": "Vital deleted successfully"}, status=status.HTTP_200_OK)
 
 
 
@@ -296,11 +324,28 @@ class PatientVitalView(APIView):
 class PatientOperationView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, patient_id):
+    def get_object(self, patient_id, pk):
+        try:
+            return PatientOperation.objects.get(
+                id=pk,
+                patient_id=patient_id,
+                is_active=True
+            )
+        except PatientOperation.DoesNotExist:
+            return None
+
+    def get(self, request, patient_id, pk=None):
+        if pk:
+            operation = self.get_object(patient_id, pk)
+            if not operation:
+                return Response({"detail": "Operation record not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = PatientOperationSerializer(operation)
+            return Response(serializer.data)
+        
         operations = PatientOperation.objects.filter(
             patient_id=patient_id,
             is_active=True
-        )
+        ).order_by('-operation_date', '-created_at')
         serializer = PatientOperationSerializer(operations, many=True)
         return Response(serializer.data)
 
@@ -311,36 +356,30 @@ class PatientOperationView(APIView):
         serializer = PatientOperationSerializer(data=data)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_object(self, patient_id, operation_id):
-        return PatientOperation.objects.get(
-            id=operation_id,
-            patient_id=patient_id,
-            is_active=True
-        )
-
-    def get(self, request, patient_id, operation_id):
-        operation = self.get_object(patient_id, operation_id)
-        serializer = PatientOperationSerializer(operation)
-        return Response(serializer.data)
-
-    def put(self, request, patient_id, operation_id):
-        operation = self.get_object(patient_id, operation_id)
+    def patch(self, request, patient_id, pk):
+        operation = self.get_object(patient_id, pk)
+        if not operation:
+            return Response({"detail": "Operation record not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         serializer = PatientOperationSerializer(
             operation, data=request.data, partial=True
         )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, patient_id, operation_id):
-        operation = self.get_object(patient_id, operation_id)
+    def delete(self, request, patient_id, pk):
+        operation = self.get_object(patient_id, pk)
+        if not operation:
+            return Response({"detail": "Operation record not found"}, status=status.HTTP_404_NOT_FOUND)
+            
         operation.is_active = False
         operation.save()
-        return Response({"detail": "Operation deleted successfully"})
+        return Response({"detail": "Operation deleted successfully"}, status=status.HTTP_200_OK)
 
 
 
@@ -352,11 +391,28 @@ class PatientOperationView(APIView):
 class PatientConsultantView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, patient_id):
+    def get_object(self, patient_id, pk):
+        try:
+            return PatientConsultant.objects.get(
+                id=pk,
+                patient_id=patient_id,
+                is_active=True
+            )
+        except PatientConsultant.DoesNotExist:
+            return None
+
+    def get(self, request, patient_id, pk=None):
+        if pk:
+            consultant = self.get_object(patient_id, pk)
+            if not consultant:
+                return Response({"detail": "Consultant record not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = PatientConsultantSerializer(consultant)
+            return Response(serializer.data)
+        
         consultants = PatientConsultant.objects.filter(
             patient_id=patient_id,
             is_active=True
-        )
+        ).order_by('-consultant_date', '-created_at')
         serializer = PatientConsultantSerializer(consultants, many=True)
         return Response(serializer.data)
 
@@ -367,36 +423,30 @@ class PatientConsultantView(APIView):
         serializer = PatientConsultantSerializer(data=data)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_object(self, patient_id, consultant_id):
-        return PatientConsultant.objects.get(
-            id=consultant_id,
-            patient_id=patient_id,
-            is_active=True
-        )
-
-    def get(self, request, patient_id, consultant_id):
-        consultant = self.get_object(patient_id, consultant_id)
-        serializer = PatientConsultantSerializer(consultant)
-        return Response(serializer.data)
-
-    def put(self, request, patient_id, consultant_id):
-        consultant = self.get_object(patient_id, consultant_id)
+    def patch(self, request, patient_id, pk):
+        consultant = self.get_object(patient_id, pk)
+        if not consultant:
+            return Response({"detail": "Consultant record not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         serializer = PatientConsultantSerializer(
             consultant, data=request.data, partial=True
         )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, patient_id, consultant_id):
-        consultant = self.get_object(patient_id, consultant_id)
+    def delete(self, request, patient_id, pk):
+        consultant = self.get_object(patient_id, pk)
+        if not consultant:
+            return Response({"detail": "Consultant record not found"}, status=status.HTTP_404_NOT_FOUND)
+            
         consultant.is_active = False
         consultant.save()
-        return Response({"detail": "Consultant deleted successfully"})
+        return Response({"detail": "Consultant deleted successfully"}, status=status.HTTP_200_OK)
 
 
 
@@ -409,11 +459,28 @@ class PatientConsultantView(APIView):
 class PatientChargesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, patient_id):
+    def get_object(self, patient_id, pk):
+        try:
+            return PatientCharges.objects.get(
+                id=pk,
+                patient_id=patient_id,
+                is_active=True
+            )
+        except PatientCharges.DoesNotExist:
+            return None
+
+    def get(self, request, patient_id, pk=None):
+        if pk:
+            charge = self.get_object(patient_id, pk)
+            if not charge:
+                return Response({"detail": "Charge record not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = PatientChargesSerializer(charge)
+            return Response(serializer.data)
+        
         charges = PatientCharges.objects.filter(
             patient_id=patient_id,
             is_active=True
-        )
+        ).order_by('-charge_date', '-created_at')
         serializer = PatientChargesSerializer(charges, many=True)
         return Response(serializer.data)
 
@@ -424,33 +491,97 @@ class PatientChargesView(APIView):
         serializer = PatientChargesSerializer(data=data)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_object(self, patient_id, charge_id):
-        return PatientCharges.objects.get(
-            id=charge_id,
-            patient_id=patient_id,
-            is_active=True
-        )
-
-    def get(self, request, patient_id, charge_id):
-        charge = self.get_object(patient_id, charge_id)
-        serializer = PatientChargesSerializer(charge)
-        return Response(serializer.data)
-
-    def put(self, request, patient_id, charge_id):
-        charge = self.get_object(patient_id, charge_id)
+    def patch(self, request, patient_id, pk):
+        charge = self.get_object(patient_id, pk)
+        if not charge:
+            return Response({"detail": "Charge record not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         serializer = PatientChargesSerializer(
             charge, data=request.data, partial=True
         )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, patient_id, charge_id):
-        charge = self.get_object(patient_id, charge_id)
+    def delete(self, request, patient_id, pk):
+        charge = self.get_object(patient_id, pk)
+        if not charge:
+            return Response({"detail": "Charge record not found"}, status=status.HTTP_404_NOT_FOUND)
+            
         charge.is_active = False
         charge.save()
-        return Response({"detail": "Charge deleted successfully"})
+        return Response({"detail": "Charge deleted successfully"}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+#*******************************************************************************************************#
+#                            Patient Charges Views
+#*******************************************************************************************************#
+
+class PatientPaymentView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, patient_id, pk):
+        try:
+            return PatientPayment.objects.get(
+                id=pk,
+                patient_id=patient_id,
+                is_active=True
+            )
+        except PatientPayment.DoesNotExist:
+            return None
+
+    def get(self, request, patient_id, pk=None):
+        if pk:
+            payment = self.get_object(patient_id, pk)
+            if not payment:
+                return Response({"detail": "Payment record not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = PatientPaymentSerializer(payment)
+            return Response(serializer.data)
+        
+        payments = PatientPayment.objects.filter(
+            patient_id=patient_id,
+            is_active=True
+        ).order_by('-payment_date', '-created_at')
+        serializer = PatientPaymentSerializer(payments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, patient_id):
+        data = request.data.copy()
+        data['patient'] = patient_id
+
+        serializer = PatientPaymentSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, patient_id, pk):
+        payment = self.get_object(patient_id, pk)
+        if not payment:
+            return Response({"detail": "Payment record not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = PatientPaymentSerializer(
+            payment, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, patient_id, pk):
+        payment = self.get_object(patient_id, pk)
+        if not payment:
+            return Response({"detail": "Payment record not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+        payment.is_active = False
+        payment.save()
+        return Response({"detail": "Payment deleted successfully"}, status=status.HTTP_200_OK)
