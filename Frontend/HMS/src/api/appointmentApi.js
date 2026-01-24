@@ -182,25 +182,3 @@ export const deletePriority = async (priorityId) => {
 
 
 
-
-
-// =======================
-// SLOT ENDPOINTS
-// =======================
-// export const getAppointmentSlots = async () => {
-//   return await appointmentAPI.get("appointment-slot/");
-// };
-
-// export const createAppointmentSlot = async (appointmentSlotData) => {
-//   return await appointmentAPI.post("appointment-slot/create/", appointmentSlotData);
-// };
-
-// export const updateAppointmentSlot = async (appointmentSlotId, appointmentSlotData) => {
-//   if (!appointmentSlotId) throw new Error('Appointment Slot ID is required');
-//   return await appointmentAPI.patch(`appointment-slot/${appointmentSlotId}/update/`, appointmentSlotData);
-// };
-
-// export const deleteAppointmentSlot = async (appointmentSlotId) => {
-//   if (!appointmentSlotId) throw new Error('Appointment Slot ID is required');
-//   return await appointmentAPI.delete(`appointment-slot/${appointmentSlotId}/delete/`);
-// };

@@ -148,7 +148,7 @@ useEffect(() => {
                     <td className="p-2 text-center">IPDN{ipd.ipd_id}</td>
                     <td
                       className="p-2 text-center text-blue-600 cursor-pointer"
-                      onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}`)}
+                      onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/profile`)}
                     >
                       {ipd.patient_detail
                           ? `${ipd.patient_detail.first_name} ${ipd.patient_detail.last_name}`

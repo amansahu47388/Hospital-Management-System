@@ -89,7 +89,7 @@ export default function OPDVisitsPage() {
                         </div>
                         <button
                             onClick={() => setShowModal(true)}
-                            className=" bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#4c3893] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-semibold"
+                            className="bg-[#6046B5] hover:bg-[#4c3893] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-semibold"
                         >
                             <Plus size={18} />
                             New Checkup
@@ -97,7 +97,32 @@ export default function OPDVisitsPage() {
                     </div>
 
                     {/* Table Actions */}
-                  
+                    <div className="px-4 md:px-6 pb-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
+                        <div className="relative w-full md:w-64">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-white">
+                                <option>100</option>
+                                <option>50</option>
+                                <option>25</option>
+                            </select>
+                            <div className="flex gap-1">
+                                {[Copy, FileSpreadsheet, FileText, FilePdf, Download].map((Icon, i) => (
+                                    <button key={i} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-all">
+                                        <Icon size={18} />
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Table */}
                     <div className="overflow-x-auto">
@@ -299,7 +324,9 @@ export default function OPDVisitsPage() {
                                     </div>
 
                                     <div className="flex flex-col gap-1.5">
-                                        
+                                        <label className="text-sm font-bold text-gray-700">
+                                            Applied Charge ($) <span className="text-red-500">*</span>
+                                        </label>
                                         <input
                                             type="text"
                                             className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm"

@@ -8,6 +8,11 @@ from .serializers import PatientSerializer, PatientCreateUpdateSerializer
 
 logger = logging.getLogger(__name__)
 
+
+
+#*******************************************************************************************************#
+#                            Patient Views
+#*******************************************************************************************************#
 class IsAdminUser(permissions.BasePermission):
     """Allow access only to admin users."""
     def has_permission(self, request, view):
@@ -222,3 +227,62 @@ class PatientSearchAPIView(APIView):
         )[:20]
         serializer = PatientSerializer(qs, many=True)
         return Response(serializer.data)
+
+
+
+
+
+
+
+#*******************************************************************************************************#
+#                            Patient Vital Views
+#*******************************************************************************************************#
+class PatientVitalView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, patient_id):
+        vitals = PatientVital.objects.filter(
+            patient_id=patient_id,
+            is_active=True
+        )
+        serializer = PatientVitalSerializer(vitals, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, patient_id):
+        data = request.data.copy()
+        data['patient'] = patient_id
+
+        serializer = PatientVitalSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+    def get_object(self, patient_id, vital_id):
+        return PatientVital.objects.get(
+            id=vital_id,
+            patient_id=patient_id,
+            is_active=True
+        )
+
+    def get(self, request, patient_id, vital_id):
+        vital = self.get_object(patient_id, vital_id)
+        serializer = PatientVitalSerializer(vital)
+        return Response(serializer.data)
+
+    def put(self, request, patient_id, vital_id):
+        vital = self.get_object(patient_id, vital_id)
+        serializer = PatientVitalSerializer(
+            vital, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, patient_id, vital_id):
+        vital = self.get_object(patient_id, vital_id)
+        vital.is_active = False
+        vital.save()
+        return Response({"detail": "Vital deleted successfully"})

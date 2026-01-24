@@ -32,7 +32,8 @@ import {
   Video,
   Download,
 } from "lucide-react";
-
+import FullLogo from "../../assets/icons/logo4.png"
+import IconLogo from "../../assets/icons/shortlogo.png"
 const adminNavItems = [
   { to: "/admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { to: "/admin/patients", label: "Patient", Icon: UserRound },
@@ -65,14 +66,15 @@ const adminNavItems = [
 const patientNavItems = [
   { to: "/patient-portal/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { to: "/patient-portal/appointments", label: "My Appointments", Icon: CalendarDays },
-  { to: "/patient-portal/opd-history/:section", label: "OPD", Icon: Stethoscope },
-  { to: "/patient-portal/ipd-history/:section", label: "IPD", Icon: Bed },
+  { to: "/patient-portal/opd-history", label: "OPD", Icon: Stethoscope },
+  { to: "/patient-portal/ipd", label: "IPD", Icon: Bed },
   { to: "/patient-portal/pharmacy", label: "Pharmacy", Icon: Pill },
   { to: "/patient-portal/pathology", label: "Pathology", Icon: FlaskConical },
   { to: "/patient-portal/radiology", label: "Radiology", Icon: FolderGit2 },
+  { to: "/patient-portal/blood-bank", label: "Blood Bank", Icon: Droplet },
   { to: "/patient-portal/ambulance", label: "Ambulance", Icon: Ambulance },
-
- 
+  { to: "/patient-portal/live-consultation", label: "Live Consultation", Icon: Video },
+  { to: "/patient-portal/download-center", label: "Download Center", Icon: Download },
 ];
 
 function Sidebar({ role = "admin" }) {
@@ -136,12 +138,40 @@ function Sidebar({ role = "admin" }) {
       >
         <div className="flex flex-col h-full p-5 justify-even">
           {/* Logo */}
-          <div className="text-xl font-bold mb-10 flex items-center gap-3">
-            {/* <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
-              ML
-            </div>
-            {!collapsed && <span>MediLab Hospital</span>} */}
+          {/* Logo */}
+          {/* LOGO */}
+          {/* <div className="mb-4 h-16 md:h-20 flex items-center justify-center">
+  <img
+    src={logo4}
+    alt="Smart Hospital Logo"
+    className={`
+      object-contain transition-all duration-300
+      ${collapsed
+        ? "h-10 w-10"
+        : "h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24 w-auto"}
+    `}
+  />
+</div> */}
+
+          {/* LOGO – hidden on mobile */}
+          <div className="hidden md:flex mb-4 h-16 md:h-20 items-center justify-center">
+            <img
+              src={collapsed ? IconLogo : FullLogo}
+              alt="Smart Hospital Logo"
+              className={`
+      object-contain transition-all duration-300
+      ${collapsed
+                  ? "h-10 w-10"
+                  : "h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24 w-auto"}
+    `}
+            />
           </div>
+
+
+
+
+
+
 
           {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-semibold pb-10">
@@ -300,7 +330,7 @@ function Sidebar({ role = "admin" }) {
                           { label: "Pharmacy", path: "/admin/setup/pharmacy/medicine-category" },
                           { label: "Pathology", path: "/admin/setup/pathology/category" },
                           { label: "Radiology", path: "/admin/setup/radiology/category" },
-                          { label: "Symptoms", path: "/admin/setup/symptoms" },
+                          { label: "Symptoms", path: "/admin/setup/symptoms/symptoms-head" },
                           { label: "Findings", path: "/admin/setup/finding" },
                           { label: "Vitals", path: "/admin/setup/vitals" },
                           { label: "Finance", path: "/admin/setup/finance/income-head" },

@@ -23,44 +23,44 @@ export default function CalendarGrid({ tasks, date, onEventClick }) {
   return (
     <div className="relative border rounded overflow-hidden bg-white">
       <div className="grid grid-cols-7">
-      {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((d) => (
-        <div key={d} className="p-2 text-center font-semibold bg-gray-100 border">
-          {d}
-        </div>
-      ))}
-
-      {days.map((day, index) => {
-        if (day === null) {
-          return <div key={index} className="h-24 border p-1 text-xs bg-gray-50"></div>;
-        }
-        const dayTasks = tasks.filter(
-          (t) => {
-            const taskStart = new Date(t.date);
-            const currentDay = new Date(year, month, day);
-            const isMulti = t.endDate && new Date(t.endDate) > taskStart;
-            if (isMulti) return false;
-            return taskStart.toDateString() === currentDay.toDateString();
-          }
-        );
-
-        return (
-          <div key={day} className="h-24 border p-1 text-xs">
-            <div className="text-right font-semibold">{day}</div>
-            {dayTasks.map((t) => (
-              <div
-                key={t.id}
-                onClick={() => onEventClick?.(t)}
-                className="bg-pink-600 text-white px-1 py-0.5 rounded mt-1 truncate cursor-pointer hover:opacity-80"
-                style={{ backgroundColor: t.color || "#EC4899" }}
-              >
-                {t.title}
-              </div>
-            ))}
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+          <div key={d} className="p-2 text-center font-semibold bg-gray-100 border">
+            {d}
           </div>
+        ))}
+
+        {days.map((day, index) => {
+          if (day === null) {
+            return <div key={index} className="h-24 border p-1 text-xs bg-gray-50"></div>;
+          }
+          const dayTasks = tasks.filter(
+            (t) => {
+              const taskStart = new Date(t.date);
+              const currentDay = new Date(year, month, day);
+              const isMulti = t.endDate && new Date(t.endDate) > taskStart;
+              if (isMulti) return false;
+              return taskStart.toDateString() === currentDay.toDateString();
+            }
+          );
+
+          return (
+            <div key={index} className="h-24 border p-1 text-xs">
+              <div className="text-right font-semibold">{day}</div>
+              {dayTasks.map((t) => (
+                <div
+                  key={t.id}
+                  onClick={() => onEventClick?.(t)}
+                  className="bg-pink-600 text-white px-1 py-0.5 rounded mt-1 truncate cursor-pointer hover:opacity-80"
+                  style={{ backgroundColor: t.color || "#EC4899" }}
+                >
+                  {t.title}
+                </div>
+              ))}
+            </div>
 
 
-        );
-      })}
+          );
+        })}
 
       </div>
 

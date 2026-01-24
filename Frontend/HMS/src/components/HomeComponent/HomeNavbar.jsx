@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { userLogout } from "../../api/authApi";
-
+import FullLogo from "../../assets/icons/logo4.png"
 function HomeNavbar({ onLogin, onSignup }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -22,8 +22,9 @@ function HomeNavbar({ onLogin, onSignup }) {
     const refresh = localStorage.getItem("refresh");
     try {
       await userLogout(refresh ? { refresh } : {});
-    } catch (e) { /* ignore */ }
-    finally {
+    } catch (e) {
+      // ignore error
+    } finally {
       logout();
       navigate("/");
       window.location.reload();
@@ -31,33 +32,37 @@ function HomeNavbar({ onLogin, onSignup }) {
   };
 
   return (
-    <header className="w-full py-5 shadow-sm bg-white  fixed top-0 left-0 w-full
- z-50">
+    <header className="fixed top-0 left-0 z-50 w-full bg-white py-5 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
 
         {/* LOGO */}
-        <div className="text-xl font-bold flex items-center gap-2">
-          <img src="/logo.png" className="w-8" alt="Logo" />
-          <span>MediLab Hospital</span>
+        <div className="flex items-center gap-2">
+          <img
+            src={FullLogo}
+            alt="Logo"
+            className="h-10 sm:h-12 md:h-14 lg:h-16 w-auto object-contain"
+          />
         </div>
 
         {/* DESKTOP NAVIGATION */}
         <nav className="hidden md:flex gap-8 text-[16px] font-semibold">
-          <Link to="/" className="px-4 py-1 bg-gray-200 rounded">Home</Link>
-          <Link to="/appointment" className="hover:text-blue-600">Appointment</Link>
-          <Link to="/services" className="hover:text-blue-600">Services</Link>
-          <Link to="/about" className="hover:text-blue-600">About Us</Link>
-          <Link to="/contact" className="hover:text-blue-600">Contact Us</Link>
+          <a href="#hero" className="px-4 py-1 bg-gray-200 rounded">Home</a>
+          <a href="#features" className="hover:text-blue-600">Services</a>
+          <a href="#about" className="hover:text-blue-600">About Us</a>
+          <a href="#contact" className="hover:text-blue-600">Contact Us</a>
         </nav>
 
         {/* DESKTOP BUTTONS */}
-        <div className="hidden md:flex gap-4">
+        <div className="hidden md:flex items-center gap-4 whitespace-nowrap">
           {user ? (
             <>
-              <div className="text-l font-semibold">{user.full_name || user.email}</div>
+              <div className="text-lg font-semibold truncate max-w-[200px]">
+                {user.full_name || user.email}
+              </div>
+
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 border rounded-lg"
+                className="px-4 py-2 border rounded-lg whitespace-nowrap"
               >
                 Logout
               </button>
@@ -66,14 +71,14 @@ function HomeNavbar({ onLogin, onSignup }) {
             <>
               <button
                 onClick={handleLogin}
-                className="px-5 py-2 border rounded-lg hover:bg-gray-100"
+                className="px-5 py-2 border rounded-lg whitespace-nowrap hover:bg-gray-100"
               >
                 Sign In
               </button>
 
               <button
                 onClick={handleSignup}
-                className="px-5 py-2 border rounded-lg hover:bg-gray-100"
+                className="px-5 py-2 border rounded-lg whitespace-nowrap hover:bg-gray-100"
               >
                 Register
               </button>
@@ -81,41 +86,22 @@ function HomeNavbar({ onLogin, onSignup }) {
           )}
         </div>
 
+
         {/* MOBILE MENU BUTTON */}
-        <button
-          className="md:hidden"
-          onClick={() => setOpen(!open)}
-        >
+        <button className="md:hidden" onClick={() => setOpen(!open)}>
           {open ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
       {/* MOBILE DROPDOWN MENU */}
       {open && (
-        <div className="md:hidden bg-white shadow-lg px-6 py-4 flex flex-col gap-2 text-lg font-medium animate-slideDown">
-
-          <Link to="/" className="py-1" onClick={() => setOpen(false)}>Home</Link>
-         
-          <Link to="/services" className="py-1" onClick={() => setOpen(false)}>Services</Link>
-          <Link to="/about" className="py-1" onClick={() => setOpen(false)}>About Us</Link>
-          <Link to="/contact" className="py-1" onClick={() => setOpen(false)}>Contact Us</Link>
-          {/* MOBILE VIEW — SIGN IN & SIGN UP AS LINKS */}
-          <Link
-            to="/login"
-            className="py-1"
-            onClick={() => setOpen(false)}
-          >
-            Sign In
-          </Link>
-
-          <Link
-            to="/signup"
-            className="py-1"
-            onClick={() => setOpen(false)}
-          >
-            Register
-          </Link>
-
+        <div className="md:hidden bg-white shadow-lg px-6 py-4 flex flex-col gap-2 text-lg font-medium">
+          <a href="#hero" onClick={() => setOpen(false)}>Home</a>
+          <a href="#features" onClick={() => setOpen(false)}>Services</a>
+          <a href="#about" onClick={() => setOpen(false)}>About Us</a>
+          <a href="#contact" onClick={() => setOpen(false)}>Contact Us</a>
+          <Link to="/login" onClick={() => setOpen(false)}>Sign In</Link>
+          <Link to="/signup" onClick={() => setOpen(false)}>Register</Link>
         </div>
       )}
     </header>

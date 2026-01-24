@@ -28,7 +28,7 @@ function Hero() {
   };
 
   return (
-    <section className="w-full pt-20">
+    <section id="hero" className="w-full pt-20">
       <div className="w-full grid md:grid-cols-3 gap-6 px-6">
 
         {/* LEFT BANNER */}

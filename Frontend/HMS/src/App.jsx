@@ -48,6 +48,8 @@ import BillingDetails from "./pages/Billing/BillingDetails";
 import NurseNotesSinglePage from "./pages/IPD/NurseNotesSinglePage";
 
 
+
+
 //setup route paths and components
 import BedStatus from "./pages/Setup/Bed/BedStatus";
 import BedList from "./pages/Setup/Bed/BedList";
@@ -104,10 +106,7 @@ import AppointmentPriority from "./pages/Setup/Appointment/AppointmentPriority";
 import ItemCategory from "./pages/Setup/Inventory/ItemCategory";
 import ItemStore from "./pages/Setup/Inventory/ItemStore";
 import ItemSupplier from "./pages/Setup/Inventory/ItemSupplier";
-//import PatientDashboard from "./pages/PatientModule/patientDashboard";
-//import PatientLayout from "./layouts/PatientLayout";
 import IPDComprehensivePage from "./pages/IPD/IPDComprehensivePage";
-//import NurseNotesSinglePage from "./pages/IPD/NurseNotesSinglePage";
 import MedicationSinglePage from "./pages/IPD/MedicationSinglePage";
 import PrescriptionSinglePage from "./pages/IPD/PrescriptionSinglePage";
 import ConsultantRegisterSinglePage from "./pages/IPD/ConsultantRegisterSinglePage";
@@ -117,19 +116,21 @@ import IPDBedHistoryPage from "./pages/IPD/IPDBedHistoryPage";
 import IPDPaymentPage from "./pages/IPD/IPDPaymentPage";
 import IPDTimelinePage from "./pages/IPD/IPDTimelinePage";
 import IPDChargesPage from "./pages/IPD/IPDChargesPage";
-import IPDTreatmentHistoryPage from "./pages/IPD/IPDTreatmentHistoryPage";
-import IPDVitalsPage from "./pages/IPD/IPDVitalsPage";
-
+import IPDTreatmentHistoryPage from "./pages/IPD/IPDTreatmentHistory";
+import IPDVitalsPage from "./pages/IPD/IPDVitals";
 import OPDComprehensivePage from "./pages/OPD/OPDComprehensivePage";
 import OPDVisitsPage from "./pages/OPD/OPDVisitsPage";
 import OPDMedicationPage from "./pages/OPD/OPDMedicationPage";
-import OPDLabInvestigationPage from "./pages/OPD/OPDLabInvestigationPage";
-import OPDOperationsPage from "./pages/OPD/OPDOperationsPage";
-import OPDChargesPage from "./pages/OPD/OPDChargesPage";
+import OPDLabInvestigationPage from "./pages/OPD/OPDLabInvestigation";
+import OPDOperationsPage from "./pages/OPD/OPDOperations";
+import OPDChargesPage from "./pages/OPD/OPDCharges";
 import OPDPaymentPage from "./pages/OPD/OPDPaymentPage";
 import OPDTimelinePage from "./pages/OPD/OPDTimelinePage";
-import OPDTreatmentHistoryPage from "./pages/OPD/OPDTreatmentHistoryPage";
-import OPDVitalsPage from "./pages/OPD/OPDVitalsPage";
+import OPDTreatmentHistoryPage from "./pages/OPD/OPDTreatmentHistory";
+import OPDVitalsPage from "./pages/OPD/OPDVitals";
+
+
+
 
 //patient entity routes
 import PatientDashboardPage from "./pages/Patient/PatientDashboardPage";
@@ -159,6 +160,12 @@ function App() {
       <NotificationProvider>
         <BrowserRouter>
           <Routes>
+
+
+            {/*/*****************************************************************************/}
+            {/*                         ADMIN ROUTES                                        */}
+            {/*/*****************************************************************************/}
+
             {/* Home Routes */}
             <Route path="/" element={<Home />} />
 
@@ -166,8 +173,7 @@ function App() {
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/profile" element={<AdminProfile />} />
             {/* <Route path="/admin/profile/edit" element={<UpdateAdminProfile />} />
-          <Route path="/admin/profile/change-password" element={<ChangePassword />} /> */}
-
+            <Route path="/admin/profile/change-password" element={<ChangePassword />} /> */}
 
             {/* Auth Routes */}
             <Route path="/login" element={<UserLogin />} />
@@ -175,29 +181,25 @@ function App() {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/signup" element={<AdminSignup />} />
 
-
             {/* Patient Routes */}
             <Route path="/admin/patients" element={<PatientDashboard />} />
             <Route path="/admin/patients/add" element={<AddPatient />} />
             <Route path="/admin/patients/:id" element={<PatientDetail />} />
             <Route path="/admin/patients/:id/update" element={<UpdatePatient />} />
 
-
             {/* Appointment Routes */}
             <Route path="/admin/appointments" element={<Appointment />} />
             <Route path="/admin/appointments/doctor-wise-appointments" element={<DoctorWiseAppointment />} />
             <Route path="/admin/appointments/patient-queue" element={<PatientQueue />} />
 
-
-            {/* OPD and IPD Routes */}
-            <Route path="/admin/opd-patients" element={<OpdPatient />} />
+            {/* IPD Routes */}
             <Route path="/admin/ipd-patients" element={<IpdPatient />} />
             <Route path="/admin/opd-patients/add-opd" element={<AddOpd />} />
             <Route path="/admin/ipd-patients/add-ipd" element={<AddIpd />} />
             <Route path="/admin/opd-patients/:opdId/update" element={<UpdateOpdPatient />} />
             <Route path="/admin/ipd-patients/:ipdId/update" element={<UpdateIpdPatient />} />
             <Route path="/admin/ipd-patients/discharge-patients" element={<DischargePatients />} />
-            <Route path="/admin/ipd-patients/:ipdId/comprehensive-page" element={<IPDComprehensivePage />} />
+            <Route path="/admin/ipd-patients/:ipdId/profile" element={<IPDComprehensivePage />} />
             <Route path="/admin/ipd-patients/115/nurse-notes" element={<NurseNotesSinglePage />} />
             <Route path="/admin/ipd-patients/115/medication" element={<MedicationSinglePage />} />
             <Route path="/admin/ipd-patients/115/prescription" element={<PrescriptionSinglePage />} />
@@ -211,6 +213,20 @@ function App() {
             <Route path="/admin/ipd-patients/115/charges" element={<IPDChargesPage />} />
             <Route path="/admin/ipd-patients/115/treatment-history" element={<IPDTreatmentHistoryPage />} />
             <Route path="/admin/ipd-patients/115/vitals" element={<IPDVitalsPage />} />
+
+            {/* OPD Routes */}
+            <Route path="/admin/opd-patients" element={<OpdPatient />} />
+            <Route path="/admin/opd-patients/:opdId/profile" element={<OPDComprehensivePage />} />
+            <Route path="/admin/opd-patients/:opdId/visits" element={<OPDVisitsPage />} />
+            <Route path="/admin/opd-patients/:opdId/medication" element={<OPDMedicationPage />} />
+            <Route path="/admin/opd-patients/:opdId/lab-investigation" element={<OPDLabInvestigationPage />} />
+            <Route path="/admin/opd-patients/:opdId/operations" element={<OPDOperationsPage />} />
+            <Route path="/admin/opd-patients/:opdId/charges" element={<OPDChargesPage />} />
+            <Route path="/admin/opd-patients/:opdId/payments" element={<OPDPaymentPage />} />
+            <Route path="/admin/opd-patients/:opdId/timeline" element={<OPDTimelinePage />} />
+            <Route path="/admin/opd-patients/:opdId/treatment-history" element={<OPDTreatmentHistoryPage />} />
+            <Route path="/admin/opd-patients/:opdId/vitals" element={<OPDVitalsPage />} />
+
             <Route path="/admin/opd-patients/210/overview" element={<OPDComprehensivePage />} />
             <Route path="/admin/opd-patients/210/visits" element={<OPDVisitsPage />} />
             <Route path="/admin/opd-patients/210/medication" element={<OPDMedicationPage />} />
@@ -222,35 +238,9 @@ function App() {
             <Route path="/admin/opd-patients/210/treatment-history" element={<OPDTreatmentHistoryPage />} />
             <Route path="/admin/opd-patients/210/vitals" element={<OPDVitalsPage />} />
 
-
-
-
-            {/* Patient Entity Routes */}
-            <Route path="/patient-portal/dashboard" element={<PatientDashboardPage />} />
-            <Route path="/patient-portal/appointments" element={<PatientAppointmentsPage />} />
-            <Route path="/patient-portal/opd-history/:section" element={<PatientOPDHistoryPage />} />
-            <Route path="/patient-portal/ipd-history/:section" element={<IPDOverviewPage />} />
-            <Route path="/patient-portal/ipd-history/nurse-notes" element={<NurseNotes />} />
-            <Route path="/patient-portal/ipd-history/medication" element={<IPDMedication />} />
-            <Route path="/patient-portal/ipd-history/prescription" element={<IPDPrescription />} />
-            <Route path="/patient-portal/ipd-history/consultant-register" element={<IPDConsultantRegister />} />
-            <Route path="/patient-portal/ipd-history/charges" element={<Charges />} />
-            <Route path="/patient-portal/ipd-history/operations" element={<Operations />} />
-            <Route path="/patient-portal/ipd-history/lab-investigation" element={<LabInvestigation />} />
-            <Route path="/patient-portal/ipd-history/vitals" element={<Vitals />} />
-            <Route path="/patient-portal/ipd-history/payment" element={<Payment />} />
-            <Route path="/patient-portal/ipd-history/timeline" element={<Timeline />} />
-            <Route path="/patient-portal/ipd-history/treatment-history" element={<TreatmentHistory />} />
-            <Route path="/patient-portal/ipd-history/bed-history" element={<BedHistory />} />
-
-            <Route path="/patient-portal/pharmacy" element={<Pharmacy />} />
-            <Route path="/patient-portal/pathology" element={<Pathology />} />
-            <Route path="/patient-portal/radiology" element={<Radiology />} />
-            <Route path="/patient-portal/ambulance" element={<Ambulance />} />
             {/* Pathology Routes */}
             <Route path="/admin/pathology-bills" element={<PathologyBill />} />
             <Route path="/admin/pathology-tests" element={<PathologyTest />} />
-
 
             {/* Radiology Routes */}
             <Route path="/admin/radiology-bills" element={<RadiologyBill />} />
@@ -265,7 +255,6 @@ function App() {
             <Route path="/admin/pharmacy-bills" element={<PharmacyBill />} />
             <Route path="/admin/pharmacy-bill/medicine-stock" element={<MedicineStock />} />
             <Route path="/admin/pharmacy-bill/medicine-purchase-list" element={<MedicinePurchaseList />} />
-
 
             {/* Ambulance Routes */}
             <Route path="/admin/ambulance" element={<AmbulanceCallList />} />
@@ -293,15 +282,18 @@ function App() {
             {/* Calendar Routes */}
             <Route path="/admin/Calendar" element={<CelenderPage />} />
 
+            {/* Billing Routes */}
+            <Route path="/admin/billing" element={<Billing />} />
+            <Route path="/admin/billing/details" element={<BillingDetails />} />
 
 
 
 
 
 
-
-
-
+            {/*****************************************************************************/}
+            {/*                         SETUP ROUTES                                        */}
+            {/*/*****************************************************************************/}
             {/* Bad Setup Routes */}
             <Route path="/admin/setup/bed-status" element={<BedStatus />} />
             <Route path="/admin/setup/bed" element={<BedList />} />
@@ -340,41 +332,63 @@ function App() {
             <Route path="/admin/setup/front-office/complain-type" element={<ComplaintType />} />
             <Route path="/admin/setup/front-office/source" element={<Source />} />
             <Route path="/admin/setup/operation/operation-list" element={<OperationList />} />
-            <Route path="/admin/setup/operation/operation-category" element={<OperationCategory />} />
             <Route path="/admin/setup/pharmacy/medicine-category" element={<MedicineCategory />} />
             <Route path="/admin/setup/pharmacy/supplier" element={<Supplier />} />
             <Route path="/admin/setup/pharmacy/dose-interval" element={<DoseInterval />} />
             <Route path="/admin/setup/pharmacy/medicine-dosage" element={<MedicineDosage />} />
             <Route path="/admin/setup/pharmacy/company" element={<Company />} />
             <Route path="/admin/setup/pharmacy/unit" element={<Unit />} />
-            <Route path="/admin/setup/pharmacy/dose-duration" element={<DoseDuration />} />
             <Route path="/admin/setup/pharmacy/medicine-group" element={<MedicineGroup />} />
             <Route path="/admin/setup/pathology/category" element={<PathologyCategory />} />
-            <Route path="/admin/setup/pathology/unit" element={<PathologyUnit />} />
             <Route path="/admin/setup/pathology/parameter" element={<PathologyParameter />} />
             <Route path="/admin/setup/radiology/category" element={<RadiologyCategory />} />
-            <Route path="/admin/setup/radiology/unit" element={<RadiologyUnit />} />
             <Route path="/admin/setup/radiology/parameter" element={<RadiologyParameter />} />
-            <Route path="/admin/setup/symptoms/symptoms-head" element={<SymptomsHead />} />
-            <Route path="/admin/setup/symptoms/symptoms-type" element={<SymptomsType />} />
+            <Route path="/admin/setup/symptoms" element={<Symptoms />} />
             <Route path="/admin/setup/finding" element={<FindingSetup />} />
             <Route path="/admin/setup/finding/category" element={<FindingCategory />} />
             <Route path="/admin/setup/vitals" element={<VitalList />} />
             <Route path="/admin/setup/finance/income-head" element={<IncomeHead />} />
             <Route path="/admin/setup/finance/expense-head" element={<ExpenseHead />} />
-            <Route path="/admin/setup/appointment/slots" element={<Slots />} />
-            <Route path="/admin/setup/appointment/doctor-shift" element={<DoctorShift />} />
             <Route path="/admin/setup/appointment/shift" element={<Shift />} />
             <Route path="/admin/setup/appointment/priority" element={<AppointmentPriority />} />
             <Route path="/admin/setup/inventory/item-category" element={<ItemCategory />} />
             <Route path="/admin/setup/inventory/item-store" element={<ItemStore />} />
             <Route path="/admin/setup/inventory/item-supplier" element={<ItemSupplier />} />
 
+
+
+
+
+            {/*****************************************************************************/}
+            {/*                         PATIENT ROUTES                                     */}
+            {/*****************************************************************************/}
+            {/* Patient Entity Routes */}
+            <Route path="/patient-portal/dashboard" element={<PatientDashboardPage />} />
+            <Route path="/patient-portal/appointments" element={<PatientAppointmentsPage />} />
+            <Route path="/patient-portal/opd-history/:section" element={<PatientOPDHistoryPage />} />
+            <Route path="/patient-portal/ipd-history/:section" element={<IPDOverviewPage />} />
+            <Route path="/patient-portal/ipd-history/nurse-notes" element={<NurseNotes />} />
+            <Route path="/patient-portal/ipd-history/medication" element={<IPDMedication />} />
+            <Route path="/patient-portal/ipd-history/prescription" element={<IPDPrescription />} />
+            <Route path="/patient-portal/ipd-history/consultant-register" element={<IPDConsultantRegister />} />
+            <Route path="/patient-portal/ipd-history/lab-investigation" element={<LabInvestigation />} />
+            <Route path="/patient-portal/ipd-history/operations" element={<Operations />} />
+            <Route path="/patient-portal/ipd-history/charges" element={<Charges />} />
+            <Route path="/patient-portal/ipd-history/vitals" element={<Vitals />} />
+            <Route path="/patient-portal/ipd-history/payment" element={<Payment />} />
+            <Route path="/patient-portal/ipd-history/timeline" element={<Timeline />} />
+            <Route path="/patient-portal/ipd-history/treatment-history" element={<TreatmentHistory />} />
+            <Route path="/patient-portal/ipd-history/bed-history" element={<BedHistory />} />
+            <Route path="/patient-portal/pharmacy" element={<Pharmacy />} />
+            <Route path="/patient-portal/pathology" element={<Pathology />} />
+            <Route path="/patient-portal/radiology" element={<Radiology />} />
+            <Route path="/patient-portal/ambulance" element={<Ambulance />} />
+
+
+
+
+
           </Routes>
-
-
-
-        </Routes>
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>

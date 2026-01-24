@@ -61,7 +61,23 @@ export default function OPDPaymentPage() {
                     </div>
 
                     {/* Table Actions */}
-                    
+                    <div className="px-4 md:px-6 pb-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
+                        <div className="relative w-full md:w-64">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+                            />
+                        </div>
+                        <div className="flex items-center gap-1">
+                            {[Copy, FileSpreadsheet, FileText, FilePdf, Printer].map((Icon, i) => (
+                                <button key={i} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-all">
+                                    <Icon size={18} />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
                     {/* Table */}
                     <div className="overflow-x-auto">

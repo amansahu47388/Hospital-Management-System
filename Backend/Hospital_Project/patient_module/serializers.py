@@ -1,11 +1,17 @@
 import logging
 import os
 from rest_framework import serializers
-from .models import Patient
+from .models import *
 from datetime import date
 BACKEND_URL = os.environ.get("BACKEND_URL")
 
 logger = logging.getLogger(__name__)
+
+
+
+#*******************************************************************************************************#
+#                            Patient Serializer
+#*******************************************************************************************************#
 
 class PatientSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
@@ -21,30 +27,9 @@ class PatientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Patient
-        fields = [
-            'id',
-            'first_name',
-            'last_name',
-            'full_name',
-            'email',
-            'phone',
-            'address',
-            'city',
-            'state',
-            'zip_code',
-            'date_of_birth',
-            'age',
-            'gender',
-            'blood_group',
-            'medical_history',
-            'allergies',
-            'emergency_contact_name',
-            'emergency_contact_phone',
-            'photo',
-            'created_by_name',
-            'created_at',
-            'updated_at',
-            'is_active',
+        fields = ['id','first_name', 'last_name', 'full_name', 'email', 'phone', 'address', 'city', 
+        'state', 'zip_code', 'date_of_birth', 'age', 'gender', 'blood_group', 'medical_history', 'allergies',
+         'emergency_contact_name', 'emergency_contact_phone', 'photo', 'created_by_name', 'created_at', 'updated_at', 'is_active',
         ]
         read_only_fields = [
             'id',
@@ -95,23 +80,9 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Patient
-        fields = [
-            'first_name',
-            'last_name',
-            'email',
-            'phone',
-            'address',
-            'city',
-            'state',
-            'zip_code',
-            'date_of_birth',
-            'gender',
-            'blood_group',
-            'medical_history',
-            'allergies',
-            'emergency_contact_name',
-            'emergency_contact_phone',
-            'photo',
+        fields = ['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state',
+            'zip_code', 'date_of_birth', 'gender', 'blood_group', 'medical_history', 'allergies',
+              'emergency_contact_name', 'emergency_contact_phone', 'photo',
         ]
 
     def validate_first_name(self, value):
@@ -237,3 +208,18 @@ class PatientDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = "__all__"
+
+
+
+
+
+
+#*******************************************************************************************************#
+#                            PatientVital Serializer
+#*******************************************************************************************************#
+
+class PatientVitalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientVital
+        fields = "__all__"
+        read_only_fields = ('created_by',)

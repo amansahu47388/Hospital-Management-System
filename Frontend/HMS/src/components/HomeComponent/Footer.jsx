@@ -3,7 +3,7 @@ import hospitalImage from "../../assets/hospital-management-system.jpg";
 
 function Footer() {
   return (
-    <footer className="bg-purple-100 text-gray-800 py-12">
+    <footer id="contact" className="bg-purple-100 text-gray-800 py-12">
       <div className="w-full mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Hospital Info */}

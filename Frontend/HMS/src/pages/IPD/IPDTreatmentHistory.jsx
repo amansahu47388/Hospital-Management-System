@@ -3,7 +3,7 @@ import AdminLayout from "../../layout/AdminLayout";
 import IPDTabsNavbar from "../../components/ipd/IPDTabsNavbar";
 import { ChevronLeft, ChevronRight, Edit2, Trash2, Search } from "lucide-react";
 
-export default function IPDTreatmentHistoryPage() {
+export default function IPDTreatmentHistory() {
   const [activeTab, setActiveTab] = useState("treatment-history");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,12 +92,11 @@ export default function IPDTreatmentHistoryPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
+                  <tr className="bg-gray-100 text-gray-900">
                     <th className="px-4 py-3 text-left text-sm font-semibold">IPD No</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Symptoms</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Consultant Doctor</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Bed</th>
-                    <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -112,24 +111,6 @@ export default function IPDTreatmentHistoryPage() {
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-900">{item.consultant}</td>
                         <td className="px-4 py-3 text-sm text-gray-900">{item.bed}</td>
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <button
-                              onClick={() => handleEdit(item)}
-                              className="p-2 hover:bg-blue-100 rounded-lg transition text-blue-600"
-                              title="Edit"
-                            >
-                              <Edit2 size={18} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteTreatment(item.id)}
-                              className="p-2 hover:bg-red-100 rounded-lg transition text-red-600"
-                              title="Delete"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
-                        </td>
                       </tr>
                     ))
                   ) : (
