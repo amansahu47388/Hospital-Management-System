@@ -92,7 +92,12 @@ export default function AddIpdAdmission() {
 
     try {
       const res = await getPatientDetail(p.id);
-      setPatientDetail(res.data);
+      const detail = res.data;
+      setPatientDetail(detail);
+
+      if (detail.is_admitted) {
+        notify("error", "This patient is already admitted in IPD!");
+      }
     } catch {
       notify("error", "Failed to fetch patient details");
     }
@@ -150,7 +155,8 @@ export default function AddIpdAdmission() {
       navigate("/admin/ipd-patients", { replace: true });
     } catch (err) {
       console.error("IPD CREATE ERROR:", err.response?.data || err);
-      notify("error", "Failed to create IPD");
+      const errMsg = err.response?.data?.detail || "Failed to create IPD";
+      notify("error", errMsg);
     } finally {
       setLoading(false);
     }
@@ -192,9 +198,14 @@ export default function AddIpdAdmission() {
                     key={p.id}
                     onClick={() => handleSelectPatient(p)}
                     className="px-4 py-2 text-sm cursor-pointer
-                                flex justify-between hover:bg-[#F3EEFF]"
+                                flex justify-between items-center hover:bg-[#F3EEFF]"
                   >
-                    <span>{p.first_name} {p.last_name}</span>
+                    <div className="flex flex-col">
+                      <span>{p.first_name} {p.last_name}</span>
+                      {p.is_admitted && (
+                        <span className="text-[10px] bg-red-100 text-red-600 px-1.5 rounded-full w-fit">Already Admitted</span>
+                      )}
+                    </div>
                     <span className="text-xs text-gray-400">#{p.id}</span>
                   </div>
                 ))}
