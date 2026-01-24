@@ -1,263 +1,212 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
-import OPDTabsNavbar from "../../components/OPDComponent/OPDNavbar";
-import {
-    Search,
-    Eye,
-    X,
-    ChevronDown,
-    Printer,
-    Copy,
-    FileSpreadsheet,
-    FileText,
-    FileIcon as FilePdf,
-    Edit2,
-    Trash2,
-} from "lucide-react";
+import OPDNavbar from "../../components/OPDComponent/OPDNavbar";
+import { ChevronLeft, ChevronRight, Search, Loader2 } from "lucide-react";
+import { getOpdPatientDetail, getOpdPatientList } from "../../api/opdApi";
+import { useNotify } from "../../context/NotificationContext";
 
 export default function OPDTreatmentHistory() {
-    const [showDetailModal, setShowDetailModal] = useState(false);
-    const [selectedVisit, setSelectedVisit] = useState(null);
+  const { opdId } = useParams();
+  const notify = useNotify();
+  const [activeTab, setActiveTab] = useState("treatment-history");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [treatmentHistory, setTreatmentHistory] = useState([]);
+  const [patientId, setPatientId] = useState(null);
 
-    const treatmentData = [
-        {
-            opdNo: "OPDN7607",
-            caseId: 7636,
-            date: "01/20/2026 10:02 AM",
-            symptoms: "",
-            consultant: "Sonia Bush (9002)",
-        },
-        {
-            opdNo: "OPDN7546",
-            caseId: 7574,
-            date: "12/10/2025 12:40 PM",
-            symptoms: "Feeling sad or down\nPersonality change in a way that seems different for that person.",
-            consultant: "Reyan Jain (9011)",
-        },
-        {
-            opdNo: "OPDN7416",
-            caseId: 7444,
-            date: "10/15/2025 12:00 PM",
-            symptoms: "Cramps and injuries\nMuscle pain: Muscle spasms, cramps and injuries can all cause muscle pain...",
-            consultant: "Reyan Jain (9011)",
-        },
-    ];
-
-    const handleOpenDetail = (visit) => {
-        setSelectedVisit(visit);
-        setShowDetailModal(true);
+  useEffect(() => {
+    const init = async () => {
+      if (opdId) {
+        setLoading(true);
+        try {
+          const opdRes = await getOpdPatientDetail(opdId);
+          const pid = opdRes.data.patient;
+          setPatientId(pid);
+          fetchHistory(pid);
+        } catch (error) {
+          console.error("Error initializing treatment history:", error);
+          notify("error", "Failed to load patient records");
+        } finally {
+          setLoading(false);
+        }
+      }
     };
+    init();
+  }, [opdId]);
 
-    return (
-        <AdminLayout>
-            <div className="min-h-screen bg-gray-50 pb-10">
-                <OPDTabsNavbar />
+  const fetchHistory = async (pid) => {
+    setLoading(true);
+    try {
+      const response = await getOpdPatientList({ patient_id: pid });
+      const formattedData = response.data.map(item => ({
+        id: item.opd_id,
+        opdNo: `OPD-${item.opd_id}`,
+        caseId: `CASE-${item.case_id}`,
+        appointmentDate: new Date(item.appointment_date).toLocaleDateString(),
+        symptoms: item.symptom_name || "N/A",
+        consultant: item.doctor_detail?.full_name || "N/A",
+        date: new Date(item.created_at).toLocaleDateString()
+      }));
+      setTreatmentHistory(formattedData);
+    } catch (error) {
+      console.error("Error fetching treatment history:", error);
+      notify("error", "Failed to fetch treatment history");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                {/* <div className="mx-4 md:mx-6 bg-white rounded-b-lg shadow-xl overflow-hidden min-h-[500px]"> */}
-                {/* Page Header */}
+  // Filter data based on search
+  const filteredData = treatmentHistory.filter(
+    (item) =>
+      item.opdNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.symptoms.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.consultant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.caseId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.appointmentDate.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-                <div className="p-4 md:p-6 ">
-                    <div className="bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div className="">
-                            <h2 className="text-xl font-bold text-gray-800">Treatment History</h2>
-                        </div>
-                    </div>
+  // Pagination
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
+  return (
+    <AdminLayout>
+      <div className="min-h-screen bg-gray-50 pt-1 md:pt-6 pb-6">
+        {/* Navbar */}
+        <div className="mx-4 md:mx-6">
+          <OPDNavbar activeTab={activeTab} onTabChange={setActiveTab} />
+        </div>
 
-                    {/* Table Actions */}
-                    <div className="p-4 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100 bg-white">
-                        <div className="relative w-full md:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-9 pr-4 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 transition-all text-xs"
-                            />
-                        </div>
-                        <div className="flex items-center gap-1">
-                            {[Copy, FileSpreadsheet, FileText, FilePdf, Printer].map((Icon, i) => (
-                                <button key={i} className="p-2 hover:bg-gray-100 rounded text-gray-500 transition-all">
-                                    <Icon size={14} />
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+        {/* Main Content */}
+        <div className="mx-4 md:mx-6 mt-6 ">
+          <div className="bg-white rounded-lg shadow-lg">
+            {/* Header */}
+            <div className="p-4 md:p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Treatment History</h2>
 
-                    {/* Table */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-100 text-gray-800">
-                                <tr>
-                                    <th className="px-6 py-4 text-sm font-bold">OPD No</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Case ID</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Appointment Date</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Symptoms</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Consultant Doctor</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-100">
-                                {treatmentData.map((row, i) => (
-                                    <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
-                                        <td className="px-6 py-4 text-sm font-bold text-[#3daadd] hover:underline cursor-pointer">{row.opdNo}</td>
-                                        <td className="px-6 py-4 text-sm font-semibold">{row.caseId}</td>
-                                        <td className="px-6 py-4 text-sm">
-                                            {row.date.split(' ').slice(0, 1).join(' ')}
-                                            <div className="text-[10px] text-gray-400">{row.date.split(' ').slice(1).join(' ')}</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm">
-                                            {row.symptoms}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm font-semibold">{row.consultant}</td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleOpenDetail(row)}
-                                                    className="hover:bg-blue-100 text-blue-500 px-2 py-1 rounded text-xs"
-                                                    title="Show Details"
-                                                >
-                                                    <Eye size={16} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="p-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
-                        <div>Records: 1 to {treatmentData.length} of {treatmentData.length}</div>
-                        <div className="flex gap-1">
-                            <button className="p-1 px-2 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50" disabled>&lt;</button>
-                            <button className="p-1 px-3 bg-purple-50 text-[#6046B5] border border-purple-100 rounded font-bold">1</button>
-                            <button className="p-1 px-2 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50" disabled>&gt;</button>
-                        </div>
-                    </div>
-                </div>
+              {/* Search Bar */}
+              <div className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2">
+                <Search size={20} className="text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="Search by OPD No, Symptoms, Doctor or Bed..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                />
+              </div>
             </div>
 
-            {/* Visit Detail Modal */}
-            {showDetailModal && selectedVisit && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden transform transition-all scale-100">
-                        {/* Modal Header */}
-                        <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] px-6 py-4 flex justify-between items-center">
-                            <h3 className="text-white text-xl font-bold">Visit Details</h3>
-                            <div className="flex items-center gap-4 text-white">
-                                <Printer size={20} className="hover:text-white transition-colors cursor-pointer" />
-                                <Edit2 size={20} className="hover:text-white transition-colors cursor-pointer" />
-                                <Trash2 size={20} className="hover:text-white transition-colors cursor-pointer" />
-                                <button
-                                    onClick={() => setShowDetailModal(false)}
-                                    className="text-white hover:text-white transition-colors"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-100 text-gray-900">
+                    <th className="px-4 py-3 text-left text-sm font-semibold">OPD No</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Case ID</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Appointment Date</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Symptoms</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Consultant Doctor</th>
+                
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="5" className="px-4 py-12 text-center">
+                        <div className="flex flex-col items-center gap-2 text-gray-500">
+                          <Loader2 className="animate-spin" size={32} />
+                          <span>Loading treatment history...</span>
                         </div>
+                      </td>
+                    </tr>
+                  ) : paginatedData.length > 0 ? (
+                    paginatedData.map((item) => (
+                      <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
+                        <td className="px-4 py-3 text-sm font-bold text-[#6046B5]">
+                          {item.opdNo}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600 font-medium">
+                          {item.caseId}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700 max-w-xs truncate">
+                          {item.appointmentDate}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-900 font-medium">{item.symptoms}</td>
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <span className=" text-gray-900 px-2 py-1font-medium">
+                            {item.consultant}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="px-4 py-12 text-center text-gray-500 italic">
+                        No treatment history records found for this patient.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-                        {/* Modal Body */}
-                        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-                            <div className="space-y-4">
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Case ID</span>
-                                    <span className="text-sm text-gray-600">{selectedVisit.caseId}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">OPD No</span>
-                                    <span className="text-sm text-gray-600">{selectedVisit.opdNo}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Patient Name</span>
-                                    <span className="text-sm text-gray-600 font-bold">Jagat Nawal (1071)</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Guardian Name</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Marital Status</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Email</span>
-                                    <span className="text-sm text-[#3daadd]">nitni25@gmail.com</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Age</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Known Allergies</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Case</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Reference</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Consultant Doctor</span>
-                                    <span className="text-sm text-gray-600">{selectedVisit.consultant}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Symptoms</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Recheckup ID</span>
-                                    <span className="text-sm text-gray-600 font-bold">CHKID7610</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Old Patient</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2 pt-4">
-                                    {/* Empty space matching screenshot layout */}
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Gender</span>
-                                    <span className="text-sm text-gray-600">Male</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Phone</span>
-                                    <span className="text-sm text-gray-600">96636652541</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Address</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Blood Group</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Appointment Date</span>
-                                    <span className="text-sm text-gray-600">{selectedVisit.date}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Casualty</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">TPA</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-50 pb-2">
-                                    <span className="font-bold text-sm text-gray-800">Note</span>
-                                    <span className="text-sm text-gray-600"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            {/* Footer */}
+            {filteredData.length > 0 && (
+              <div className="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="text-sm text-gray-600">
+                  Records: {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
+                  {filteredData.length}
                 </div>
+
+                <div className="flex items-center gap-4">
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(parseInt(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
+                    >
+                      <ChevronLeft size={20} className="text-gray-600" />
+                    </button>
+                    <span className="text-sm font-bold text-[#6046B5] bg-purple-50 w-8 h-8 flex items-center justify-center rounded-full border border-purple-100">
+                      {currentPage}
+                    </span>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages || totalPages === 0}
+                      className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
+                    >
+                      <ChevronRight size={20} className="text-gray-600" />
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
-        </AdminLayout>
-    );
+          </div>
+        </div>
+      </div>
+    </AdminLayout>
+  );
 }

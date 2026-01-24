@@ -36,7 +36,11 @@ class OpdPatientListAPIView(generics.ListAPIView):
             "patient", "doctor", "created_by", "symptom"
         ).order_by("-created_at")
 
+        patient_id = self.request.query_params.get("patient_id")
         tab = self.request.query_params.get("tab")
+
+        if patient_id:
+            qs = qs.filter(patient_id=patient_id)
 
         if tab == "today":
             qs = qs.filter(appointment_date__date=now().date())
