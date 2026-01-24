@@ -4,10 +4,8 @@ export const createOpdPatient = (data) => {
   return api.post("opd/create/", data);
 };
 
-export const getOpdPatientList = (tab) => {
-  return api.get("opd/", {
-    params: { tab },
-  });
+export const getOpdPatientList = (params = {}) => {
+  return api.get("opd/", { params });
 };
 
 export const getOpdPatientDetail = (opdId) => {

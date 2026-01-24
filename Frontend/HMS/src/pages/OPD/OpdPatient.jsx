@@ -42,7 +42,7 @@ export default function OpdPatient() {
   const fetchOpd = async () => {
     try {
       setLoading(true);
-      const res = await getOpdPatientList(activeTab);
+      const res = await getOpdPatientList({ tab: activeTab });
       setOpdList(res.data);
     } catch (err) {
       console.error(err);
@@ -122,8 +122,8 @@ export default function OpdPatient() {
                     key={tab.value}
                     onClick={() => setActiveTab(tab.value)}
                     className={`pb-2 transition-colors duration-200 ${activeTab === tab.value
-                        ? "text-[#6046B5] border-b-2 border-[#6046B5] font-semibold"
-                        : "text-gray-600 hover:text-[#6046B5]"
+                      ? "text-[#6046B5] border-b-2 border-[#6046B5] font-semibold"
+                      : "text-gray-600 hover:text-[#6046B5]"
                       }`}
                   >
                     {tab.label}
