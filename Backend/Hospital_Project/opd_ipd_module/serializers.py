@@ -305,7 +305,7 @@ class IpdPatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpdPatient
         fields = [
-            'ipd_id', 'patient', 'patient_detail', 'appointment_date', 'doctor', 'doctor_detail', 'bed' , 'discharge_date',
+            'ipd_id', 'patient', 'patient_detail', 'admission_date', 'doctor', 'doctor_detail', 'bed' , 'discharge_date',
             'symptom', 'symptom_name', 'allergies','checkup_id', 'case_id', 'old_patient', 'casualty', 'reference', 'previous_medical_issue', 
             'credit_limit', 'created_by', 'created_at', 'updated_at'
         ]
@@ -316,10 +316,11 @@ class IpdPatientCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpdPatient
         fields = [
-            'patient', 'appointment_date', 'doctor','allergies', 'symptom', 'bed', 'credit_limit' , 'case_id',
+            'patient', 'admission_date', 'doctor','allergies', 'symptom', 'bed', 'credit_limit' , 'case_id',
             'old_patient', 'casualty', 'reference', 'previous_medical_issue',
         ]
 
+    @transaction.atomic
     def create(self, validated_data):
         max_id = IpdPatient.objects.aggregate(max_id=models.Max('ipd_id'))['max_id'] or 0
         next_id = max_id + 1
@@ -328,7 +329,14 @@ class IpdPatientCreateSerializer(serializers.ModelSerializer):
         if not validated_data.get("checkup_id"):
              validated_data["checkup_id"] = f"CHK-IPD{next_id:04d}"
              
-        return super().create(validated_data)
+        instance = super().create(validated_data)
+        
+        # Mark bed as occupied
+        if instance.bed:
+            instance.bed.status = "occupied"
+            instance.bed.save()
+            
+        return instance
 
 
 class IpdPatientListSerializer(serializers.ModelSerializer):
@@ -341,7 +349,7 @@ class IpdPatientListSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpdPatient
         fields = [
-            "ipd_id","case_id","patient_detail","appointment_date","case_id","doctor_detail","bed","symptom_name",
+            "ipd_id","case_id","patient_detail","admission_date","case_id","doctor_detail","bed","symptom_name",
             "previous_medical_issue","credit_limit","created_by","created_at",
         ]
 
@@ -351,9 +359,29 @@ class IpdPatientUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpdPatient
         fields = [
-            'appointment_date', 'doctor','allergies','symptom', 'bed','old_patient','casualty','reference','previous_medical_issue',
+            'admission_date', 'doctor','allergies','symptom', 'bed','old_patient','casualty','reference','previous_medical_issue',
             "credit_limit","created_by","created_at",
         ]
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        old_bed = instance.bed
+        new_bed = validated_data.get('bed')
+
+        # Proceed with update
+        instance = super().update(instance, validated_data)
+
+        # Handle bed status change
+        if 'bed' in validated_data:
+            if old_bed and old_bed != new_bed:
+                old_bed.status = "available"
+                old_bed.save()
+            
+            if new_bed:
+                new_bed.status = "occupied"
+                new_bed.save()
+
+        return instance
 
 
 class IpdDischargeSerializer(serializers.ModelSerializer):
@@ -416,7 +444,7 @@ class IpdDischargedListSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpdPatient
         fields = [
-            "ipd_id","case_id","patient_detail","doctor_detail","created_by","appointment_date", "discharge_date","credit_limit","discharge",
+            "ipd_id","case_id","patient_detail","doctor_detail","created_by","admission_date", "discharge_date","credit_limit","discharge",
         ]
 
     def get_discharge(self, obj):

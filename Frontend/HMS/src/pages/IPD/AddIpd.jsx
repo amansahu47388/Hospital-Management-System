@@ -37,13 +37,14 @@ export default function AddIpdAdmission() {
     symptom: "",
     symptom_description: "",
     bed: "",
-    appointment_date: "",
+    admission_date: "",
     allergies: "",
     previous_medical_issue: "",
     reference: "",
     credit_limit: "20000",
     old_patient: false,
     casualty: false,
+    bed_type: "",
   });
 
   /* ================= INPUT HANDLER ================= */
@@ -138,7 +139,7 @@ export default function AddIpdAdmission() {
       doctor: formData.doctor,
       symptom: formData.symptom || null,
       bed: formData.bed || null,
-      appointment_date: formData.appointment_date || null,
+      admission_date: formData.admission_date || null,
       total_amount: Number(formData.total_amount || 0),
       old_patient: Boolean(formData.old_patient),
       casualty: Boolean(formData.casualty),
@@ -402,15 +403,15 @@ export default function AddIpdAdmission() {
                 {/* RIGHT */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Appointment Date</label>
+                    <label className="block text-sm font-medium mb-1">Admission Date</label>
                     <input
                       type="datetime-local"
                       className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                      value={formatDateTimeLocal(formData.appointment_date)}
+                      value={formatDateTimeLocal(formData.admission_date)}
                       onChange={(e) =>
                         setFormData(prev => ({
                           ...prev,
-                          appointment_date: e.target.value
+                          admission_date: e.target.value
                         }))
                       }
                     />
@@ -485,16 +486,22 @@ export default function AddIpdAdmission() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-1">Bad Type</label>
+                    <label className="block text-sm font-medium mb-1">Bed Type & Floor</label>
                     <select
-                      name="bed"
-                      value={formData.bed}
-                      onChange={handleInputChange}
-                      className="w-full border px-3 py-2 rounded">
-                      <option value="">Select Bed</option>
-                      {beds.map(bad => (
-                        <option key={bad.id} value={bad.id}>
-                          {bad.bed_type} - {bad.bed_number}
+                      className="w-full border px-3 py-2 rounded"
+                      value={formData.bed_type}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          bed_type: e.target.value,
+                          bed: ""
+                        }));
+                      }}
+                    >
+                      <option value="">Select</option>
+                      {[...new Set(beds.filter(b => b.status === "available").map(b => `${b.bed_type} - ${b.floor || ""}`))].map(label => (
+                        <option key={label} value={label}>
+                          {label}
                         </option>
                       ))}
                     </select>
@@ -503,16 +510,20 @@ export default function AddIpdAdmission() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Bed Name</label>
                     <select
-                      name="bad"
-                      value={formData.bad}
+                      name="bed"
+                      value={formData.bed}
                       onChange={handleInputChange}
-                      className="w-full border px-3 py-2 rounded">
-                      <option value="">Select Bed Name</option>
-                      {beds.map(bed => (
-                        <option key={bed.id} value={bed.bed_name}>
-                          {bed.bed_name}
-                        </option>
-                      ))}
+                      disabled={!formData.bed_type}
+                      className="w-full border px-3 py-2 rounded"
+                    >
+                      <option value="">Select</option>
+                      {beds
+                        .filter(b => b.status === "available" && `${b.bed_type} - ${b.floor || ""}` === formData.bed_type)
+                        .map(b => (
+                          <option key={b.id} value={b.id}>
+                            {b.bed_name}
+                          </option>
+                        ))}
                     </select>
                   </div>
 

@@ -1,61 +1,25 @@
-import React, { useState } from "react";
-import { X, Pencil, Trash } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { deleteOpdPatient } from "../../api/opdApi";
+import React from "react";
+import { X } from "lucide-react";
 
-export default function OPDVisitDetail({ open, onClose, opd, onDelete }) {
-    const navigate = useNavigate();
-    const [deleting, setDeleting] = useState(false);
+export default function OPDVisitDetail({ open, onClose, opd }) {
   if (!open || !opd) return null;
-
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this OPD?")) return;
-
-    try {
-      setDeleting(true);
-      const res = await deleteOpdPatient(id);
-      if (onDelete) onDelete(id);
-      alert(res.data?.detail || "OPD deleted");
-      onClose();
-    } catch (err) {
-      const msg = err.response?.data?.detail || err.response?.data || err.message || "Delete failed";
-      alert(msg);
-    } finally {
-      setDeleting(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       {/* PANEL */}
       <div className="bg-white w-[98%] md:w-[90%] lg:w-[80%] rounded-lg shadow-lg overflow-y-auto max-h-[90vh] mx-auto">
-        
+
         {/* HEADER */}
         <div className="flex justify-between items-center px-6 py-4 sticky top-0 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
           <h2 className="text-lg font-semibold">Visit Details</h2>
           <div className="flex gap-3">
-            <button className="cursor-pointer hover:opacity-80 title-edit"
-            title="Edit"
-            onClick={() => navigate(`/admin/opd-patients/${opd.opd_id}/update`)}>
-            <Pencil  size={18} />
-            </button>
-            <button
-              title="Delete OPD"
-              className={`cursor-pointer hover:opacity-80 ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
-              onClick={() => handleDelete(opd.opd_id)}
-              disabled={deleting}
-            >
-              <Trash size={18} />
-            </button>
             <button
               title="Close"
-              className="cursor-pointer hover:opacity-80" size={18}
+              className="cursor-pointer hover:opacity-80"
               onClick={onClose}
             >
               <X size={18} />
             </button>
-           
           </div>
         </div>
 

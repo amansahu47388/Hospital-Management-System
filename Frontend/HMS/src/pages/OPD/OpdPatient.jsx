@@ -2,11 +2,13 @@ import React, { useState, useMemo } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
-import { Plus, FileText, FileSpreadsheet, Printer, File, Eye, Share2, X, Calendar, User, Phone, Mail, MapPin, Info, CheckCircle } from "lucide-react";
-import { getOpdPatientList } from "../../api/opdApi";
+import { Plus, FileText, FileSpreadsheet, Printer, File, Eye, Share2, Pencil, Trash2 } from "lucide-react";
+import { getOpdPatientList, deleteOpdPatient } from "../../api/opdApi";
 import { getPatientList } from "../../api/patientApi";
 import { useEffect } from "react";
 import OPDVisitDetail from "../../components/OPDComponent/OPDVisitDetail";
+import MovePatientModal from "./movetoIPD";
+import { useNotify } from "../../context/NotificationContext";
 
 const tabs = [
   { label: "Today OPD", value: "today" },
@@ -18,6 +20,7 @@ const tabs = [
 
 export default function OpdPatient() {
   const navigate = useNavigate();
+  const notify = useNotify();
   const [activeTab, setActiveTab] = useState("today");
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(100);
@@ -28,6 +31,7 @@ export default function OpdPatient() {
   const [selectedOpd, setSelectedOpd] = useState(null);
   const [showMoveModal, setShowMoveModal] = useState(false);
   const [selectedMovePatient, setSelectedMovePatient] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (activeTab === "patient") {
@@ -103,6 +107,23 @@ export default function OpdPatient() {
   }, [search, patientList]);
 
 
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this OPD?")) return;
+
+    try {
+      setDeleting(true);
+      const res = await deleteOpdPatient(id);
+      setOpdList(prev => prev.filter(item => item.opd_id !== id));
+      notify("success", res.data?.detail || "OPD deleted successfully");
+    } catch (err) {
+      console.error("Delete error:", err);
+      const msg = err.response?.data?.detail || "Failed to delete OPD";
+      notify("error", msg);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
@@ -268,7 +289,7 @@ export default function OpdPatient() {
                         <td className="p-4">{opd.symptom_name || "-"}</td>
                         <td className="p-4">{opd.old_patient ? "Yes" : "No"}</td>
                         <td className="p-4">{opd.previous_medical_issue || "-"}</td>
-                        <td className="p-4">
+                        <td className="p-4 flex gap-2">
                           <button
                             className=" hover:text-blue-600 text-sm"
                             title="view"
@@ -277,17 +298,31 @@ export default function OpdPatient() {
                               setShowDetail(true);
                             }}
                           >
-                            <Eye />
+                            <Eye size={16} />
+                          </button>
+                          <button className="cursor-pointer hover:opacity-80"
+                            title="Update"
+                            onClick={() => navigate(`/admin/opd-patients/${opd.opd_id}/update`)}>
+                            <Pencil size={16} />
+                          </button>
+
+                          <button
+                            title="Delete OPD"
+                            className={`cursor-pointer hover:opacity-80 ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            onClick={() => handleDelete(opd.opd_id)}
+                            disabled={deleting}
+                          >
+                            <Trash2 size={16} />
                           </button>
                           <button
-                            className=" hover:text-blue-600 text-sm ml-2"
+                            className=" hover:text-blue-600 text-sm"
                             title="Move in IPD"
                             onClick={() => {
                               setSelectedMovePatient(opd);
                               setShowMoveModal(true);
                             }}
                           >
-                            <Share2 size={18} />
+                            <Share2 size={16} />
                           </button>
                         </td>
 
@@ -311,176 +346,8 @@ export default function OpdPatient() {
           </div>
         </main>
       </div>
-      <OPDVisitDetail open={showDetail} opd={selectedOpd} onClose={() => setShowDetail(false)} onDelete={(id) => setOpdList(prev => prev.filter(item => item.opd_id !== id))} />
-
-      {/* Move Patient to IPD Modal */}
-      {showMoveModal && selectedMovePatient && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl my-8 overflow-hidden transform transition-all scale-100 flex flex-col h-fit lg:h-auto max-h-[90vh]">
-            {/* Modal Header */}
-            <div className="bg-[#3daadd] px-6 py-4 flex justify-between items-center flex-shrink-0">
-              <h3 className="text-white text-xl font-bold">Move Patient to IPD</h3>
-              <button
-                onClick={() => setShowMoveModal(false)}
-                className="text-white hover:text-white transition-colors"
-              >
-                <X size={28} />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto p-0 lg:p-0 flex flex-col lg:flex-row">
-              {/* Left Column: Patient Info */}
-              <div className="w-full lg:w-2/5 p-6 lg:border-r border-gray-100 bg-gray-50/30">
-                <div className="flex flex-col md:flex-row gap-6 mb-8">
-                  <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-300 flex-shrink-0 overflow-hidden text-gray-400 text-[10px] text-center px-1 font-bold">
-                    NO IMAGE AVAILABLE
-                  </div>
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-bold text-gray-800">
-                      {selectedMovePatient.patient_detail.first_name} {selectedMovePatient.patient_detail.last_name} ({selectedMovePatient.patient_detail.id})
-                    </h2>
-                    <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-600">
-                      <div className="flex items-center gap-1.5 font-bold"><User size={14} className="text-gray-400" /> {selectedMovePatient.patient_detail.gender}</div>
-                      <div className="flex items-center gap-1.5 font-bold"><Calendar size={14} className="text-gray-400" /> {selectedMovePatient.patient_detail.age} Year, 0 Month, 0 Day</div>
-                    </div>
-                    <div className="space-y-1.5 text-sm text-gray-600">
-                      <div className="flex items-center gap-1.5 font-bold"><Phone size={14} className="text-gray-400" /> {selectedMovePatient.patient_detail.phone}</div>
-                      <div className="flex items-center gap-1.5 font-bold"><Mail size={14} className="text-gray-400" /> {selectedMovePatient.patient_detail.email}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  {[
-                    { label: "Any Known Allergies", value: selectedMovePatient.patient_detail.known_allergies },
-                    { label: "Remarks", value: "" },
-                    { label: "TPA", value: selectedMovePatient.patient_detail.tpa },
-                    { label: "TPA ID", value: selectedMovePatient.patient_detail.tpa_id },
-                    { label: "TPA Validity", value: "" },
-                    { label: "National Identification Number", value: "" },
-                  ].map((field, idx) => (
-                    <div key={idx} className="flex flex-col gap-1">
-                      <span className="text-sm font-bold text-gray-800">{field.label}</span>
-                      <span className="text-sm text-gray-500 min-h-[1.25rem]">{field.value || ""}</span>
-                    </div>
-                  ))}
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-gray-700">Symptoms Type</label>
-                      <input type="text" className="w-full p-2 border border-blue-100 bg-white rounded outline-none h-10 shadow-sm" />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-gray-700">Symptoms Title</label>
-                      <input type="text" className="w-full p-2 border border-blue-100 bg-white rounded outline-none h-10 shadow-sm" />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-gray-700">Symptoms Description</label>
-                      <textarea className="w-full p-2 border border-blue-100 bg-white rounded outline-none h-10 shadow-sm resize-none" />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-1.5 mt-4">
-                    <label className="text-xs font-bold text-gray-700">Note</label>
-                    <textarea className="w-full p-2 border border-blue-100 bg-white rounded outline-none h-10 shadow-sm resize-none" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Admission Form */}
-              <div className="w-full lg:w-3/5 p-6 space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Admission Date <span className="text-red-500">*</span></label>
-                    <div className="relative">
-                      <input type="text" defaultValue="01/20/2026 10:02 AM" className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm" />
-                      <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                    </div>
-                  </div>
-                  <div className="col-span-full flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Case</label>
-                    <input type="text" className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm" />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Casualty</label>
-                    <select className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm bg-whiteappearance-none cursor-pointer">
-                      <option>No</option>
-                      <option>Yes</option>
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Old Patient</label>
-                    <select className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm bg-white appearance-none cursor-pointer">
-                      <option>No</option>
-                      <option>Yes</option>
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Credit Limit ($) <span className="text-red-500">*</span></label>
-                    <input type="text" defaultValue="20000" className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm" />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Reference</label>
-                    <input type="text" className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm" />
-                  </div>
-
-                  <div className="col-span-full flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Consultant Doctor <span className="text-red-500">*</span></label>
-                    <select className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm bg-white appearance-none cursor-pointer">
-                      <option>{selectedMovePatient.doctor_detail?.full_name || "Select"}</option>
-                    </select>
-                  </div>
-
-                  <div className="col-span-full flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Bed Group</label>
-                    <select className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm bg-white appearance-none cursor-pointer font-bold">
-                      <option>Select</option>
-                    </select>
-                  </div>
-
-                  <div className="col-span-full flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Bed Number <span className="text-red-500">*</span></label>
-                    <select className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm bg-white appearance-none cursor-pointer">
-                      <option>Select</option>
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-700">Live Consultation</label>
-                    <select className="w-full p-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#3daadd] outline-none text-sm h-10 shadow-sm bg-white appearance-none cursor-pointer">
-                      <option>No</option>
-                      <option>Yes</option>
-                    </select>
-                  </div>
-                  <div className="flex items-center gap-2 pt-6">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300" />
-                    <label className="text-xs font-bold text-gray-700">Is For Antenatal</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0">
-              <button
-                onClick={() => setShowMoveModal(false)}
-                className="px-6 py-2 rounded text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-[#3daadd] hover:bg-[#3498c5] text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-sm"
-              >
-                <CheckCircle size={16} />
-                Move
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <OPDVisitDetail open={showDetail} opd={selectedOpd} onClose={() => setShowDetail(false)} />
+      <MovePatientModal open={showMoveModal} patient={selectedMovePatient} onClose={() => setShowMoveModal(false)} />
 
     </div>
   );

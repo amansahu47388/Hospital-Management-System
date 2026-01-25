@@ -186,7 +186,7 @@ function AddDischargePatient({ open, onClose, ipd, onDischarged }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white w-[95%] lg:w-[80%] rounded-lg shadow max-h-[90vh] overflow-y-auto">
+      <div className="bg-white w-[95%] lg:w-[70%] rounded-lg shadow max-h-[90vh] overflow-y-auto">
 
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">

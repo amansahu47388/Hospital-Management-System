@@ -171,7 +171,7 @@ class PharmacyPurchase(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.id
+        return f"Purchase-{self.id}"
 
 
 
@@ -209,7 +209,7 @@ class PharmacyBill(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.id
+        return f"Bill-{self.id}"
 
 
 

@@ -154,33 +154,60 @@ class PatientDeleteView(APIView):
     def delete(self, request, patient_id):
         try:
             logger.info(f"🗑️ Deleting patient {patient_id}")
-            
-            patient = Patient.objects.get(id=patient_id, is_active=True)
+
+            # Fetch patient
+            try:
+                patient = Patient.objects.get(id=patient_id, is_active=True)
+            except Patient.DoesNotExist:
+                return Response(
+                    {"detail": "Patient not found."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
             patient_name = patient.full_name
-            
+
+            # Check OPD / IPD
+            from opd_ipd_module.models import OpdPatient, IpdPatient
+            if OpdPatient.objects.filter(patient=patient).exists():
+                return Response(
+                    {"detail": "Patient has OPD records. Delete them first."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if IpdPatient.objects.filter(patient=patient).exists():
+                return Response(
+                    {"detail": "Patient has IPD records. Delete them first."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Check Pharmacy Bills
+            from pharmacy_module.models import PharmacyBill
+            if PharmacyBill.objects.filter(patient=patient).exists():
+                return Response(
+                    {"detail": "Patient has pharmacy bills. Delete them first."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             # Hard delete
             patient.delete()
-            
-            logger.info(f"✅ Patient {patient_id} ({patient_name}) deleted successfully")
+
+            logger.info(f"✅ Patient {patient_id} deleted")
+
             return Response(
-                {
-                    "detail": f"Patient {patient_name} has been permanently deleted.",
-                    "id": patient_id
-                },
+                {"detail": "Patient deleted successfully."},
                 status=status.HTTP_200_OK
             )
-        except Patient.DoesNotExist:
-            logger.warning(f"❌ Patient {patient_id} not found")
-            return Response(
-                {"detail": "Patient not found."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+
         except Exception as e:
-            logger.error(f"❌ Error deleting patient {patient_id}: {str(e)}", exc_info=True)
+            # Full error only in server logs
+            logger.error(f"❌ Delete patient error: {str(e)}", exc_info=True)
+
+            # Simple message to frontend
             return Response(
-                {"detail": f"Error deleting patient: {str(e)}"},
+                {"detail": "Unable to delete patient right now. Please try again later."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
 class PatientSearchView(APIView):
     permission_classes = [permissions.IsAuthenticated]

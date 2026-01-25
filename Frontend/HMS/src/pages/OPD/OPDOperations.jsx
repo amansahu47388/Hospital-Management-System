@@ -2,10 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import OPDNavbar from "../../components/OPDComponent/OPDNavbar";
-import {
-    Search, Plus, Edit2, Trash2, Eye, FileText, Download, Copy, FileSpreadsheet, FileIcon as FilePdf,
-    X, Save, ChevronDown, Printer, CheckCircle, Loader2
-} from "lucide-react";
+import {Plus, Edit2, Trash2, Eye, FileText,FileIcon as FilePdf, X, Save, Printer, Loader2} from "lucide-react";
 import {
     getPatientOperations,
     createPatientOperation,

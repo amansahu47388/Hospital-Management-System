@@ -7,7 +7,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import ProfileDropdown from "./AdminProfileDropDown";
-import BedStatusModal from "./BedStatusModal";
+import BedStatusModal from "./BedStatus";
 
 function Navbar({ role = "admin" }) {
   const user = {

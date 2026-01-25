@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {getPatientList,deletePatient,searchPatient} from "../../api/patientApi";
+import { getPatientList, deletePatient, searchPatient } from "../../api/patientApi";
 import { useNotify } from "../../context/NotificationContext";
 import { useAuth } from "../../context/AuthContext";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import AddPatient from "../../components/PatientComponent/AddPatient";
-import { Eye } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import UpdatePatient from "../../components/PatientComponent/UpdatePatient";
 
 function PatientDashboard() {
   const [openAdd, setOpenAdd] = useState(false);
@@ -17,13 +18,15 @@ function PatientDashboard() {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
 
   // selection
   const [selectedPatients, setSelectedPatients] = useState([]);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(null);
 
-  const isAdmin = user?.is_staff;
+  const isAdmin = user?.is_staff || user?.role === "admin" || user?.is_superuser;
 
   useEffect(() => {
     fetchPatients();
@@ -107,6 +110,24 @@ function PatientDashboard() {
     }
   };
 
+  const handleDeleteSingle = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this patient?")) return;
+
+    try {
+      setDeleteLoading(id);
+      await deletePatient(id);
+      setPatients((prev) => prev.filter((p) => p.id !== id));
+      setSelectedPatients((prev) => prev.filter((pId) => pId !== id));
+      notify("success", "Patient deleted successfully");
+    } catch (err) {
+      console.error("Delete error:", err);
+      const msg = err.response?.data?.detail || "Failed to delete patient";
+      notify("error", msg);
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+
   return (
     <div className="h-screen w-screen flex bg-gray-100 overflow-hidden">
       <Sidebar />
@@ -126,10 +147,10 @@ function PatientDashboard() {
                 {isAdmin && (
                   <button
                     onClick={handleDeleteSelected}
-                    // disabled={selectedPatients.length === 0 || bulkDeleteLoading}
                     className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                                text-white text-sm px-4 py-2 rounded
                                hover:shadow-lg transition disabled:opacity-60"
+                    disabled={selectedPatients.length === 0 || bulkDeleteLoading}
                   >
                     {bulkDeleteLoading
                       ? "Deleting..."
@@ -232,7 +253,7 @@ function PatientDashboard() {
                       </td>
 
                       {/* ACTIONS → DIRECT NAVIGATION */}
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 flex gap-2">
                         <button
                           onClick={() =>
                             navigate(`/admin/patients/${patient.id}`)
@@ -240,8 +261,29 @@ function PatientDashboard() {
                           className="text-xl text-gray-600 hover:text-gray-900"
                           title="View"
                         >
-                          <Eye />
+                          <Eye size={16} />
                         </button>
+                        <button
+                          onClick={() => {
+                            setSelectedPatientId(patient.id);
+                            setOpenUpdate(true);
+                          }}
+                          className="text-xl text-gray-600 hover:text-gray-900"
+                          title="Edit"
+                        >
+                          <Pencil size={16} />
+                        </button>
+
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeleteSingle(patient.id)}
+                            className={`text-xl text-gray-600 hover:text-red-600 ${deleteLoading === patient.id ? 'opacity-50 pointer-events-none' : ''}`}
+                            title="Delete"
+                            disabled={deleteLoading === patient.id}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -250,8 +292,22 @@ function PatientDashboard() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+      </div >
+      {/* UPDATE PATIENT MODAL - Only opens when edit button is clicked */}
+      {
+        openUpdate && selectedPatientId && (
+          <UpdatePatient
+            open={openUpdate}
+            patientId={selectedPatientId}
+            onClose={() => {
+              setOpenUpdate(false);
+              setSelectedPatientId(null);
+              fetchPatients(); // Refresh patient data after update
+            }}
+          />
+        )
+      }
+    </div >
   );
 }
 

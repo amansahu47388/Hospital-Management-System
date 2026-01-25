@@ -339,7 +339,26 @@ class BedAPI(APIView):
     def get(self, request):
         beds = Bed.objects.all().order_by("bed_name")
         serializer = BedSerializer(beds, many=True)
-        return Response(serializer.data)
+        data = serializer.data
+        
+        # Add patient info for occupied beds
+        try:
+            from opd_ipd_module.models import IpdPatient
+            active_ipd = IpdPatient.objects.filter(is_discharged=False, bed__isnull=False).select_related('patient')
+            bed_patient_map = {ipd.bed_id: ipd for ipd in active_ipd}
+            
+            for item in data:
+                ipd = bed_patient_map.get(item['id'])
+                if ipd:
+                    item['patient_name'] = f"{ipd.patient.first_name} {ipd.patient.last_name}"
+                    item['ipd_id'] = ipd.ipd_id
+                else:
+                    item['patient_name'] = None
+                    item['ipd_id'] = None
+        except Exception as e:
+            print("Error fetching patient info for beds:", e)
+            
+        return Response(data)
 
     def post(self, request):
         serializer = BedSerializer(data=request.data)
@@ -607,12 +626,18 @@ class HospitalChargesListAPIView(APIView):
         )
 
 
-class BedListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+# class BedListAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        data = list(Bed.objects.values("id", "bed_name", "bed_type", "bed_group", "status", "floor"))
-        return Response(data)
+#     def get(self, request):
+#         status_filter = request.query_params.get('status')
+#         beds_qs = Bed.objects.all()
+        
+#         if status_filter:
+#             beds_qs = beds_qs.filter(status=status_filter)
+            
+#         data = list(beds_qs.values("id", "bed_name", "bed_type", "bed_group", "status", "floor"))
+#         return Response(data)
 
 
 class ChargeCategoryListAPIView(APIView):

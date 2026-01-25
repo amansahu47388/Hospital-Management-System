@@ -162,6 +162,11 @@ class IpdPatientDeleteAPIView(generics.DestroyAPIView):
             return Response({"detail": "IPD not found."}, status=status.HTTP_404_NOT_FOUND)
 
         try:
+            # Free the bed before deletion
+            if instance.bed:
+                instance.bed.status = "available"
+                instance.bed.save()
+                
             instance.delete()
             return Response({"detail": "IPD deleted successfully."}, status=status.HTTP_200_OK)
         except ProtectedError:

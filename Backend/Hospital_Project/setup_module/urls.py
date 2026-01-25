@@ -119,7 +119,6 @@ urlpatterns = [
 
     path("charges/", HospitalChargesListAPIView.as_view(), name="hospital-charges-list"),
     path("symptoms/", SymptomListAPIView.as_view(), name="symptom-list"),
-    path("beds/", BedListAPIView.as_view(), name="bed-list"),
+    # path("beds/", BedListAPIView.as_view(), name="bed-list"),
     
 ]
-
