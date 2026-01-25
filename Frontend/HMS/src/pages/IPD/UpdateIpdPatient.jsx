@@ -25,7 +25,7 @@ export default function UpdateIpdPatient() {
     symptom: "",
     symptom_type: "",
     symptom_description: "",
-    appointment_date: "",
+    admission_date: "",
     old_patient: false,
     casualty: false,
     reference: "",
@@ -57,7 +57,7 @@ export default function UpdateIpdPatient() {
         patient: ipd.patient || "",
         doctor: ipd.doctor || "",
         symptom: ipd.symptom || "",
-        appointment_date: ipd.appointment_date || "",
+        admission_date: ipd.admission_date || "",
         old_patient: ipd.old_patient || false,
         casualty: ipd.casualty || false,
         reference: ipd.reference || "",
@@ -65,6 +65,7 @@ export default function UpdateIpdPatient() {
         allergies: ipd.allergies || "",
         credit_limit: ipd.credit_limit || "",
         bed: ipd.bed?.id || "",
+        bed_type: ipd.bed ? `${ipd.bed.bed_type} - ${ipd.bed.floor || ""}` : "",
         symptom_type: ipd.symptom_name || "",
         symptom_description: "",
         case_id: ipd.case_id || "",
@@ -131,7 +132,7 @@ export default function UpdateIpdPatient() {
         <div
           className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                       px-4 py-3 flex items-center relative">
-
+          <h2 className="text-white text-lg font-semibold">Update IPD Patient</h2>
           <div className="ml-auto flex items-center gap-3">
             <button
               onClick={() => setIsAddPatientOpen(true)}
@@ -222,14 +223,14 @@ export default function UpdateIpdPatient() {
                       <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         placeholder="Any Known Allergies"
                         value={formData.allergies}
-                        onChange={(e) => update("allergies", e.target.value)}
+                        onChange={(e) => handleChange("allergies", e.target.value)}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Previous Medical Issue</label>
                       <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
-                        value={formData.previousIssue}
-                        onChange={(e) => update("previousIssue", e.target.value)}
+                        value={formData.previous_medical_issue}
+                        onChange={(e) => handleChange("previous_medical_issue", e.target.value)}
                       />
                     </div>
                   </div>
@@ -238,15 +239,15 @@ export default function UpdateIpdPatient() {
                 {/* RIGHT */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Appointment Date</label>
+                    <label className="block text-sm font-medium mb-1">Admission Date</label>
                     <input
                       type="datetime-local"
                       className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
-                      value={formatDateTimeLocal(formData.appointment_date)}
+                      value={formatDateTimeLocal(formData.admission_date)}
                       onChange={(e) =>
                         setFormData(prev => ({
                           ...prev,
-                          appointment_date: e.target.value
+                          admission_date: e.target.value
                         }))
                       }
                     />
@@ -265,7 +266,7 @@ export default function UpdateIpdPatient() {
                     <select
                       name="doctor"
                       value={formData.doctor}
-                      onChange={handleChange}
+                      onChange={(e) => handleChange("doctor", e.target.value)}
                       className="w-full border px-3 py-2 rounded"
                       required
                     >
@@ -315,7 +316,7 @@ export default function UpdateIpdPatient() {
                       <label className="block text-sm font-medium mb-1">Reference</label>
                       <input placeholder="Reference" className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.reference}
-                        onChange={(e) => update("reference", e.target.value)}
+                        onChange={(e) => handleChange("reference", e.target.value)}
                       />
                     </div>
                     <div>
@@ -335,14 +336,23 @@ export default function UpdateIpdPatient() {
                       <label className="block text-sm font-medium mb-1">Bed Type</label>
                       <select
                         className="w-full border px-3 py-2"
-                        value={formData.bed}
-                        onChange={(e) => handleChange("bed", e.target.value)}
+                        value={formData.bed_type}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            bed_type: e.target.value,
+                            bed: ""
+                          }));
+                        }}
                       >
-                        {beds.map(b => (
-                          <option key={b.id} value={b.id}>
-                            {b.bed_type} - ({b.floor})
-                          </option>
-                        ))}
+                        <option value="">Select</option>
+                        {[...new Set(beds
+                          .filter(b => b.status === "available" || b.id === Number(formData.bed))
+                          .map(b => `${b.bed_type} - ${b.floor || ""}`))].map(label => (
+                            <option key={label} value={label}>
+                              {label}
+                            </option>
+                          ))}
                       </select>
                     </div>
                     <div>
@@ -351,12 +361,16 @@ export default function UpdateIpdPatient() {
                         className="w-full border px-3 py-2"
                         value={formData.bed}
                         onChange={(e) => handleChange("bed", e.target.value)}
+                        disabled={!formData.bed_type}
                       >
-                        {beds.map(b => (
-                          <option key={b.id} value={b.id}>
-                            {b.bed_name}
-                          </option>
-                        ))}
+                        <option value="">Select</option>
+                        {beds
+                          .filter(b => (b.status === "available" || b.id === Number(formData.bed)) && `${b.bed_type} - ${b.floor || ""}` === formData.bed_type)
+                          .map(b => (
+                            <option key={b.id} value={b.id}>
+                              {b.bed_name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                   </div>

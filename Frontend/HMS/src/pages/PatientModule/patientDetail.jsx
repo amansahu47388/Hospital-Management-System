@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getPatientDetail } from "../../api/patientApi";
-import UpdatePatient from "../../components/PatientComponent/UpdatePatient"; 
+
 
 import {
   User,
@@ -21,7 +21,7 @@ function PatientDetails() {
 
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [openUpdate, setOpenUpdate] = useState(false);
+  
 
   useEffect(() => {
     if (id) {
@@ -95,14 +95,7 @@ function PatientDetails() {
           <h2 className="text-2xl font-semibold">Patient Details</h2>
 
           <div className="flex gap-4 items-center">
-            <button
-              onClick={() => setOpenUpdate(true)}
-              className="flex items-center gap-2 hover:opacity-80 transition p-2 rounded hover:bg-white/20"
-              title="Edit Patient"
-            >
-              <Edit size={20} />
-            </button>
-
+          
             <button
               onClick={() => navigate("/admin/patients")}
               className="hover:opacity-80 transition p-2 rounded hover:bg-white/20"
@@ -112,18 +105,6 @@ function PatientDetails() {
             </button>
           </div>
         </div>
-
-        {/* UPDATE PATIENT MODAL - Only opens when edit button is clicked */}
-        {openUpdate && (
-          <UpdatePatient
-            open={openUpdate}
-            patientId={id}
-            onClose={() => {
-              setOpenUpdate(false);
-              fetchPatient(); // Refresh patient data after update
-            }}
-          />
-        )}
 
         {/* PAGE BODY */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6">

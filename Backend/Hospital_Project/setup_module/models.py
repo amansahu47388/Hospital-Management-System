@@ -57,7 +57,7 @@ class Floor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Floor {self.floor_number} - {self.name}"
+        return self.floor_name
 
 
 class BedType(models.Model):
@@ -80,7 +80,7 @@ class BedGroup(models.Model):
         unique_together = ("name", "floor")
 
     def __str__(self):
-        return f"{self.name} ({self.bed_type.name}) - {self.floor}"
+        return f"{self.name} ({self.bed_type.bad_type}) - {self.floor}"
 
 
 class Bed(models.Model):

@@ -47,18 +47,11 @@ const adminNavItems = [
   { to: "/admin/billing", label: "Billing", Icon: CreditCard },
   { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
   { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },
-  //{ to: "/QR-Code-Attendance", label: "QR Code Attendance", Icon: QrCode },
-  //{ to: "/Duty-Roster", label: "Duty Roster", Icon: ClipboardList },
   // { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
-  //{ to: "/Referral", label: "Referral", Icon: UserCheck },
-  //{ to: "/TPA-Management", label: "TPA Management", Icon: Building2 },
   { to: "/Finance", label: "Finance", Icon: BarChart3 },
 
-  //{ to: "/Messaging", label: "Messaging", Icon: MessageCircle },
-  //{ to: "/Download-Calendar", label: "Download Calendar", Icon: FileDown },
 
   //{ to: "/Front-CMS", label: "Front CMS", Icon: Monitor },
-  //{ to: "/Live-Consultation", label: "Live Consultation", Icon: Stethoscope },
   //{ to: "/Reports", label: "Reports", Icon: BarChart3 },
   { to: "/Setup", label: "Setup", Icon: Settings },
 ];
@@ -73,7 +66,6 @@ const patientNavItems = [
   { to: "/patient-portal/radiology", label: "Radiology", Icon: FolderGit2 },
   { to: "/patient-portal/blood-bank", label: "Blood Bank", Icon: Droplet },
   { to: "/patient-portal/ambulance", label: "Ambulance", Icon: Ambulance },
-  { to: "/patient-portal/live-consultation", label: "Live Consultation", Icon: Video },
   { to: "/patient-portal/download-center", label: "Download Center", Icon: Download },
 ];
 
@@ -137,22 +129,6 @@ function Sidebar({ role = "admin" }) {
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
         <div className="flex flex-col h-full p-5 justify-even">
-          {/* Logo */}
-          {/* Logo */}
-          {/* LOGO */}
-          {/* <div className="mb-4 h-16 md:h-20 flex items-center justify-center">
-  <img
-    src={logo4}
-    alt="Smart Hospital Logo"
-    className={`
-      object-contain transition-all duration-300
-      ${collapsed
-        ? "h-10 w-10"
-        : "h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24 w-auto"}
-    `}
-  />
-</div> */}
-
           {/* LOGO – hidden on mobile */}
           <div className="hidden md:flex mb-4 h-16 md:h-20 items-center justify-center">
             <img
@@ -166,12 +142,6 @@ function Sidebar({ role = "admin" }) {
     `}
             />
           </div>
-
-
-
-
-
-
 
           {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-semibold pb-10">
@@ -321,7 +291,6 @@ function Sidebar({ role = "admin" }) {
                     {setupOpen && !collapsed && (
                       <div className="ml-8 mt-2 space-y-2 ">
                         {[
-                          { label: "Settings", path: "/admin/setup/settings" },
                           { label: "Hospital Charges", path: "/admin/setup/charges-details" },
                           { label: "Bed", path: "/admin/setup/bed-status" },
                           { label: "Print Head. Foot.", path: "/admin/setup/appointment-header-footer" },
@@ -335,8 +304,7 @@ function Sidebar({ role = "admin" }) {
                           { label: "Vitals", path: "/admin/setup/vitals" },
                           { label: "Finance", path: "/admin/setup/finance/income-head" },
                           { label: "Inventory", path: "/admin/setup/inventory/item-category" },
-                          { label: "Appointment", path: "/admin/setup/appointment/slots" },
-                          { label: "Custom Fields", path: "/admin/setup/Custom Fields" },
+                          { label: "Appointment", path: "/admin/setup/appointment/shift" },
 
                         ].map(({ label, path }) => (
                           <NavLink

@@ -39,7 +39,7 @@ class OpdPatient(models.Model):
 class IpdPatient(models.Model):
     ipd_id = models.AutoField(primary_key=True)
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE)
-    appointment_date = models.DateTimeField(null=True, blank=True)
+    admission_date = models.DateTimeField(null=True, blank=True)
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ipd_patients_as_doctor", limit_choices_to={"role": "doctor"})
     symptom = models.ForeignKey('setup_module.Symptom', on_delete=models.SET_NULL, null=True)
     bed = models.ForeignKey('setup_module.Bed', on_delete=models.SET_NULL, null=True)

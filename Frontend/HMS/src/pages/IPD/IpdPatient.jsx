@@ -2,13 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
-import {Plus,FileText,FileSpreadsheet,Printer,File, Eye} from "lucide-react";
+import {Plus,FileText,FileSpreadsheet,Printer,File, Eye, Pencil, Trash, ClipboardPenLine} from "lucide-react";
 import { getIpdPatientList } from "../../api/ipdApi";
 import IPDVisitDetail from "../../components/ipd/IPDVisitDetails";
+import { deleteIpdPatient } from "../../api/ipdApi";
+import AddDischargePatient from "../../components/ipd/AddDischargePatient";
+import { useNotify } from "../../context/NotificationContext";
 
 
 export default function IpdPatient() {
   const navigate = useNavigate();
+  const notify = useNotify();
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(100);
   const [ipdList, setIpdList] = useState([]);
@@ -16,6 +20,9 @@ export default function IpdPatient() {
   const [showDetail, setShowDetail] = useState(false);
   const [selectedIpd, setSelectedIpd] = useState(null);
   const hasFetchedRef = useRef(false);
+  const [deleting, setDeleting] = useState(false);
+  const [dischargePatient, setDischargePatient] = useState(false);
+
 
   
 useEffect(() => {
@@ -57,6 +64,27 @@ useEffect(() => {
     );
   });
 }, [search, ipdList]);
+
+
+const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this IPD?")) return;
+
+    try {
+      setDeleting(true);
+      const res = await deleteIpdPatient(id);
+      setIpdList(prev => prev.filter(item => item.ipd_id !== id));
+      notify("success", res.data?.detail || "IPD deleted successfully");
+      if (selectedIpd?.ipd_id === id) {
+        setShowDetail(false);
+        setSelectedIpd(null);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.detail || "Delete failed";
+      notify("error", msg);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
 
   return (
@@ -162,19 +190,41 @@ useEffect(() => {
                     <td className="p-2 py-4 text-center">{ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"}</td>
                     <td className="p-2 py-4 text-center">{new Date(ipd.created_at).toLocaleString("en-IN")}</td>
                     <td className="p-2 py-4 text-center">{ipd.previous_medical_issue || "-"}</td>
-                    <td className="p-2 py-4 text-center">
-                    <div className="relative inline-flex items-center group">
-                      <button
-                      title="view"
-                        onClick={(e) => {
-                          setSelectedIpd(ipd);
-                          setShowDetail(true);
-                        }} 
-                      >
-                        <Eye size={16} />
-                      </button>
+                    <td className="p-2 py-4 text-center flex gap-2">
+                    <button
+                    title="view"
+                      onClick={(e) => {
+                        setSelectedIpd(ipd);
+                        setShowDetail(true);
+                      }} 
+                    >
+                    <Eye size={16} />
+                  </button>
 
-                    </div>
+                  <button className="cursor-pointer hover:opacity-80"  
+                    title="Edit"
+                    onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/update`)}>
+                    <Pencil size={18} />
+                  </button>
+
+                  <button
+                    title="Delete IPD"
+                    className={`cursor-pointer hover:opacity-80 ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    onClick={() => handleDelete(ipd.ipd_id)}
+                    disabled={deleting}
+                  >
+                    <Trash size={18} />
+                  </button>
+
+                  <button
+                    className="cursor-pointer hover:opacity-80"  
+                    title="Discharge Patient"
+                    onClick={(e) => {
+                      setSelectedIpd(ipd);
+                      setDischargePatient(true);
+                    }}>
+                    <ClipboardPenLine size={18} />
+                  </button>
                   </td>
                   </tr>
                 ))}
@@ -188,9 +238,16 @@ useEffect(() => {
       open={showDetail}
       ipd={selectedIpd}
       onClose={() => setShowDetail(false)}
-      onDelete={(id) => setIpdList(prev => prev.filter(item => item.ipd_id !== id))}
-      onDischarge={() => { setShowDetail(false); fetchIpd(); }}
      />
+      <AddDischargePatient
+          open={dischargePatient}
+          onClose={() => setDischargePatient(false)}
+          ipd={selectedIpd}
+          onDischarged={() => {
+            setDischargePatient(false);
+            fetchIpd();
+          }}
+        />
     </div>
   );
 }
