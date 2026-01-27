@@ -126,7 +126,7 @@ export default function ItemSupplier() {
             <ItemSidebarMenu />
           </div>
 
-          <div className="flex-1 bg-white rounded-md shadow overflow-x-auto">
+          <div className="flex-1 bg-white rounded-md shadow overflow-x-auto thin-scrollbar">
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>

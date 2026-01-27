@@ -7,7 +7,7 @@ export default function AppointmentTabs({ activeTab, setActiveTab }) {
   ];
 
   return (
-    <div className="flex gap-6 border-b text-sm font-semibold">
+    <div className="flex gap-6 border-b border-gray-200 text-sm font-semibold">
       {tabs.map((tab) => (
         <button
           key={tab.key}

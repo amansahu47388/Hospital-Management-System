@@ -103,7 +103,7 @@ function BillingDetails() {
                             </div>
 
                             {/* Charges Table - Unchanged */}
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto thin-scrollbar">
                                 <table className="min-w-full text-left text-sm whitespace-nowrap">
                                     <thead className="text-gray-700 font-semibold border-b border-gray-200">
                                         <tr>
@@ -175,7 +175,7 @@ function BillingDetails() {
                             </div>
                             <h4 className="text-[#6046B5] font-semibold mb-2">OPD Charges</h4>
                             {/* Table... */}
-                            <div className="overflow-x-auto mb-6">
+                            <div className="overflow-x-auto mb-6 thin-scrollbar">
                                 <table className="w-full text-left mb-2">
                                     <thead className="border-b"><tr><th className="py-2">Service</th><th className="py-2">Charge</th><th className="py-2">Qty</th><th className="py-2 text-right">Discount</th><th className="py-2 text-right">Tax</th><th className="py-2 text-right">Amount</th></tr></thead>
                                     <tbody><tr><td className="py-2">OPD Service</td><td className="py-2">$122.00</td><td className="py-2">1 per day</td><td className="py-2 text-right">$0.00 (0.00%)</td><td className="py-2 text-right">$24.40 (20.00%)</td><td className="py-2 text-right">$146.40</td></tr></tbody>
@@ -183,7 +183,7 @@ function BillingDetails() {
                             </div>
                             {/* Transactions... */}
                             <h4 className="text-[#6046B5] font-semibold mb-2">Transactions</h4>
-                            <div className="overflow-x-auto mb-6">
+                            <div className="overflow-x-auto mb-6 thin-scrollbar">
                                 <table className="w-full text-left mb-2">
                                     <thead className="border-b"><tr><th className="py-2">Transaction ID</th><th className="py-2">Payment Date</th><th className="py-2">Payment Mode</th><th className="py-2 text-right">Amount</th></tr></thead>
                                     <tbody><tr><td className="py-2">TRANID11754</td><td className="py-2">01/22/2026 10:47 AM</td><td className="py-2">Cash</td><td className="py-2 text-right">$146.40</td></tr></tbody>
@@ -247,7 +247,7 @@ function BillingDetails() {
                             <X className="cursor-pointer hover:opacity-80" onClick={() => setShowViewPayments(false)} />
                         </div>
                         <div className="p-6">
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto thin-scrollbar">
                                 <table className="w-full text-left text-sm whitespace-nowrap">
                                     <thead className="bg-gray-50 border-b">
                                         <tr>
@@ -327,7 +327,7 @@ function BillingDetails() {
                             </div>
 
                             {/* Table */}
-                            <div className="overflow-x-auto mb-6">
+                            <div className="overflow-x-auto mb-6 thin-scrollbar">
                                 <table className="w-full text-sm border-t border-b border-gray-300">
                                     <thead className="border-b border-gray-300">
                                         <tr>

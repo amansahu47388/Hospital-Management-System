@@ -74,7 +74,7 @@ export default function UnitTypeList() {
 
           <ChargesSidebar/>
           {/* TABLE */}
-          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow thin-scrollbar">
             <table className="w-full text-sm">
               <thead className="bg-gray-200">
                 <tr>

@@ -109,6 +109,11 @@ function UpdatePatient({ open, onClose, patientId }) {
   if (!open) return null;
 
   /* ==================== UI ==================== */
+
+
+
+
+  
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
       <div className="bg-white w-[98%] md:w-[90%] lg:w-[80%] rounded-lg max-h-[90vh] overflow-y-auto">
@@ -126,8 +131,8 @@ function UpdatePatient({ open, onClose, patientId }) {
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
 
             {/* PERSONAL */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <Input label="First Name" name="first_name" value={formData.first_name} onChange={handleChange} error={errors.first_name} />
+            <div className=" grid md:grid-cols-2 gap-4 ">
+              <Input  label="First Name" name="first_name" value={formData.first_name} onChange={handleChange} error={errors.first_name} />
               <Input label="Last Name" name="last_name" value={formData.last_name} onChange={handleChange} error={errors.last_name} />
             </div>
 
@@ -146,7 +151,7 @@ function UpdatePatient({ open, onClose, patientId }) {
                 ]}
               />
               <Input label="Blood Group" name="blood_group" value={formData.blood_group} onChange={handleChange} />
-              <div>
+              {/* <div>
                 <label className="font-semibold">Photo</label>
                 <input type="file" name="photo" onChange={handleChange} />
                 {(photoPreview || formData.photo) && (
@@ -155,7 +160,48 @@ function UpdatePatient({ open, onClose, patientId }) {
                     className="w-20 h-20 mt-2 object-cover rounded"
                   />
                 )}
-              </div>
+              </div> */}
+
+
+
+          <div>
+          <label className="font-semibold text-gray-700">Photo</label>
+
+          <label
+            htmlFor="photoUpload"
+            className="mt-1 flex items-center gap-3 px-3 py-2 border-[0.5px] border-gray-200 rounded-md
+                      cursor-pointer bg-white hover:border-[#6046B5] transition"
+          >
+            {/* Preview */}
+            <div className="w-9 h-9 rounded overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+              {(photoPreview || formData.photo) ? (
+                <img
+                  src={photoPreview || getImageUrl(formData.photo)}
+                  alt="Patient"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-[10px] text-gray-400">Photo</span>
+              )}
+            </div>
+
+            {/* Text */}
+            <p className="text-sm text-gray-600 truncate">
+              {(photoPreview || formData.photo) ? "Change photo" : "Upload photo"}
+            </p>
+          </label>
+
+          {/* Hidden input */}
+          <input
+            id="photoUpload"
+            type="file"
+            name="photo"
+            accept="image/*"
+            onChange={handleChange}
+            className="hidden"
+          />
+        </div>
+
             </div>
 
             {/* ADDRESS */}
@@ -179,7 +225,7 @@ function UpdatePatient({ open, onClose, patientId }) {
             </div>
 
             {/* FOOTER */}
-            <div className="flex justify-end gap-4 border-t pt-4">
+            <div className="flex justify-end gap-4  pt-4">
               <button type="button" onClick={onClose} className="px-6 py-2 border rounded">
                 Cancel
               </button>
@@ -198,28 +244,51 @@ function UpdatePatient({ open, onClose, patientId }) {
 
 /* ==================== FIELDS ==================== */
 
+/* ==================== FIELDS ==================== */
+
+const baseField =
+  "w-full px-3 py-2 rounded-md bg-white border-[0.5px]  border-gray-200 text-gray-800 " +
+  "focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400  transition";
+
 const Input = ({ label, error, ...props }) => (
   <div>
-    <label className="font-semibold">{label}</label>
-    <input {...props} className="w-full border px-3 py-2 rounded" />
-    {error && <p className="text-red-500 text-sm">{error}</p>}
+    <label className="font-semibold text-gray-700">{label}</label>
+    <input
+      {...props}
+      className={`${baseField} ${error ? "border-red-500" : "border-[#8A63D2]"}`}
+    />
+    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
   </div>
 );
 
 const Select = ({ label, options, ...props }) => (
   <div>
-    <label className="font-semibold">{label}</label>
-    <select {...props} className="w-full border px-3 py-2 rounded">
-      {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+    <label className="font-semibold text-gray-700">{label}</label>
+    <select
+      {...props}
+      className={`${baseField} border-[#8A63D2]`}
+    >
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      ))}
     </select>
   </div>
 );
 
 const Textarea = ({ label, ...props }) => (
   <div>
-    <label className="font-semibold">{label}</label>
-    <textarea {...props} rows={3} className="w-full border px-3 py-2 rounded" />
+    <label className="font-semibold text-gray-700">{label}</label>
+    <textarea
+      {...props}
+      rows={3}
+      className={`${baseField} border-[#8A63D2]`}
+    />
   </div>
 );
+
+
+
 
 export default UpdatePatient;

@@ -138,7 +138,7 @@ function PatientDashboard() {
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">
             {/* HEADER */}
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-gray-800">
                 Patients List ({patients.length})
               </h2>
@@ -173,15 +173,29 @@ function PatientDashboard() {
 
             {/* SEARCH */}
             <div className="px-6 py-4">
-              <input
-                type="text"
-                placeholder="Search by patient name"
-                className="border rounded px-3 py-2 text-sm w-full md:w-64
-                           focus:ring-2 focus:ring-[#6046B5] outline-none"
-                value={searchTerm}
-                onChange={handleSearch}
-              />
-            </div>
+  <div
+    className="flex items-center gap-2
+               bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+               p-[2px] rounded-lg
+               w-full md:w-72"
+  >
+    <input
+      type="text"
+      placeholder="Search by patient name"
+      value={searchTerm}
+      onChange={handleSearch}
+      className="w-full px-4 py-2 text-sm
+                 rounded-md
+                 bg-white
+                 text-gray-800
+                 placeholder-gray-400
+                 outline-none
+                 focus:ring-2 focus:ring-white
+                 transition"
+    />
+  </div>
+</div>
+
 
             <AddPatient
               open={openAdd}
@@ -192,10 +206,10 @@ function PatientDashboard() {
             />
 
             {/* TABLE */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto thin-scrollbar">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-gray-100 border-b">
+                  <tr className="bg-gray-100 border-b border-gray-200">
                     <th className="px-6 py-4">
                       <input
                         type="checkbox"

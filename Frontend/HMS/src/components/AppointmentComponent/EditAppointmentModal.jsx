@@ -264,7 +264,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="patient"
                                     value={formData.patient}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border px-3 py-2 rounded"
                                     required
                                 >
                                     <option value="">Select Patient</option>
@@ -282,7 +282,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="doctor"
                                     value={formData.doctor}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border px-3 py-2 rounded"
                                     required
                                 >
                                     <option value="">Select Doctor</option>
@@ -301,7 +301,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="appointment_date"
                                     value={formData.appointment_date}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className="form-field w-full border px-3 py-2 rounded"
                                     required
                                 />
                             </div>
@@ -315,7 +315,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="shift"
                                     value={formData.shift}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className="form-field w-full border px-3 py-2 rounded"
                                 >
                                     <option value="">Select Shift</option>
                                     {shifts.map(s => (
@@ -330,7 +330,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="appontmet_priority"
                                     value={formData.appontmet_priority}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border px-3 py-2 rounded"
                                 >
                                     <option value="">Select Priority</option>
                                     {priorities.map(p => (
@@ -345,7 +345,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="status"
                                     value={formData.status}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className="form-field w-full border px-3 py-2 rounded"
                                 >
                                     <option value="pending">Pending</option>
                                     <option value="scheduled">Scheduled</option>
@@ -363,7 +363,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="payment_mode"
                                     value={formData.payment_mode}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border px-3 py-2 rounded"
                                 >
                                     <option value="">Select</option>
                                     <option value="cash">Cash</option>
@@ -378,7 +378,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="source"
                                     value={formData.source}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border px-3 py-2 rounded"
                                 >
                                     <option value="online">Online</option>
                                     <option value="offline">Offline</option>
@@ -391,7 +391,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border px-3 py-2 rounded"
                                     placeholder="Phone number"
                                 />
                             </div>
@@ -405,7 +405,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="chargeCategory"
                                     value={formData.chargeCategory}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border px-3 py-2 rounded"
                                 >
                                     <option value="">Select Category</option>
                                     {chargeCategories.map(cat => (
@@ -419,7 +419,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="charge"
                                     value={formData.charge}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                    className=" form-field w-full border px-3 py-2 rounded disabled:bg-gray-100 disabled:cursor-not-allowed"
                                     disabled={!formData.chargeCategory}
                                 >
                                     <option value="">Select Charge</option>
@@ -436,7 +436,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="fees"
                                     value={formData.fees}
                                     onChange={handleInputChange}
-                                    className="w-full border px-3 py-2 rounded bg-gray-50"
+                                    className="form-field w-full border px-3 py-2 rounded bg-gray-50"
                                     step="0.01"
                                     readOnly
                                 />
@@ -450,7 +450,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                 name="reason"
                                 value={formData.reason}
                                 onChange={handleInputChange}
-                                className="w-full border px-3 py-2 rounded"
+                                className="form-field w-full border px-3 py-2 rounded"
                                 rows="3"
                                 placeholder="Reason for appointment"
                             />

@@ -120,7 +120,7 @@ export default function PathologyCategory() {
           </div>
 
           {/* TABLE */}
-          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow">
+          <div className="flex-1 bg-white rounded-md overflow-x-auto shadow thin-scrollbar">
             {tableLoading ? (
               <div className="flex justify-center items-center h-48 text-purple-600">
                 <Loader2 className="animate-spin" size={32} />

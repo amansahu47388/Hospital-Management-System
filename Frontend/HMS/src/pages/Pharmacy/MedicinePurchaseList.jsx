@@ -127,7 +127,7 @@ const openPurchaseDetails = async (id) => {
 
           {/* TABLE */}
           <div className="overflow-x-auto bg-white rounded shadow">
-            <table className="min-w-full">
+            <table className="min-w-full thin-scrollbar">
               <thead className="bg-gray-100 text-sm">
                 <tr>
                   <th className="p-2 text-left">Pharmacy Purchase No</th>

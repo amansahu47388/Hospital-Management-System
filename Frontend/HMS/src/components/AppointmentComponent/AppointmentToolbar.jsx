@@ -13,12 +13,27 @@ export default function AppointmentToolbar({
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4">
       {/* Search */}
       <input
-        type="text"
-        placeholder="Search..."
-        className="border px-3 py-2 rounded w-full md:w-64"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+  type="text"
+  placeholder="Search..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="
+    w-full md:w-64
+    px-3 py-2
+    rounded-md
+    bg-white
+    border border-gray-200
+    text-gray-800
+    placeholder-gray-400
+    focus:outline-none
+    focus:border-purple-400
+    focus:ring-2
+    focus:ring-purple-400/30
+    hover:border-purple-300
+    transition
+  "
+/>
+
 
       {/* Actions */}
       <div className="flex flex-wrap gap-2 items-center">

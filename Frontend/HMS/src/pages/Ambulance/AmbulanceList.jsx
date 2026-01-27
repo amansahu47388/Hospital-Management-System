@@ -108,7 +108,7 @@ export default function AmbulanceList() {
           </div>
 
           {/* TABLE */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto thin-scrollbar">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-100 ">
                 <tr className="text-left text-gray-700">
