@@ -33,6 +33,13 @@ export const searchPatient = async (query) => {
   });
 };
 
+export const getMedicalCases = async (patientId = null, caseId = null) => {
+  const params = {};
+  if (patientId) params.patient_id = patientId;
+  if (caseId) params.case_id = caseId;
+  return api.get('cases/', { params });
+};
+
 
 
 

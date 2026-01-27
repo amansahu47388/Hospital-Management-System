@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X, CheckCircle } from "lucide-react";
-import { getSymptoms, getBeds, createIpdPatient } from "../../api/ipdApi";
+import { getSymptoms, getBeds } from "../../api/ipdApi";
+import { convertOpdToIpd } from "../../api/opdApi";
 import { getDoctors } from "../../api/appointmentApi";
 import { User, Phone, Mail, MapPin, Droplet, Calendar } from "lucide-react";
 import { useNotify } from "../../context/NotificationContext";
@@ -116,7 +117,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
 
         try {
             setLoading(true);
-            await createIpdPatient(submitData);
+            await convertOpdToIpd(patient.opd_id, submitData);
             notify("success", "Moved to IPD Successfully");
             onClose();
         } catch (err) {

@@ -33,3 +33,7 @@ export const getHospitalCharges = () => {
 export const deleteOpdPatient = (id) => {
   return api.delete(`opd/${id}/delete/`);
 };
+
+export const convertOpdToIpd = (opdId, data) => {
+  return api.post(`opd/${opdId}/convert-to-ipd/`, data);
+};

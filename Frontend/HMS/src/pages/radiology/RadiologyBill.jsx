@@ -191,7 +191,7 @@ const handleDelete = async (billId) => {
                   <tbody className="divide-y divide-gray-200">
                     {filteredBills.slice(0, limit).map((bill) => (
                       <tr key={bill.id} className="border-t hover:bg-gray-50">
-                        <td className="p-2 text-center font-medium">{bill.bill_no || `#${bill.id}`}</td>
+                        <td className="p-2 text-center font-medium">{bill.id}</td>
                         <td className="p-2 text-center">
                           {bill.case_id || "-"}
                         </td>

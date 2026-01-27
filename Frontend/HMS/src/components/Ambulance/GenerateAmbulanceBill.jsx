@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { X, Search } from "lucide-react";
 import { createAmbulanceBill, getAmbulances } from "../../api/ambulanceApi";
 import { getHospitalCharges } from "../../api/setupApi";
-import { searchPatient } from "../../api/patientApi";
+import { searchPatient, getMedicalCases } from "../../api/patientApi";
 import { useNotify } from "../../context/NotificationContext";
 
 export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
@@ -18,6 +18,8 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
   /* ================= DATA ================= */
   const [ambulances, setAmbulances] = useState([]);
   const [charges, setCharges] = useState([]);
+  const [cases, setCases] = useState([]);
+  const [selectedCase, setSelectedCase] = useState("");
 
   /* ================= SELECTION ================= */
   const [selectedAmbulance, setSelectedAmbulance] = useState("");
@@ -63,6 +65,8 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
       setDiscountPercent("");
       setTaxPercent("");
       setPaymentAmount("");
+      setCases([]);
+      setSelectedCase("");
       return;
     }
 
@@ -72,6 +76,20 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
     loadAmbulances();
     loadCharges(); // ✅ ONLY THIS
   }, [open]);
+
+  useEffect(() => {
+    if (selectedPatient) {
+      getMedicalCases(selectedPatient.id)
+        .then((res) => {
+          setCases(res.data || []);
+          setSelectedCase("");
+        })
+        .catch(() => setCases([]));
+    } else {
+      setCases([]);
+      setSelectedCase("");
+    }
+  }, [selectedPatient]);
 
 
   /* ================= API ================= */
@@ -112,6 +130,19 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
     setShowPatientDropdown(false);
   };
 
+  // Close dropdown on click outside
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowPatientDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () =>
+      document.removeEventListener("mousedown", handleClick);
+  }, []);
+
   const getFilteredCharges = () => {
     if (!selectedChargeCategory) return [];
     return charges.filter(
@@ -133,6 +164,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
 
       const billData = {
         patient: selectedPatient.id,
+        case: selectedCase || null,
         ambulance: parseInt(selectedAmbulance),
         hospital_charge: parseInt(selectedCharge),
         date,
@@ -163,42 +195,68 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
       <div className="w-full h-full bg-white flex flex-col overflow-hidden">
 
         {/* HEADER */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
-          <div className="relative w-[35%]">
-            <input
-              type="text"
-              placeholder="Search Patient"
-              value={patientSearch}
-              onChange={(e) => {
-                setPatientSearch(e.target.value);
-                searchPatients(e.target.value);
-              }}
-              className="w-full px-3 py-2 rounded text-sm text-black bg-white"
-            />
-            {showPatientDropdown && (
-              <div className="absolute top-full left-0 right-0 bg-white border shadow z-10">
-                {patients.map((p) => (
-                  <div
-                    key={p.id}
-                    onClick={() => handlePatientSelect(p)}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-black"
-                  >
-                    {p.first_name} {p.last_name} - {p.phone}
-                  </div>
-                ))}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-3 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+            {/* Patient Search */}
+            <div className="relative w-full sm:w-80" ref={dropdownRef}>
+              <div className="flex items-center bg-white rounded px-3 py-1 text-black">
+                <Search size={16} className="text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Search Patient..."
+                  className="w-full text-sm sm:text-base outline-none"
+                  value={patientSearch}
+                  onChange={(e) => {
+                    setPatientSearch(e.target.value);
+                    searchPatients(e.target.value);
+                  }}
+                />
               </div>
-            )}
+
+              {showPatientDropdown && (
+                <div className="absolute z-50 top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto mt-1 text-black">
+                  {patients.length === 0 ? (
+                    <div className="px-4 py-2 text-sm text-gray-500">No patient found</div>
+                  ) : (
+                    patients.map((p) => (
+                      <div
+                        key={p.id}
+                        onClick={() => handlePatientSelect(p)}
+                        className="px-4 py-2 text-sm cursor-pointer flex justify-between items-center hover:bg-[#F3EEFF] text-black"
+                      >
+                        <div className="flex flex-col">
+                          <span>{p.first_name} {p.last_name}</span>
+                          <span className="text-[10px] text-gray-400">{p.phone || "No phone"}</span>
+                        </div>
+                        <span className="text-xs text-gray-400">#{p.id}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Case Selection */}
+            <div className="w-full sm:w-48">
+              <select
+                className="w-full bg-white text-black px-3 py-1 rounded text-sm sm:text-base outline-none h-[34px]"
+                value={selectedCase}
+                onChange={(e) => setSelectedCase(e.target.value)}
+                disabled={!selectedPatient}
+              >
+                <option value="">Select Case ID</option>
+                {cases.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.case_id}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <input
-            value={selectedPatient?.id || ""}
-            readOnly
-            className="flex-1 px-3 py-2 rounded text-sm text-black bg-gray-100"
-          />
-
-          <button onClick={onClose} className="p-1">
-            <X />
-          </button>
+          <div className="ml-auto">
+            <X onClick={onClose} className="cursor-pointer hover:opacity-80" size={24} />
+          </div>
         </div>
 
         {/* BODY */}

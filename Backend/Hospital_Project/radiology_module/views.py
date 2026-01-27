@@ -113,22 +113,6 @@ from .models import RadiologyCategory, RadiologyParameter
 from .serializers import RadiologyCategorySerializer, RadiologyParameterSerializer
 
 
-# class RadiologyCategoryListAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         categories = RadiologyCategory.objects.all()
-#         serializer = RadiologyCategorySerializer(categories, many=True)
-#         return Response(serializer.data)
-
-
-# class RadiologyParameterListAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         params = RadiologyParameter.objects.all().order_by('parameter_name')
-#         serializer = RadiologyParameterSerializer(params, many=True)
-#         return Response(serializer.data)
 
 class GenerateRadiologyBillAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -166,7 +150,7 @@ class RadiologyBillListAPIView(APIView):
         patient_id = request.query_params.get("patient_id", "").strip()
 
         queryset = RadiologyBill.objects.select_related(
-            "patient", "doctor", "created_by"
+            "patient", "doctor", "created_by", "case"
         ).prefetch_related("items").order_by("-created_at")
 
         if patient_id:
@@ -189,7 +173,7 @@ class RadiologyBillDetailAPIView(APIView):
 
     def get(self, request, pk):
         bill = get_object_or_404(
-            RadiologyBill.objects.select_related("patient", "doctor", "created_by", "prescription")
+            RadiologyBill.objects.select_related("patient", "doctor", "created_by", "prescription", "case")
             .prefetch_related("items__test"),
             pk=pk
         )
@@ -250,6 +234,7 @@ class RadiologyBillUpdateAPIView(APIView):
         bill.payment_mode = data.get("payment_mode", bill.payment_mode)
         bill.discount = data.get("discount", bill.discount)
         bill.paid_amount = data.get("paid_amount", bill.paid_amount)
+        bill.case_id = data.get("case_id", bill.case_id)
 
         # Remove old items
         bill.items.all().delete()

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { X, Search, Plus, Trash2 } from "lucide-react";
 import { createPathologyBill, getPathologyTests, searchPrescription } from "../../api/pathologyApi";
-import { searchPatient } from "../../api/patientApi";
+import { searchPatient, getMedicalCases } from "../../api/patientApi";
 import { getDoctors } from "../../api/appointmentApi";
 import { useNotify } from "../../context/NotificationContext";
 import AddPatient from "../../components/PatientComponent/AddPatient";
@@ -15,11 +15,14 @@ export default function GeneratePathologyBill({ open, onClose }) {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showPatientDropdown, setShowPatientDropdown] = useState(false);
+  const [isSelectingPatient, setIsSelectingPatient] = useState(false); // Add this
   const [patientLoading, setPatientLoading] = useState(false);
   const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
   const [prescriptionSearch, setPrescriptionSearch] = useState("");
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
+  const [cases, setCases] = useState([]);
+  const [selectedCase, setSelectedCase] = useState("");
 
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
@@ -74,10 +77,11 @@ export default function GeneratePathologyBill({ open, onClose }) {
 
   /* ================= PATIENT SEARCH ================= */
   useEffect(() => {
-    if (!patientSearch) {
-      setPatients([]);
-      setShowPatientDropdown(false);
-      setPatientLoading(false);
+    if (!patientSearch || isSelectingPatient) {
+      if (!isSelectingPatient) {
+        setPatients([]);
+        setShowPatientDropdown(false);
+      }
       return;
     }
 
@@ -111,6 +115,20 @@ export default function GeneratePathologyBill({ open, onClose }) {
       setPatientLoading(false);
     };
   }, [patientSearch]);
+
+  useEffect(() => {
+    if (selectedPatient) {
+      getMedicalCases(selectedPatient.id)
+        .then((res) => {
+          setCases(res.data || []);
+          setSelectedCase("");
+        })
+        .catch(() => setCases([]));
+    } else {
+      setCases([]);
+      setSelectedCase("");
+    }
+  }, [selectedPatient]);
 
   const filteredPatients = Array.isArray(patients) ? patients : [];
 
@@ -210,6 +228,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
     const payload = {
       patient_id: selectedPatient.id,
       doctor_id: selectedDoctor ? Number(selectedDoctor) : null,
+      case_id: selectedCase || null,
       prescription_id: selectedPrescription?.id || null,
       note: note || "",
       previous_report_value: previousReportValue,
@@ -255,10 +274,11 @@ export default function GeneratePathologyBill({ open, onClose }) {
     }
   };
 
-  /* ================= CLOSE DROPDOWN ================= */
+  // Close dropdown on click outside
+  const dropdownRef = useRef(null);
   useEffect(() => {
     const handleClick = (e) => {
-      if (!e.target.closest(".patient-search")) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowPatientDropdown(false);
       }
     };
@@ -270,58 +290,66 @@ export default function GeneratePathologyBill({ open, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-white flex flex-col">
       {/* HEADER */}
-      <div className="px-4 py-3 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
-        <div className="flex items-center gap-3 justify-between">
-          <div className="relative w-full max-w-md patient-search flex gap-4">
-            <input
-              type="text"
-              placeholder="Search patient by name or phone"
-              value={
-                selectedPatient
-                  ? selectedPatient.full_name || selectedPatient.name
-                  : patientSearch
-              }
-              onChange={(e) => {
-                setPatientSearch(e.target.value);
-                setSelectedPatient(null);
-                setShowPatientDropdown(true);
-              }}
-              className="w-full px-3 py-2 bg-white rounded text-black"
-            />
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 px-3 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+          {/* Patient Search */}
+          <div className="relative w-full sm:w-80" ref={dropdownRef}>
+            <div className="flex items-center bg-white rounded px-3 py-1 text-black">
+              <Search size={16} className="text-gray-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Search Patient..."
+                className="w-full text-sm sm:text-base outline-none"
+                value={
+                  selectedPatient
+                    ? selectedPatient.full_name || selectedPatient.name
+                    : patientSearch
+                }
+                onChange={(e) => {
+                  setPatientSearch(e.target.value);
+                  setSelectedPatient(null);
+                  setShowPatientDropdown(true);
+                }}
+              />
+            </div>
 
             {showPatientDropdown && !selectedPatient && (
-              <div className="absolute z-30  w-full bg-white border rounded shadow mt-1 max-h-60 overflow-y-auto">
+              <div className="absolute z-50 top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto mt-1">
                 {filteredPatients.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-gray-600">
+                  <div className="px-4 py-2 text-sm text-gray-500">
                     {patientLoading ? "Searching..." : "No patient found"}
                   </div>
                 ) : (
-                  filteredPatients.map((patient) => {
-                    const fullName = patient.full_name || `${patient.first_name || ""} ${patient.last_name || ""}`.trim();
-                    const contact = patient.phone || patient.mobile || patient.contact || `#${patient.id}`;
-                    return (
-                      <div
-                        key={patient.id}
-                        onClick={() => {
-                          setSelectedPatient({ ...patient, full_name: fullName });
-                          setShowPatientDropdown(false);
-                          setPatientSearch("");
-                        }}
-                        className="px-3 py-2 cursor-pointer hover:bg-indigo-50 text-sm flex gap-4"
-                      >
-                        <div className="font-medium text-black">{fullName || `#${patient.id}`}</div>
-                        <div className="text-xs text-black">{contact}</div>
+                  filteredPatients.map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => {
+                        setIsSelectingPatient(true);
+                        setSelectedPatient({ ...p, full_name: p.full_name || `${p.first_name || ""} ${p.last_name || ""}`.trim() });
+                        setPatientSearch(`${p.first_name || ""} ${p.last_name || ""}`.trim());
+                        setShowPatientDropdown(false);
+                        setTimeout(() => setIsSelectingPatient(false), 0);
+                      }}
+                      className="px-4 py-2 text-sm cursor-pointer flex justify-between items-center hover:bg-[#F3EEFF] text-black"
+                    >
+                      <div className="flex flex-col">
+                        <span>{p.first_name} {p.last_name}</span>
+                        <span className="text-[10px] text-gray-400">{p.phone || p.mobile || "No phone"}</span>
                       </div>
-                    );
-                  })
+                      <span className="text-xs text-gray-400">#{p.id}</span>
+                    </div>
+                  ))
                 )}
               </div>
             )}
+          </div>
 
-            <div className="flex items-center min-w-[220px]">
+          {/* Prescription Search */}
+          <div className="flex items-center w-full sm:w-72">
+            <div className="flex items-center bg-white rounded px-3 py-1 text-black w-full">
               <input
-                className="px-3 py-2 rounded text-black w-full bg-white"
-                placeholder="Search by prescription Id"
+                className="w-full text-sm sm:text-base outline-none"
+                placeholder="Prescription ID..."
                 value={prescriptionSearch}
                 onChange={(e) => setPrescriptionSearch(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handlePrescriptionSearch()}
@@ -329,45 +357,46 @@ export default function GeneratePathologyBill({ open, onClose }) {
               <button
                 onClick={handlePrescriptionSearch}
                 disabled={prescriptionLoading}
-                className="
-                  ml-2 h-10 px-4
-                  flex items-center justify-center gap-2
-                  rounded-md
-                  bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-                  text-white
-                  shadow-md
-                  transition-all duration-200
-                  hover:scale-105 hover:shadow-lg
-                  active:scale-95
-                  disabled:opacity-60 disabled:cursor-not-allowed
-                "
+                className="ml-2 text-purple-600 hover:text-purple-800 disabled:opacity-50"
               >
                 <Search size={18} />
               </button>
             </div>
-            {selectedPrescription && (
-              <div className="text-xs bg-white px-2 py-1 rounded text-black flex items-center shadow-sm">
-                Prescription #{selectedPrescription.id} found
-              </div>
-            )}
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
-            <button
-              onClick={() => setIsAddPatientOpen(true)}
-              className="bg-white text-[#6046B5]
+          {/* Case Selection */}
+          <div className="w-full sm:w-48">
+            <select
+              className="w-full bg-white text-black px-3 py-1 rounded text-sm sm:text-base outline-none h-[34px]"
+              value={selectedCase}
+              onChange={(e) => setSelectedCase(e.target.value)}
+              disabled={!selectedPatient}
+            >
+              <option value="">Select Case</option>
+              {cases.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.case_id} {c.case_reference_no ? `(${c.case_reference_no})` : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="ml-auto flex items-center gap-3">
+          <button
+            onClick={() => setIsAddPatientOpen(true)}
+            className="bg-white text-[#6046B5]
                           px-4 py-2 text-sm rounded
                           flex items-center gap-2
                           shadow-sm hover:bg-gray-100"
-            >
-              <Plus size={14} /> New Patient
-            </button>
+          >
+            <Plus size={14} /> New Patient
+          </button>
 
-            <X
-              onClick={onClose}
-              className="text-white cursor-pointer hover:opacity-80"
-            />
-          </div>
+          <X
+            onClick={onClose}
+            className="text-white cursor-pointer hover:opacity-80"
+          />
         </div>
       </div>
 
@@ -592,6 +621,6 @@ export default function GeneratePathologyBill({ open, onClose }) {
         </div>
       </div>
       <AddPatient open={isAddPatientOpen} onClose={() => setIsAddPatientOpen(false)} />
-    </div>
+    </div >
   );
 }

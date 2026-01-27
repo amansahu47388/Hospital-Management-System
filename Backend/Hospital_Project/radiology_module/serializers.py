@@ -119,6 +119,7 @@ class RadiologyBillCreateSerializer(serializers.Serializer):
     note = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     previous_report_value = serializers.BooleanField(required=False, default=False)
     payment_mode = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    case_id = serializers.IntegerField(required=False, allow_null=True)
     discount = serializers.DecimalField(max_digits=10, decimal_places=2, default=0)
     paid_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     tests = serializers.ListField(
@@ -134,9 +135,9 @@ class RadiologyBillCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         tests = validated_data.pop("tests")
         
-        # Generate bill number - use max id to avoid conflicts
-        max_id = RadiologyBill.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
-        bill_no = f"RB{max_id + 1:04d}"
+        # # Generate bill number - use max id to avoid conflicts
+        # max_id = RadiologyBill.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        # bill_no = f"RB{max_id + 1:04d}"
 
         bill = RadiologyBill.objects.create(
             patient_id=validated_data["patient_id"],
@@ -145,9 +146,10 @@ class RadiologyBillCreateSerializer(serializers.Serializer):
             note=validated_data.get("note", ""),
             previous_report_value=validated_data.get("previous_report_value", False),
             payment_mode=validated_data.get("payment_mode", ""),
+            case_id=validated_data.get("case_id"),
             discount=validated_data["discount"],
             paid_amount=validated_data["paid_amount"],
-            bill_no=bill_no,
+            # bill_no=bill_no,
             created_by=self.context["request"].user,
         )
 
@@ -193,7 +195,7 @@ class RadiologyBillListSerializer(serializers.ModelSerializer):
     class Meta:
         model = RadiologyBill
         fields = [
-            "id", "bill_no", "case_id", "patient", "patient_name", "doctor", "doctor_name",
+            "id", "case_id", "patient", "patient_name", "doctor", "doctor_name",
             "subtotal", "tax", "discount", "total_amount", "paid_amount", "balance",
             "payment_mode", "created_at", "created_by", "created_by_name", "items_count"
         ]
@@ -217,7 +219,8 @@ class RadiologyBillListSerializer(serializers.ModelSerializer):
         return obj.items.count()
 
     def get_case_id(self, obj):
-        # Use prescription ID as case ID
+        if obj.case:
+            return obj.case.case_id
         if obj.prescription_id:
             return f"RX-{obj.prescription_id}"
         return "-"
@@ -243,9 +246,9 @@ class RadiologyBillDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = RadiologyBill
         fields = [
-            "id", "bill_no", "patient", "patient_name", "patient_phone", "patient_email",
+            "id", "patient", "patient_name", "patient_phone", "patient_email",
             "patient_age", "patient_gender", "patient_blood_group", "patient_address",
-            "doctor", "doctor_name", "prescription", "prescription_id", "case_id",
+            "doctor", "doctor_name", "prescription", "prescription_id", "case", "case_id",
             "note", "previous_report_value",
             "subtotal", "tax", "discount", "total_amount", "paid_amount", "balance",
             "payment_mode", "created_at", "updated_at", "created_by", "created_by_name",
@@ -294,6 +297,8 @@ class RadiologyBillDetailSerializer(serializers.ModelSerializer):
         return "-"
     
     def get_case_id(self, obj):
+        if obj.case:
+            return obj.case.case_id
         if obj.prescription_id:
             return f"RX-{obj.prescription_id}"
         return "-"

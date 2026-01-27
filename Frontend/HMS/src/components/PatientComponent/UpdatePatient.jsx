@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getPatientDetail, updatePatient } from "../../api/patientApi";
 import { X, Loader } from "lucide-react";
+import { useNotify } from "../../context/NotificationContext";
 
 
 /* ==================== IMAGE URL ==================== */
@@ -15,7 +16,7 @@ const getImageUrl = (photo) => {
 /* ==================== COMPONENT ==================== */
 
 function UpdatePatient({ open, onClose, patientId }) {
-
+  const notify = useNotify();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [formData, setFormData] = useState(null);
@@ -51,6 +52,7 @@ function UpdatePatient({ open, onClose, patientId }) {
         photo: res.data.photo || null,
       });
     } catch {
+      notify("error", "Failed to load patient details.");
       console.error("Failed to load patient");
       onClose();
     } finally {
@@ -92,13 +94,17 @@ function UpdatePatient({ open, onClose, patientId }) {
 
     try {
       await updatePatient(patientId, payload);
+      notify("success", "Patient updated successfully!");
       onClose();
     } catch (err) {
       if (err.response?.data) {
         setErrors(err.response.data);
         const msg = Object.values(err.response.data)[0];
-        console.error("Update patient error:", Array.isArray(msg) ? msg[0] : msg);
+        const errorMessage = Array.isArray(msg) ? msg[0] : msg;
+        notify("error", errorMessage || "Failed to update patient");
+        console.error("Update patient error:", errorMessage);
       } else {
+        notify("error", "Update failed. Please try again.");
         console.error("Update failed");
       }
     } finally {

@@ -8,6 +8,7 @@ urlpatterns = [
     path("opd/<int:pk>/", OpdPatientDetailAPIView.as_view(), name="opd-detail"),
     path("opd/<int:pk>/update/", OpdPatientUpdateAPIView.as_view()),
     path("opd/<int:pk>/delete/", OpdPatientDeleteAPIView.as_view()),
+    path("opd/<int:opd_id>/convert-to-ipd/", ConvertOpdToIpdAPIView.as_view(), name="opd-to-ipd"),
 
 
     # IPD Patient URLs

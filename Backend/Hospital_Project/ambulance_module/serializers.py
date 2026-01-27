@@ -109,11 +109,17 @@ class AmbulanceBillListSerializer(serializers.ModelSerializer):
 
     def get_patient_address(self, obj):
         return obj.patient.address if obj.patient else None
+    case_id = serializers.SerializerMethodField()
+
+    def get_case_id(self, obj):
+        if obj.case:
+            return obj.case.case_id
+        return "-"
 
     class Meta:
         model = AmbulanceBill
         fields = [
-            'id', 'patient_id', 'patient_name', 'ambulance_number', 
+            'id', 'patient_id', 'patient_name', 'case_id', 'ambulance_number', 
             'ambulance_model', 'driver_name', 'driver_contact', 'charge_name',
             'date', 'total_amount', 'discount', 'tax', 'net_amount', 'patient_address',
             'paid_amount', 'balance', 'payment_mode', 'created_by_name', 'created_at'
@@ -126,6 +132,12 @@ class AmbulanceBillDetailSerializer(serializers.ModelSerializer):
     ambulance_details = serializers.SerializerMethodField()
     charge_details = serializers.SerializerMethodField()
     created_by_name = serializers.CharField(source='created_by.first_name', read_only=True)
+    case_id = serializers.SerializerMethodField()
+
+    def get_case_id(self, obj):
+        if obj.case:
+            return obj.case.case_id
+        return "-"
 
     def get_ambulance_details(self, obj):
         if obj.ambulance:
@@ -147,10 +159,12 @@ class AmbulanceBillDetailSerializer(serializers.ModelSerializer):
             }
         return None
 
+   
+
     class Meta:
         model = AmbulanceBill
         fields = [
-            'id', 'patient_name', 'patient_phone', 'ambulance_details',
+            'id', 'patient_name', 'patient_phone', 'case_id', 'ambulance_details',
             'charge_details', 'date', 'note', 'payment_mode', 'total_amount',
             'discount', 'tax', 'net_amount', 'paid_amount', 'balance',
             'created_by_name', 'created_at'
@@ -163,7 +177,7 @@ class AmbulanceBillCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = AmbulanceBill
         fields = [
-            'patient', 'ambulance','hospital_charge', 'date', 'note',
+            'patient', 'case', 'ambulance','hospital_charge', 'date', 'note',
             'payment_mode', 'total_amount', 'discount', 'tax', 'paid_amount'
         ]
         extra_kwargs = {
@@ -200,7 +214,7 @@ class AmbulanceBillUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = AmbulanceBill
         fields = [
-            'patient', 'ambulance', 'charge', 'hospital_charge', 'date', 'note',
+            'patient', 'case', 'ambulance', 'charge', 'hospital_charge', 'date', 'note',
             'payment_mode', 'total_amount', 'discount', 'tax', 'paid_amount'
         ]
 

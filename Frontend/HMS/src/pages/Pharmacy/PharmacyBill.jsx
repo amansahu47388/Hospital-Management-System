@@ -212,7 +212,7 @@ export default function PharmacyBillList() {
                       className=" hover:bg-gray-100 text-sm"
                     >
                       <td className="px-3 py-2 text-blue-600 font-medium">
-                        PHARMAB{row.id}
+                        {row.id}
                       </td>
                       <td className="px-3 py-2">{row.case_id || "-"}</td>
                       <td className="px-3 py-2">{new Date(row.bill_date || row.created_at || Date.now()).toLocaleString()}</td>
