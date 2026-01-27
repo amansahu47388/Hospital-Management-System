@@ -1,5 +1,5 @@
-import { X, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { X, Plus, Trash2, Search } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import { useNotify } from "../../context/NotificationContext";
 import {
   getMedicineCategories,
@@ -7,7 +7,7 @@ import {
   getBillingBatches,
   generatePharmacyBill,
 } from "../../api/pharmacyApi";
-import { getPatientList } from "../../api/patientApi";
+import { getPatientList, getMedicalCases, searchPatient } from "../../api/patientApi";
 import { getDoctors } from "../../api/appointmentApi";
 
 /* ================= ROW STRUCTURE ================= */
@@ -32,13 +32,20 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
 
   const [rows, setRows] = useState([{ ...emptyRow }]);
-  const [patients, setPatients] = useState([]);
+  const [patientSearch, setPatientSearch] = useState("");
+  const [patientList, setPatientList] = useState([]);
+  const [showPatientDropdown, setShowPatientDropdown] = useState(false);
+  const [isSelectingPatient, setIsSelectingPatient] = useState(false);
+  const dropdownRef = useRef(null);
+
   const [doctors, setDoctors] = useState([]);
   const [categories, setCategories] = useState([]);
   const [billingMedicines, setBillingMedicines] = useState([]);
 
   const [patientId, setPatientId] = useState("");
   const [doctorId, setDoctorId] = useState("");
+  const [cases, setCases] = useState([]);
+  const [caseId, setCaseId] = useState("");
   const [note, setNote] = useState("");
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [paymentAmount, setPaymentAmount] = useState("");
@@ -48,13 +55,11 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
     if (!open) return;
     (async () => {
       try {
-        const [patRes, catRes, medsRes, docsRes] = await Promise.all([
-          getPatientList(),
+        const [catRes, medsRes, docsRes] = await Promise.all([
           getMedicineCategories(),
           getBillingMedicines(),
           getDoctors(),
         ]);
-        setPatients(patRes.data || []);
         setCategories(catRes.data || []);
         setBillingMedicines(medsRes.data || []);
         setDoctors(docsRes.data || []);
@@ -65,17 +70,75 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
     })();
   }, [open, notify]);
 
+  /* ================= PATIENT SEARCH EFFECT ================= */
+  useEffect(() => {
+    if (!patientSearch || isSelectingPatient) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await searchPatient(patientSearch);
+        setPatientList(res.data || []);
+        setShowPatientDropdown(true);
+      } catch {
+        setPatientList([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [patientSearch, isSelectingPatient]);
+
+  const handlePatientSelect = (p) => {
+    setIsSelectingPatient(true);
+    setPatientId(p.id);
+    setPatientSearch(`${p.first_name} ${p.last_name}`);
+    setShowPatientDropdown(false);
+    setTimeout(() => setIsSelectingPatient(false), 0);
+  };
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowPatientDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // Reset form when modal closes
   useEffect(() => {
     if (!open) {
       setRows([{ ...emptyRow }]);
       setPatientId("");
+      setPatientSearch("");
+      setPatientList([]);
+      setShowPatientDropdown(false);
       setDoctorId("");
+      setCases([]);
+      setCaseId("");
       setNote("");
       setPaymentMode("Cash");
       setPaymentAmount("");
     }
   }, [open]);
+
+  useEffect(() => {
+    if (patientId) {
+      (async () => {
+        try {
+          const res = await getMedicalCases(patientId);
+          setCases(res.data || []);
+          setCaseId("");
+        } catch (err) {
+          console.error("Error fetching cases:", err);
+        }
+      })();
+    } else {
+      setCases([]);
+      setCaseId("");
+    }
+  }, [patientId]);
 
   const addRow = () => setRows((p) => [...p, { ...emptyRow }]);
 
@@ -184,7 +247,7 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
   /* ================= CALCULATION ================= */
   const updateRow = (i, field, value) => {
     const updated = [...rows];
-    
+
     // Validate quantity doesn't exceed available
     if (field === "quantity") {
       const qty = Number(value) || 0;
@@ -308,6 +371,7 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
       const payload = {
         patient: patientId,
         doctor: doctorId || null,
+        case: caseId || null,
         payment_mode: paymentMode,
         note: note || "",
         total_amount: calculatedBaseTotal.toFixed(2),
@@ -354,18 +418,36 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
       <div className="w-full h-full bg-white flex flex-col overflow-hidden rounded-lg md:rounded-none">
         {/* ================= HEADER ================= */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 px-3 sm:px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
-          <select
-            className="bg-white text-black px-3 py-1 rounded w-full sm:w-80 text-sm sm:text-base"
-            value={patientId}
-            onChange={(e) => setPatientId(e.target.value)}
-          >
-            <option value="">Select Patient</option>
-            {patients.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim() || `Patient #${p.id}`}
-              </option>
-            ))}
-          </select>
+          <div className="relative w-full sm:w-80" ref={dropdownRef}>
+            <div className="flex items-center bg-white rounded px-3 py-1 text-black">
+              <Search size={16} className="text-gray-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Search Patient..."
+                className="w-full text-sm sm:text-base outline-none"
+                value={patientSearch}
+                onChange={(e) => {
+                  setPatientSearch(e.target.value);
+                  setShowPatientDropdown(true);
+                }}
+              />
+            </div>
+
+            {showPatientDropdown && patientList.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border shadow-lg z-50 text-black max-h-60 overflow-y-auto rounded-b text-sm">
+                {patientList.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => handlePatientSelect(p)}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between"
+                  >
+                    <span>{p.first_name} {p.last_name}</span>
+                    <span className="text-gray-400">#{p.id}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => !loading && onClose()}
@@ -374,6 +456,23 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
           >
             <X size={22} />
           </button>
+        </div>
+
+        <div className="px-4 py-2 border-b flex gap-4 bg-gray-50 items-center">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700">Case ID</label>
+            <select
+              className="border px-3 py-1 rounded text-sm min-w-[150px]"
+              value={caseId}
+              onChange={(e) => setCaseId(e.target.value)}
+              disabled={!patientId}
+            >
+              <option value="">Select Case</option>
+              {cases.map(c => (
+                <option key={c.id} value={c.id}>{c.case_id}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* ================= TABLE ================= */}
@@ -662,9 +761,8 @@ const InputRow = ({ label, value, onChange, readOnly, bold }) => (
     <input
       type="number"
       step="0.01"
-      className={`border px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${
-        bold ? "font-semibold" : ""
-      } ${readOnly ? "bg-gray-50" : ""}`}
+      className={`border px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""
+        } ${readOnly ? "bg-gray-50" : ""}`}
       value={value}
       readOnly={readOnly}
       onChange={onChange ? (e) => onChange(e.target.value) : undefined}

@@ -39,7 +39,7 @@ export default function AddOpd() {
     appointment_date: "",
     discount: 0,
     paid_amount: 0,
-    payment_mode: "",
+    payment_mode: "cash",
     allergies: "",
     old_patient: false,
     casualty: false,
@@ -561,11 +561,9 @@ export default function AddOpd() {
                       <label className="block text-sm font-medium mb-1">Payment Mode</label>
                       <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.payment_mode}
-                        // onChange={(e) => update("payment_mode", e.target.value)}
                         onChange={handleInputChange}
                         name="payment_mode"
                       >
-                        <option value="">Select payment Mode</option>
                         <option value="cash">Cash</option>
                         <option value="cheque">Cheque</option>
                         <option value="upi">UPI</option>

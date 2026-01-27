@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { createPatient } from "../../api/patientApi";
 import { X, Loader } from "lucide-react";
+import { useNotify } from "../../context/NotificationContext";
 
 function AddPatient({ open, onClose }) {
+  const notify = useNotify();
 
   // Initialize formData with default empty values
   const [formData, setFormData] = useState({
@@ -140,6 +142,7 @@ function AddPatient({ open, onClose }) {
       const response = await createPatient(submitData);
 
       console.log("✅ Patient created successfully:", response.data);
+      notify("success", "Patient added successfully!");
 
       // Reset form
       setFormData({
@@ -177,11 +180,14 @@ function AddPatient({ open, onClose }) {
           setErrors(backendErrors);
           const firstError = Object.values(backendErrors)[0];
           const message = Array.isArray(firstError) ? firstError[0] : firstError;
+          notify("error", message || "Failed to add patient");
           console.error("Failed to add patient:", message);
         } else {
+          notify("error", backendErrors.detail || "Failed to add patient");
           console.error("Failed to add patient:", backendErrors.detail);
         }
       } else {
+        notify("error", "Failed to add patient. Please try again.");
         console.error("Failed to add patient");
       }
     } finally {

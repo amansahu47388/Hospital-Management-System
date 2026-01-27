@@ -194,6 +194,7 @@ class PharmacyPurchaseItem(models.Model):
 
 class PharmacyBill(models.Model):
     patient = models.ForeignKey("patient_module.Patient", on_delete=models.PROTECT)
+    case = models.ForeignKey('patient_module.MedicalCase', on_delete=models.SET_NULL, null=True, blank=True, related_name="pharmacy_bills")
     doctor = models.ForeignKey('users.User', on_delete=models.PROTECT, related_name="pharmacy_bills", limit_choices_to={"role": "doctor"}, null=True, blank=True)
     bill_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2)

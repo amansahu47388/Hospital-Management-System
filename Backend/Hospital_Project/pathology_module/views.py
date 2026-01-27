@@ -233,7 +233,7 @@ class PathologyBillListAPIView(APIView):
         patient_id = request.query_params.get("patient_id", "").strip()
         
         queryset = PathologyBill.objects.select_related(
-            "patient", "doctor", "created_by"
+            "patient", "doctor", "created_by", "case"
         ).prefetch_related("items").order_by("-created_at")
 
         if patient_id:
@@ -256,7 +256,7 @@ class PathologyBillDetailAPIView(APIView):
 
     def get(self, request, pk):
         bill = get_object_or_404(
-            PathologyBill.objects.select_related("patient", "doctor", "created_by", "prescription")
+            PathologyBill.objects.select_related("patient", "doctor", "created_by", "prescription", "case")
             .prefetch_related("items__test"),
             pk=pk
         )
@@ -319,6 +319,7 @@ class PathologyBillUpdateAPIView(APIView):
         bill.payment_mode = data.get("payment_mode", bill.payment_mode)
         bill.discount = data.get("discount", bill.discount)
         bill.paid_amount = data.get("paid_amount", bill.paid_amount)
+        bill.case_id = data.get("case_id", bill.case_id)
 
         # Remove old items
         bill.items.all().delete()

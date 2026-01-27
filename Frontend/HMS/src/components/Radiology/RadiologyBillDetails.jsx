@@ -67,7 +67,7 @@ export default function RadiologyBillDetails({ open, billId, onClose }) {
 
         {/* DETAILS GRID */}
         <div className="grid md:grid-cols-3 gap-6">
-          <Detail label="Bill No" value={bill.bill_no || `#${bill.id}`} />
+          <Detail label="Bill No" value={bill.id || `#${bill.id}`} />
           <Detail label="Case ID" value={bill.case_id || "-"} />
           <Detail label="Patient Name" value={bill.patient_name || "-"} />
 

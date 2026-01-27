@@ -422,7 +422,8 @@ class PharmacyBillListAPIView(APIView):
         qs = PharmacyBill.objects.select_related(
             "patient",
             "doctor",
-            "created_by"
+            "created_by",
+            "case"
         ).order_by("-id")
 
         # if search:
@@ -463,7 +464,7 @@ class PharmacyBillDetailAPIView(APIView):
 
     def get(self, request, pk):
         bill = get_object_or_404(
-            PharmacyBill.objects.select_related("patient", "doctor").prefetch_related("items"),
+            PharmacyBill.objects.select_related("patient", "doctor", "case").prefetch_related("items"),
             pk=pk,
         )
         return Response(PharmacyBillSerializer(bill).data)

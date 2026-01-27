@@ -57,11 +57,12 @@ class PathologyTest(models.Model):
 class PathologyBill(models.Model):
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="pathology_bills" )
     doctor = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="pathology_bills", limit_choices_to={"role": "doctor"}, null=True, blank=True)
+    case = models.ForeignKey('patient_module.MedicalCase', on_delete=models.SET_NULL, null=True, blank=True, related_name="pathology_bills")
     prescription = models.ForeignKey('opd_ipd_module.Prescription', on_delete=models.SET_NULL, null=True, blank=True, related_name="pathology_bills")
     note = models.TextField(null=True, blank=True)
     previous_report_value = models.BooleanField(default=False)
     payment_mode = models.CharField(max_length=50, null=True, blank=True)
-    bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    # bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

@@ -183,7 +183,7 @@ export default memo(function PathologyBill() {
                 <tbody className="bg-white">
                   {filteredBills.slice(0, limit).map((bill) => (
                     <tr key={bill.id} className="border border-gray-200 hover:bg-gray-50">
-                      <td className="p-2 text-center font-medium">{bill.bill_no || `#${bill.id}`}</td>
+                      <td className="p-2 text-center font-medium">{bill.id}</td>
                       <td className="p-2 text-center">
                         {bill.case_id || "-"}
                       </td>

@@ -36,7 +36,8 @@ class AmbulanceBill(models.Model):
     ]
 
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="ambulance_bills")
-    bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    case = models.ForeignKey('patient_module.MedicalCase', on_delete=models.SET_NULL, null=True, blank=True, related_name="ambulance_bills")
+    # bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
     ambulance = models.ForeignKey(Ambulance, on_delete=models.SET_NULL, null=True, blank=True)
     hospital_charge = models.ForeignKey(HospitalCharges, on_delete=models.SET_NULL, null=True, blank=True, related_name="ambulance_bills")
     date = models.DateField()

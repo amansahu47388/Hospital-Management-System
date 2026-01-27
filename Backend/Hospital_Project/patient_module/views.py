@@ -148,6 +148,55 @@ class PatientUpdateView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+#*******************************************************************************************************#
+#                            MedicalCase Views
+#*******************************************************************************************************#
+
+class MedicalCaseListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            patient_id = request.query_params.get('patient_id')
+            case_id = request.query_params.get('case_id')
+            if patient_id:
+                cases = MedicalCase.objects.filter(patient_id=patient_id).order_by('-created_at')
+            elif case_id:
+                cases = MedicalCase.objects.filter(case_id=case_id).order_by('-created_at')
+            else:
+                cases = MedicalCase.objects.filter(is_active=True).order_by('-created_at')
+            
+            serializer = MedicalCaseSerializer(cases, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MedicalCaseDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            case = MedicalCase.objects.get(pk=pk)
+            serializer = MedicalCaseSerializer(case)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except MedicalCase.DoesNotExist:
+            return Response({"detail": "Case not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class MedicalCaseCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = MedicalCaseSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
 class PatientDeleteView(APIView):
     permission_classes = [IsAdminUser]
 

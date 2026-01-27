@@ -13,6 +13,11 @@ urlpatterns = [
     path('patients/<int:patient_id>/update/', PatientUpdateView.as_view(), name='patient-update'),
     path('patients/<int:patient_id>/delete/', PatientDeleteView.as_view(), name='patient-delete'),
     
+    # Medical Case URLs
+    path('cases/', MedicalCaseListView.as_view(), name='case-list'),
+    path('cases/create/', MedicalCaseCreateView.as_view(), name='case-create'),
+    path('cases/<int:pk>/', MedicalCaseDetailView.as_view(), name='case-detail'),
+
     # Patient Vital URLs
     path('patients/<int:patient_id>/vitals/', PatientVitalView.as_view(), name='patient-vital-list-create'),
     path('patients/<int:patient_id>/vitals/<int:pk>/', PatientVitalView.as_view(), name='patient-vital-detail'),

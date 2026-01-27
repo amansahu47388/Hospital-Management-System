@@ -112,6 +112,39 @@ class Patient(models.Model):
         return self.blood_group
 
 
+# ******************************************************************************************************#
+#                                       MedicalCase Model
+# ******************************************************************************************************#
+
+class MedicalCase(models.Model):
+    case_id = models.CharField(max_length=20, unique=True, editable=False)
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,related_name="cases")
+    description = models.TextField(blank=True, null=True)
+    is_closed = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='cases_created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.case_id:
+            # Basic auto-generation logic
+            last_case = MedicalCase.objects.order_by('-id').first()
+            if not last_case:
+                self.case_id = '1'
+            else:
+                self.case_id = f"{str(last_case.id + 1).zfill(5)}"
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.case_id} - {self.patient.full_name}"
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Medical Case'
+        verbose_name_plural = 'Medical Cases'
+
+
 
 
 # ******************************************************************************************************#

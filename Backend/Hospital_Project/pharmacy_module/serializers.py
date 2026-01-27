@@ -286,6 +286,12 @@ class PharmacyBillSerializer(serializers.ModelSerializer):
     doctor_name = serializers.SerializerMethodField()
     items = PharmacyBillItemSerializer(many=True, read_only=True)
     created_by_name = serializers.CharField(source="created_by.full_name", read_only=True)
+    case_id = serializers.SerializerMethodField()
+
+    def get_case_id(self, obj):
+        if obj.case:
+            return obj.case.case_id
+        return "-"
 
     class Meta:
         model = PharmacyBill
@@ -295,13 +301,13 @@ class PharmacyBillSerializer(serializers.ModelSerializer):
             "patient",
             "patient_name",
             "patient_phone",
+            "case",
+            "case_id",
             "items",
             "doctor",
             "doctor_name",
-
             "created_by",
             "created_by_name",
-
             "total_amount",
             "discount_amount",
             "tax_amount",
@@ -345,6 +351,7 @@ class PharmacyBillCreateSerializer(serializers.ModelSerializer):
             "balance_amount",
             "payment_mode",
             "note",
+            "case",
             "items",
         ]
 

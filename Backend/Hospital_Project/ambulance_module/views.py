@@ -65,7 +65,7 @@ class AmbulanceBillListAPIView(APIView):
     def get(self, request):
         search = request.query_params.get('search', '').strip()
         queryset = AmbulanceBill.objects.select_related(
-            'patient', 'ambulance', 'hospital_charge', 'created_by'
+            'patient', 'ambulance', 'hospital_charge', 'created_by', 'case'
         ).order_by('-created_at')
 
         if search:
@@ -85,7 +85,7 @@ class AmbulanceBillDetailAPIView(APIView):
 
     def get(self, request, pk):
         bill = get_object_or_404(
-            AmbulanceBill.objects.select_related('patient', 'ambulance', 'hospital_charge', 'created_by'),
+            AmbulanceBill.objects.select_related('patient', 'ambulance', 'hospital_charge', 'created_by', 'case'),
             pk=pk
         )
         serializer = AmbulanceBillDetailSerializer(bill)
@@ -234,7 +234,7 @@ class AmbulanceBillListAPIView(APIView):
     def get(self, request):
         search = request.query_params.get('search', '').strip()
         queryset = AmbulanceBill.objects.select_related(
-            'patient', 'ambulance', 'hospital_charge', 'created_by'
+            'patient', 'ambulance', 'hospital_charge', 'created_by', 'case'
         ).order_by('-created_at')
 
         if search:
@@ -254,7 +254,7 @@ class AmbulanceBillDetailAPIView(APIView):
 
     def get(self, request, pk):
         bill = get_object_or_404(
-            AmbulanceBill.objects.select_related('patient', 'ambulance', 'hospital_charge', 'created_by'),
+            AmbulanceBill.objects.select_related('patient', 'ambulance', 'hospital_charge', 'created_by', 'case'),
             pk=pk
         )
         serializer = AmbulanceBillDetailSerializer(bill)

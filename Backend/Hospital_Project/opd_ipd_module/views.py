@@ -115,6 +115,51 @@ class IpdPatientCreateAPIView(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class ConvertOpdToIpdAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request, opd_id):
+        opd = get_object_or_404(OpdPatient, pk=opd_id)
+        
+        # Check if patient is already admitted
+        already_admitted = IpdPatient.objects.filter(
+            patient=opd.patient, 
+            is_discharged=False
+        ).exists()
+        
+        if already_admitted:
+            return Response(
+                {"detail": "This patient is already admitted in IPD and has not been discharged yet."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Data for IPD from OPD
+        # We reuse the same case to track the treatment episode
+        data = {
+            'patient': opd.patient.id,
+            'doctor': opd.doctor.id,
+            'symptom': opd.symptom.id if opd.symptom else None,
+            'case': opd.case.id if opd.case else None,
+            'old_patient': opd.old_patient,
+            'casualty': opd.casualty,
+            'allergies': opd.allergies,
+            'previous_medical_issue': opd.previous_medical_issue,
+            'admission_date': now(),
+        }
+        
+        # Merge with extra data from request (bed, credit_limit, etc.)
+        data.update(request.data or {})
+        
+        serializer = IpdPatientCreateSerializer(data=data, context={'request': request})
+        if serializer.is_valid():
+            ipd = serializer.save(created_by=request.user)
+            return Response(IpdPatientSerializer(ipd).data, status=status.HTTP_201_CREATED)
+        
+        print("❌ CONVERSION ERROR:", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class IpdPatientListAPIView(generics.ListAPIView):
     serializer_class = IpdPatientListSerializer

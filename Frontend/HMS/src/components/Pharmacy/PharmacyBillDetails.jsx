@@ -21,7 +21,7 @@ export default function PharmacyBillDetail({ bill, onClose }) {
           {/* BILL INFO */}
           <div className="flex justify-between border-b pb-2 mb-3">
             <div>
-              <div><b>Bill No:</b> PHARMAB{bill.id}</div>
+              <div><b>Bill No:</b> {bill.id}</div>
             </div>
             <div>
               <b>Date:</b> {new Date(bill.bill_date || bill.created_at || Date.now()).toLocaleString()}

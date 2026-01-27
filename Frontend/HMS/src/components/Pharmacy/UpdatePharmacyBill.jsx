@@ -1,5 +1,5 @@
-import { X, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { X, Plus, Trash2, Search } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import { useNotify } from "../../context/NotificationContext";
 import {
   getMedicineCategories,
@@ -7,7 +7,7 @@ import {
   getBillingBatches,
   updatePharmacyBill,
 } from "../../api/pharmacyApi";
-import { getPatientList } from "../../api/patientApi";
+import { getPatientList, searchPatient } from "../../api/patientApi";
 import { getDoctors } from "../../api/appointmentApi";
 
 const emptyRow = {
@@ -31,7 +31,12 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
   const [loading, setLoading] = useState(false);
 
   const [rows, setRows] = useState([{ ...emptyRow }]);
-  const [patients, setPatients] = useState([]);
+  const [patientSearch, setPatientSearch] = useState("");
+  const [patientList, setPatientList] = useState([]);
+  const [showPatientDropdown, setShowPatientDropdown] = useState(false);
+  const [isSelectingPatient, setIsSelectingPatient] = useState(false);
+  const dropdownRef = useRef(null);
+
   const [doctors, setDoctors] = useState([]);
   const [categories, setCategories] = useState([]);
   const [billingMedicines, setBillingMedicines] = useState([]);
@@ -45,16 +50,50 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
   /* ================= LOAD DROPDOWNS ================= */
   useEffect(() => {
     Promise.all([
-      getPatientList(),
       getMedicineCategories(),
       getBillingMedicines(),
       getDoctors(),
-    ]).then(([p, c, m, d]) => {
-      setPatients(p.data || []);
+    ]).then(([c, m, d]) => {
       setCategories(c.data || []);
       setBillingMedicines(m.data || []);
       setDoctors(d.data || []);
     });
+  }, []);
+
+  /* ================= PATIENT SEARCH EFFECT ================= */
+  useEffect(() => {
+    if (!patientSearch || isSelectingPatient) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await searchPatient(patientSearch);
+        setPatientList(res.data || []);
+        setShowPatientDropdown(true);
+      } catch {
+        setPatientList([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [patientSearch, isSelectingPatient]);
+
+  const handlePatientSelect = (p) => {
+    setIsSelectingPatient(true);
+    setPatientId(p.id);
+    setPatientSearch(`${p.first_name} ${p.last_name}`);
+    setShowPatientDropdown(false);
+    setTimeout(() => setIsSelectingPatient(false), 0);
+  };
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowPatientDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   /* ================= LOAD EXISTING BILL ================= */
@@ -62,6 +101,10 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
     if (!bill) return;
 
     setPatientId(bill.patient);
+    setPatientSearch(bill.patient_name || "");
+    setIsSelectingPatient(true); // Don't trigger search on initial load
+    setTimeout(() => setIsSelectingPatient(false), 500);
+
     setDoctorId(bill.doctor || "");
     setNote(bill.note || "");
     setPaymentMode(bill.payment_mode);
@@ -206,22 +249,40 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
 
 
   return (
-  <div className="fixed inset-0 z-[999] bg-black/40 p-2 sm:p-4 md:p-0">
+    <div className="fixed inset-0 z-[999] bg-black/40 p-2 sm:p-4 md:p-0">
       <div className="w-full h-full bg-white flex flex-col overflow-hidden rounded-lg md:rounded-none">
         {/* ================= HEADER ================= */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 px-3 sm:px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
-          <select
-            className="bg-white text-black px-3 py-1 rounded w-full sm:w-80 text-sm sm:text-base"
-            value={patientId}
-            onChange={(e) => setPatientId(e.target.value)}
-          >
-            <option value="">Select Patient</option>
-            {patients.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim() || `Patient #${p.id}`}
-              </option>
-            ))}
-          </select>
+          <div className="relative w-full sm:w-80" ref={dropdownRef}>
+            <div className="flex items-center bg-white rounded px-3 py-1 text-black">
+              <Search size={16} className="text-gray-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Search Patient..."
+                className="w-full text-sm sm:text-base outline-none"
+                value={patientSearch}
+                onChange={(e) => {
+                  setPatientSearch(e.target.value);
+                  setShowPatientDropdown(true);
+                }}
+              />
+            </div>
+
+            {showPatientDropdown && patientList.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border shadow-lg z-50 text-black max-h-60 overflow-y-auto rounded-b text-sm">
+                {patientList.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => handlePatientSelect(p)}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between"
+                  >
+                    <span>{p.first_name} {p.last_name}</span>
+                    <span className="text-gray-400">#{p.id}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => !loading && onClose()}
@@ -518,9 +579,8 @@ const InputRow = ({ label, value, onChange, readOnly, bold }) => (
     <input
       type="number"
       step="0.01"
-      className={`border px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${
-        bold ? "font-semibold" : ""
-      } ${readOnly ? "bg-gray-50" : ""}`}
+      className={`border px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""
+        } ${readOnly ? "bg-gray-50" : ""}`}
       value={value}
       readOnly={readOnly}
       onChange={onChange ? (e) => onChange(e.target.value) : undefined}

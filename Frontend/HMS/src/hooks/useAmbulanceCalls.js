@@ -11,7 +11,7 @@ export default function useAmbulanceCalls() {
       setLoading(true);
       const response = await getAmbulanceBills(search);
       const bills = response.data || [];
-      
+
       // Transform API data to match table structure
       const transformedData = bills.map((bill) => {
         // Format date - handle both date string and datetime
@@ -45,7 +45,7 @@ export default function useAmbulanceCalls() {
         return {
           id: bill.id,
           billNo: bill.bill_no || `AMB-${bill.id}`,
-          caseId: bill.patient_id || bill.id || "-",
+          caseId: bill.case_id || "-",
           patient: bill.patient_name || "N/A",
           generatedBy: bill.created_by_name || "N/A",
           vehicleNo: bill.ambulance_number || "-",
@@ -62,7 +62,7 @@ export default function useAmbulanceCalls() {
           balance: parseFloat(bill.balance) || 0,
         };
       });
-      
+
       setData(transformedData);
     } catch (error) {
       console.error("Failed to load ambulance bills:", error);
