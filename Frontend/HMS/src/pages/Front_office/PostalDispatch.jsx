@@ -91,7 +91,7 @@ export default function PostalDispatch() {
         </div>
 
         {/* ================= TABLE ================= */}
-        <div className="bg-white rounded-md mt-4 overflow-x-auto shadow">
+        <div className="bg-white rounded-md mt-4 overflow-x-auto shadow thin-scrollbar">
           <table className="w-full text-sm">
             <thead className="bg-gray-100">
               <tr>

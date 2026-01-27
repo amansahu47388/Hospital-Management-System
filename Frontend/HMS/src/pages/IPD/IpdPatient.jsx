@@ -124,7 +124,7 @@ useEffect(() => {
             </div>
 
             {/* TABLE */}
-            <div className="overflow-x-auto" >
+            <div className="overflow-x-auto thin-scrollbar">
               <table className="min-w-full text-sm">
                 <thead className="bg-gray-200 ">
                   <tr>

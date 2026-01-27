@@ -46,7 +46,7 @@ import RadiologyTest from "./pages/radiology/RadiologyTest";
 import Billing from "./pages/Billing/Billing";
 import BillingDetails from "./pages/Billing/BillingDetails";
 import NurseNotesSinglePage from "./pages/IPD/IPDNurseNotes";
-import NurseNotesSinglePage from "./pages/IPD/IPDNurseNotes";
+
 
 
 //setup route paths and components

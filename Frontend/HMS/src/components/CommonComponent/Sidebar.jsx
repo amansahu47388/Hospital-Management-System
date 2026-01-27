@@ -80,7 +80,8 @@ const patientNavItems = [
 function Sidebar({ role = "admin" }) {
   const navItems = role === "admin" ? adminNavItems : patientNavItems;
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(
+false);
   const [birthDeathRecordOpen, setBirthDeathRecordOpen] = useState(false);
 
   const [financeOpen, setFinanceOpen] = useState(false);
@@ -117,6 +118,10 @@ function Sidebar({ role = "admin" }) {
     }
   }, [collapsed]);
 
+
+
+
+  
 
   return (
     <div className="relative">
@@ -330,7 +335,7 @@ function Sidebar({ role = "admin" }) {
                           { label: "Pharmacy", path: "/admin/setup/pharmacy/medicine-category" },
                           { label: "Pathology", path: "/admin/setup/pathology/category" },
                           { label: "Radiology", path: "/admin/setup/radiology/category" },
-                          { label: "Symptoms", path: "/admin/setup/symptoms/symptoms-head" },
+                          { label: "Symptoms", path: "/admin/setup/symptoms" },
                           { label: "Findings", path: "/admin/setup/finding" },
                           { label: "Vitals", path: "/admin/setup/vitals" },
                           { label: "Finance", path: "/admin/setup/finance/income-head" },

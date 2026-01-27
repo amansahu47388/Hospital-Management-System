@@ -102,7 +102,7 @@ export default function ItemStockPage() {
         </div>
 
         {/* ================= TABLE ================= */}
-        <div className="overflow-x-auto bg-white rounded shadow">
+        <div className="overflow-x-auto bg-white rounded shadow thin-scrollbar">
           <table className="min-w-full text-sm">
             <thead className="bg-gray-100">
               <tr>

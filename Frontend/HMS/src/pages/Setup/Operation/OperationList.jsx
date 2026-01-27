@@ -151,7 +151,7 @@ export default function OperationList() {
           </div>
 
           {/* TABLE */}
-          <div className="flex-1 bg-white rounded-md shadow overflow-x-auto">
+          <div className="flex-1 bg-white rounded-md shadow overflow-x-auto thin-scrollbar">
             {tableLoading ? (
               <div className="flex justify-center items-center h-64 text-purple-600">
                 <Loader2 className="animate-spin" size={32} />

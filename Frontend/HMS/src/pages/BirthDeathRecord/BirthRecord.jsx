@@ -86,7 +86,7 @@ export default function BirthRecord() {
           </div>
 
           {/* TABLE */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto thin-scrollbar">
             <table className="min-w-full text-left bg-white">
               <thead className="bg-gray-100 text-sm">
                 <tr>

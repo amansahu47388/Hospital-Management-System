@@ -78,7 +78,7 @@ const handleDelete = async (id) => {
             </div>
           </div>
 
-          <table className="min-w-full text-sm shadow ">
+          <table className="min-w-full text-sm shadow thin-scrollbar">
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-3 text-left">Item</th>

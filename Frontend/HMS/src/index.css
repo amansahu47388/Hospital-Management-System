@@ -118,6 +118,7 @@ button {
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
+  
 }
 
 ::-webkit-scrollbar-thumb {
@@ -127,4 +128,74 @@ button {
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+}
+
+
+
+
+
+.thin-scrollbar::-webkit-scrollbar {
+  height: 8px;   /* 👈 horizontal scrollbar thickness */
+  width: 8px;    /* 👈 vertical scrollbar thickness */
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* or #f1f1f1 */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgb(160, 160, 219)gradient(to bottom, #edebf5, #cec4e0); /* light purple like your image */
+  border-radius: 10px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #a8a8d8;
+}
+
+
+
+
+
+
+
+.form-field {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* gray-200 */
+
+  color: #1f2937; /* gray-800 */
+  font-size: 14px;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Placeholder */
+.form-field::placeholder {
+  color: #9ca3af; /* gray-400 */
+}
+
+/* Hover */
+.form-field:hover {
+  border-color: #a78bfa; /* purple-400 */
+  background-color: rgba(167, 139, 250, 0.05); /* purple-400/5 */
+}
+
+/* Focus */
+.form-field:focus {
+  outline: none;
+  border-color: #a78bfa; /* purple-400 */
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.3); /* purple-400 ring */
+  background-color: #ffffff;
+}
+
+/* Error state (optional) */
+.form-field.error {
+  border-color: #ef4444; /* red-500 */
+}
+
+.form-field.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
 }
