@@ -174,7 +174,7 @@ export default function PharmacyBillList() {
           </div>
 
           {/* TABLE */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto thin-scrollbar">
             <table className="min-w-full text-sm border-collapse">
               <thead className="bg-gray-100">
                 <tr>

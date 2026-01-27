@@ -78,7 +78,7 @@ export default function DoctorWiseAppointment() {
                 <select
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
-                  className="w-full mt-1 border rounded px-3 py-2 text-sm"
+                  className="w-full mt-1 border rounded px-3 py-2 text-sm form-field"
                 >
                   <option value="">Select Doctor</option>
                   {doctors.map((d) => (
@@ -97,9 +97,9 @@ export default function DoctorWiseAppointment() {
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full mt-1 border rounded px-3 py-2 text-sm pr-10"
+                    className="w-full mt-1 border rounded px-3 py-2 text-sm pr-10 form-field"
                   />
-                  <Calendar className="absolute right-3 top-3 text-gray-400" size={18} />
+                  <Calendar className="absolute right-3 top-3 text-gray-400 " size={18} />
                 </div>
               </div>
 
@@ -117,7 +117,7 @@ export default function DoctorWiseAppointment() {
 
             {/* TABLE SECTION */}
             <div className="mt-6 overflow-x-auto">
-              <table className="w-full text-sm border-separate border-spacing-0">
+              <table className="w-full text-sm border-separate border-spacing-0 thin-scrollbar">
                 <thead className="bg-gray-50 border-y">
                   <tr>
                     <th className="px-4 py-2 text-left">Patient Name</th>

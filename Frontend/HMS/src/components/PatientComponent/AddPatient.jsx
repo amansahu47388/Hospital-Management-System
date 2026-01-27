@@ -238,10 +238,10 @@ function AddPatient({ open, onClose }) {
           <div className="p-6 space-y-6">
             {/* PERSONAL INFO */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                 Personal Information
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                 <FormField
                   label="First Name"
                   name="first_name"
@@ -343,7 +343,7 @@ function AddPatient({ open, onClose }) {
 
             {/* ADDRESS INFO */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                 Address Information
               </h3>
               <FormField
@@ -381,7 +381,7 @@ function AddPatient({ open, onClose }) {
 
             {/* MEDICAL INFO */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                 Medical Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -404,7 +404,7 @@ function AddPatient({ open, onClose }) {
 
             {/* EMERGENCY CONTACT */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                 Guardian Contact
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -461,7 +461,7 @@ function FormField({ label, name, type = "text", value, onChange, error, require
         name={name}
         value={value}
         onChange={onChange}
-        className={`w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none ${error ? "border-red-500" : "border-gray-300"
+        className={`w-full border   px-3 py-2 rounded focus:ring-2 focus:ring-purple-400 outline-none ${error ? "border-red-500" : "border-gray-300"
           }`}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
@@ -477,7 +477,7 @@ function SelectField({ label, name, value, onChange, options }) {
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-purple-400 outline-none"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

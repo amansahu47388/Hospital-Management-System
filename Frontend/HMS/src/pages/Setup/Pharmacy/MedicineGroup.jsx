@@ -117,7 +117,7 @@ export default function MedicineGroup() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto thin-scrollbar">
               <table className="w-full text-xs text-left">
                 <thead className="bg-[#f2f2f2] text-gray-600">
                   <tr>

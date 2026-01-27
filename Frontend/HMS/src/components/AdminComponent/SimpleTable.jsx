@@ -2,8 +2,8 @@ import React from "react";
 
  function SimpleTable({ columns, rows }) {
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-card overflow-auto">
-      <table className="w-full text-sm">
+    <div className="bg-white rounded-2xl p-4 shadow-card overflow-auto thin-scrollbar">
+      <table className="w-full text-sm  ">
         <thead>
           <tr className="text-left text-muted ">
             {columns.map((c) => (

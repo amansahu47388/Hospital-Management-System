@@ -121,8 +121,8 @@ const handleDelete = async (id) => {
           </div>
 
             {/* TABLE */}
-            <div className="w-full overflow-x-auto">
-              <table className="min-w-[1100px] w-full">
+            <div className="w-full overflow-x-auto thin-scrollbar">
+              <table className="min-w-[1100px] w-full ">
               <thead className="bg-gray-100 text-sm">
                 <tr>
                   <th className="p-2 text-left">Medicine Name</th>

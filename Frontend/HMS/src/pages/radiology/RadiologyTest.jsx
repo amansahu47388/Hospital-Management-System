@@ -119,8 +119,8 @@ export default function RadiologyTest() {
         </div>
 
         {/* TABLE */}
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="min-w-[1200px] w-full text-sm text-gray-600">
+        <div className="bg-white rounded-lg shadow overflow-x-auto thin-scrollbar">
+          <table className="min-w-[1200px] w-full text-sm text-gray-600 ">
             <thead className="bg-gray-100 text-gray-700">
               <tr>
                 <th className="px-3 py-2 text-left">Test Name</th>

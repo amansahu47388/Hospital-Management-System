@@ -96,7 +96,7 @@ export default function ItemCategory() {
             <ItemSidebarMenu />
           </div>
 
-          <div className="flex-1 bg-white rounded-md shadow">
+          <div className="flex-1 bg-white rounded-md shadow overflow-x-auto thin-scrollbar">
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>

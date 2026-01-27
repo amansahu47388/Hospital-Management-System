@@ -41,7 +41,7 @@ export default function AppointmentTable({ data, onUpdate }) {
 
   return (
     <>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto thin-scrollbar">
         <table className="min-w-full text-sm ">
           <thead className="bg-gray-100">
             <tr>
@@ -123,7 +123,8 @@ export default function AppointmentTable({ data, onUpdate }) {
                           setSelectedAppointment(row);
                           setShowDetails(true);
                         }}
-                        className="text-purple-600 hover:text-purple-800"
+                        className="hover:bg-purple-600/10 hover:text-purple-800
+                              transition"
                       >
                         <Eye size={16} />
                       </button>
@@ -134,7 +135,7 @@ export default function AppointmentTable({ data, onUpdate }) {
                           setSelectedAppointment(row);
                           setShowEdit(true);
                         }}
-                        className="text-green-600 hover:text-green-800"
+                        className="text-green-600 hover:text-green-800 transition hover:bg-green-600/10"
                       >
                         <Pencil size={16} />
                       </button>
@@ -142,7 +143,7 @@ export default function AppointmentTable({ data, onUpdate }) {
                       <button
                         title="Delete"
                         onClick={() => handleDelete(row)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800  hover:bg-red-600/10 transition"
                       >
                         <Trash2 size={16} />
                       </button>

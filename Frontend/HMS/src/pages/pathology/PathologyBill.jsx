@@ -155,13 +155,13 @@ export default memo(function PathologyBill() {
           </div>
 
           {/* TABLE */}
-          <div className="overflow-x-auto" >
+          <div className="overflow-x-auto thin-scrollbar" >
             {loading ? (
               <div className="text-center py-8">Loading...</div>
             ) : bills.length === 0 ? (
               <div className="text-center py-8 text-gray-500">No bills found</div>
             ) : (
-              <table className="min-w-full text-sm">
+              <table className="min-w-full text-sm ">
                 <thead className="bg-gray-200 ">
                   <tr>
                     <th className="px-2 py-4 text-center">Bill No</th>

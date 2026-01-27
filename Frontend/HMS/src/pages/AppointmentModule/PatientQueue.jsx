@@ -94,7 +94,7 @@ export default function PatientQueue() {
         <select
           value={doctor}
           onChange={(e) => setDoctor(e.target.value)}
-          className="w-full border rounded px-3 py-2 text-sm mt-1"
+          className="w-full border rounded px-3 py-2 text-sm mt-1 form-field"
         >
           <option value="">Select</option>
           {doctors.map((d) => (
@@ -113,18 +113,18 @@ export default function PatientQueue() {
         <select
           value={shift}
           onChange={(e) => setShift(e.target.value)}
-          className="w-full border rounded px-3 py-2 text-sm mt-1"
+          className="w-full border rounded px-3 py-2 text-sm mt-1 form-field"
         >
           <option value="">Select</option>
           {shifts.map((s) => (
             <option key={s}>{s}</option>
           ))}
         </select>
-        {error && !shift && (
+        {/* {error && !shift && (
           <p className="text-red-500 text-xs mt-1">
             Shift field is required
           </p>
-        )}
+        )} */}
       </div>
 
       {/* Date */}
@@ -137,7 +137,7 @@ export default function PatientQueue() {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border rounded px-3 py-2 text-sm mt-1 pr-10"
+            className="w-full border rounded px-3 py-2 text-sm mt-1 pr-10 form-field"
           />
           <Calendar
             size={18}
@@ -152,7 +152,7 @@ export default function PatientQueue() {
         <select
           value={slot}
           onChange={(e) => setSlot(e.target.value)}
-          className="w-full border rounded px-3 py-2 text-sm mt-1"
+          className="w-full border rounded px-3 py-2 text-sm mt-1 form-field"
         >
           <option value="">Select</option>
           {slots.map((s) => (
@@ -192,7 +192,7 @@ export default function PatientQueue() {
 
     {/* TABLE */}
     <div className="mt-6 overflow-x-auto">
-      <table className="min-w-[800px] w-full text-sm border-separate border-spacing-0">
+      <table className="min-w-[800px] w-full text-sm border-separate border-spacing-0  thin-scrollbar">
         <thead className="bg-gray-50 border-y">
           <tr>
             <th className="px-4 py-2 text-left">Appointment S.No.</th>

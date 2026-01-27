@@ -60,7 +60,7 @@ export default function ChargesDetailsList() {
         <div className="flex gap-4 mt-4 shadow">
           <ChargesSidebar />
 
-          <div className="flex-1 bg-white rounded shadow">
+          <div className="flex-1 bg-white rounded shadow overflow-x-auto thin-scrollbar">
             <table className="w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>

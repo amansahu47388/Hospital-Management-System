@@ -701,7 +701,7 @@ function BillingDetails() {
                             <X className="cursor-pointer hover:opacity-80" onClick={() => setShowViewPayments(false)} />
                         </div>
                         <div className="p-6">
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto thin-scrollbar">
                                 <table className="w-full text-left text-sm whitespace-nowrap">
                                     <thead className="bg-gray-50 border-b border-gray-200">
                                         <tr>
@@ -773,7 +773,7 @@ function BillingDetails() {
                             </div>
 
                             {/* Table */}
-                            <div className="overflow-x-auto mb-6">
+                            <div className="overflow-x-auto mb-6 thin-scrollbar">
                                 <table className="w-full text-sm border-t border-b border-gray-300">
                                     <thead className="border-b border-gray-300">
                                         <tr>

@@ -78,7 +78,7 @@ export default function AmbulanceCallList() {
         </div>
 
         {/* TABLE */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm mt-6 overflow-x-auto lg:overflow-x-visible">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm mt-6 overflow-x-auto lg:overflow-x-visible thin-scrollbar">
           <table className="w-full text-left table-auto min-w-[900px] lg:min-w-0">
             <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
               <tr>
