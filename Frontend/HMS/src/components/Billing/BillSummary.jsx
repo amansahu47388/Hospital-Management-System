@@ -116,14 +116,14 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                                 {charges.length > 0 ? (
                                     charges.map((c) => (
                                         <tr key={c.id}>
-                                           <td className="py-2">{c.bill_no}</td>
-                                           <td className="py-2">{c.doctor}</td>
-                                           <td className="py-2">{c.amount}</td>
-                                           <td className="py-2">{c.discount}</td>
-                                           <td className="py-2">{c.tax}</td>
-                                           <td className="py-2">{c.net_amount}</td>
-                                           <td className="py-2">{c.paid_amount}</td>
-                                           <td className="py-2">{c.balance_amount}</td>
+                                            <td className="py-2">{c.bill_no}</td>
+                                            <td className="py-2">{c.doctor}</td>
+                                            <td className="py-2">{c.amount}</td>
+                                            <td className="py-2">{c.discount}</td>
+                                            <td className="py-2">{c.tax}</td>
+                                            <td className="py-2">{c.net_amount}</td>
+                                            <td className="py-2">{c.paid_amount}</td>
+                                            <td className="py-2">{c.balance_amount}</td>
                                         </tr>
                                     ))
                                 ) : (
@@ -156,13 +156,13 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                                     charges.map((c) => (
                                         <tr key={c.id}>
                                             <td className="py-2">{c.bill_no}</td>
-                                           <td className="py-2">{c.doctor}</td>
-                                           <td className="py-2">{c.amount}</td>
-                                           <td className="py-2">{c.discount}</td>
-                                           <td className="py-2">{c.tax}</td>
-                                           <td className="py-2">{c.net_amount}</td>
-                                           <td className="py-2">{c.paid_amount}</td>
-                                           <td className="py-2">{c.balance_amount}</td>
+                                            <td className="py-2">{c.doctor}</td>
+                                            <td className="py-2">{c.amount}</td>
+                                            <td className="py-2">{c.discount}</td>
+                                            <td className="py-2">{c.tax}</td>
+                                            <td className="py-2">{c.net_amount}</td>
+                                            <td className="py-2">{c.paid_amount}</td>
+                                            <td className="py-2">{c.balance_amount}</td>
                                         </tr>
                                     ))
                                 ) : (
@@ -232,13 +232,13 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                                     charges.map((c) => (
                                         <tr key={c.id}>
                                             <td className="py-2">{c.bill_no}</td>
-                                           <td className="py-2">{c.doctor}</td>
-                                           <td className="py-2">{c.amount}</td>
-                                           <td className="py-2">{c.discount}</td>
-                                           <td className="py-2">{c.tax}</td>
-                                           <td className="py-2">{c.net_amount}</td>
-                                           <td className="py-2">{c.paid_amount}</td>
-                                           <td className="py-2">{c.balance_amount}</td>
+                                            <td className="py-2">{c.doctor}</td>
+                                            <td className="py-2">{c.amount}</td>
+                                            <td className="py-2">{c.discount}</td>
+                                            <td className="py-2">{c.tax}</td>
+                                            <td className="py-2">{c.net_amount}</td>
+                                            <td className="py-2">{c.paid_amount}</td>
+                                            <td className="py-2">{c.balance_amount}</td>
                                         </tr>
                                     ))
                                 ) : (
@@ -257,6 +257,7 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                             <thead className="border-b border-gray-200 bg-gray-100">
                                 <tr>
                                     <th className="py-2">Payment Date</th>
+                                    <th className="py-2">Service Type</th>
                                     <th className="py-2">Payment Mode</th>
                                     <th className="py-2">Note</th>
                                     <th className="py-2 text-right">Amount</th>
@@ -267,6 +268,11 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                                     payments.map((p) => (
                                         <tr key={p.id}>
                                             <td className="py-2">{p.payment_date}</td>
+                                            <td className="py-2">
+                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                    {p.service_type || 'General'}
+                                                </span>
+                                            </td>
                                             <td className="py-2">{p.payment_mode}</td>
                                             <td className="py-2 text-xs truncate max-w-[200px]">{p.note}</td>
                                             <td className="py-2 text-right">${parseFloat(p.paid_amount || 0).toFixed(2)}</td>
@@ -274,7 +280,7 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className="py-4 text-center text-gray-400">No transactions found</td>
+                                        <td colSpan="5" className="py-4 text-center text-gray-400">No transactions found</td>
                                     </tr>
                                 )}
                             </tbody>

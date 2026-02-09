@@ -57,10 +57,10 @@ class AmbulanceBill(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        if not self.bill_no:
-            # Generate bill number
-            import uuid
-            self.bill_no = f"AMB-{uuid.uuid4().hex[:8].upper()}"
+        # if not self.bill_no:
+        #     # Generate bill number
+        #     import uuid
+        #     self.bill_no = f"AMB-{uuid.uuid4().hex[:8].upper()}"
 
         # Calculate net amount
         self.net_amount = self.total_amount - self.discount + self.tax
@@ -69,7 +69,7 @@ class AmbulanceBill(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Ambulance Bill #{self.bill_no} - {self.patient}"
+        return f"Ambulance Bill #{self.id} - {self.patient}"
 
     class Meta:
         ordering = ['-created_at']

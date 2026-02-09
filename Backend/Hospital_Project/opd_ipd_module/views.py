@@ -37,10 +37,14 @@ class OpdPatientListAPIView(generics.ListAPIView):
         ).order_by("-created_at")
 
         patient_id = self.request.query_params.get("patient_id")
+        case_id = self.request.query_params.get("case_id")
         tab = self.request.query_params.get("tab")
 
         if patient_id:
             qs = qs.filter(patient_id=patient_id)
+
+        if case_id:
+            qs = qs.filter(case__case_id=case_id)
 
         if tab == "today":
             qs = qs.filter(appointment_date__date=now().date())
@@ -167,6 +171,7 @@ class IpdPatientListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         patient_id = self.request.query_params.get("patient_id")
+        case_id = self.request.query_params.get("case_id")
         tab = self.request.query_params.get("tab")
         
         qs = IpdPatient.objects.select_related(
@@ -174,7 +179,10 @@ class IpdPatientListAPIView(generics.ListAPIView):
         ).order_by("-created_at")
 
         if patient_id:
-            return qs.filter(patient_id=patient_id)
+            qs = qs.filter(patient_id=patient_id)
+
+        if case_id:
+            qs = qs.filter(case__case_id=case_id)
             
         if tab == "discharged":
             return qs.filter(is_discharged=True)

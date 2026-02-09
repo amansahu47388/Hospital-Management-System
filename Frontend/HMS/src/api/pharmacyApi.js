@@ -155,8 +155,8 @@ export const generatePharmacyBill = (data) => {
   return api.post("pharmacy/bills/create/", data);
 }
 
-export const getPharmacyBills = () => {
-  return api.get("pharmacy/bills/");
+export const getPharmacyBills = (params) => {
+  return api.get("pharmacy/bills/", { params });
 }
 
 export const updatePharmacyBill = (id, data) => {

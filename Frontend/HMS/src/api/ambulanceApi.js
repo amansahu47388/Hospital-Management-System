@@ -27,8 +27,11 @@ export const createAmbulanceBill = async (payload) => {
   return api.post("ambulance-bill/create/", payload);
 };
 
-export const getAmbulanceBills = (search = "") => {
-  const params = search ? { search } : {};
+export const getAmbulanceBills = (search = "", patientId = "", caseId = "") => {
+  const params = {};
+  if (search) params.search = search;
+  if (patientId) params.patient_id = patientId;
+  if (caseId) params.case_id = caseId;
   return api.get("ambulance-bill/", { params });
 };
 

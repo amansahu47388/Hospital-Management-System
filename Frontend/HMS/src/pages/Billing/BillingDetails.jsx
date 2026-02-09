@@ -51,7 +51,9 @@ function BillingDetails() {
         amount: "",
         mode: "Cash",
         note: "",
-        date: new Date().toISOString().slice(0, 16)
+        date: new Date().toISOString().slice(0, 16),
+        selectedBill: null, // Track which bill to pay
+        selectedBillType: null // Track bill type (pathology_bill, pharmacy_bill, etc.)
     });
 
     const fetchDetails = async (caseIdValue) => {
@@ -69,6 +71,7 @@ function BillingDetails() {
                     name: `${patient.full_name} (${patient.id})`,
                     gender: patient.gender,
                     phone: patient.phone,
+                    photo: patient.photo, // Add patient photo
                     opdNo: "OPDN" + (caseObj.id + 7500),
                     appointmentDate: new Date(caseObj.created_at).toLocaleString(),
                     guardianName: patient.emergency_contact_name || "N/A",
@@ -78,14 +81,14 @@ function BillingDetails() {
 
                 // Fetch Charges and Payments
                 const [chargesRes, paymentsRes, pathoRes, radioRes, pharmRes, ambuRes, opdRes, ipdRes] = await Promise.all([
-                    getPatientCharges(patient.id),
-                    getPatientPayments(patient.id),
-                    getPathologyBills(null, patient.id),
-                    getRadiologyBills(null, patient.id),
-                    getPharmacyBills(),
-                    getAmbulanceBills(),
-                    getOpdPatientList({ patient_id: patient.id }),
-                    getIpdPatientList({ patient_id: patient.id })
+                    getPatientCharges(patient.id, caseObj.case_id),
+                    getPatientPayments(patient.id, caseObj.case_id),
+                    getPathologyBills(null, null, caseObj.case_id),
+                    getRadiologyBills(null, null, caseObj.case_id),
+                    getPharmacyBills({ case_id: caseObj.case_id }),
+                    getAmbulanceBills(null, null, caseObj.case_id),
+                    getOpdPatientList({ case_id: caseObj.case_id }),
+                    getIpdPatientList({ case_id: caseObj.case_id })
                 ]);
 
                 setCharges(chargesRes.data || []);
@@ -94,10 +97,8 @@ function BillingDetails() {
                 setRadiologyBills(radioRes.data || []);
                 setOpdVisits(opdRes.data || []);
                 setIpdAdmissions(ipdRes.data || []);
-
-                // Local filtering for Pharmacy and Ambulance
-                setPharmacyBills((pharmRes.data || []).filter(b => b.patient_id === patient.id || b.patient === patient.id));
-                setAmbulanceBills((ambuRes.data || []).filter(b => b.patient_id === patient.id || b.patient === patient.id));
+                setPharmacyBills(pharmRes.data || []);
+                setAmbulanceBills(ambuRes.data || []);
             } else {
                 notify("error", "No Case found with this ID");
                 setPatientData(null);
@@ -126,19 +127,38 @@ function BillingDetails() {
                 paid_amount: paymentData.amount,
                 payment_mode: paymentData.mode,
                 note: paymentData.note,
-                payment_date: paymentData.date.split('T')[0] // API expects date only typically
+                payment_date: paymentData.date.split('T')[0],
+                case: patientData.case_id_internal,
+                service_type: activeTab
             };
+
+            // Add bill reference based on selected bill
+            if (paymentData.selectedBill && paymentData.selectedBillType && paymentData.selectedBill !== "") {
+                // Convert to integer since select returns string
+                const billId = parseInt(paymentData.selectedBill);
+                if (!isNaN(billId)) {
+                    payload[paymentData.selectedBillType] = billId;
+                }
+            }
+
             await createPatientPayment(patientData.id, payload);
-            notify("success", "Payment added successfully");
+            notify("success", `Payment added successfully for ${activeTab}`);
             setShowAddPayment(false);
-            // Refresh payments and charges (if needed)
-            const paymentsRes = await getPatientPayments(patientData.id);
+
+            // Refresh payments and bills
+            const paymentsRes = await getPatientPayments(patientData.id, patientData.caseId);
             setPayments(paymentsRes.data || []);
+
+            // Refresh the specific module data
+            fetchDetails(patientData.caseId);
+
             setPaymentData({
                 amount: "",
                 mode: "Cash",
                 note: "",
-                date: new Date().toISOString().slice(0, 16)
+                date: new Date().toISOString().slice(0, 16),
+                selectedBill: null,
+                selectedBillType: null
             });
         } catch (error) {
             notify("error", "Failed to add payment");
@@ -151,6 +171,34 @@ function BillingDetails() {
             fetchDetails(location.state.caseId);
         }
     }, [location.state]);
+
+    const formatVisitRows = (rows = []) => {
+        return rows.map(r => {
+            const net = Number(r.net_amount || r.total_amount || 0);
+            const paid = Number(r.paid_amount || 0);
+            return {
+                ...r,
+                net,
+                paid,
+                balance: net - paid
+            };
+        });
+    };
+
+    const opdRows = formatVisitRows(opdVisits);
+    const ipdRows = formatVisitRows(ipdAdmissions);
+
+    const calculateTotals = (rows) => {
+        return rows.reduce((acc, r) => {
+            acc.net += r.net;
+            acc.paid += r.paid;
+            acc.balance += r.balance;
+            return acc;
+        }, { net: 0, paid: 0, balance: 0 });
+    };
+
+    const opdTotals = calculateTotals(opdRows);
+    const ipdTotals = calculateTotals(ipdRows);
 
     return (
         <AdminLayout>
@@ -220,11 +268,27 @@ function BillingDetails() {
                                 {/* Photo & Barcode Section */}
                                 <div className="flex flex-col items-center">
                                     <div className="w-32 h-36 bg-gray-100 border border-gray-200 rounded overflow-hidden mb-2">
-                                        <img
-                                            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop"
-                                            alt="Patient"
-                                            className="w-full h-full object-cover"
-                                        />
+                                        {patientData.photo ? (
+                                            <img
+                                                src={patientData.photo}
+                                                alt="Patient"
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    // Fallback to default avatar if image fails to load
+                                                    e.target.onerror = null;
+                                                    e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(patientData.name) + "&size=200&background=6046B5&color=fff";
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-purple-200">
+                                                <div className="text-center">
+                                                    <div className="text-4xl font-bold text-purple-600">
+                                                        {patientData.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div className="text-xs text-purple-500 mt-1">No Photo</div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <button
                                         onClick={() => setShowSummary(true)}
@@ -321,65 +385,50 @@ function BillingDetails() {
                                         <tr>
                                             <th className="px-3 py-2 text-left ">Date</th>
                                             <th className="px-3 py-2 text-left">Charge Name</th>
-                                            <th className="px-3 py-2 text-left">Charge Type</th>
                                             <th className="px-3 py-2 text-left">Charge Category</th>
-                                            <th className="px-3 py-2 text-left">Standard Charge ($)</th>
-                                            <th className="px-3 py-2 text-left">Discount</th>
-                                            <th className="px-3 py-2 text-left">Tax</th>
                                             <th className="px-3 py-2 text-left">Amount ($)</th>
-                                            <th className="px-3 py-2 text-left">Action</th>
+                                            <th className="px-3 py-2 text-left">Discount ($)</th>
+                                            <th className="px-3 py-2 text-left">Tax ($)</th>
+                                            <th className="px-3 py-2 text-left">Net Amount ($)</th>
+                                            <th className="px-3 py-2 text-left">Paid Amount ($)</th>
+                                            <th className="px-3 py-2 text-left">Balance ($)</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
-                                        {(() => {
-                                            const filteredCharges = charges.filter(c => c.charge_type?.toUpperCase().includes("OPD") || !c.charge_type);
-                                            const mappedVisits = opdVisits.map(v => ({
-                                                id: `opd-${v.opd_id}`,
-                                                charge_date: v.appointment_date || v.created_at,
-                                                charge_name: "OPD Visit / Consultation",
-                                                charge_type: "OPD",
-                                                charge_category: "Consultation",
-                                                standard_charge: (Number(v.total_amount || 0) + Number(v.discount || 0)).toFixed(2),
-                                                discount: Number(v.discount || 0).toFixed(2),
-                                                tax: "0.00",
-                                                amount: Number(v.total_amount || 0).toFixed(2)
-                                            }));
-                                            const allOpdItems = [...filteredCharges, ...mappedVisits];
+                                        {opdRows.length > 0 ? opdRows.map((row) => (
+                                            <tr key={row.id} className="hover:bg-gray-50">
+                                                <td className="px-3 py-2 text-gray-600 font-medium whitespace-nowrap">
+                                                    {new Date(row.appointment_date || row.created_at).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{row.charge_name}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{row.charge_category}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{Number(row.amount || 0).toFixed(2)}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{Number(row.discount || 0).toFixed(2)}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{Number(row.tax || 0).toFixed(2)}</td>
+                                                <td className="px-3 py-2 font-semibold text-gray-800">
+                                                    {row.net.toFixed(2)}
+                                                </td>
+                                                <td className="px-3 py-2 text-green-600 font-semibold">
+                                                    {row.paid.toFixed(2)}
+                                                </td>
+                                                <td className="px-3 py-2 text-red-600 font-semibold">
+                                                    {row.balance.toFixed(2)}
+                                                </td>
+                                            </tr>
+                                        )) : (
+                                            <tr>
+                                                <td colSpan="9" className="text-center py-6 text-gray-400">
+                                                    No OPD charges found
+                                                </td>
+                                            </tr>
+                                        )}
 
-                                            if (allOpdItems.length === 0) {
-                                                return (
-                                                    <tr>
-                                                        <td colSpan="9" className="px-3 py-10 text-center text-gray-400 font-medium">No OPD charges found</td>
-                                                    </tr>
-                                                );
-                                            }
-
-                                            return (
-                                                <>
-                                                    {allOpdItems.map((charge) => (
-                                                        <tr key={charge.id} className="hover:bg-gray-50 border-b border-gray-100 cursor-pointer ">
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_date ? new Date(charge.charge_date).toLocaleDateString() : new Date().toLocaleDateString()}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_name}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_type || "OPD"}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_category}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{Number(charge.standard_charge || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{Number(charge.discount || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{Number(charge.tax || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-800 font-medium font-bold">{Number(charge.amount || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-500">
-                                                                <Printer size={16} className="cursor-pointer mx-auto hover:text-[#6046B5]" />
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    <tr className="bg-[#f9f9f9] font-bold border-b border-gray-100">
-                                                        <td colSpan="8" className="px-3 py-2 text-right text-gray-800">
-                                                            Total : ${allOpdItems.reduce((sum, c) => sum + parseFloat(c.amount || 0), 0).toFixed(2)}
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                </>
-                                            );
-                                        })()}
+                                        <tr className="bg-gray-100 font-bold border-b border-gray-100">
+                                            <td colSpan="6" className="text-right px-3 py-2 text-gray-800">Total :</td>
+                                            <td className="px-3 py-2 text-gray-800">${opdTotals.net.toFixed(2)}</td>
+                                            <td className="px-3 py-2 text-green-600">${opdTotals.paid.toFixed(2)}</td>
+                                            <td className="px-3 py-2 text-red-600">${opdTotals.balance.toFixed(2)}</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -392,56 +441,50 @@ function BillingDetails() {
                                         <tr>
                                             <th className="px-3 py-2 text-left">Date</th>
                                             <th className="px-3 py-2 text-left">Charge Name</th>
-                                            <th className="px-3 py-2 text-left">Charge Type</th>
                                             <th className="px-3 py-2 text-left">Charge Category</th>
-                                            <th className="px-3 py-2 text-left">Standard Charge ($)</th>
-                                            <th className="px-3 py-2 text-left">Discount</th>
-                                            <th className="px-3 py-2 text-left">Tax</th>
                                             <th className="px-3 py-2 text-left">Amount ($)</th>
-                                            <th className="px-3 py-2 text-left">Action</th>
+                                            <th className="px-3 py-2 text-left">Discount ($)</th>
+                                            <th className="px-3 py-2 text-left">Tax ($)</th>
+                                            <th className="px-3 py-2 text-left">Net Amount ($)</th>
+                                            <th className="px-3 py-2 text-left">Paid Amount ($)</th>
+                                            <th className="px-3 py-2 text-left">Balance ($)</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
-                                        {(() => {
-                                            const filteredCharges = charges.filter(c => c.charge_type?.toUpperCase().includes("IPD"));
+                                        {ipdRows.length > 0 ? ipdRows.map((row) => (
+                                            <tr key={row.id} className="hover:bg-gray-50">
+                                                <td className="px-3 py-2 text-gray-600 font-medium whitespace-nowrap">
+                                                    {new Date(row.admission_date || row.created_at).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{row.charge_name || "IPD Admission"}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{row.charge_category || "General Ward"}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{Number(row.amount || 0).toFixed(2)}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{Number(row.discount || 0).toFixed(2)}</td>
+                                                <td className="px-3 py-2 text-gray-600 font-medium">{Number(row.tax || 0).toFixed(2)}</td>
+                                                <td className="px-3 py-2 font-semibold text-gray-800">
+                                                    {row.net.toFixed(2)}
+                                                </td>
+                                                <td className="px-3 py-2 text-green-600 font-semibold">
+                                                    {row.paid.toFixed(2)}
+                                                </td>
+                                                <td className="px-3 py-2 text-red-600 font-semibold">
+                                                    {row.balance.toFixed(2)}
+                                                </td>
+                                            </tr>
+                                        )) : (
+                                            <tr>
+                                                <td colSpan="9" className="text-center py-6 text-gray-400">
+                                                    No IPD charges found
+                                                </td>
+                                            </tr>
+                                        )}
 
-                                            // IPD might have admissions/bed charges too, but currently they seem to go through PatientCharges
-                                            const allIpdItems = [...filteredCharges];
-
-                                            if (allIpdItems.length === 0) {
-                                                return (
-                                                    <tr>
-                                                        <td colSpan="9" className="px-3 py-10 text-center text-gray-400 font-medium">No IPD charges found</td>
-                                                    </tr>
-                                                );
-                                            }
-
-                                            return (
-                                                <>
-                                                    {allIpdItems.map((charge) => (
-                                                        <tr key={charge.id} className="hover:bg-gray-50 border-b border-gray-100 cursor-pointer ">
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_date || new Date(charge.created_at).toLocaleDateString()}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_name}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_type || "IPD"}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{charge.charge_category}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{Number(charge.standard_charge || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{Number(charge.discount || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-600 font-medium">{Number(charge.tax || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-800 font-medium font-bold">{Number(charge.amount || 0).toFixed(2)}</td>
-                                                            <td className="px-3 py-3 text-gray-500">
-                                                                <Printer size={16} className="cursor-pointer mx-auto hover:text-[#6046B5]" />
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    <tr className="bg-[#f9f9f9] font-bold border-b border-gray-100">
-                                                        <td colSpan="8" className="px-3 py-2 text-right text-gray-800">
-                                                            Total : ${allIpdItems.reduce((sum, c) => sum + parseFloat(c.amount || 0), 0).toFixed(2)}
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                </>
-                                            );
-                                        })()}
+                                        <tr className="bg-gray-100 font-bold border-b border-gray-100">
+                                            <td colSpan="6" className="text-right px-3 py-2 text-gray-800">Total :</td>
+                                            <td className="px-3 py-2 text-gray-800">${ipdTotals.net.toFixed(2)}</td>
+                                            <td className="px-3 py-2 text-green-600">${ipdTotals.paid.toFixed(2)}</td>
+                                            <td className="px-3 py-2 text-red-600">${ipdTotals.balance.toFixed(2)}</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -461,7 +504,6 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left ">Net Amount ($)</th>
                                             <th className="px-3 py-2 text-left ">Paid Amount ($)</th>
                                             <th className="px-3 py-2 text-left ">Balance ($)</th>
-                                            <th className="px-3 py-2 text-left ">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -477,9 +519,6 @@ function BillingDetails() {
                                                     <td className="px-3 py-3 text-gray-800 font-medium font-bold">{Number(bill.net_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-green-600 font-medium font-bold">{Number(bill.paid_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-red-600 font-medium font-bold">{Number(bill.balance_amount || 0).toFixed(2)}</td>
-                                                    <td className="px-3 py-3 text-center">
-                                                        <Printer size={16} className="cursor-pointer mx-auto text-gray-400 hover:text-[#6046B5]" title="Print Bill" />
-                                                    </td>
                                                 </tr>
                                             ))
                                         ) : (
@@ -505,7 +544,6 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left">Net Amount ($)</th>
                                             <th className="px-3 py-2 text-left">Paid Amount ($)</th>
                                             <th className="px-3 py-2 text-left">Balance ($)</th>
-                                            <th className="px-3 py-2 text-left">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -520,9 +558,6 @@ function BillingDetails() {
                                                     <td className="px-3 py-3 text-gray-800 font-medium font-bold">{Number(bill.total_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-green-600 font-medium font-bold">{Number(bill.paid_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-red-600 font-medium font-bold">{Number(bill.balance || 0).toFixed(2)}</td>
-                                                    <td className="px-3 py-3 text-center">
-                                                        <Printer size={16} className="cursor-pointer mx-auto text-gray-400 hover:text-[#6046B5]" title="Print Bill" />
-                                                    </td>
                                                 </tr>
                                             ))
                                         ) : (
@@ -548,7 +583,6 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left ">Net Amount ($)</th>
                                             <th className="px-3 py-2 text-left ">Paid Amount ($)</th>
                                             <th className="px-3 py-2 text-left ">Balance ($)</th>
-                                            <th className="px-3 py-2 text-left ">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -563,9 +597,6 @@ function BillingDetails() {
                                                     <td className="px-3 py-3 text-gray-800 font-medium font-bold">{Number(bill.total_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-green-600 font-medium font-bold">{Number(bill.paid_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-red-600 font-medium font-bold">{Number(bill.balance || 0).toFixed(2)}</td>
-                                                    <td className="px-3 py-3 text-center">
-                                                        <Printer size={16} className="cursor-pointer mx-auto text-gray-400 hover:text-[#6046B5]" title="Print Bill" />
-                                                    </td>
                                                 </tr>
                                             ))
                                         ) : (
@@ -589,7 +620,6 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left ">Amount ($)</th>
                                             <th className="px-3 py-2 text-left ">Paid Amount ($)</th>
                                             <th className="px-3 py-2 text-left ">Balance Amount ($)</th>
-                                            <th className="px-3 py-2 text-left ">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -602,9 +632,6 @@ function BillingDetails() {
                                                     <td className="px-3 py-3 text-gray-800 font-medium font-bold">{Number(bill.net_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-green-600 font-medium font-bold">{Number(bill.paid_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-red-600 font-medium font-bold">{Number(bill.balance || 0).toFixed(2)}</td>
-                                                    <td className="px-3 py-3 text-center">
-                                                        <Printer size={16} className="cursor-pointer mx-auto text-gray-400 hover:text-[#6046B5]" title="Print Bill" />
-                                                    </td>
                                                 </tr>
                                             ))
                                         ) : (
@@ -643,9 +670,11 @@ function BillingDetails() {
                                     <label className="block text-gray-700 text-sm font-medium mb-1">Amount ($) <span className="text-red-500">*</span></label>
                                     <input
                                         type="number"
+                                        step="0.01"
                                         className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                                         value={paymentData.amount}
                                         onChange={(e) => setPaymentData({ ...paymentData, amount: e.target.value })}
+                                        placeholder="Enter amount"
                                     />
                                 </div>
                             </div>
@@ -663,6 +692,104 @@ function BillingDetails() {
                                     <option>Online</option>
                                 </select>
                             </div>
+
+                            {/* Bill Selector based on active tab */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-medium mb-1">
+                                    Select Bill to Pay <span className="text-gray-500 text-xs">(Optional)</span>
+                                </label>
+                                <select
+                                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                                    value={paymentData.selectedBill || ""}
+                                    onChange={(e) => {
+                                        const selectedId = e.target.value;
+                                        let billType = null;
+                                        let balanceAmount = "";
+
+                                        if (selectedId) {
+                                            // Determine bill type based on active tab
+                                            if (activeTab === "Pathology") {
+                                                billType = "pathology_bill";
+                                                const bill = pathologyBills.find(b => b.id === parseInt(selectedId));
+                                                balanceAmount = bill ? Number(bill.balance || 0).toFixed(2) : "";
+                                            }
+                                            else if (activeTab === "Radiology") {
+                                                billType = "radiology_bill";
+                                                const bill = radiologyBills.find(b => b.id === parseInt(selectedId));
+                                                balanceAmount = bill ? Number(bill.balance || 0).toFixed(2) : "";
+                                            }
+                                            else if (activeTab === "Pharmacy") {
+                                                billType = "pharmacy_bill";
+                                                const bill = pharmacyBills.find(b => b.id === parseInt(selectedId));
+                                                balanceAmount = bill ? Number(bill.balance_amount || 0).toFixed(2) : "";
+                                            }
+                                            else if (activeTab === "Ambulance") {
+                                                billType = "ambulance_bill";
+                                                const bill = ambulanceBills.find(b => b.id === parseInt(selectedId));
+                                                balanceAmount = bill ? Number(bill.balance || 0).toFixed(2) : "";
+                                            }
+                                            else if (activeTab === "OPD") {
+                                                billType = "opd_patient";
+                                                const visit = opdRows.find(r => r.opd_id === parseInt(selectedId));
+                                                balanceAmount = visit ? Number(visit.balance || 0).toFixed(2) : "";
+                                            }
+                                            else if (activeTab === "IPD") {
+                                                billType = "ipd_patient";
+                                                const admission = ipdRows.find(r => r.ipd_id === parseInt(selectedId));
+                                                balanceAmount = admission ? Number(admission.balance || 0).toFixed(2) : "";
+                                            }
+                                        }
+
+                                        setPaymentData({
+                                            ...paymentData,
+                                            selectedBill: selectedId || null,
+                                            selectedBillType: billType,
+                                            amount: balanceAmount // Auto-fill amount with balance
+                                        });
+                                    }}
+                                >
+                                    <option value="">General Payment (No specific bill)</option>
+
+                                    {activeTab === "Pathology" && pathologyBills.filter(b => b.balance > 0).map(bill => (
+                                        <option key={bill.id} value={bill.id}>
+                                            Bill #{bill.id} - Balance: ${Number(bill.balance || 0).toFixed(2)}
+                                        </option>
+                                    ))}
+
+                                    {activeTab === "Radiology" && radiologyBills.filter(b => b.balance > 0).map(bill => (
+                                        <option key={bill.id} value={bill.id}>
+                                            Bill {bill.id} - Balance: ${Number(bill.balance || 0).toFixed(2)}
+                                        </option>
+                                    ))}
+
+                                    {activeTab === "Pharmacy" && pharmacyBills.filter(b => b.balance_amount > 0).map(bill => (
+                                        <option key={bill.id} value={bill.id}>
+                                            Bill {bill.id} - Balance: ${Number(bill.balance_amount || 0).toFixed(2)}
+                                        </option>
+                                    ))}
+
+
+                                    {activeTab === "Ambulance" && ambulanceBills.filter(b => b.balance > 0).map(bill => (
+                                        <option key={bill.id} value={bill.id}>
+                                            Bill {bill.id} - Balance: ${Number(bill.balance || 0).toFixed(2)}
+                                        </option>
+                                    ))}
+
+                                    {activeTab === "OPD" && opdRows.filter(r => r.balance > 0).map(row => (
+                                        <option key={row.opd_id} value={row.opd_id}>
+                                            OPD Visit {row.opd_id} - Balance: ${Number(row.balance || 0).toFixed(2)}
+                                        </option>
+                                    ))}
+
+                                    {activeTab === "IPD" && ipdRows.filter(r => r.balance > 0).map(row => (
+                                        <option key={row.ipd_id} value={row.ipd_id}>
+                                            IPD Admission {row.ipd_id} - Balance: ${Number(row.balance || 0).toFixed(2)}
+                                        </option>
+                                    ))}
+                                </select>
+
+                            </div>
+
                             <div className="mb-6">
                                 <label className="block text-gray-700 text-sm font-medium mb-1">Note</label>
                                 <textarea
@@ -706,6 +833,7 @@ function BillingDetails() {
                                     <thead className="bg-gray-50 border-b border-gray-200">
                                         <tr>
                                             <th className="px-4 py-2 font-semibold text-gray-700">Date</th>
+                                            <th className="px-4 py-2 font-semibold text-gray-700">Service Type</th>
                                             <th className="px-4 py-2 font-semibold text-gray-700">Note</th>
                                             <th className="px-4 py-2 font-semibold text-gray-700">Payment Mode</th>
                                             <th className="px-4 py-2 font-semibold text-gray-700 text-right">Paid Amount ($)</th>
@@ -717,6 +845,11 @@ function BillingDetails() {
                                             payments.map((p) => (
                                                 <tr key={p.id}>
                                                     <td className="px-4 py-2">{p.payment_date}</td>
+                                                    <td className="px-4 py-2">
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                            {p.service_type || 'General'}
+                                                        </span>
+                                                    </td>
                                                     <td className="px-4 py-2">{p.note || "-"}</td>
                                                     <td className="px-4 py-2">{p.payment_mode}</td>
                                                     <td className="px-4 py-2 text-right">{p.paid_amount}</td>
@@ -724,13 +857,13 @@ function BillingDetails() {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="4" className="px-4 py-10 text-center text-gray-400">No payments found</td>
+                                                <td colSpan="5" className="px-4 py-10 text-center text-gray-400">No payments found</td>
                                             </tr>
                                         )}
                                     </tbody>
                                     <tfoot className="bg-gray-50 font-semibold border-t">
                                         <tr>
-                                            <td colSpan="3" className="px-2 py-2 text-right">Total</td>
+                                            <td colSpan="4" className="px-2 py-2 text-right">Total</td>
                                             <td className="px-2 py-2 text-right">${payments.reduce((sum, p) => sum + parseFloat(p.paid_amount || 0), 0).toFixed(2)}</td>
                                         </tr>
                                     </tfoot>
