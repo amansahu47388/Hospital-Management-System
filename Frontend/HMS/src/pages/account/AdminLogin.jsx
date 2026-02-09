@@ -55,10 +55,10 @@ export default function AdminLogin() {
 
   const submit = async (e) => {
     e.preventDefault();
-    
+
     const emailError = validateEmail(form.email);
     const passwordError = validatePassword(form.password);
-    
+
     if (emailError || passwordError) {
       setErrors({ email: emailError, password: passwordError });
       return;
@@ -72,12 +72,12 @@ export default function AdminLogin() {
 
         const user = res.data.user || JSON.parse(localStorage.getItem("user") || "{}");
         const role = (user?.role || "").toLowerCase();
-        const adminRoles = ["admin","doctor","pharmacist","pathologist","radiologist","accountant","receptionist","staff"];
+        const adminRoles = ["admin", "doctor", "pharmacist", "pathologist", "radiologist", "accountant", "receptionist", "nurse"];
         const isAdmin = adminRoles.includes(role);
 
         const roleName = role.charAt(0).toUpperCase() + role.slice(1);
         notify("success", `Welcome back, ${user?.full_name || roleName}! Login successful.`);
-        
+
         setTimeout(() => {
           navigate(isAdmin ? "/admin/dashboard" : "/", { replace: true });
         }, 1500);

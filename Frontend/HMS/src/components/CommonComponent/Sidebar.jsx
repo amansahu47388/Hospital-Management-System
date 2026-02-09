@@ -34,26 +34,48 @@ import {
 } from "lucide-react";
 import FullLogo from "../../assets/icons/logo4.png"
 import IconLogo from "../../assets/icons/shortlogo.png"
+
+
+// Role-based permissions configuration
+const ROLE_PERMISSIONS = {
+  admin: ['dashboard', 'patient', 'appointment', 'opd', 'ipd', 'pharmacy', 'pathology', 'radiology', 'ambulance', 'billing', 'front-office', 'birth-death', 'inventory', 'finance', 'setup'],
+  doctor: ['dashboard', 'patient', 'appointment', 'opd', 'ipd', 'pathology', 'radiology', 'ambulance', 'billing', 'birth-death', 'setup'],
+  pharmacist: ['dashboard', 'patient', 'opd', 'ipd', 'pharmacy', 'billing', 'setup'],
+  pathologist: ['dashboard', 'patient', 'opd', 'ipd', 'pathology', 'billing', 'setup'],
+  radiologist: ['dashboard', 'patient', 'opd', 'ipd', 'radiology', 'billing', 'setup'],
+  accountant: ['dashboard', 'patient', 'appointment', 'opd', 'ipd', 'pharmacy', 'pathology', 'radiology', 'ambulance', 'billing', 'inventory', 'finance', 'setup'],
+  receptionist: ['dashboard', 'patient', 'appointment', 'opd', 'ipd', 'pharmacy', 'pathology', 'radiology', 'ambulance', 'billing', 'front-office', 'birth-death', 'inventory', 'setup'],
+  nurse: ['dashboard', 'patient', 'opd', 'ipd', 'setup'],
+};
+
+// Setup submenu permissions for each role
+const SETUP_PERMISSIONS = {
+  admin: ['hospital-charges', 'bed', 'print-header-footer', 'front-office', 'operations', 'pharmacy', 'pathology', 'radiology', 'symptoms', 'findings', 'vitals', 'finance', 'inventory', 'appointment'],
+  doctor: ['hospital-charges', 'bed', 'print-header-footer', 'pharmacy', 'symptoms', 'findings', 'vitals', 'finance', 'inventory', 'appointment'],
+  pharmacist: ['hospital-charges', 'print-header-footer', 'pharmacy', 'finance', 'inventory', 'appointment'],
+  pathologist: ['hospital-charges', 'print-header-footer', 'pathology', 'finance', 'inventory'],
+  radiologist: ['hospital-charges', 'print-header-footer', 'radiology', 'finance', 'inventory'],
+  accountant: ['hospital-charges', 'print-header-footer', 'bed', 'pharmacy', 'finance', 'inventory', 'appointment'],
+  receptionist: ['bed', 'print-header-footer', 'front-office', 'finance', 'inventory', 'appointment'],
+  nurse: ['bed', 'vitals', 'finance', 'inventory'],
+};
+
+
 const adminNavItems = [
-  { to: "/admin/dashboard", label: "Dashboard", Icon: LayoutDashboard },
-  { to: "/admin/patients", label: "Patient", Icon: UserRound },
-  { to: "/admin/appointments", label: "Appointment", Icon: Calendar },
-  { to: "/admin/opd-patients", label: "OPD-Out patient", Icon: Hospital },
-  { to: "/admin/ipd-patients", label: "IPD-In Patient", Icon: Bed },
-  { to: "/admin/pharmacy-bills", label: "Pharmacy", Icon: Pill },
-  { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical },
-  { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2 },
-  { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance },
-  { to: "/admin/billing", label: "Billing", Icon: CreditCard },
-  { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList },
-  { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList },
-  // { to: "/Annual-Calendar", label: "Annual Calendar", Icon: CalendarDays },
-  { to: "/Finance", label: "Finance", Icon: BarChart3 },
-
-
-  //{ to: "/Front-CMS", label: "Front CMS", Icon: Monitor },
-  //{ to: "/Reports", label: "Reports", Icon: BarChart3 },
-  { to: "/Setup", label: "Setup", Icon: Settings },
+  { to: "/admin/dashboard", label: "Dashboard", Icon: LayoutDashboard, permission: 'dashboard' },
+  { to: "/admin/patients", label: "Patient", Icon: UserRound, permission: 'patient' },
+  { to: "/admin/appointments", label: "Appointment", Icon: Calendar, permission: 'appointment' },
+  { to: "/admin/opd-patients", label: "OPD-Out patient", Icon: Hospital, permission: 'opd' },
+  { to: "/admin/ipd-patients", label: "IPD-In Patient", Icon: Bed, permission: 'ipd' },
+  { to: "/admin/pharmacy-bills", label: "Pharmacy", Icon: Pill, permission: 'pharmacy' },
+  { to: "/admin/pathology-bills", label: "Pathology", Icon: FlaskConical, permission: 'pathology' },
+  { to: "/admin/radiology-bills", label: "Radiology", Icon: FolderGit2, permission: 'radiology' },
+  { to: "/admin/Ambulance", label: "Ambulance", Icon: Ambulance, permission: 'ambulance' },
+  { to: "/admin/billing", label: "Billing", Icon: CreditCard, permission: 'billing' },
+  { to: "/admin/front-office/visitor-list", label: "Front Office", Icon: ClipboardList, permission: 'front-office' },
+  { to: "/admin/Inventory/Item-Stock", label: "Inventory", Icon: ClipboardList, permission: 'inventory' },
+  { to: "/Finance", label: "Finance", Icon: BarChart3, permission: 'finance' },
+  { to: "/Setup", label: "Setup", Icon: Settings, permission: 'setup' },
 ];
 
 const patientNavItems = [
@@ -70,10 +92,27 @@ const patientNavItems = [
 ];
 
 function Sidebar({ role = "admin" }) {
-  const navItems = role === "admin" ? adminNavItems : patientNavItems;
+  // Helper function to check if user has permission
+  const hasPermission = (permission) => {
+    if (role === "patient") return true;
+    const userPermissions = ROLE_PERMISSIONS[role.toLowerCase()] || ROLE_PERMISSIONS['admin'];
+    return userPermissions.includes(permission);
+  };
+
+  // Helper function to check if user has permission for setup submenu items
+  const hasSetupPermission = (setupItem) => {
+    if (role === "patient") return false;
+    const setupPermissions = SETUP_PERMISSIONS[role.toLowerCase()] || SETUP_PERMISSIONS['admin'];
+    return setupPermissions.includes(setupItem);
+  };
+
+  // Filter nav items based on role permissions
+  const navItems = role === "patient"
+    ? patientNavItems
+    : adminNavItems.filter(item => hasPermission(item.permission));
+
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(
-false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [birthDeathRecordOpen, setBirthDeathRecordOpen] = useState(false);
 
   const [financeOpen, setFinanceOpen] = useState(false);
@@ -113,7 +152,7 @@ false);
 
 
 
-  
+
 
   return (
     <div className="relative">
@@ -152,7 +191,7 @@ false);
           <nav className="space-y-3 text-md font-semibold pb-10">
             {navItems.map(({ to, label, Icon }) => {
               /* FRONT OFFICE + BIRTH & DEATH */
-              if (to === "/admin/front-office/visitor-list" && role === "admin") {
+              if (to === "/admin/front-office/visitor-list" && role !== "patient") {
                 return (
                   <React.Fragment key={to}>
                     <NavLink
@@ -170,59 +209,61 @@ false);
                       <span className={`${collapsed ? "hidden" : "block"}`}>{label}</span>
                     </NavLink>
 
-                    {/* Birth & Death */}
-                    <div>
-                      <button
-                        onClick={toggleBirthDeathRecord}
-                        className={`w-full flex items-center justify-between py-2 px-2 transition-all duration-700
+                    {/* Birth & Death - Only show if user has permission */}
+                    {hasPermission('birth-death') && (
+                      <div>
+                        <button
+                          onClick={toggleBirthDeathRecord}
+                          className={`w-full flex items-center justify-between py-2 px-2 transition-all duration-700
                         ${birthDeathRecordOpen
-                            ? "bg-white/10 rounded-md"
-                            : "hover:text-gray-200"
-                          }`}
-                      >
-                        <div className="flex items-center gap-4">
-                          <FileBadge size={20} />
-                          <span className={`${collapsed ? "hidden" : "block"} whitespace-nowrap truncate`}>
-                            Birth & Death
-                          </span>
-                        </div>
-                        {!collapsed &&
-                          (birthDeathRecordOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
-                      </button>
+                              ? "bg-white/10 rounded-md"
+                              : "hover:text-gray-200"
+                            }`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <FileBadge size={20} />
+                            <span className={`${collapsed ? "hidden" : "block"} whitespace-nowrap truncate`}>
+                              Birth & Death
+                            </span>
+                          </div>
+                          {!collapsed &&
+                            (birthDeathRecordOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+                        </button>
 
-                      {birthDeathRecordOpen && !collapsed && (
-                        <div className="ml-8 mt-2 space-y-2">
-                          <NavLink
-                            to="/admin/birth-death-record/birth-record"
-                            className={({ isActive }) =>
-                              `w-full flex items-center gap-4 py-2 px-2 no-underline
+                        {birthDeathRecordOpen && !collapsed && (
+                          <div className="ml-8 mt-2 space-y-2">
+                            <NavLink
+                              to="/admin/birth-death-record/birth-record"
+                              className={({ isActive }) =>
+                                `w-full flex items-center gap-4 py-2 px-2 no-underline
                               ${isActive ? "bg-white/10 rounded-md" : ""}
                               !text-white hover:!text-white`
-                            }
-                          >
-                            <ChevronRight size={20} className="flex-shrink-0 opacity-80" />
-                            Birth Record
-                          </NavLink>
-                          <NavLink
-                            to="/admin/birth-death-record/death-record"
-                            className={({ isActive }) =>
-                              `w-full flex items-center gap-4 py-2 px-2 no-underline
+                              }
+                            >
+                              <ChevronRight size={20} className="flex-shrink-0 opacity-80" />
+                              Birth Record
+                            </NavLink>
+                            <NavLink
+                              to="/admin/birth-death-record/death-record"
+                              className={({ isActive }) =>
+                                `w-full flex items-center gap-4 py-2 px-2 no-underline
                               ${isActive ? "bg-white/10 rounded-md" : ""}
                               !text-white hover:!text-white`
-                            }
-                          >
-                            <ChevronRight size={20} className="flex-shrink-0 opacity-80" />
-                            Death Record
-                          </NavLink>
-                        </div>
-                      )}
-                    </div>
+                              }
+                            >
+                              <ChevronRight size={20} className="flex-shrink-0 opacity-80" />
+                              Death Record
+                            </NavLink>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </React.Fragment>
                 );
               }
 
               /* FINANCE MENU WITH SUBMENU */
-              if (to === "/Finance" && role === "admin") {
+              if (to === "/Finance" && role !== "patient") {
                 return (
                   <React.Fragment key={to}>
                     <button
@@ -274,7 +315,7 @@ false);
               }
 
               /* SETUP MENU WITH SUBMENU */
-              if (to === "/Setup" && role === "admin") {
+              if (to === "/Setup" && role !== "patient") {
                 return (
                   <React.Fragment key={to}>
                     <button
@@ -296,35 +337,36 @@ false);
                     {setupOpen && !collapsed && (
                       <div className="ml-8 mt-2 space-y-2 ">
                         {[
-                          { label: "Hospital Charges", path: "/admin/setup/charges-details" },
-                          { label: "Bed", path: "/admin/setup/bed-status" },
-                          { label: "Print Head. Foot.", path: "/admin/setup/appointment-header-footer" },
-                          { label: "Front Office", path: "/admin/setup/front-office/purpose-list" },
-                          { label: "Operations", path: "/admin/setup/operation/operation-list" },
-                          { label: "Pharmacy", path: "/admin/setup/pharmacy/medicine-category" },
-                          { label: "Pathology", path: "/admin/setup/pathology/category" },
-                          { label: "Radiology", path: "/admin/setup/radiology/category" },
-                          { label: "Symptoms", path: "/admin/setup/symptoms" },
-                          { label: "Findings", path: "/admin/setup/finding" },
-                          { label: "Vitals", path: "/admin/setup/vitals" },
-                          { label: "Finance", path: "/admin/setup/finance/income-head" },
-                          { label: "Inventory", path: "/admin/setup/inventory/item-category" },
-                          { label: "Appointment", path: "/admin/setup/appointment/shift" },
-
-                        ].map(({ label, path }) => (
-                          <NavLink
-                            key={path}
-                            to={path}
-                            className={({ isActive }) =>
-                              `w-full flex items-center gap-3 py-2 px-2 no-underline
+                          { label: "Hospital Charges", path: "/admin/setup/charges-details", permission: "hospital-charges" },
+                          { label: "Bed", path: "/admin/setup/bed-status", permission: "bed" },
+                          { label: "Print Head. Foot.", path: "/admin/setup/appointment-header-footer", permission: "print-header-footer" },
+                          { label: "Front Office", path: "/admin/setup/front-office/purpose-list", permission: "front-office" },
+                          { label: "Operations", path: "/admin/setup/operation/operation-list", permission: "operations" },
+                          { label: "Pharmacy", path: "/admin/setup/pharmacy/medicine-category", permission: "pharmacy" },
+                          { label: "Pathology", path: "/admin/setup/pathology/category", permission: "pathology" },
+                          { label: "Radiology", path: "/admin/setup/radiology/category", permission: "radiology" },
+                          { label: "Symptoms", path: "/admin/setup/symptoms", permission: "symptoms" },
+                          { label: "Findings", path: "/admin/setup/finding", permission: "findings" },
+                          { label: "Vitals", path: "/admin/setup/vitals", permission: "vitals" },
+                          { label: "Finance", path: "/admin/setup/finance/income-head", permission: "finance" },
+                          { label: "Inventory", path: "/admin/setup/inventory/item-category", permission: "inventory" },
+                          { label: "Appointment", path: "/admin/setup/appointment/shift", permission: "appointment" },
+                        ]
+                          .filter(item => hasSetupPermission(item.permission))
+                          .map(({ label, path }) => (
+                            <NavLink
+                              key={path}
+                              to={path}
+                              className={({ isActive }) =>
+                                `w-full flex items-center gap-3 py-2 px-2 no-underline
                               ${isActive ? "bg-white/10 rounded-md" : ""}
                               !text-white hover:!text-white`
-                            }
-                          >
-                            <ChevronRight size={14} className="opacity-80" />
-                            <span className="whitespace-nowrap">{label}</span>
-                          </NavLink>
-                        ))}
+                              }
+                            >
+                              <ChevronRight size={14} className="opacity-80" />
+                              <span className="whitespace-nowrap">{label}</span>
+                            </NavLink>
+                          ))}
                       </div>
                     )}
                   </React.Fragment>
