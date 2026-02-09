@@ -130,8 +130,10 @@ export const deletePatientConsultant = (patientId, consultantId) => {
 //                                      Patient Charges API                                 //
 // *****************************************************************************************///
 // 🔹 Get all charges of a patient
-export const getPatientCharges = (patientId) => {
-  return api.get(`patients/${patientId}/charges/`);
+export const getPatientCharges = (patientId, caseId = null) => {
+  const params = {};
+  if (caseId) params.case_id = caseId;
+  return api.get(`patients/${patientId}/charges/`, { params });
 };
 
 // 🔹 Create patient charge
@@ -157,8 +159,10 @@ export const deletePatientCharge = (patientId, chargeId) => {
 //                                      Patient Payment API                                 //
 // *****************************************************************************************///
 // 🔹 Get all payments of a patient
-export const getPatientPayments = (patientId) => {
-  return api.get(`patients/${patientId}/payments/`);
+export const getPatientPayments = (patientId, caseId = null) => {
+  const params = {};
+  if (caseId) params.case_id = caseId;
+  return api.get(`patients/${patientId}/payments/`, { params });
 };
 
 // 🔹 Create patient payment

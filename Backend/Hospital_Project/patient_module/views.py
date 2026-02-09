@@ -553,11 +553,18 @@ class PatientChargesView(APIView):
             serializer = PatientChargesSerializer(charge)
             return Response(serializer.data)
         
-        charges = PatientCharges.objects.filter(
-            patient_id=patient_id,
+        patient_id_query = self.request.query_params.get("patient_id")
+        case_id = self.request.query_params.get("case_id")
+        
+        queryset = PatientCharges.objects.filter(
+            patient_id=patient_id_query or patient_id,
             is_active=True
         ).order_by('-charge_date', '-created_at')
-        serializer = PatientChargesSerializer(charges, many=True)
+
+        if case_id:
+            queryset = queryset.filter(case__case_id=case_id)
+
+        serializer = PatientChargesSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def post(self, request, patient_id):
@@ -623,11 +630,18 @@ class PatientPaymentView(APIView):
             serializer = PatientPaymentSerializer(payment)
             return Response(serializer.data)
         
-        payments = PatientPayment.objects.filter(
-            patient_id=patient_id,
+        patient_id_query = self.request.query_params.get("patient_id")
+        case_id = self.request.query_params.get("case_id")
+
+        queryset = PatientPayment.objects.filter(
+            patient_id=patient_id_query or patient_id,
             is_active=True
         ).order_by('-payment_date', '-created_at')
-        serializer = PatientPaymentSerializer(payments, many=True)
+
+        if case_id:
+            queryset = queryset.filter(case__case_id=case_id)
+
+        serializer = PatientPaymentSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def post(self, request, patient_id):

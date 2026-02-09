@@ -418,6 +418,8 @@ class PharmacyBillListAPIView(APIView):
 
     def get(self, request):
         search = request.query_params.get("search")
+        patient_id = request.query_params.get("patient_id")
+        case_id = request.query_params.get("case_id")
 
         qs = PharmacyBill.objects.select_related(
             "patient",
@@ -426,11 +428,18 @@ class PharmacyBillListAPIView(APIView):
             "case"
         ).order_by("-id")
 
-        # if search:
-        #     qs = qs.filter(
-        #         Q(patient__name__icontains=search) |
-        #         Q(doctor__username__icontains=search)
-        #     )
+        if patient_id:
+            qs = qs.filter(patient_id=patient_id)
+        
+        if case_id:
+            qs = qs.filter(case__case_id=case_id)
+
+        if search:
+            qs = qs.filter(
+                Q(patient__first_name__icontains=search) |
+                Q(patient__last_name__icontains=search) |
+                Q(doctor__username__icontains=search)
+            )
 
         return Response(PharmacyBillSerializer(qs, many=True).data)
 

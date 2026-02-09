@@ -394,14 +394,14 @@ export default function AddOpd() {
                       <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         placeholder="Any Known Allergies"
                         value={formData.allergies}
-                        onChange={(e) => update("allergies", e.target.value)}
+                        onChange={(e) => setFormData(prev => ({ ...prev, allergies: e.target.value }))}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Previous Medical Issue</label>
                       <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
                         value={formData.previousIssue}
-                        onChange={(e) => update("previousIssue", e.target.value)}
+                        onChange={(e) => setFormData(prev => ({ ...prev, previous_medical_issue: e.target.value }))}
                       />
                     </div>
                   </div>
@@ -478,7 +478,7 @@ export default function AddOpd() {
                     <label className="block text-sm font-medium mb-1">Reference</label>
                     <input placeholder="Reference" className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
                       value={formData.reference}
-                      onChange={(e) => update("reference", e.target.value)}
+                      onChange={(e) => setFormData(prev => ({ ...prev, reference: e.target.value }))}
                     />
                   </div>
 
@@ -605,14 +605,16 @@ export default function AddOpd() {
                       <label className="block text-sm font-medium mb-1">Total Amount ($)</label>
                       <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Total Amount ($)"
                         value={formData.total_amount}
-                        onChange={(e) => update("total_amount", e.target.value)}
+                        onChange={handleInputChange}
+                        name="total_amount"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Paid Amount ($)</label>
                       <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Paid Amount ($)"
                         value={formData.paid_amount}
-                        onChange={(e) => update("paid_amount", e.target.value)}
+                        onChange={handleInputChange}
+                        name="paid_amount"
                       />
                     </div>
                   </div>

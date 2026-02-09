@@ -76,10 +76,11 @@ export const createPathologyBill = async (payload) => {
   return api.post("pathology/pathology-bill/create/", payload);
 };
 
-export const getPathologyBills = async (search = "", patientId = "") => {
+export const getPathologyBills = async (search = "", patientId = "", caseId = "") => {
   const params = {};
   if (search) params.search = search;
   if (patientId) params.patient_id = patientId;
+  if (caseId) params.case_id = caseId;
   return api.get("pathology/pathology-bill/", { params });
 };
 
