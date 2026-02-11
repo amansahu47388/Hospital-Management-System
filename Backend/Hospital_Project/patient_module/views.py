@@ -56,18 +56,11 @@ class PatientDetailView(APIView):
             )
 
 class PatientCreateView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         try:
             logger.info(f"📝 Creating patient - User: {request.user}, Data: {request.data}")
-            
-            if not request.user.is_staff:
-                logger.warning(f"❌ Non-admin user {request.user} attempted to create patient")
-                return Response(
-                    {"detail": "Only admin users can create patients."},
-                    status=status.HTTP_403_FORBIDDEN
-                )
             
             serializer = PatientCreateUpdateSerializer(
                 data=request.data,
@@ -93,20 +86,12 @@ class PatientCreateView(APIView):
             )
 
 class PatientUpdateView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request, patient_id):
         try:
             logger.info(f"📝 Updating patient ID={patient_id}")
             logger.info(f"Request data: {request.data}")
-            
-            # Check admin permission
-            if not request.user.is_staff:
-                logger.warning(f"❌ Non-admin user {request.user} attempted to update patient")
-                return Response(
-                    {"detail": "Only admin users can update patients."},
-                    status=status.HTTP_403_FORBIDDEN
-                )
             
             # Get patient
             try:

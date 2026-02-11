@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Check } from "lucide-react";
-import { createAppointment, getDoctors } from "../../../api/appointmentApi";
+import { createAppointment, getDoctors, getShifts, getPriorities } from "../../../api/appointmentApi";
 import { useNotify } from "../../../context/NotificationContext";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -8,6 +8,8 @@ export default function PatientAddAppointmentModal({ open, onClose, onSuccess })
     const { user } = useAuth();
     const notify = useNotify();
     const [doctors, setDoctors] = useState([]);
+    const [shifts, setShifts] = useState([]);
+    const [priorities, setPriorities] = useState([]);
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
@@ -16,37 +18,46 @@ export default function PatientAddAppointmentModal({ open, onClose, onSuccess })
         specialist: '',
         doctor: '',
         shift: '',
-        slot: '',
-        appontmet_priority: 'normal',
-        message: '',
-        live_consultation: 'no',
+        number: '',
+        appontmet_priority: '',
+        reason: '',
         alternate_address: '',
     });
 
     useEffect(() => {
         if (open) {
-            fetchDoctors();
-            setFormData({
-                appointment_date: '',
-                specialist: '',
-                doctor: '',
-                shift: '',
-                slot: '',
-                appontmet_priority: 'normal',
-                message: '',
-                live_consultation: 'no',
-                alternate_address: '',
-            });
+            fetchInitialData();
+            resetForm();
         }
     }, [open]);
 
-    const fetchDoctors = async () => {
+    const resetForm = () => {
+        setFormData({
+            appointment_date: '',
+            specialist: '',
+            doctor: '',
+            shift: '',
+            number: '',
+            appontmet_priority: '',
+            reason: '',
+        });
+    };
+
+    const fetchInitialData = async () => {
         setLoading(true);
         try {
-            const response = await getDoctors();
-            setDoctors(Array.isArray(response.data) ? response.data : []);
+            const [doctorsRes, shiftsRes, prioritiesRes] = await Promise.all([
+                getDoctors(),
+                getShifts(),
+                getPriorities()
+            ]);
+
+            setDoctors(Array.isArray(doctorsRes.data) ? doctorsRes.data : []);
+            setShifts(Array.isArray(shiftsRes.data) ? shiftsRes.data : []);
+            setPriorities(Array.isArray(prioritiesRes.data) ? prioritiesRes.data : []);
         } catch (err) {
-            notify("error", "Failed to load doctors");
+            notify("error", "Failed to load form data");
+            console.error('Error fetching initial data:', err);
         } finally {
             setLoading(false);
         }
@@ -61,21 +72,35 @@ export default function PatientAddAppointmentModal({ open, onClose, onSuccess })
         e.preventDefault();
         setSubmitting(true);
         try {
+            // Get patient ID from user object
+            const patientId = user?.patient_id || user?.id;
+
+            if (!patientId) {
+                notify("error", "Patient information not found");
+                setSubmitting(false);
+                return;
+            }
+
             const submitData = {
-                ...formData,
-                patient: user?.id,
-                source: 'online',
-                status: 'pending',
+                patient: patientId,
+                doctor: parseInt(formData.doctor),
                 appointment_date: new Date(formData.appointment_date).toISOString(),
-                live_consultation: formData.live_consultation === 'yes',
-                reason: formData.message // Mapping 'message' to 'reason' as per API
+                shift: formData.shift ? parseInt(formData.shift) : null,
+                appontmet_priority: formData.appontmet_priority ? parseInt(formData.appontmet_priority) : null,
+                number: formData.number || null,
+                reason: formData.reason || '',
+                department: formData.specialist || null,
+                status: formData.status || 'pending',
+                
             };
 
             await createAppointment(submitData);
-            notify("success", "Appointment saved successfully");
+            notify("success", "Appointment booked successfully");
             onSuccess && onSuccess();
         } catch (err) {
-            notify("error", "Failed to book appointment");
+            const errorMsg = err.response?.data?.message || err.response?.data?.error || "Failed to book appointment";
+            notify("error", errorMsg);
+            console.error('Appointment creation error:', err.response?.data);
         } finally {
             setSubmitting(false);
         }
@@ -84,7 +109,7 @@ export default function PatientAddAppointmentModal({ open, onClose, onSuccess })
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 ">
             <div className="bg-white w-full max-w-4xl rounded-lg shadow-xl overflow-hidden animate-in zoom-in duration-200">
                 {/* HEADER */}
                 <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] px-4 py-3 text-white flex justify-between items-center">
@@ -97,7 +122,7 @@ export default function PatientAddAppointmentModal({ open, onClose, onSuccess })
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                         {/* DATE */}
                         <div className="space-y-1">
-                            <label className="font-semibold text-gray-600">Date <span className="text-red-500">*</span></label>
+                            <label className="font-semibold text-gray-600">Appointment Date <span className="text-red-500">*</span></label>
                             <input
                                 type="datetime-local"
                                 name="appointment_date"
@@ -142,31 +167,33 @@ export default function PatientAddAppointmentModal({ open, onClose, onSuccess })
 
                         {/* SHIFT */}
                         <div className="space-y-1">
-                            <label className="font-semibold text-gray-600">Shift <span className="text-red-500">*</span></label>
+                            <label className="font-semibold text-gray-600">Shift</label>
                             <select
                                 name="shift"
                                 value={formData.shift}
                                 onChange={handleChange}
-                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none bg-white"
+                                disabled={loading}
+                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none bg-white disabled:bg-gray-100"
                             >
                                 <option value="">Select</option>
-                                <option value="Morning">Morning</option>
-                                <option value="Evening">Evening</option>
+                                {shifts.map(shift => (
+                                    <option key={shift.id} value={shift.id}>
+                                        {shift.shift} ({shift.time_from} - {shift.time_to})
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
                         {/* SLOT */}
                         <div className="space-y-1">
-                            <label className="font-semibold text-gray-600">Slot <span className="text-red-500">*</span></label>
-                            <select
-                                name="slot"
-                                value={formData.slot}
+                            <label className="font-semibold text-gray-600">Mobile Number</label>
+                            <input
+                                type="text"
+                                name="number"
+                                value={formData.number}
                                 onChange={handleChange}
-                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none bg-white"
-                            >
-                                <option value="">Select</option>
-                                <option value="10:00 AM - 12:30 PM">10:00 AM - 12:30 PM</option>
-                            </select>
+                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none"
+                            />
                         </div>
 
                         {/* PRIORITY */}
@@ -176,54 +203,52 @@ export default function PatientAddAppointmentModal({ open, onClose, onSuccess })
                                 name="appontmet_priority"
                                 value={formData.appontmet_priority}
                                 onChange={handleChange}
-                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none bg-white"
+                                disabled={loading}
+                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none bg-white disabled:bg-gray-100"
                             >
-                                <option value="normal">Normal</option>
-                                <option value="urgent">Urgent</option>
-                                <option value="high">High</option>
+                                <option value="">Select</option>
+                                {priorities.map(priority => (
+                                    <option key={priority.id} value={priority.id}>
+                                        {priority.priority}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>
 
-                    {/* MESSAGE */}
-                    <div className="space-y-1">
-                        <label className="font-semibold text-gray-600">Message <span className="text-red-500">*</span></label>
-                        <textarea
-                            name="message"
-                            value={formData.message}
-                            onChange={handleChange}
-                            rows="3"
-                            className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none resize-none"
-                        ></textarea>
-                    </div>
-
-                    {/* LIVE CONSULTATION */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                         <div className="space-y-1">
-                            <label className="font-semibold text-gray-600">Live Consultation (On Video Conference) <span className="text-red-500">*</span></label>
+                            <label className="font-semibold text-gray-600">Status</label>
                             <select
-                                name="live_consultation"
-                                value={formData.live_consultation}
+                                name="status"
+                                value={formData.status}
                                 onChange={handleChange}
-                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none bg-white font-medium"
+                                disabled={loading}
+                                className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none bg-white disabled:bg-gray-100"
                             >
-                                <option value="no">No</option>
-                                <option value="yes">Yes</option>
+                                <option value="">Select</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
                             </select>
                         </div>
-                    </div>
 
-                    {/* ALTERNATE ADDRESS */}
+                         {/* REASON */}
                     <div className="space-y-1">
-                        <label className="font-semibold text-gray-600">Alternate Address</label>
+                        <label className="font-semibold text-gray-600">Reason</label>
                         <textarea
-                            name="alternate_address"
-                            value={formData.alternate_address}
+                            name="reason"
+                            value={formData.reason}
                             onChange={handleChange}
                             rows="2"
                             className="w-full px-2 py-1.5 border border-gray-200 rounded focus:border-[#6046B5] outline-none resize-none"
                         ></textarea>
                     </div>
+                    </div>
+
+                   
+
+        
 
                     {/* FOOTER */}
                     <div className="flex justify-end pt-2">

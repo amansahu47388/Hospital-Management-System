@@ -259,6 +259,8 @@ class PharmacyPurchaseCreateSerializer(serializers.ModelSerializer):
 # ----------------- PHARMACY BILL -----------------
 class PharmacyBillItemSerializer(serializers.ModelSerializer):
     medicine_name = serializers.CharField(source="medicine.name", read_only=True)
+    medicine_category = serializers.CharField(source="medicine.category.category_name", read_only=True)
+    medicine_unit = serializers.CharField(source="medicine.unit.unit_name", read_only=True)
     batch_no = serializers.CharField(source="batch.batch_no", read_only=True)
     expiry_date = serializers.DateField(source="batch.expiry_date", read_only=True)
 
@@ -269,6 +271,8 @@ class PharmacyBillItemSerializer(serializers.ModelSerializer):
             "id",
             "medicine",
             "medicine_name",
+            "medicine_category",
+            "medicine_unit",
             "batch",
             "batch_no",
             "quantity",

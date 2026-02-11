@@ -129,7 +129,6 @@ class GenerateRadiologyBillAPIView(APIView):
                 {
                     "success": True,
                     "bill_id": bill.id,
-                    "bill_no": bill.bill_no,
                     "total": bill.total_amount,
                     "balance": bill.balance,
                 },
@@ -162,7 +161,6 @@ class RadiologyBillListAPIView(APIView):
 
         if search:
             queryset = queryset.filter(
-                Q(bill_no__icontains=search) |
                 Q(patient__first_name__icontains=search) |
                 Q(patient__last_name__icontains=search) |
                 Q(patient__phone__icontains=search)

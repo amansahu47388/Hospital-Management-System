@@ -1,217 +1,118 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PatientLayout from "../../../layout/PatientLayout";
 import {
     Search,
     Printer,
-    FileText,
     Eye,
-    CreditCard,
     X,
-    FileSpreadsheet,
     AlignJustify,
+    Loader,
+    CreditCard
 } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
+import { useNotify } from "../../../context/NotificationContext";
+import { getAmbulanceBills, getAmbulanceBillDetail } from "../../../api/ambulanceApi";
+import { createPatientPayment, getPatientPayments } from "../../../api/patientApi";
 
 export default function Ambulance() {
+    const { user } = useAuth();
+    const notify = useNotify();
+
+    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [bills, setBills] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [showPaymentsModal, setShowPaymentsModal] = useState(false);
     const [selectedBill, setSelectedBill] = useState(null);
+    const [paymentHistory, setPaymentHistory] = useState([]);
+    const [paymentAmount, setPaymentAmount] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Mock Data matching the Ambulance screenshot
-    const [bills] = useState([
-        {
-            billNo: "ACB502",
-            vehicleNo: "MP20SC1797",
-            vehicleModel: "BS4",
-            driverName: "Ravi",
-            driverContact: "7865412358",
-            amount: 150.00,
-            discount: "0.00 (0.00%)",
-            tax: "22.50 (15.00%)",
-            netAmount: 172.50,
-            paidAmount: 172.50,
-            balanceAmount: 0.00,
-            date: "01/30/2026 10:05 PM",
-            caseId: "115",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "Super Admin (9001)",
-        },
-        {
-            billNo: "ACB496",
-            vehicleNo: "MP20DDHK2562",
-            vehicleModel: "BS4FGD",
-            driverName: "David Wood",
-            driverContact: "9806545404",
-            amount: 150.00,
-            discount: "0.00 (0.00%)",
-            tax: "22.50 (15.00%)",
-            netAmount: 172.50,
-            paidAmount: 172.50,
-            balanceAmount: 0.00,
-            date: "01/25/2026 02:30 PM",
-            caseId: "7577",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "David Wood (9008)",
-        },
-        {
-            billNo: "ACB488",
-            vehicleNo: "MP20DFG56",
-            vehicleModel: "BS440",
-            driverName: "David Wood",
-            driverContact: "7446165065",
-            amount: 150.00,
-            discount: "0.00 (0.00%)",
-            tax: "22.50 (15.00%)",
-            netAmount: 172.50,
-            paidAmount: 172.50,
-            balanceAmount: 0.00,
-            date: "01/20/2026 11:15 AM",
-            caseId: "7519",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "David Wood (9008)",
-        },
-        {
-            billNo: "ACB480",
-            vehicleNo: "MP20DDHK2562",
-            vehicleModel: "BS4FGD",
-            driverName: "David Wood",
-            driverContact: "9806545404",
-            amount: 150.00,
-            discount: "15.00 (10.00%)",
-            tax: "20.25 (15.00%)",
-            netAmount: 155.25,
-            paidAmount: 155.25,
-            balanceAmount: 0.00,
-            date: "01/15/2026 09:00 AM",
-            caseId: "7519",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "David Wood (9008)",
-        },
-        {
-            billNo: "ACB478",
-            vehicleNo: "MP20SC1797",
-            vehicleModel: "BS4",
-            driverName: "Ravi",
-            driverContact: "7865412358",
-            amount: 150.00,
-            discount: "0.00 (0.00%)",
-            tax: "22.50 (15.00%)",
-            netAmount: 172.50,
-            paidAmount: 172.50,
-            balanceAmount: 0.00,
-            date: "01/10/2026 05:45 PM",
-            caseId: "115",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "Ravi (9010)",
-        },
-        {
-            billNo: "ACB472",
-            vehicleNo: "MP20PL3265",
-            vehicleModel: "MKL265",
-            driverName: "Ankit",
-            driverContact: "968854556",
-            amount: 150.00,
-            discount: "0.00 (0.00%)",
-            tax: "22.50 (15.00%)",
-            netAmount: 172.50,
-            paidAmount: 172.50,
-            balanceAmount: 0.00,
-            date: "01/05/2026 01:20 PM",
-            caseId: "115",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "Ankit (9012)",
-        },
-        {
-            billNo: "ACB465",
-            vehicleNo: "MP20DDHK2562",
-            vehicleModel: "BS4FGD",
-            driverName: "David Wood",
-            driverContact: "9806545404",
-            amount: 150.00,
-            discount: "0.00 (0.00%)",
-            tax: "22.50 (15.00%)",
-            netAmount: 172.50,
-            paidAmount: 172.50,
-            balanceAmount: 0.00,
-            date: "01/01/2026 08:00 AM",
-            caseId: "115",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "David Wood (9008)",
-        },
-        {
-            billNo: "ACB459",
-            vehicleNo: "MP20DDHK2562",
-            vehicleModel: "BS4FGD",
-            driverName: "David Wood",
-            driverContact: "9806545404",
-            amount: 150.00,
-            discount: "0.00 (0.00%)",
-            tax: "22.50 (15.00%)",
-            netAmount: 172.50,
-            paidAmount: 172.50,
-            balanceAmount: 0.00,
-            date: "12/28/2025 04:10 PM",
-            caseId: "115",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "David Wood (9008)",
-        },
-        {
-            billNo: "ACB458",
-            vehicleNo: "MP20QW2343",
-            vehicleModel: "HJG1650",
-            driverName: "Oliver",
-            driverContact: "984865101",
-            amount: 150.00,
-            discount: "15.00 (10.00%)",
-            tax: "20.25 (15.00%)",
-            netAmount: 155.25,
-            paidAmount: 155.25,
-            balanceAmount: 0.00,
-            date: "12/25/2025 10:00 AM",
-            caseId: "115",
-            patientName: "Olivier Thomas (1)",
-            chargeCategory: "Private Ambulance",
-            chargeName: "Private",
-            collectedBy: "Oliver (9015)",
-        },
-    ]);
+    const fetchBills = useCallback(async () => {
+        if (!user?.patient_id) return;
+        setLoading(true);
+        try {
+            const res = await getAmbulanceBills("", user.patient_id);
+            setBills(res.data || []);
+        } catch (error) {
+            console.error("Error fetching ambulance bills:", error);
+            notify("error", "Failed to load ambulance bills");
+        } finally {
+            setLoading(false);
+        }
+    }, [user, notify]);
 
-    const handleShowDetails = (bill) => {
-        setSelectedBill(bill);
-        setShowDetailsModal(true);
+    useEffect(() => {
+        fetchBills();
+    }, [fetchBills]);
+
+    const handleShowDetails = async (bill) => {
+        setLoading(true);
+        try {
+            const res = await getAmbulanceBillDetail(bill.id);
+            setSelectedBill(res.data);
+            setShowDetailsModal(true);
+        } catch (error) {
+            notify("error", "Failed to load bill details");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handlePay = (bill) => {
         setSelectedBill(bill);
+        setPaymentAmount(bill.balance || 0);
         setShowPaymentModal(true);
     };
 
-    const handleShowPayments = (bill) => {
+    const handleShowPayments = async (bill) => {
         setSelectedBill(bill);
         setShowPaymentsModal(true);
+        try {
+            const res = await getPatientPayments(user.patient_id);
+            const history = (res.data || []).filter(p => p.ambulance_bill === bill.id);
+            setPaymentHistory(history);
+        } catch (error) {
+            notify("error", "Failed to load payment history");
+        }
     };
 
-    // Mock Payment History Data
-    const paymentHistory = [
-        { date: "01/30/2026 10:05 PM", note: "", mode: "Cash", type: "Payment", amount: 172.50, action: "" },
-    ];
+    const handleProcessPayment = async () => {
+        if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
+            notify("error", "Please enter a valid amount");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                patient: user.patient_id,
+                payment_date: new Date().toISOString().slice(0, 10),
+                paid_amount: parseFloat(paymentAmount),
+                payment_mode: "Online",
+                note: `Payment for Ambulance Bill #${selectedBill.id}`,
+                ambulance_bill: selectedBill.id,
+                service_type: "Ambulance"
+            };
+
+            await createPatientPayment(user.patient_id, payload);
+            notify("success", "Payment recorded successfully");
+            setShowPaymentModal(false);
+            fetchBills();
+        } catch (error) {
+            notify("error", error.response?.data?.detail || "Payment failed");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const filteredBills = bills.filter(bill =>
+        String(bill.id).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bill.ambulance_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bill.driver_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bill.case_id?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <PatientLayout>
@@ -220,28 +121,10 @@ export default function Ambulance() {
                     {/* Header */}
                     <div className="p-5 border-b flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
                         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                            Ambulance Bill
+                            Ambulance Bills
                         </h2>
 
                         <div className="flex gap-2">
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Export Excel"
-                            >
-                                <FileSpreadsheet size={18} />
-                            </button>
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Export PDF"
-                            >
-                                <FileText size={18} />
-                            </button>
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Export PDF"
-                            >
-                                <FileText size={18} />
-                            </button>
                             <button
                                 className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
                                 title="Print"
@@ -270,92 +153,115 @@ export default function Ambulance() {
 
                     {/* Table */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left border-collapse">
-                            <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
-                                <tr className="border-b border-gray-200">
-                                    <th className="p-3 whitespace-nowrap">Bill No</th>
-                                    <th className="p-3 whitespace-nowrap">Vehicle Number</th>
-                                    <th className="p-3 whitespace-nowrap">Vehicle Model</th>
-                                    <th className="p-3 whitespace-nowrap">Driver Name</th>
-                                    <th className="p-3 whitespace-nowrap">Driver Contact</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Amount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Discount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Tax(%)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Net Amount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Paid ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Balance ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {bills.map((bill, index) => (
-                                    <tr
-                                        key={index}
-                                        className="hover:bg-indigo-50/30 transition-colors group"
-                                    >
-                                        <td className="p-3 font-medium text-indigo-600 whitespace-nowrap">
-                                            {bill.billNo}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.vehicleNo}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.vehicleModel}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.driverName}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.driverContact}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.amount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.discount}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.tax}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right font-medium whitespace-nowrap">
-                                            {bill.netAmount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.paidAmount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-right font-bold text-gray-800 whitespace-nowrap">
-                                            {bill.balanceAmount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-center whitespace-nowrap">
-                                            <div className="flex items-center justify-center gap-2">
-                                                <button
-                                                    onClick={() => handleShowDetails(bill)}
-                                                    className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-gray-200"
-                                                    title="Show Details"
-                                                >
-                                                    <Eye size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleShowPayments(bill)}
-                                                    className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-gray-200"
-                                                    title="View Payments"
-                                                >
-                                                    <AlignJustify size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handlePay(bill)}
-                                                    className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded text-xs font-semibold shadow-sm hover:opacity-90 transition-all"
-                                                    title="Pay"
-                                                >
-                                                    <CreditCard size={14} />
-                                                    Pay
-                                                </button>
-                                            </div>
-                                        </td>
+                        {loading && bills.length === 0 ? (
+                            <div className="flex justify-center p-8">
+                                <Loader size={30} className="animate-spin text-gray-400" />
+                            </div>
+                        ) : (
+                            <table className="w-full text-sm text-left border-collapse">
+                                <thead className="bg-gray-50 text-gray-600 text-xs font-semibold">
+                                    <tr className="border-b border-gray-200">
+                                        <th className="px-2 py-3 text-left">Bill No</th>
+                                        <th className="px-2 py-3 text-left">Case ID</th>
+                                        <th className="px-2 py-3 text-left">Date</th>
+                                        <th className="px-2 py-3 text-left">Vehicle Number</th>
+                                        <th className="px-2 py-3 text-left">Vehicle Model</th>
+                                        <th className="px-2 py-3 text-left">Driver Name</th>
+                                        <th className="px-2 py-3 text-left">Driver Contact</th>
+                                        <th className="px-2 py-3 text-right">Amount </th>
+                                        <th className="px-2 py-3 text-right">Discount</th>
+                                        <th className="px-2 py-3 text-right">Tax </th>
+                                        <th className="px-2 py-3 text-right">Net Amount </th>
+                                        <th className="px-2 py-3 text-right">Paid Amount </th>
+                                        <th className="px-2 py-3 text-right">Balance Amount</th>
+                                        <th className="px-2 py-3 text-center">Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {filteredBills.map((bill, index) => (
+                                        <tr
+                                            key={index}
+                                            className="hover:bg-indigo-50/30 transition-colors group"
+                                        >
+                                            <td className="p-3 font-medium text-indigo-600 ">
+                                                AMBB{bill.id}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.case_id || "-"}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                <div>{new Date(bill.created_at).toLocaleDateString()}</div>
+                                                <div className="text-xs text-gray-400">
+                                                    {new Date(bill.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.ambulance_number}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.ambulance_model}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.driver_name}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.driver_contact}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.total_amount || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.discount || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.tax || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right font-medium ">
+                                                {parseFloat(bill.net_amount || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.paid_amount || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-right font-bold text-gray-800 ">
+                                                {parseFloat(bill.balance || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-center ">
+                                                <div className="flex flex-col items-center justify-center gap-1">
+                                                    <div className="flex gap-1 justify-end w-full">
+                                                        <button
+                                                            onClick={() => handleShowDetails(bill)}
+                                                            className=""
+                                                            title="Show Details"
+                                                        >
+                                                            <Eye size={14} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleShowPayments(bill)}
+                                                            className=""
+                                                            title="View Payments"
+                                                        >
+                                                            <AlignJustify size={14} />
+                                                        </button>
+                                                        {parseFloat(bill.balance) > 0 && (
+                                                            <button
+                                                                onClick={() => handlePay(bill)}
+                                                                className="flex items-center justify-center w-full gap-1 px-2 py-1 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded text-[10px] font-semibold shadow-sm hover:from-blue-600 hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:shadow transition-all"
+                                                                title="Pay"
+                                                            >
+                                                                Pay
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                    <div className="p-4 border-t text-xs text-gray-500 bg-gray-50">
+                        Records: 1 to {filteredBills.length} of {filteredBills.length}
                     </div>
                 </div>
             </div>
@@ -365,178 +271,96 @@ export default function Ambulance() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
                         {/* Modal Header */}
-                        <div className="bg-[#0BB7AF] p-4 flex justify-between items-center text-white">
-                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                Bill Details
-                            </h3>
-                            <div className="flex items-center gap-3">
-                                <button className="text-white/80 hover:text-white transition-colors" title="Print">
-                                    <Printer size={20} />
-                                </button>
-                                <button
-                                    onClick={() => setShowDetailsModal(false)}
-                                    className="text-white/80 hover:text-white transition-colors"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Header override with gradient requested by user */}
-                        <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] p-4 flex justify-between items-center text-white -mt-[64px] relative z-10">
-                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                Bill Details
-                            </h3>
-                            <div className="flex items-center gap-3">
-                                <button className="text-white/80 hover:text-white transition-colors" title="Print">
-                                    <Printer size={20} />
-                                </button>
-                                <button
-                                    onClick={() => setShowDetailsModal(false)}
-                                    className="text-white/80 hover:text-white transition-colors"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="flex-1 overflow-y-auto p-6 bg-white">
-                            <div className="text-center mb-6">
-                                <div className="flex justify-center items-center gap-2 mb-2">
-                                    <div className="w-8 h-8 bg-yellow-400 flex items-center justify-center rounded text-red-600 font-bold text-xl">+</div>
-                                    <h2 className="text-2xl font-bold text-gray-800">Smart Hospital & Research Center</h2>
-                                </div>
-                                <div className="text-sm font-bold bg-[#333] text-white py-1 uppercase max-w-sm mx-auto rounded-sm mt-2">Ambulance</div>
-                            </div>
-
-                            <div className="flex justify-between items-center mb-6 text-sm whitespace-nowrap">
-                                <div>
-                                    <span className="font-semibold text-gray-600">Bill: {selectedBill.billNo}</span>
-                                </div>
-                                <div>
-                                    <span className="font-semibold text-gray-600">Date {selectedBill.date}</span>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 mb-6 text-sm">
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Patient Name</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.patientName}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Driver Name</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.driverName}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Vehicle Number</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.vehicleNo}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Vehicle Model</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.vehicleModel}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Case ID</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.caseId}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Charge Category</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.chargeCategory}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Charge Name</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.chargeName}</span>
-                                </div>
-                                <div className="flex justify-between border-b border-gray-100 pb-2">
-                                    <span className="text-gray-500">Collected By</span>
-                                    <span className="font-medium text-gray-800">{selectedBill.collectedBy}</span>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col items-end gap-2 text-sm text-gray-800 pr-4 mt-8">
-                                <div className="flex justify-between w-64">
-                                    <span>Amount ($)</span>
-                                    <span className="font-semibold text-right">{selectedBill.amount.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between w-64">
-                                    <span>Discount ($)</span>
-                                    <span className="text-right">0.00 (0.00%)</span>
-                                </div>
-                                <div className="flex justify-between w-64">
-                                    <span>Tax ($)</span>
-                                    <span className="text-right">{selectedBill.tax.split(" ")[0]} ({selectedBill.tax.split(" ")[1].replace(/[()]/g, '')})</span>
-                                </div>
-                                <div className="flex justify-between w-64 font-bold text-base border-t pt-2 mt-1">
-                                    <span>Net Amount ($)</span>
-                                    <span className="text-right">{selectedBill.netAmount.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between w-64">
-                                    <span>Paid Amount ($)</span>
-                                    <span className="text-right">{selectedBill.paidAmount.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between w-64 font-bold text-base border-t pt-2 mt-1">
-                                    <span>Due Amount ($)</span>
-                                    <span className="text-right">{selectedBill.balanceAmount.toFixed(2)}</span>
-                                </div>
-                            </div>
-
-                            <div className="mt-8 pt-4 border-t text-sm text-gray-600">
-                                This invoice is printed electronically, so no signature is required
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Payments Modal */}
-            {showPaymentsModal && selectedBill && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden transform transition-all scale-100">
-                        {/* Modal Header */}
                         <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] p-4 flex justify-between items-center text-white">
-                            <h3 className="text-lg font-bold">Payments</h3>
-                            <button
-                                onClick={() => setShowPaymentsModal(false)}
-                                className="text-white/80 hover:text-white transition-colors"
-                            >
-                                <X size={20} />
-                            </button>
+                            <h3 className="text-lg font-bold flex items-center gap-2">
+                                Bill Details - AMBB{selectedBill.id}
+                            </h3>
+                            <div className="flex items-center gap-3">
+                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={() => window.print()}>
+                                    <Printer size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setShowDetailsModal(false)}
+                                    className="text-white/80 hover:text-white transition-colors"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Modal Content */}
-                        <div className="p-0">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-[#f8f9fa] text-gray-700 font-bold border-b">
-                                    <tr>
-                                        <th className="p-4">Date</th>
-                                        <th className="p-4">Note</th>
-                                        <th className="p-4">Payment Mode</th>
-                                        <th className="p-4">Payment Type</th>
-                                        <th className="p-4 text-right">Paid Amount ($)</th>
-                                        <th className="p-4 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    <tr className="bg-[#f0f0f0]">
-                                        <td className="p-4">{paymentHistory[0].date}</td>
-                                        <td className="p-4">{paymentHistory[0].note}</td>
-                                        <td className="p-4">{paymentHistory[0].mode}</td>
-                                        <td className="p-4">{paymentHistory[0].type}</td>
-                                        <td className="p-4 text-right">{paymentHistory[0].amount.toFixed(2)}</td>
-                                        <td className="p-4 text-center">
-                                            <button className="text-gray-500 hover:text-indigo-600" title="Print">
-                                                <Printer size={16} />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-[#e9ecef] font-bold">
-                                        <td className="p-4 text-right" colSpan={4}>Total</td>
-                                        <td className="p-4 text-right">${paymentHistory[0].amount.toFixed(2)}</td>
-                                        <td></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-sm">
+                                <div>
+                                    <span className="text-gray-500 block">Bill No</span>
+                                    <span className="font-semibold text-gray-800">AMBB{selectedBill.id}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Date</span>
+                                    <span className="font-semibold text-gray-800">
+                                        {new Date(selectedBill.created_at).toLocaleDateString()} {new Date(selectedBill.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Case ID</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.case_id || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Name</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.patient_name}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Phone</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.patient_phone}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Vehicle Number</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.ambulance_details?.vehicle_number}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Vehicle Model</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.ambulance_details?.vehicle_model}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Driver Name</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.ambulance_details?.driver_name}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Charge Name</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.charge_details?.charge_name}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Category</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.charge_details?.category}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-end gap-2 text-sm text-gray-800 pr-4 mt-8 border-t pt-8">
+                                <div className="flex justify-between w-64">
+                                    <span>Total (₹)</span>
+                                    <span className="font-semibold">{parseFloat(selectedBill.total_amount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64">
+                                    <span>Discount (₹)</span>
+                                    <span>{parseFloat(selectedBill.discount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64">
+                                    <span>Tax (₹)</span>
+                                    <span>{parseFloat(selectedBill.tax).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64 font-bold text-base border-t pt-2 mt-1">
+                                    <span>Net Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.net_amount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64">
+                                    <span>Paid Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.paid_amount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64 font-bold text-red-600">
+                                    <span>Due Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.balance).toFixed(2)}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -562,23 +386,80 @@ export default function Ambulance() {
                         <div className="p-6">
                             <div className="mb-6 flex items-center">
                                 <label className="block text-sm font-medium text-gray-700 w-40">
-                                    Payment Amount ($) <span className="text-red-500">*</span>
+                                    Payment Amount (₹) <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="number"
-                                    defaultValue="0.00"
+                                    value={paymentAmount}
+                                    onChange={(e) => setPaymentAmount(e.target.value)}
                                     className="flex-1 p-2 border border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
                                 />
                             </div>
 
                             <div className="flex justify-end gap-3">
                                 <button
-                                    onClick={() => setShowPaymentModal(false)}
-                                    className="px-4 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded shadow-md hover:opacity-90 transition-all font-medium text-sm flex items-center gap-1"
+                                    onClick={handleProcessPayment}
+                                    disabled={isSubmitting}
+                                    className={`px-4 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded shadow-md hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2] transition-all font-medium text-sm flex items-center gap-1 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                                 >
-                                    Add
+                                    {isSubmitting ? "Processing..." : "Add"}
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Payments Modal */}
+            {showPaymentsModal && selectedBill && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all scale-100">
+                        {/* Modal Header */}
+                        <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] p-4 flex justify-between items-center text-white">
+                            <h3 className="text-lg font-bold">Payments</h3>
+                            <button
+                                onClick={() => setShowPaymentsModal(false)}
+                                className="text-white/80 hover:text-white transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="p-0">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-gray-50 text-gray-700 font-bold border-b">
+                                    <tr>
+                                        <th className="p-4">Date</th>
+                                        <th className="p-4">Note</th>
+                                        <th className="p-4">Payment Mode</th>
+                                        <th className="p-4 text-right">Paid Amount (₹)</th>
+                                        <th className="p-4 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {paymentHistory.map((payment, index) => (
+                                        <tr key={index} className="hover:bg-gray-50">
+                                            <td className="p-4">
+                                                {new Date(payment.payment_date).toLocaleDateString()}
+                                            </td>
+                                            <td className="p-4">{payment.note}</td>
+                                            <td className="p-4">{payment.payment_mode}</td>
+                                            <td className="p-4 text-right">{parseFloat(payment.paid_amount || 0).toFixed(2)}</td>
+                                            <td className="p-4 text-right">
+                                                <button className="text-gray-500 hover:text-indigo-600" title="Print">
+                                                    <Printer size={16} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    <tr className="bg-gray-100 font-bold">
+                                        <td className="p-4 text-right" colSpan={3}>Total</td>
+                                        <td className="p-4 text-right">₹{paymentHistory.reduce((acc, curr) => acc + parseFloat(curr.paid_amount || 0), 0).toFixed(2)}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

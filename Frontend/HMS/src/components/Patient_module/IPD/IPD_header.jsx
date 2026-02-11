@@ -26,16 +26,12 @@ export default function IPDHeaderNavbar() {
   const tabs = [
     { id: "overview", label: "Overview", icon: Eye, active: true },
     { id: "nurse-notes", label: "Nurse Notes", icon: Activity },
-    { id: "medication", label: "Medication", icon: Pill },
     { id: "prescription", label: "Prescription", icon: FileText },
     { id: "consultant-register", label: "Consultant Register", icon: Users },
-    { id: "lab-investigation", label: "Lab Investigation", icon: Beaker },
     { id: "operations", label: "Operations", icon: Scissors },
     { id: "charges", label: "Charges", icon: Receipt },
     { id: "payments", label: "Payment", icon: CreditCard },
-    { id: "live-consultation", label: "Live Consultation", icon: Video },
     { id: "bed-history", label: "Bed History", icon: Home },
-    { id: "timeline", label: "Timeline", icon: Clock },
     { id: "treatment-history", label: "Treatment History", icon: History },
     { id: "vitals", label: "Vitals", icon: Heart },
   ];
@@ -63,10 +59,9 @@ export default function IPDHeaderNavbar() {
               key={id}
               href={`/patient-portal/ipd-history/${id}`}
               className={`flex items-center gap-2 px-3 md:px-4 py-2 text-xs md:text-sm whitespace-nowrap rounded
-                ${
-                  active
-                    ? "font-semibold text-white border-b-2 border-white"
-                    : "font-medium text-white/85 hover:text-white hover:bg-white/10"
+                ${active
+                  ? "font-semibold text-white border-b-2 border-white"
+                  : "font-medium text-white/85 hover:text-white hover:bg-white/10"
                 }`}
             >
               <Icon size={16} className="text-white" />

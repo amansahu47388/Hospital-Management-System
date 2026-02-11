@@ -1,147 +1,112 @@
-// IPDCombinedPage.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PatientLayout from "../../../layout/PatientLayout";
 import IPDHeaderNavbar from "../../../components/Patient_module/IPD/IPD_header";
+import { useAuth } from "../../../context/AuthContext";
+import { getIpdPatientList, getPrescriptions, getNurseNotes } from "../../../api/ipdApi";
+import { getPatientVitals, getPatientOperations } from "../../../api/patientApi";
+import { getPathologyBills } from "../../../api/pathologyApi";
+import { getRadiologyBills } from "../../../api/radiologyApi";
 import {
-  Phone,
-  Mail,
-  MapPin,
-  Droplet,
-  User,
-  DollarSign,
-  Activity,
-  TrendingUp,
   Heart,
-  Calendar,
-  Clock,
   FileText,
-  Pill,
-  Users,
+  Activity,
   Beaker,
   Scissors,
-  Receipt,
-  CreditCard,
-  Home,
-  Eye,
-  History,
 } from "lucide-react";
 
 export default function IPDCombinedPage() {
-  // --------- STATIC MOCK DATA (replace with your API data if needed) ----------
-  const patient = {
-    name: "OLIVIER THOMAS (1)",
-    gender: "Male",
-    age: "41 Year 4 Month 30 Days",
-    guardianName: "Edward Thomas",
-    phone: "7896541230",
-    barcode: "IPDN14-115",
-    qrCodeText: "IPDN14-QR",
-    caseId: "115",
-    ipdNo: "IPDN14",
-    admissionDate: "12/02/2021 10:00 AM",
-    bed: "GF - 101 - VIP Ward - Ground Floor",
-    creditLimit: "$20000",
-    usedCredit: "$2871.94",
-    balanceCredit: "$17128.06",
-    vitals: {
-      height: "150 Centimeters",
-      weight: "80 Kilograms",
-      pulse: "75 Beats per min",
-      temperature: "94 Fahrenheit",
-      bp: "96 mmHg",
-      bmi: "35.56",
-    },
-    allergies: ["No"],
-    finding:
-      "Elevated temperature (above 100.4°). The medical community generally defines a fever as a body temperature above 100.4 degrees Fahrenheit. A body temp between 100.4 and 102.2 degree is usually considered a low‑grade fever.",
-    symptoms: [
-      "Feeling sad or down",
-      "Personality change in a way that seems different for that person.",
-    ],
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [ipdData, setIpdData] = useState(null);
+  const [vitals, setVitals] = useState(null);
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [nurseNotes, setNurseNotes] = useState([]);
+  const [labInvestigations, setLabInvestigations] = useState([]);
+  const [operations, setOperations] = useState([]);
+
+  useEffect(() => {
+    if (user?.patient_id) {
+      fetchOverviewData();
+    }
+  }, [user]);
+
+  const fetchOverviewData = async () => {
+    try {
+      setLoading(true);
+      // 1. Get IPD Admission Info
+      const ipdRes = await getIpdPatientList({ patient_id: user.patient_id });
+      if (ipdRes.data && ipdRes.data.length > 0) {
+        const activeIpd = ipdRes.data[0]; // Fetching most recent admission
+        setIpdData(activeIpd);
+
+        // 2. Fetch all other data using active IPD information
+        const [vitalsRes, prescriptionsRes, nurseNotesRes, pathologyRes, radiologyRes, operationsRes] = await Promise.all([
+          getPatientVitals(user.patient_id),
+          getPrescriptions({ ipd_patient: activeIpd.ipd_id }),
+          getNurseNotes({ ipd_patient: activeIpd.ipd_id }),
+          getPathologyBills("", user.patient_id),
+          getRadiologyBills("", user.patient_id),
+          getPatientOperations(user.patient_id)
+        ]);
+
+        if (vitalsRes.data && vitalsRes.data.length > 0) {
+          setVitals(vitalsRes.data[0]);
+        }
+
+        setPrescriptions(prescriptionsRes.data || []);
+        setNurseNotes(nurseNotesRes.data || []);
+        setOperations(operationsRes.data || []);
+
+        // Combine Pathology and Radiology for Lab Investigations
+        const labs = [
+          ...(pathologyRes.data || []).map(bill => (bill.items || []).map(item => ({
+            testName: item.test_name || "N/A",
+            lab: "Pathology",
+            sample: bill.doctor_name || "N/A",
+            expectedDate: item.report_date || "N/A",
+            approvedBy: bill.created_by_name || "N/A"
+          }))).flat(),
+          ...(radiologyRes.data || []).map(bill => (bill.items || []).map(item => ({
+            testName: item.test_name || "N/A",
+            lab: "Radiology",
+            sample: bill.doctor_name || "N/A",
+            expectedDate: item.report_date || "N/A",
+            approvedBy: bill.created_by_name || "N/A"
+          }))).flat()
+        ];
+        setLabInvestigations(labs);
+      }
+    } catch (error) {
+      console.error("Error fetching IPD overview data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const paymentSummary = {
-    ipd: { percent: "83.09%", amount: "$5557.00/$6687.61" },
-    pharmacy: { percent: "80.91%", amount: "$2923.5/$3613.30" },
-    pathology: { percent: "67.25%", amount: "$912.72/$1357.15" },
-    radiology: { percent: "76.77%", amount: "$966.39/$1258.79" },
-    bloodBank: { percent: "83.98%", amount: "$1650.13/$1964.83" },
-    ambulance: { percent: "100.00%", amount: "$1518.00/$1518.00" },
-  };
+  if (loading) {
+    return (
+      <PatientLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6046B5]"></div>
+        </div>
+      </PatientLayout>
+    );
+  }
 
-  const medications = [
-    {
-      date: "07/16/2025",
-      name: "Alprovit",
-      dose: "1 (CT)",
-      time: "02:49 PM",
-      remark: "",
-    },
-    {
-      date: "07/18/2025",
-      name: "WORMSTOP",
-      dose: "1 (Micrometer (oi))",
-      time: "04:30 PM",
-      remark: "",
-    },
-  ];
+  if (!ipdData) {
+    return (
+      <PatientLayout>
+        <div className="min-h-screen">
+          <IPDHeaderNavbar />
+          <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+            <h2 className="text-2xl font-bold text-gray-800">No active IPD admission found.</h2>
+            <p className="text-gray-600 mt-2">You don't have any current IPD records.</p>
+          </div>
+        </div>
+      </PatientLayout>
+    );
+  }
 
-  const prescriptions = [
-    {
-      no: "IPDP358",
-      date: "01/01/2025",
-      finding:
-        "Elevated temperature (above 100.4°) ... may be considered a low‑grade fever.",
-    },
-    {
-      no: "IPDP362",
-      date: "02/05/2025",
-      finding:
-        "Damaged hair, more than just split ends. Extremely damaged hair develops cracks in the outside layer.",
-    },
-  ];
-
-  const nurseNotes = [
-    {
-      time: "08/05/2025 04:45 PM",
-      by: "April Clinton (9020)",
-      note: "Take medicine after meal everyday also eat one egg daily at morning time.",
-      comment: "Same as note.",
-    },
-    {
-      time: "09/05/2025 11:54 AM",
-      by: "April Clinton (9020)",
-      note: "Take medicine after meal everyday.",
-      comment: "Take medicine after meal everyday.",
-    },
-  ];
-
-  const labInvestigations = [
-    {
-      testName: "Chest X‑rays (C)",
-      lab: "Pathology",
-      sample: "Belina Turner (9005)",
-      expectedDate: "06/26/2025",
-      approvedBy: "Belina Turner (9005)",
-    },
-    {
-      testName: "Abdomen X‑rays (AX)",
-      lab: "Pathology",
-      sample: "Belina Turner (9005)",
-      expectedDate: "08/06/2025",
-      approvedBy: "Belina Turner (9005)",
-    },
-  ];
-
-  const operations = [
-    {
-      ref: "OTREF275",
-      date: "03/08/2025 01:30 PM",
-      name: "Dilation and curettage",
-      category: "Gynaecology",
-      technician: "Faran",
-    },
-  ];
 
   // ---------------------------------------------------------------------------
   return (
@@ -163,27 +128,23 @@ export default function IPDCombinedPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between p-2 bg-gray-50 rounded-lg">
                   <span className="text-gray-600">Height</span>
-                  <span className="font-semibold">{patient.vitals.height}</span>
+                  <span className="font-semibold">{vitals?.height || "N/A"} cm</span>
                 </div>
                 <div className="flex justify-between p-2 bg-white rounded-lg border border-gray-100">
                   <span className="text-gray-600">Weight</span>
-                  <span className="font-semibold">{patient.vitals.weight}</span>
+                  <span className="font-semibold">{vitals?.weight || "N/A"} kg</span>
                 </div>
                 <div className="flex justify-between p-2 bg-gray-50 rounded-lg">
                   <span className="text-gray-600">Pulse</span>
-                  <span className="font-semibold">{patient.vitals.pulse}</span>
+                  <span className="font-semibold">{vitals?.pulse || "N/A"} bpm</span>
                 </div>
                 <div className="flex justify-between p-2 bg-white rounded-lg border border-gray-100">
                   <span className="text-gray-600">Temperature</span>
-                  <span className="font-semibold">{patient.vitals.temperature}</span>
+                  <span className="font-semibold">{vitals?.temperature || "N/A"} °F</span>
                 </div>
                 <div className="flex justify-between p-2 bg-gray-50 rounded-lg">
                   <span className="text-gray-600">BP</span>
-                  <span className="font-semibold">{patient.vitals.bp}</span>
-                </div>
-                <div className="flex justify-between p-2 bg-white rounded-lg border border-gray-100">
-                  <span className="text-gray-600">BMI</span>
-                  <span className="font-semibold">{patient.vitals.bmi}</span>
+                  <span className="font-semibold">{vitals?.bp || "N/A"}</span>
                 </div>
               </div>
 
@@ -192,16 +153,7 @@ export default function IPDCombinedPage() {
                   Known Allergies
                 </h4>
                 <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg border border-red-100 text-sm">
-                  {patient.allergies.join(", ")}
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm uppercase tracking-wide">
-                  Finding
-                </h4>
-                <div className="bg-blue-50 text-blue-800 px-4 py-3 rounded-lg border border-blue-100 text-sm leading-relaxed">
-                  {patient.finding}
+                  {ipdData.allergies || "None"}
                 </div>
               </div>
 
@@ -209,14 +161,9 @@ export default function IPDCombinedPage() {
                 <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm uppercase tracking-wide">
                   Symptoms
                 </h4>
-                <ul className="space-y-2">
-                  {patient.symptoms.map((s, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
-                      {s}
-                    </li>
-                  ))}
-                </ul>
+                <div className="bg-blue-50 text-blue-800 px-4 py-3 rounded-lg border border-blue-100 text-sm leading-relaxed">
+                  {ipdData.symptom_name || "N/A"}
+                </div>
               </div>
             </div>
 
@@ -230,22 +177,27 @@ export default function IPDCombinedPage() {
                 <table className="w-full text-sm text-left">
                   <thead className="bg-gray-100 text-gray-600 font-medium">
                     <tr>
-                      <th className="px-4 py-3 rounded-l-lg">Prescription No</th>
+                      <th className="px-4 py-3 rounded-l-lg">ID</th>
                       <th className="px-4 py-3">Date</th>
-                      <th className="px-4 py-3 rounded-r-lg">Finding</th>
+                      <th className="px-4 py-3 rounded-r-lg">Findings</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {prescriptions.map((p, idx) => (
                       <tr
-                        key={p.no}
+                        key={p.id}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-4 py-3 font-medium text-indigo-600">{p.no}</td>
-                        <td className="px-4 py-3">{p.date}</td>
-                        <td className="px-4 py-3 text-gray-600 max-w-xs truncate" title={p.finding}>{p.finding}</td>
+                        <td className="px-4 py-3 font-medium text-indigo-600">PRES{p.id}</td>
+                        <td className="px-4 py-3">{new Date(p.created_at).toLocaleDateString()}</td>
+                        <td className="px-4 py-3 text-gray-600 max-w-xs truncate" title={p.finding_description || p.finding_name}>{p.finding_description || p.finding_name}</td>
                       </tr>
                     ))}
+                    {prescriptions.length === 0 && (
+                      <tr>
+                        <td colSpan="3" className="px-4 py-8 text-center text-gray-500">No prescriptions found.</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -260,26 +212,29 @@ export default function IPDCombinedPage() {
                 <Activity size={20} className="text-indigo-500" />
                 Nurse Notes
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                 {nurseNotes.map((n, i) => (
                   <div
-                    key={i}
+                    key={n.id}
                     className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all"
                   >
                     <div className="flex justify-between items-center text-xs text-gray-500 mb-2 uppercase tracking-wide font-semibold">
-                      <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">{n.by}</span>
-                      <span>{n.time}</span>
+                      <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">{n.nurse_name}</span>
+                      <span>{n.formatted_date}</span>
                     </div>
                     <p className="text-gray-800 text-sm mb-2">
                       <span className="font-semibold text-gray-900">Note: </span>
                       {n.note}
                     </p>
-                    <p className="text-gray-600 text-sm italic border-t pt-2 mt-2">
-                      <span className="font-medium not-italic">Comment: </span>
-                      {n.comment}
-                    </p>
+                    {n.comment && (
+                      <p className="text-gray-600 text-sm italic border-t pt-2 mt-2">
+                        <span className="font-medium not-italic">Comment: </span>
+                        {n.comment}
+                      </p>
+                    )}
                   </div>
                 ))}
+                {nurseNotes.length === 0 && <p className="text-center text-gray-500 py-4">No nurse notes found.</p>}
               </div>
             </div>
 
@@ -295,8 +250,8 @@ export default function IPDCombinedPage() {
                     <tr>
                       <th className="px-4 py-3 rounded-l-lg">Test Name</th>
                       <th className="px-4 py-3">Lab</th>
-                      <th className="px-4 py-3">Sample</th>
-                      <th className="px-4 py-3 rounded-r-lg">Expected</th>
+                      <th className="px-4 py-3">Expected</th>
+                      <th className="px-4 py-3 rounded-r-lg">Approved By</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -307,10 +262,15 @@ export default function IPDCombinedPage() {
                       >
                         <td className="px-4 py-3 font-medium text-gray-800">{l.testName}</td>
                         <td className="px-4 py-3 text-gray-600">{l.lab}</td>
-                        <td className="px-4 py-3 text-gray-600">{l.sample}</td>
                         <td className="px-4 py-3 text-gray-600">{l.expectedDate}</td>
+                        <td className="px-4 py-3 text-gray-600">{l.approvedBy}</td>
                       </tr>
                     ))}
+                    {labInvestigations.length === 0 && (
+                      <tr>
+                        <td colSpan="4" className="px-4 py-8 text-center text-gray-500">No lab investigations found.</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -327,26 +287,29 @@ export default function IPDCombinedPage() {
               <table className="w-full text-sm text-left">
                 <thead className="bg-gray-100 text-gray-600 font-medium">
                   <tr>
-                    <th className="px-4 py-3 rounded-l-lg">Reference No</th>
+                    <th className="px-4 py-3 rounded-l-lg">Operation Name</th>
                     <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Category</th>
-                    <th className="px-4 py-3 rounded-r-lg">Technician</th>
+                    <th className="px-4 py-3">Doctor</th>
+                    <th className="px-4 py-3 rounded-r-lg">Remark</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {operations.map((o, idx) => (
                     <tr
-                      key={o.ref}
+                      key={o.id}
                       className="hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-4 py-3 font-medium text-indigo-600">{o.ref}</td>
-                      <td className="px-4 py-3 text-gray-600">{o.date}</td>
-                      <td className="px-4 py-3 text-gray-800 font-medium">{o.name}</td>
-                      <td className="px-4 py-3 text-gray-600">{o.category}</td>
-                      <td className="px-4 py-3 text-gray-600">{o.technician}</td>
+                      <td className="px-4 py-3 font-medium text-indigo-600">{o.operation_name}</td>
+                      <td className="px-4 py-3 text-gray-600">{o.operation_date}</td>
+                      <td className="px-4 py-3 text-gray-800 font-medium">{o.doctor_name}</td>
+                      <td className="px-4 py-3 text-gray-600">{o.remark || "N/A"}</td>
                     </tr>
                   ))}
+                  {operations.length === 0 && (
+                    <tr>
+                      <td colSpan="4" className="px-4 py-8 text-center text-gray-500">No operations found.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

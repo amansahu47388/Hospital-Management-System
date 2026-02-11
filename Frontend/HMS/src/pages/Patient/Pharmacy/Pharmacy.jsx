@@ -1,128 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PatientLayout from "../../../layout/PatientLayout";
 import {
-    Search,
-    Printer,
-    FileText,
-    Eye,
-    CreditCard,
-    X,
-    Download,
-    FileSpreadsheet,
-    AlignJustify,
-} from "lucide-react";
+    Search, Printer, Eye, X, AlignJustify,} from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
+import { getPharmacyBills } from "../../../api/pharmacyApi";
+import { getPatientPayments, createPatientPayment } from "../../../api/patientApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 export default function Pharmacy() {
+    const { user } = useAuth();
+    const notify = useNotify();
+
+    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [bills, setBills] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [showPaymentsModal, setShowPaymentsModal] = useState(false);
     const [selectedBill, setSelectedBill] = useState(null);
+    const [paymentHistory, setPaymentHistory] = useState([]);
+    const [paymentAmount, setPaymentAmount] = useState("");
 
-    // Mock Data matching the screenshot
-    const [bills] = useState([
-        {
-            billNo: "PHARMAB539",
-            caseId: "115",
-            date: "01/30/2026",
-            time: "01:30 PM",
-            doctor: "Sansa Gomez (9008)",
-            note: "",
-            discount: "0.00 (0.00%)",
-            netAmount: 558.23,
-            paidAmount: 420.0,
-            refundAmount: 0.0,
-            balanceAmount: 138.23,
-        },
-        {
-            billNo: "PHARMAB533",
-            caseId: "7577",
-            date: "01/01/2026",
-            time: "05:25 PM",
-            doctor: "Reyan Jain (9011)",
-            note: "",
-            discount: "47.25 (10.00%)",
-            netAmount: 470.81,
-            paidAmount: 350.0,
-            refundAmount: 0.0,
-            balanceAmount: 120.81,
-        },
-        {
-            billNo: "PHARMAB530",
-            caseId: "7519",
-            date: "12/25/2025",
-            time: "01:30 PM",
-            doctor: "Amit Singh (9009)",
-            note: "",
-            discount: "62.10 (12.00%)",
-            netAmount: 495.99,
-            paidAmount: 320.0,
-            refundAmount: 0.0,
-            balanceAmount: 175.99,
-        },
-        {
-            billNo: "PHARMAB525",
-            caseId: "115",
-            date: "12/01/2025",
-            time: "05:14 PM",
-            doctor: "Sansa Gomez (9008)",
-            note: "",
-            discount: "18.00 (10.00%)",
-            netAmount: 170.1,
-            paidAmount: 210.0,
-            refundAmount: 39.9,
-            balanceAmount: 0.0,
-        },
-        {
-            billNo: "PHARMAB522",
-            caseId: "115",
-            date: "11/25/2025",
-            time: "08:00 PM",
-            doctor: "Reyan Jain (9011)",
-            note: "",
-            discount: "58.50 (10.00%)",
-            netAmount: 577.13,
-            paidAmount: 410.0,
-            refundAmount: 0.0,
-            balanceAmount: 167.13,
-        },
-    ]);
+    const fetchBills = useCallback(async () => {
+        if (!user?.patient_id) return;
+        setLoading(true);
+        try {
+            const res = await getPharmacyBills({ patient_id: user.patient_id });
+            setBills(res.data || []);
+        } catch (error) {
+            console.error("Error fetching bills:", error);
+            notify("error", "Failed to load pharmacy bills");
+        } finally {
+            setLoading(false);
+        }
+    }, [user, notify]);
 
-    // Mock Details Data
-    const billDetails = {
-        medicines: [
-            {
-                category: "Syrup",
-                name: "Alprovit",
-                batchNo: "5673",
-                unit: "mm",
-                expiry: "Aug/2026",
-                qty: 4,
-                tax: "5.00%",
-                discount: "10.00%",
-                amount: 162.0,
-            },
-            {
-                category: "Capsule",
-                name: "WORMSTOP",
-                batchNo: "7844",
-                unit: "mg",
-                expiry: "Oct/2026",
-                qty: 5,
-                tax: "15.00%",
-                discount: "10.00%",
-                amount: 337.5,
-            },
-        ],
-        total: 499.5,
-        discount: "0.00 (0.00%)",
-        tax: "58.73 (11.76%)",
-        netAmount: 558.23,
-        paidAmount: 420.0,
-        refundAmount: 0.0,
-        dueAmount: 138.23,
-        collectedBy: "Harry Grant (9012)",
-    };
+    useEffect(() => {
+        fetchBills();
+    }, [fetchBills]);
 
     const handleShowDetails = (bill) => {
         setSelectedBill(bill);
@@ -131,48 +46,63 @@ export default function Pharmacy() {
 
     const handlePay = (bill) => {
         setSelectedBill(bill);
+        setPaymentAmount(bill.balance_amount);
         setShowPaymentModal(true);
     };
 
-    const handleShowPayments = (bill) => {
+    const handleShowPayments = async (bill) => {
         setSelectedBill(bill);
         setShowPaymentsModal(true);
+        try {
+            const res = await getPatientPayments(user.patient_id);
+            const history = (res.data || []).filter(p => p.pharmacy_bill === bill.id);
+            setPaymentHistory(history);
+        } catch (error) {
+            notify("error", "Failed to load payment history");
+        }
     };
 
-    const paymentHistory = [
-        { date: "01/30/2026 01:30 PM", note: "", mode: "Cash", type: "Payment", amount: 420.00, action: "" },
-    ];
+    const handleProcessPayment = async () => {
+        if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
+            notify("error", "Please enter a valid amount");
+            return;
+        }
+
+        try {
+            const payload = {
+                patient: user.patient_id,
+                payment_date: new Date().toISOString().slice(0, 10),
+                paid_amount: parseFloat(paymentAmount),
+                payment_mode: "Online",
+                note: `Payment for Bill #${selectedBill.id}`,
+                pharmacy_bill: selectedBill.id,
+                service_type: "Pharmacy"
+            };
+
+            await createPatientPayment(user.patient_id, payload);
+            notify("success", "Payment recorded successfully");
+            setShowPaymentModal(false);
+            fetchBills();
+        } catch (error) {
+            notify("error", error.response?.data?.detail || "Payment failed");
+        }
+    };
+
+    const filteredBills = bills.filter(bill =>
+        String(bill.id).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bill.doctor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bill.case_id?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <PatientLayout>
-            <div className="min-h-screen   transition-all duration-300">
+            <div className="min-h-screen transition-all duration-300">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-fade-in-up">
                     {/* Header */}
                     <div className="p-5 border-b flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
                         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                             Pharmacy Bill
                         </h2>
-
-                        <div className="flex gap-2">
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                title="Print"
-                            >
-                                <Printer size={18} />
-                            </button>
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                title="Export Excel"
-                            >
-                                <FileSpreadsheet size={18} />
-                            </button>
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                title="Export PDF"
-                            >
-                                <FileText size={18} />
-                            </button>
-                        </div>
                     </div>
 
                     {/* Search Bar */}
@@ -195,91 +125,79 @@ export default function Pharmacy() {
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left border-collapse">
-                            <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
+                            <thead className="bg-gray-100 text-gray-600 uppercase text-xs font-semibold">
                                 <tr className="border-b border-gray-200">
-                                    <th className="p-4 whitespace-nowrap">Bill No</th>
-                                    <th className="p-4 whitespace-nowrap">Case ID</th>
-                                    <th className="p-4 whitespace-nowrap">Date</th>
-                                    <th className="p-4 whitespace-nowrap">Doctor Name</th>
-                                    <th className="p-4 whitespace-nowrap">Note</th>
-                                    <th className="p-4 whitespace-nowrap text-right">
-                                        Discount ($)
-                                    </th>
-                                    <th className="p-4 whitespace-nowrap text-right">
-                                        Net Amount ($)
-                                    </th>
-                                    <th className="p-4 whitespace-nowrap text-right">
-                                        Paid Amount ($)
-                                    </th>
-                                    <th className="p-4 whitespace-nowrap text-right">
-                                        Refund Amount ($)
-                                    </th>
-                                    <th className="p-4 whitespace-nowrap text-right">
-                                        Balance Amount ($)
-                                    </th>
-                                    <th className="p-4 whitespace-nowrap text-center">Action</th>
+                                    <th className="px-2 py-3 text-left">Bill No</th>
+                                    <th className="px-2 py-3 text-left">Case ID</th>
+                                    <th className="px-2 py-3 text-left">Date</th>
+                                    <th className="px-2 py-3 text-left">Doctor Name</th>
+                                    <th className="px-2 py-3 text-left">Note</th>
+                                    <th className="px-2 py-3 text-left">Discount</th>
+                                    <th className="px-2 py-3 text-left">Net Amount</th>
+                                    <th className="px-2 py-3 text-left">Paid Amount</th>
+                                    <th className="px-2 py-3 text-left">Refund Amount</th>
+                                    <th className="px-2 py-3 text-left">Balance Amount</th>
+                                    <th className="px-2 py-3 text-left">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {bills.map((bill, index) => (
+                                {filteredBills.map((bill, index) => (
                                     <tr
                                         key={index}
                                         className="hover:bg-indigo-50/30 transition-colors group"
                                     >
                                         <td className="p-4 font-medium text-indigo-600 whitespace-nowrap">
-                                            {bill.billNo}
+                                            PHARMAB{bill.id}
                                         </td>
                                         <td className="p-4 text-gray-600 whitespace-nowrap">
-                                            {bill.caseId}
+                                            {bill.case_id || "-"}
                                         </td>
                                         <td className="p-4 text-gray-600 whitespace-nowrap">
-                                            <div>{bill.date}</div>
-                                            <div className="text-xs text-gray-400">{bill.time}</div>
+                                            <div>{new Date(bill.bill_date).toLocaleDateString()}</div>
+                                            <div className="text-xs text-gray-400">
+                                                {new Date(bill.bill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
                                         </td>
                                         <td className="p-4 text-gray-600 whitespace-nowrap">
-                                            {bill.doctor}
+                                            {bill.doctor_name || "Self"}
                                         </td>
                                         <td className="p-4 text-gray-600 whitespace-nowrap">
                                             {bill.note || "-"}
                                         </td>
                                         <td className="p-4 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.discount}
+                                            {parseFloat(bill.discount_amount).toFixed(2)}
                                         </td>
                                         <td className="p-4 text-gray-600 text-right font-medium whitespace-nowrap">
-                                            {bill.netAmount.toFixed(2)}
+                                            {parseFloat(bill.net_amount).toFixed(2)}
                                         </td>
                                         <td className="p-4 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.paidAmount.toFixed(2)}
+                                            {parseFloat(bill.paid_amount).toFixed(2)}
                                         </td>
                                         <td className="p-4 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.refundAmount.toFixed(2)}
+                                            {parseFloat(bill.refund_amount).toFixed(2)}
                                         </td>
                                         <td className="p-4 text-right font-bold text-gray-800 whitespace-nowrap">
-                                            {bill.balanceAmount.toFixed(2)}
+                                            {parseFloat(bill.balance_amount).toFixed(2)}
                                         </td>
                                         <td className="p-4 text-center whitespace-nowrap">
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleShowDetails(bill)}
-                                                    className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-gray-200"
-                                                    title="Show Details"
-                                                >
+                                                    className=""
+                                                    title="Show Details">
                                                     <Eye size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleShowPayments(bill)}
-                                                    className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-gray-200"
-                                                    title="View Payments"
-                                                >
+                                                    className=""
+                                                    title="View Payments">
                                                     <AlignJustify size={16} />
                                                 </button>
-                                                {bill.balanceAmount > 0 && (
+                                                {parseFloat(bill.balance_amount) > 0 && (
                                                     <button
                                                         onClick={() => handlePay(bill)}
                                                         className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded text-xs font-semibold shadow-sm hover:from-blue-600 hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:shadow transition-all"
-                                                        title="Pay"
-                                                    >
-                                                        <CreditCard size={14} />
+                                                        title="Pay">
                                                         Pay
                                                     </button>
                                                 )}
@@ -291,7 +209,7 @@ export default function Pharmacy() {
                         </table>
                     </div>
                     <div className="p-4 border-t text-xs text-gray-500 bg-gray-50">
-                        Records: 1 to {bills.length} of {bills.length}
+                        Records: 1 to {filteredBills.length} of {filteredBills.length}
                     </div>
                 </div>
             </div>
@@ -303,10 +221,10 @@ export default function Pharmacy() {
                         {/* Modal Header */}
                         <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] p-4 flex justify-between items-center text-white">
                             <h3 className="text-lg font-bold flex items-center gap-2">
-                                Bill Details - {selectedBill.billNo}
+                                Bill Details - PHARMAB{selectedBill.id}
                             </h3>
                             <div className="flex items-center gap-3">
-                                <button className="text-white/80 hover:text-white transition-colors" title="Print">
+                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={() => window.print()}>
                                     <Printer size={20} />
                                 </button>
                                 <button
@@ -320,54 +238,32 @@ export default function Pharmacy() {
 
                         {/* Modal Content */}
                         <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-                            <div className="bg-white border text-center p-4 mb-4 shadow-sm">
-                                <div className="flex items-center justify-center gap-2 mb-2">
-                                    <span className="text-orange-500 font-bold text-xl uppercase">Smart Hospital & Research Center</span>
-                                </div>
-                                <div className="text-sm text-gray-600">
-                                    Address: 25 Kings Street, CA <br />
-                                    Phone No: 89662423934 <br />
-                                    Email: smarthospitalrc@gmail.com <br />
-                                    Website: www.smart-hospital.in
-                                </div>
-                                <div className="mt-2 bg-black text-white py-1 font-bold uppercase text-sm">
-                                    Pharmacy Bill
-                                </div>
-                            </div>
-
-
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-sm">
                                 <div>
                                     <span className="text-gray-500 block">Bill No</span>
-                                    <span className="font-semibold text-gray-800">{selectedBill.billNo}</span>
+                                    <span className="font-semibold text-gray-800">PHARMAB{selectedBill.id}</span>
                                 </div>
                                 <div>
                                     <span className="text-gray-500 block">Date</span>
-                                    <span className="font-semibold text-gray-800">{selectedBill.date} {selectedBill.time}</span>
+                                    <span className="font-semibold text-gray-800">
+                                        {new Date(selectedBill.bill_date).toLocaleDateString()} {new Date(selectedBill.bill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
                                 </div>
                                 <div>
                                     <span className="text-gray-500 block">Case ID</span>
-                                    <span className="font-semibold text-gray-800">{selectedBill.caseId}</span>
-                                </div>
-                                <div>
-                                    <span className="text-gray-500 block">Prescription</span>
-                                    <span className="font-semibold text-gray-800">IPDP415</span>
-                                </div>
-                                <div>
-                                    <span className="text-gray-500 block">Name</span>
-                                    <span className="font-semibold text-gray-800">Olivier Thomas (1)</span>
-                                </div>
-                                <div>
-                                    <span className="text-gray-500 block">Phone</span>
-                                    <span className="font-semibold text-gray-800">7896451230</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.case_id || "N/A"}</span>
                                 </div>
                                 <div>
                                     <span className="text-gray-500 block">Doctor</span>
-                                    <span className="font-semibold text-gray-800">{selectedBill.doctor}</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.doctor_name || "Self"}</span>
                                 </div>
                                 <div>
-                                    <span className="text-gray-500 block">TPA</span>
-                                    <span className="font-semibold text-gray-800">Health Life Insurance</span>
+                                    <span className="text-gray-500 block">Name</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.patient_name}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Phone</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.patient_phone}</span>
                                 </div>
                             </div>
 
@@ -383,21 +279,21 @@ export default function Pharmacy() {
                                             <th className="p-3 text-center">Quantity</th>
                                             <th className="p-3">Tax</th>
                                             <th className="p-3">Discount</th>
-                                            <th className="p-3 text-right">Amount ($)</th>
+                                            <th className="p-3 text-right">Amount (₹)</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 bg-white">
-                                        {billDetails.medicines.map((med, i) => (
+                                        {selectedBill.items.map((med, i) => (
                                             <tr key={i}>
-                                                <td className="p-3">{med.category}</td>
-                                                <td className="p-3 font-medium text-gray-800">{med.name}</td>
-                                                <td className="p-3">{med.batchNo}</td>
-                                                <td className="p-3">{med.unit}</td>
-                                                <td className="p-3">{med.expiry}</td>
-                                                <td className="p-3 text-center">{med.qty}</td>
-                                                <td className="p-3">{med.tax}</td>
-                                                <td className="p-3">{med.discount}</td>
-                                                <td className="p-3 text-right">{med.amount.toFixed(2)}</td>
+                                                <td className="p-3">{med.medicine_category}</td>
+                                                <td className="p-3 font-medium text-gray-800">{med.medicine_name}</td>
+                                                <td className="p-3">{med.batch_no}</td>
+                                                <td className="p-3">{med.medicine_unit}</td>
+                                                <td className="p-3">{med.expiry_date ? new Date(med.expiry_date).toLocaleDateString() : "-"}</td>
+                                                <td className="p-3 text-center">{med.quantity}</td>
+                                                <td className="p-3">{med.tax_percentage}%</td>
+                                                <td className="p-3">{med.discount_percentage}%</td>
+                                                <td className="p-3 text-right">{parseFloat(med.amount).toFixed(2)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -406,39 +302,34 @@ export default function Pharmacy() {
 
                             <div className="flex flex-col items-end gap-2 text-sm text-gray-800 pr-4">
                                 <div className="flex justify-between w-64">
-                                    <span>Total ($)</span>
-                                    <span className="font-semibold">{billDetails.total.toFixed(2)}</span>
+                                    <span>Total (₹)</span>
+                                    <span className="font-semibold">{parseFloat(selectedBill.total_amount).toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between w-64">
-                                    <span>Discount</span>
-                                    <span>{billDetails.discount}</span>
+                                    <span>Discount (₹)</span>
+                                    <span>{parseFloat(selectedBill.discount_amount).toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between w-64">
-                                    <span>Tax ($)</span>
-                                    <span>{billDetails.tax}</span>
+                                    <span>Tax (₹)</span>
+                                    <span>{parseFloat(selectedBill.tax_amount).toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between w-64 font-bold text-base border-t pt-2 mt-1">
-                                    <span>Net Amount ($)</span>
-                                    <span>{billDetails.netAmount}</span>
+                                    <span>Net Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.net_amount).toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between w-64">
-                                    <span>Paid Amount ($)</span>
-                                    <span>{billDetails.paidAmount.toFixed(2)}</span>
+                                    <span>Paid Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.paid_amount).toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between w-64">
-                                    <span>Refund Amount ($)</span>
-                                    <span>{billDetails.refundAmount.toFixed(2)}</span>
+                                    <span>Refund Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.refund_amount).toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between w-64 font-bold text-red-600">
-                                    <span>Due Amount ($)</span>
-                                    <span>{billDetails.dueAmount}</span>
+                                    <span>Due Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.balance_amount).toFixed(2)}</span>
                                 </div>
                             </div>
-
-                            <div className="mt-8 pt-4 border-t text-right text-gray-500 text-xs">
-                                Collected By: {billDetails.collectedBy}
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -463,24 +354,19 @@ export default function Pharmacy() {
                         <div className="p-6">
                             <div className="mb-6">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Payment Amount ($) <span className="text-red-500">*</span>
+                                    Payment Amount (₹) <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="number"
-                                    defaultValue={selectedBill.balanceAmount}
+                                    value={paymentAmount}
+                                    onChange={(e) => setPaymentAmount(e.target.value)}
                                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A63D2] focus:border-[#8A63D2] outline-none transition-all"
                                 />
                             </div>
 
                             <div className="flex justify-end gap-3">
-                                {/* <button
-                        onClick={() => setShowPaymentModal(false)}
-                        className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
-                    >
-                        Cancel
-                    </button> */}
                                 <button
-                                    onClick={() => setShowPaymentModal(false)}
+                                    onClick={handleProcessPayment}
                                     className="px-6 py-2 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white rounded-lg shadow-md hover:shadow-lg hover:opacity-90 transition-all font-medium"
                                 >
                                     Add
@@ -514,19 +400,19 @@ export default function Pharmacy() {
                                         <th className="p-4">Date</th>
                                         <th className="p-4">Note</th>
                                         <th className="p-4">Payment Mode</th>
-                                        <th className="p-4">Payment Type</th>
-                                        <th className="p-4 text-right">Paid Amount ($)</th>
+                                        <th className="p-4 text-right">Paid Amount (₹)</th>
                                         <th className="p-4 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {paymentHistory.map((payment, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
-                                            <td className="p-4">{payment.date}</td>
+                                            <td className="p-4">
+                                                {new Date(payment.payment_date).toLocaleDateString()}
+                                            </td>
                                             <td className="p-4">{payment.note}</td>
-                                            <td className="p-4">{payment.mode}</td>
-                                            <td className="p-4">{payment.type}</td>
-                                            <td className="p-4 text-right">{payment.amount.toFixed(2)}</td>
+                                            <td className="p-4">{payment.payment_mode}</td>
+                                            <td className="p-4 text-right">{parseFloat(payment.paid_amount).toFixed(2)}</td>
                                             <td className="p-4 text-right">
                                                 <button className="text-gray-500 hover:text-indigo-600" title="Print">
                                                     <Printer size={16} />
@@ -535,8 +421,8 @@ export default function Pharmacy() {
                                         </tr>
                                     ))}
                                     <tr className="bg-gray-100 font-bold">
-                                        <td className="p-4 text-right" colSpan={4}>Total</td>
-                                        <td className="p-4 text-right">${paymentHistory.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2)}</td>
+                                        <td className="p-4 text-right" colSpan={3}>Total</td>
+                                        <td className="p-4 text-right">₹{paymentHistory.reduce((acc, curr) => acc + parseFloat(curr.paid_amount), 0).toFixed(2)}</td>
                                         <td></td>
                                     </tr>
                                 </tbody>

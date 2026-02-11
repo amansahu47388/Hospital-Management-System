@@ -5,9 +5,17 @@ from .models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 
 class UserSerializer(serializers.ModelSerializer):
+    patient_id = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
-        fields = ['id', 'email', 'full_name', 'phone', 'role', 'is_active', 'is_staff', 'is_superuser', 'created_at']
+        fields = ['id', 'email', 'full_name', 'phone', 'role', 'is_active', 'is_staff', 'is_superuser', 'created_at', 'patient_id']
+    
+    def get_patient_id(self, obj):
+        """Return patient ID if user has a patient profile"""
+        if hasattr(obj, 'patient_profile') and obj.patient_profile:
+            return obj.patient_profile.id
+        return None
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(

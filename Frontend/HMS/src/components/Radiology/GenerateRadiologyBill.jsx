@@ -249,7 +249,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
       setLoading(true);
       const res = await createRadiologyBill(payload);
       const data = res?.data || res;
-      notify("success", `Bill created successfully (Bill No: ${data.bill_no || data.bill_id})`);
+      notify("success", `Bill created successfully (Bill No: ${data.bill_id})`);
       // Reset form
       setSelectedPatient(null);
       setSelectedPrescription(null);

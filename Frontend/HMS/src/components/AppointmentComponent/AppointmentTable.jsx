@@ -49,7 +49,7 @@ export default function AppointmentTable({ data, onUpdate }) {
                 "Patient Name",
                 "Appointment No",
                 "Created By",
-                "Date & Time",
+                "Appointment Date",
                 "Phone",
                 "Gender",
                 "Doctor",
@@ -78,7 +78,7 @@ export default function AppointmentTable({ data, onUpdate }) {
                 <td className="p-2">{row.patient_name || row.patient_details?.full_name || "—"}</td>
                 <td className="p-2">APP-{row.id}</td>
                 <td className="p-2">{row.created_by_name || "—"}</td>
-                <td className="p-2">{row.appointment_date || "—"}</td>
+                <td className="p-2">{new Date(row.appointment_date).toLocaleDateString() || "—"}</td>
                 <td className="p-2">{row.phone || "—"}</td>
                 <td className="p-2">{row.gender || row.patient_details?.gender || "—"}</td>
                 <td className="p-2">

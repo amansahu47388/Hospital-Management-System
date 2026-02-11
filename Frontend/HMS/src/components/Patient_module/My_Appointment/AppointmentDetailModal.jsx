@@ -4,34 +4,43 @@ import { X, Printer } from 'lucide-react';
 export default function AppointmentDetailModal({ open, onClose, appointment }) {
     if (!open || !appointment) return null;
 
+    // Format date for display
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    };
+
     // Derived data for display
     const details = [
-        { label: "Patient Name", value: appointment.patient_name || "Olivier Thomas (1)" },
-        { label: "Appointment No", value: appointment.appointment_no || "APPNO7620" },
-        { label: "Age", value: appointment.age || "41 Year, 8 Month, 16 Day" },
-        { label: "Appointment Date", value: appointment.date || "01/01/2026 03:46 PM" },
-        { label: "Gender", value: appointment.gender || "Male" },
-        { label: "Appointment Priority", value: appointment.priority || "Normal" },
-        { label: "Blood Group", value: appointment.blood_group || "B+" },
-        { label: "Shift", value: appointment.shift || "Morning" },
-        { label: "Phone", value: appointment.phone || "7896541230" },
-        { label: "Slot", value: appointment.slot || "10:00 AM - 12:30 PM" },
-        { label: "Email", value: appointment.email || "olivier@gmail.com" },
-        { label: "Amount", value: appointment.amount || "$147.60" },
-        { label: "Doctor", value: appointment.doctor || "Amit Singh (9009)" },
-        { label: "Payment Mode", value: appointment.payment_mode || "Cash" },
-        { label: "Department", value: appointment.department || "Doctor Department" },
+        { label: "Patient Name", value: appointment.patient_details?.full_name || "N/A" },
+        { label: "Appointment No", value: `APPNO${appointment.id}` },
+        { label: "Appointment Date", value: formatDate(appointment.appointment_date) },
+        { label: "Doctor", value: appointment.doctor_details?.full_name || appointment.doctor_name || "N/A" },
+        { label: "Department", value: appointment.department || "N/A" },
+        { label: "Appointment Priority", value: appointment.priority_details?.priority || "Normal" },
+        { label: "Shift", value: appointment.shift_details ? `${appointment.shift_details.shift} (${appointment.shift_details.time_from} - ${appointment.shift_details.time_to})` : "N/A" },
+        { label: "Slot", value: appointment.slot || "N/A" },
+        { label: "Phone", value: appointment.phone || appointment.patient_details?.phone || "N/A" },
+        { label: "Email", value: appointment.patient_details?.email || "N/A" },
+        { label: "Fees", value: appointment.fees ? `$${appointment.fees}` : "N/A" },
+        { label: "Payment Mode", value: appointment.payment_mode || "N/A" },
         { label: "Status", value: appointment.status, isStatus: true },
-        { label: "Message", value: appointment.message || "No message", isFullWidth: true },
-        { label: "Live Consultation", value: appointment.live_consultation ? "Yes" : "No" },
-        { label: "Transaction ID", value: appointment.transaction_id || "TRANID11667" },
-        { label: "Payment Note", value: appointment.payment_note || "", isFullWidth: true },
-        { label: "Source", value: appointment.source || "Offline" },
-        { label: "Alternate Address", value: appointment.alternate_address || "", isFullWidth: true },
+        { label: "Source", value: appointment.source || "N/A" },
+        { label: "Created At", value: formatDate(appointment.created_at) },
+        { label: "Created By", value: appointment.created_by_name || "N/A" },
+        { label: "Reason", value: appointment.reason || "No reason provided", isFullWidth: true },
     ];
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 ">
             <div className="bg-white w-full max-w-4xl rounded-lg shadow-xl overflow-hidden animate-in zoom-in duration-200">
                 {/* HEADER */}
                 <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] px-4 py-3 text-white flex justify-between items-center">

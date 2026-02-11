@@ -83,6 +83,16 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             'charge'
         ).all()
         
+        # Filter by patient if provided (for patient portal)
+        patient_id = self.request.query_params.get('patient', None)
+        if patient_id:
+            queryset = queryset.filter(patient_id=patient_id)
+        
+        # Filter by doctor if provided
+        doctor_id = self.request.query_params.get('doctor', None)
+        if doctor_id:
+            queryset = queryset.filter(doctor_id=doctor_id)
+        
         # Filter by status if provided
         status_filter = self.request.query_params.get('status', None)
         if status_filter:
