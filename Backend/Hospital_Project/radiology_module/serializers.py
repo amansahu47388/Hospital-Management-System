@@ -134,10 +134,6 @@ class RadiologyBillCreateSerializer(serializers.Serializer):
     @transaction.atomic
     def create(self, validated_data):
         tests = validated_data.pop("tests")
-        
-        # # Generate bill number - use max id to avoid conflicts
-        # max_id = RadiologyBill.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
-        # bill_no = f"RB{max_id + 1:04d}"
 
         bill = RadiologyBill.objects.create(
             patient_id=validated_data["patient_id"],
@@ -149,7 +145,6 @@ class RadiologyBillCreateSerializer(serializers.Serializer):
             case_id=validated_data.get("case_id"),
             discount=validated_data["discount"],
             paid_amount=validated_data["paid_amount"],
-            # bill_no=bill_no,
             created_by=self.context["request"].user,
         )
 
@@ -172,8 +167,8 @@ class RadiologyBillCreateSerializer(serializers.Serializer):
                 + timedelta(days=test.report_days or 0),
             )
 
-            subtotal += price
-            total_tax += tax
+        subtotal += price
+        total_tax += tax
 
         bill.subtotal = subtotal
         bill.tax = total_tax
@@ -191,13 +186,15 @@ class RadiologyBillListSerializer(serializers.ModelSerializer):
     created_by_name = serializers.SerializerMethodField()
     items_count = serializers.SerializerMethodField()
     case_id = serializers.SerializerMethodField()
+    items = RadiologyBillItemSerializer(many=True, read_only=True)
     
     class Meta:
         model = RadiologyBill
         fields = [
             "id", "case_id", "patient", "patient_name", "doctor", "doctor_name",
             "subtotal", "tax", "discount", "total_amount", "paid_amount", "balance",
-            "payment_mode", "created_at", "created_by", "created_by_name", "items_count"
+            "payment_mode", "created_at", "created_by", "created_by_name", "items_count",
+            "items"
         ]
     
     def get_patient_name(self, obj):

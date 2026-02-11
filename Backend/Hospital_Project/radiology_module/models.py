@@ -66,7 +66,6 @@ class RadiologyBill(models.Model):
     note = models.TextField(null=True, blank=True)
     previous_report_value = models.BooleanField(default=False)
     payment_mode = models.CharField(max_length=50, null=True, blank=True)
-    # bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -93,4 +92,4 @@ class RadiologyBillItem(models.Model):
     report_date = models.DateField()
     
     def __str__(self):
-        return f"{self.bill.bill_no} - {self.test.test_name}"
+        return f"{self.bill.id} - {self.test.test_name}"

@@ -1,162 +1,116 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PatientLayout from "../../../layout/PatientLayout";
 import {
     Search,
     Printer,
-    FileText,
     Eye,
-    CreditCard,
     X,
-    Download,
-    FileSpreadsheet,
     AlignJustify,
+    Loader
 } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
+import { useNotify } from "../../../context/NotificationContext";
+import { getRadiologyBills, getRadiologyBillDetail } from "../../../api/radiologyApi";
+import { createPatientPayment, getPatientPayments } from "../../../api/patientApi";
 
 export default function Radiology() {
+    const { user } = useAuth();
+    const notify = useNotify();
+
+    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [bills, setBills] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [showPaymentsModal, setShowPaymentsModal] = useState(false);
     const [selectedBill, setSelectedBill] = useState(null);
+    const [paymentHistory, setPaymentHistory] = useState([]);
+    const [paymentAmount, setPaymentAmount] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Mock Data matching the Radiology screenshot
-    const [bills] = useState([
-        {
-            billNo: "RADIOB557",
-            caseId: "115",
-            reportingDate: "01/25/2026",
-            reportingTime: "02:00 PM",
-            doctor: "Sonia Bush (9002)",
-            note: "",
-            previousReportValue: "",
-            amount: 330.00,
-            discount: "33.00 (10.00%)",
-            tax: "59.40 (20.00%)",
-            netAmount: 356.40,
-            paidAmount: 250.00,
-            balanceAmount: 106.40,
-        },
-        {
-            billNo: "RADIOB552",
-            caseId: "7577",
-            reportingDate: "01/01/2026",
-            reportingTime: "03:47 PM",
-            doctor: "Reyan Jain (9011)",
-            note: "",
-            previousReportValue: "",
-            amount: 330.00,
-            discount: "33.00 (10.00%)",
-            tax: "59.40 (20.00%)",
-            netAmount: 356.40,
-            paidAmount: 250.00,
-            balanceAmount: 106.40,
-        },
-        {
-            billNo: "RADIOB544",
-            caseId: "7519",
-            reportingDate: "12/01/2025",
-            reportingTime: "04:07 PM",
-            doctor: "Reyan Jain (9011)",
-            note: "NA",
-            previousReportValue: "",
-            amount: 165.00,
-            discount: "8.25 (5.00%)",
-            tax: "31.35 (20.00%)",
-            netAmount: 188.10,
-            paidAmount: 188.10,
-            balanceAmount: 0.00,
-        },
-        {
-            billNo: "RADIOB542",
-            caseId: "115",
-            reportingDate: "11/30/2025",
-            reportingTime: "04:22 PM",
-            doctor: "Reyan Jain (9011)",
-            note: "",
-            previousReportValue: "",
-            amount: 330.00,
-            discount: "33.00 (10.00%)",
-            tax: "59.40 (20.00%)",
-            netAmount: 356.40,
-            paidAmount: 254.00,
-            balanceAmount: 102.40,
-        },
-        {
-            billNo: "RADIOB536",
-            caseId: "115",
-            reportingDate: "11/01/2025",
-            reportingTime: "04:14 PM",
-            doctor: "Amit Singh (9009)",
-            note: "",
-            previousReportValue: "",
-            amount: 170.00,
-            discount: "17.00 (10.00%)",
-            tax: "30.60 (20.00%)",
-            netAmount: 183.60,
-            paidAmount: 100.00,
-            balanceAmount: 83.60,
-        },
-    ]);
+    const fetchBills = useCallback(async () => {
+        if (!user?.patient_id) return;
+        setLoading(true);
+        try {
+            const res = await getRadiologyBills("", user.patient_id);
+            setBills(res.data || []);
+        } catch (error) {
+            console.error("Error fetching radiology bills:", error);
+            notify("error", "Failed to load radiology bills");
+        } finally {
+            setLoading(false);
+        }
+    }, [user, notify]);
 
-    // Mock Details Data
-    const billDetails = {
-        patientName: "Olivier Thomas (1)",
-        age: "41 Year 4 Month 30 Days",
-        gender: "Male",
-        mobile: "7896451230",
-        email: "olivier@gmail.com",
-        address: "482 Kingsway, Brooklyn West, CA",
-        tpa: "",
-        tpaId: "",
-        tpaValidity: "",
-        generatedBy: "John Hook (9006)",
-        prescriptionNo: "IPDP415",
+    useEffect(() => {
+        fetchBills();
+    }, [fetchBills]);
 
-        tests: [
-            {
-                name: "Resting 12-lead EKG (RLE)",
-                sampleCollected: "John Hook (9006) Radiology : In-House Radiology Lab 01/25/2026",
-                expectedDate: "01/27/2026",
-                approvedBy: "John Hook (9006) 01/28/2026",
-                tax: "$29.70 (20.00%)",
-                netAmount: 178.20,
-            },
-            {
-                name: "Magnetic resonance imaging (MR)",
-                sampleCollected: "John Hook (9006) Radiology : In-House Radiology Lab 01/25/2026",
-                expectedDate: "01/27/2026",
-                approvedBy: "John Hook (9006) 01/28/2026",
-                tax: "$29.70 (20.00%)",
-                netAmount: 178.20,
-            },
-        ],
-        total: 330.00,
-        totalDiscount: "$33.00 (10.00%)",
-        totalTax: "$59.40 (20.00%)",
-        netAmount: 356.40,
-        totalDeposit: 250.00,
-        balanceAmount: 106.40,
-    };
-
-    const handleShowDetails = (bill) => {
-        setSelectedBill(bill);
-        setShowDetailsModal(true);
+    const handleShowDetails = async (bill) => {
+        setLoading(true);
+        try {
+            const res = await getRadiologyBillDetail(bill.id);
+            setSelectedBill(res.data);
+            setShowDetailsModal(true);
+        } catch (error) {
+            notify("error", "Failed to load bill details");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handlePay = (bill) => {
         setSelectedBill(bill);
+        setPaymentAmount(bill.balance || bill.balance_amount || 0);
         setShowPaymentModal(true);
     };
 
-    const handleShowPayments = (bill) => {
+    const handleShowPayments = async (bill) => {
         setSelectedBill(bill);
         setShowPaymentsModal(true);
+        try {
+            const res = await getPatientPayments(user.patient_id);
+            const history = (res.data || []).filter(p => p.radiology_bill === bill.id);
+            setPaymentHistory(history);
+        } catch (error) {
+            notify("error", "Failed to load payment history");
+        }
     };
 
-    // Mock Payment History Data
-    const paymentHistory = [
-        { date: "01/25/2026 02:00 PM", note: "Transfer to Bank Account", mode: "Transfer to Bank Account", type: "Payment", amount: 250.00, action: "" },
-    ];
+    const handleProcessPayment = async () => {
+        if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
+            notify("error", "Please enter a valid amount");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                patient: user.patient_id,
+                payment_date: new Date().toISOString().slice(0, 10),
+                paid_amount: parseFloat(paymentAmount),
+                payment_mode: "Online",
+                note: `Payment for Radiology Bill #${selectedBill.id}`,
+                radiology_bill: selectedBill.id,
+                service_type: "Radiology"
+            };
+
+            await createPatientPayment(user.patient_id, payload);
+            notify("success", "Payment recorded successfully");
+            setShowPaymentModal(false);
+            fetchBills();
+        } catch (error) {
+            notify("error", error.response?.data?.detail || "Payment failed");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const filteredBills = bills.filter(bill =>
+        String(bill.id).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bill.doctor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bill.case_id?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <PatientLayout>
@@ -169,24 +123,6 @@ export default function Radiology() {
                         </h2>
 
                         <div className="flex gap-2">
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Print"
-                            >
-                                <Printer size={18} />
-                            </button>
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Export Excel"
-                            >
-                                <FileSpreadsheet size={18} />
-                            </button>
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Export PDF"
-                            >
-                                <FileText size={18} />
-                            </button>
                             <button
                                 className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
                                 title="Print"
@@ -215,111 +151,111 @@ export default function Radiology() {
 
                     {/* Table */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left border-collapse">
-                            <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
-                                <tr className="border-b border-gray-200">
-                                    <th className="p-3 whitespace-nowrap">Bill No</th>
-                                    <th className="p-3 whitespace-nowrap">Case ID</th>
-                                    <th className="p-3 whitespace-nowrap">Reporting Date</th>
-                                    <th className="p-3 whitespace-nowrap">Reference Doctor</th>
-                                    <th className="p-3 whitespace-nowrap">Note</th>
-                                    <th className="p-3 whitespace-nowrap">Previous Report Value</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Amount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Discount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Tax ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Net Amount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Paid Amount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-right">Balance Amount ($)</th>
-                                    <th className="p-3 whitespace-nowrap text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {bills.map((bill, index) => (
-                                    <tr
-                                        key={index}
-                                        className="hover:bg-indigo-50/30 transition-colors group"
-                                    >
-                                        <td className="p-3 font-medium text-indigo-600 whitespace-nowrap">
-                                            {bill.billNo}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.caseId}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            <div>{bill.reportingDate}</div>
-                                            <div className="text-xs text-gray-400">{bill.reportingTime}</div>
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.doctor}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.note || ""}
-                                        </td>
-                                        <td className="p-3 text-gray-600 whitespace-nowrap">
-                                            {bill.previousReportValue || ""}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.amount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.discount}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.tax}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right font-medium whitespace-nowrap">
-                                            {bill.netAmount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-gray-600 text-right whitespace-nowrap">
-                                            {bill.paidAmount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-right font-bold text-gray-800 whitespace-nowrap">
-                                            {bill.balanceAmount.toFixed(2)}
-                                        </td>
-                                        <td className="p-3 text-center whitespace-nowrap">
-                                            <div className="flex flex-col items-center justify-center gap-1">
-                                                <div className="flex gap-1 justify-end w-full">
-                                                    <button
-                                                        onClick={() => handleShowDetails(bill)}
-                                                        className="p-1 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-gray-200"
-                                                        title="Show Details"
-                                                    >
-                                                        <Eye size={14} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleShowPayments(bill)}
-                                                        className="p-1 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-gray-200"
-                                                        title="View Payments"
-                                                    >
-                                                        <AlignJustify size={14} />
-                                                    </button>
-                                                    <button
-                                                        className="p-1 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-gray-200"
-                                                        title="Print"
-                                                    >
-                                                        <Printer size={14} />
-                                                    </button>
-                                                </div>
-
-                                                {bill.balanceAmount > 0 && (
-                                                    <button
-                                                        onClick={() => handlePay(bill)}
-                                                        className="flex items-center justify-center w-full gap-1 px-2 py-1 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded text-[10px] font-semibold shadow-sm hover:from-blue-600 hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:shadow transition-all"
-                                                        title="Pay"
-                                                    >
-                                                        <CreditCard size={12} />
-                                                        Pay
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
+                        {loading && bills.length === 0 ? (
+                            <div className="flex justify-center p-8">
+                                <Loader size={30} className="animate-spin text-gray-400" />
+                            </div>
+                        ) : (
+                            <table className="w-full text-sm text-left border-collapse">
+                                <thead className="bg-gray-50 text-gray-600 text-xs font-semibold">
+                                    <tr className="border-b border-gray-200">
+                                        <th className="px-2 py-3 text-left">Bill No</th>
+                                        <th className="px-2 py-3 text-left">Case ID</th>
+                                        <th className="px-2 py-3 text-left">Reporting Date</th>
+                                        <th className="px-2 py-3 text-left">Reference Doctor</th>
+                                        <th className="px-2 py-3 text-left">Note</th>
+                                        <th className="px-2 py-3 text-left">Previous Report Value</th>
+                                        <th className="px-2 py-3 text-right">Amount </th>
+                                        <th className="px-2 py-3 text-right">Discount</th>
+                                        <th className="px-2 py-3 text-right">Tax </th>
+                                        <th className="px-2 py-3 text-right">Net Amount </th>
+                                        <th className="px-2 py-3 text-right">Paid Amount </th>
+                                        <th className="px-2 py-3 text-right">Balance Amount</th>
+                                        <th className="px-2 py-3 text-center">Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {filteredBills.map((bill, index) => (
+                                        <tr
+                                            key={index}
+                                            className="hover:bg-indigo-50/30 transition-colors group"
+                                        >
+                                            <td className="p-3 font-medium text-indigo-600 ">
+                                                RADIOB{bill.id}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.case_id || "-"}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                <div>{new Date(bill.created_at).toLocaleDateString()}</div>
+                                                <div className="text-xs text-gray-400">
+                                                    {new Date(bill.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.doctor_name || "Self"}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.note || "-"}
+                                            </td>
+                                            <td className="p-3 text-gray-600 ">
+                                                {bill.previous_report_value ? "Yes" : "No"}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.subtotal || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.discount || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.tax || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right font-medium ">
+                                                {parseFloat(bill.total_amount || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-gray-600 text-right ">
+                                                {parseFloat(bill.paid_amount || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-right font-bold text-gray-800 ">
+                                                {parseFloat(bill.balance || 0).toFixed(2)}
+                                            </td>
+                                            <td className="p-3 text-center ">
+                                                <div className="flex flex-col items-center justify-center gap-1">
+                                                    <div className="flex gap-1 justify-end w-full">
+                                                        <button
+                                                            onClick={() => handleShowDetails(bill)}
+                                                            className=""
+                                                            title="Show Details"
+                                                        >
+                                                            <Eye size={14} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleShowPayments(bill)}
+                                                            className=""
+                                                            title="View Payments"
+                                                        >
+                                                            <AlignJustify size={14} />
+                                                        </button>
+                                                        {parseFloat(bill.balance) > 0 && (
+                                                            <button
+                                                                onClick={() => handlePay(bill)}
+                                                                className="flex items-center justify-center w-full gap-1 px-2 py-1 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded text-[10px] font-semibold shadow-sm hover:from-blue-600 hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:shadow transition-all"
+                                                                title="Pay"
+                                                            >
+                                                                Pay
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                     <div className="p-4 border-t text-xs text-gray-500 bg-gray-50">
-                        Records: 1 to {bills.length} of {bills.length}
+                        Records: 1 to {filteredBills.length} of {filteredBills.length}
                     </div>
                 </div>
             </div>
@@ -327,17 +263,14 @@ export default function Radiology() {
             {/* Bill Details Modal */}
             {showDetailsModal && selectedBill && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
                         {/* Modal Header */}
                         <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] p-4 flex justify-between items-center text-white">
                             <h3 className="text-lg font-bold flex items-center gap-2">
-                                Bill Details
+                                Bill Details - RADIOB{selectedBill.id}
                             </h3>
                             <div className="flex items-center gap-3">
-                                <button className="text-white/80 hover:text-white transition-colors" title="Menu">
-                                    <div className="scale-150">≡</div>
-                                </button>
-                                <button className="text-white/80 hover:text-white transition-colors" title="Print">
+                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={() => window.print()}>
                                     <Printer size={20} />
                                 </button>
                                 <button
@@ -350,111 +283,89 @@ export default function Radiology() {
                         </div>
 
                         {/* Modal Content */}
-                        <div className="flex-1 overflow-y-auto p-6 bg-white">
-
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-4 mb-8 text-sm text-gray-700">
-                                {/* Row 1 */}
-                                <div className="font-semibold">Bill No</div>
-                                <div>{selectedBill.billNo}</div>
-                                <div className="font-semibold">Case ID</div>
-                                <div>{selectedBill.caseId}</div>
-                                <div className="font-semibold">Patient Name</div>
-                                <div>{billDetails.patientName}</div>
-                                <div className="font-semibold">Total</div>
-                                <div className="text-right">${billDetails.total.toFixed(2)}</div>
-
-                                {/* Row 2 */}
-                                <div className="font-semibold">Prescription No</div>
-                                <div>{billDetails.prescriptionNo}</div>
-                                <div className="font-semibold">Age</div>
-                                <div>{billDetails.age}</div>
-                                <div className="font-semibold">Gender</div>
-                                <div>{billDetails.gender}</div>
-                                <div className="font-semibold">Discount</div>
-                                <div className="text-right">{billDetails.totalDiscount}</div>
-
-                                {/* Row 3 */}
-                                <div className="font-semibold">Doctor Name</div>
-                                <div>{selectedBill.doctor}</div>
-                                <div className="font-semibold">Mobile No</div>
-                                <div>{billDetails.mobile}</div>
-                                <div className="font-semibold">Email</div>
-                                <div>{billDetails.email}</div>
-                                <div className="font-semibold">Tax</div>
-                                <div className="text-right">{billDetails.totalTax}</div>
-
-                                {/* Row 4 */}
-                                <div className="font-semibold">Blood Group</div>
-                                <div>B+</div>
-                                <div className="font-semibold">Address</div>
-                                <div className="col-span-2 md:col-span-1">{billDetails.address}</div>
-                                <div className="font-semibold">Net Amount</div>
-                                <div className="text-right">${billDetails.netAmount.toFixed(2)}</div>
-
-                                {/* Row 5 */}
-                                <div className="font-semibold">TPA</div>
-                                <div>{billDetails.tpa}</div>
-                                <div className="font-semibold">TPA ID</div>
-                                <div>{billDetails.tpaId}</div>
-                                <div className="font-semibold">TPA Validity</div>
-                                <div>{billDetails.tpaValidity}</div>
-                                <div className="font-semibold">Total Deposit</div>
-                                <div className="text-right">${billDetails.totalDeposit.toFixed(2)}</div>
-
-                                {/* Row 6 */}
-                                <div className="font-semibold">Generated By</div>
-                                <div>{billDetails.generatedBy}</div>
-                                <div className="col-span-4 md:col-span-1"></div>
-                                <div className="font-semibold">Due Amount</div>
-                                <div className="text-right">${billDetails.balanceAmount.toFixed(2)}</div>
-
-                                {/* Row 7 */}
-                                <div className="font-semibold">Note</div>
-                                <div className="col-span-7"></div>
-
-                                {/* Row 8 */}
-                                <div className="font-semibold">Previous Report Value</div>
-                                <div className="col-span-7"></div>
-
+                        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-sm">
+                                <div>
+                                    <span className="text-gray-500 block">Bill No</span>
+                                    <span className="font-semibold text-gray-800">RADIOB{selectedBill.id}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Date</span>
+                                    <span className="font-semibold text-gray-800">
+                                        {new Date(selectedBill.created_at).toLocaleDateString()} {new Date(selectedBill.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Case ID</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.case_id || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Doctor</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.doctor_name || "Self"}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Name</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.patient_name}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-500 block">Phone</span>
+                                    <span className="font-semibold text-gray-800">{selectedBill.patient_phone}</span>
+                                </div>
                             </div>
 
                             <div className="overflow-x-auto mb-6">
-                                <table className="w-full text-sm text-left border-t border-b">
-                                    <thead className="text-gray-700 font-bold border-b">
+                                <table className="w-full text-sm text-left border">
+                                    <thead className="bg-gray-100 text-gray-700 font-semibold border-b">
                                         <tr>
-                                            <th className="p-3">#</th>
                                             <th className="p-3">Test Name</th>
-                                            <th className="p-3">Sample Collected</th>
-                                            <th className="p-3">Expected Date</th>
-                                            <th className="p-3">Approved By / Update Date</th>
-                                            <th className="p-3 text-right">Tax (%)</th>
-                                            <th className="p-3 text-right">Net Amount</th>
-                                            <th className="p-3 text-center">Action</th>
+                                            <th className="p-3">Report Date</th>
+                                            <th className="p-3">Report Days</th>
+                                            <th className="p-3 text-right">Tax (₹)</th>
+                                            <th className="p-3 text-right">Amount (₹)</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 bg-white">
-                                        {billDetails.tests.map((test, i) => (
+                                        {selectedBill.items.map((item, i) => (
                                             <tr key={i}>
-                                                <td className="p-3">{i + 1}</td>
-                                                <td className="p-3 font-semibold text-gray-800">
-                                                    <div>{test.name}</div>
+                                                <td className="p-3 font-medium text-gray-800">
+                                                    <div>{item.test_name}</div>
+                                                    <div className="text-[10px] text-gray-400">{item.test_detail?.short_name}</div>
                                                 </td>
-                                                <td className="p-3">
-                                                    <div className="max-w-xs">{test.sampleCollected}</div>
-                                                </td>
-                                                <td className="p-3">{test.expectedDate}</td>
-                                                <td className="p-3">
-                                                    <div className="max-w-xs">{test.approvedBy}</div>
-                                                </td>
-                                                <td className="p-3 text-right">{test.tax}</td>
-                                                <td className="p-3 text-right">${test.netAmount}</td>
-                                                <td className="p-3 text-center">
-                                                    <button title="Print" className="text-gray-500 hover:text-gray-700"><Printer size={16} /></button>
-                                                </td>
+                                                <td className="p-3">{new Date(item.report_date).toLocaleDateString()}</td>
+                                                <td className="p-3">{item.report_days} Days</td>
+                                                <td className="p-3 text-right">{parseFloat(item.tax || 0).toFixed(2)}</td>
+                                                <td className="p-3 text-right">{parseFloat(item.price || 0).toFixed(2)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <div className="flex flex-col items-end gap-2 text-sm text-gray-800 pr-4">
+                                <div className="flex justify-between w-64">
+                                    <span>Total (₹)</span>
+                                    <span className="font-semibold">{parseFloat(selectedBill.subtotal).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64">
+                                    <span>Discount (₹)</span>
+                                    <span>{parseFloat(selectedBill.discount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64">
+                                    <span>Tax (₹)</span>
+                                    <span>{parseFloat(selectedBill.tax).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64 font-bold text-base border-t pt-2 mt-1">
+                                    <span>Net Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.total_amount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64">
+                                    <span>Paid Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.paid_amount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between w-64 font-bold text-red-600">
+                                    <span>Due Amount (₹)</span>
+                                    <span>{parseFloat(selectedBill.balance).toFixed(2)}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -481,21 +392,23 @@ export default function Radiology() {
                         <div className="p-6">
                             <div className="mb-6 flex items-center">
                                 <label className="block text-sm font-medium text-gray-700 w-40">
-                                    Payment Amount ($) <span className="text-red-500">*</span>
+                                    Payment Amount (₹) <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="number"
-                                    defaultValue={selectedBill.balanceAmount}
+                                    value={paymentAmount}
+                                    onChange={(e) => setPaymentAmount(e.target.value)}
                                     className="flex-1 p-2 border border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
                                 />
                             </div>
 
                             <div className="flex justify-end gap-3">
                                 <button
-                                    onClick={() => setShowPaymentModal(false)}
-                                    className="px-4 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded shadow-md hover:opacity-90 transition-all font-medium text-sm flex items-center gap-1"
+                                    onClick={handleProcessPayment}
+                                    disabled={isSubmitting}
+                                    className={`px-4 py-1.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded shadow-md hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2] transition-all font-medium text-sm flex items-center gap-1 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                                 >
-                                    Add
+                                    {isSubmitting ? "Processing..." : "Add"}
                                 </button>
                             </div>
                         </div>
@@ -526,19 +439,19 @@ export default function Radiology() {
                                         <th className="p-4">Date</th>
                                         <th className="p-4">Note</th>
                                         <th className="p-4">Payment Mode</th>
-                                        <th className="p-4">Payment Type</th>
-                                        <th className="p-4 text-right">Paid Amount ($)</th>
+                                        <th className="p-4 text-right">Paid Amount (₹)</th>
                                         <th className="p-4 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {paymentHistory.map((payment, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
-                                            <td className="p-4">{payment.date}</td>
+                                            <td className="p-4">
+                                                {new Date(payment.payment_date).toLocaleDateString()}
+                                            </td>
                                             <td className="p-4">{payment.note}</td>
-                                            <td className="p-4">{payment.mode}</td>
-                                            <td className="p-4">{payment.type}</td>
-                                            <td className="p-4 text-right">{payment.amount.toFixed(2)}</td>
+                                            <td className="p-4">{payment.payment_mode}</td>
+                                            <td className="p-4 text-right">{parseFloat(payment.paid_amount || 0).toFixed(2)}</td>
                                             <td className="p-4 text-right">
                                                 <button className="text-gray-500 hover:text-indigo-600" title="Print">
                                                     <Printer size={16} />
@@ -547,8 +460,8 @@ export default function Radiology() {
                                         </tr>
                                     ))}
                                     <tr className="bg-gray-100 font-bold">
-                                        <td className="p-4 text-right" colSpan={4}>Total</td>
-                                        <td className="p-4 text-right">${paymentHistory.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2)}</td>
+                                        <td className="p-4 text-right" colSpan={3}>Total</td>
+                                        <td className="p-4 text-right">₹{paymentHistory.reduce((acc, curr) => acc + parseFloat(curr.paid_amount || 0), 0).toFixed(2)}</td>
                                         <td></td>
                                     </tr>
                                 </tbody>

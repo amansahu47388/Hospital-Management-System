@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PatientLayout from "../../../layout/PatientLayout";
-import IPDHeaderNavbar from "../../../components/Patient_module/IPD/IPD_header";
+import OPDHeaderNavbar from "../../../components/Patient_module/OPD/OPDHeader";
 import { useAuth } from "../../../context/AuthContext";
 import { getPatientOperations } from "../../../api/patientApi";
 import { Eye, X, Calendar, User, Activity, ClipboardList, Scissors } from "lucide-react";
@@ -59,7 +59,7 @@ export default function Operations() {
 
   return (
     <PatientLayout>
-      <IPDHeaderNavbar />
+      <OPDHeaderNavbar />
 
       <div className="min-h-screen p-4 md:p-6">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">

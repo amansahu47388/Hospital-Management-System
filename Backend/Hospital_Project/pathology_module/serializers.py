@@ -220,6 +220,7 @@ class PathologyBillListSerializer(serializers.ModelSerializer):
     created_by_name = serializers.SerializerMethodField()
     items_count = serializers.SerializerMethodField()
     case_id = serializers.SerializerMethodField()
+    items = PathologyBillItemSerializer(many=True, read_only=True)
     
     class Meta:
         model = PathologyBill

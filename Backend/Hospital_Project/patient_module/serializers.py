@@ -185,7 +185,16 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate_photo(self, value):
         """Validate photo file"""
-        if value:
+        # If value is a string (existing photo URL), skip validation
+        if isinstance(value, str):
+            return value
+        
+        # If value is None or empty, allow it (photo is optional)
+        if not value:
+            return value
+        
+        # Only validate if it's an actual file upload
+        if hasattr(value, 'size') and hasattr(value, 'content_type'):
             # Check file size (max 5MB)
             if value.size > 5 * 1024 * 1024:
                 raise serializers.ValidationError("Image size must be less than 5MB.")
@@ -197,12 +206,43 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        """Create a new patient"""
+        """Create a new patient with associated user account"""
         logger.info(f"Creating new patient")
         try:
-            validated_data['created_by'] = self.context['request'].user
-            patient = Patient.objects.create(**validated_data)
-            logger.info(f"✅ Patient created: ID={patient.id}, Name={patient.full_name}")
+            from users.models import User
+            from django.db import transaction
+            
+            # Extract photo if present (will be set separately)
+            photo = validated_data.pop('photo', None)
+            
+            with transaction.atomic():
+                # Prepare full_name for User model
+                first_name = validated_data['first_name']
+                last_name = validated_data.get('last_name', '')
+                full_name = f"{first_name} {last_name}".strip()
+                
+                # Create User account for patient
+                user = User.objects.create_user(
+                    email=validated_data['email'],
+                    full_name=full_name,
+                    password='Patient@123',  # Default password - should be changed on first login
+                    phone=validated_data.get('phone'),
+                    role='patient',
+                    is_staff=False
+                )
+                logger.info(f"✅ User account created for patient: {user.email}")
+                
+                # Create Patient record linked to user
+                validated_data['created_by'] = self.context['request'].user
+                validated_data['user'] = user
+                
+                # Add photo back if it was present
+                if photo:
+                    validated_data['photo'] = photo
+                
+                patient = Patient.objects.create(**validated_data)
+                logger.info(f"✅ Patient created: ID={patient.id}, Name={patient.full_name}")
+                
             return patient
         except Exception as e:
             logger.error(f"❌ Error creating patient: {str(e)}", exc_info=True)

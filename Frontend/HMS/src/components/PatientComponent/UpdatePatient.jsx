@@ -66,8 +66,11 @@ function UpdatePatient({ open, onClose, patientId }) {
 
     if (type === "file") {
       const file = files[0];
-      setPhotoPreview(URL.createObjectURL(file));
-      setFormData((p) => ({ ...p, photo: file }));
+      if (file) {
+        console.log('📸 Photo selected:', file.name, file.type, file.size);
+        setPhotoPreview(URL.createObjectURL(file));
+        setFormData((p) => ({ ...p, photo: file }));
+      }
     } else {
       setFormData((p) => ({ ...p, [name]: value }));
     }
@@ -87,16 +90,37 @@ function UpdatePatient({ open, onClose, patientId }) {
     const payload = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
+      // Skip photo if it's not a File object (i.e., it's the existing URL string)
+      if (key === 'photo') {
+        // Only append if it's a new file upload (File object)
+        if (value instanceof File) {
+          console.log('✅ Appending photo file:', value.name, value.type, value.size);
+          payload.append(key, value);
+        } else {
+          console.log('⏭️ Skipping photo (not a File):', typeof value, value);
+        }
+        // If it's a string (existing URL) or null, don't append it
+        return;
+      }
+
+      // Append other fields if they have values
+      if (value !== null && value !== undefined && value !== '') {
         payload.append(key, value);
       }
     });
+
+    // Log FormData contents for debugging
+    console.log('📦 FormData contents:');
+    for (let pair of payload.entries()) {
+      console.log(`  ${pair[0]}:`, pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1]);
+    }
 
     try {
       await updatePatient(patientId, payload);
       notify("success", "Patient updated successfully!");
       onClose();
     } catch (err) {
+      console.error('❌ Update patient error:', err.response?.data);
       if (err.response?.data) {
         setErrors(err.response.data);
         const msg = Object.values(err.response.data)[0];
@@ -119,7 +143,7 @@ function UpdatePatient({ open, onClose, patientId }) {
 
 
 
-  
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
       <div className="bg-white w-[98%] md:w-[90%] lg:w-[80%] rounded-lg max-h-[90vh] overflow-y-auto">
@@ -138,7 +162,7 @@ function UpdatePatient({ open, onClose, patientId }) {
 
             {/* PERSONAL */}
             <div className=" grid md:grid-cols-2 gap-4 ">
-              <Input  label="First Name" name="first_name" value={formData.first_name} onChange={handleChange} error={errors.first_name} />
+              <Input label="First Name" name="first_name" value={formData.first_name} onChange={handleChange} error={errors.first_name} />
               <Input label="Last Name" name="last_name" value={formData.last_name} onChange={handleChange} error={errors.last_name} />
             </div>
 
@@ -170,43 +194,43 @@ function UpdatePatient({ open, onClose, patientId }) {
 
 
 
-          <div>
-          <label className="font-semibold text-gray-700">Photo</label>
+              <div>
+                <label className="font-semibold text-gray-700">Photo</label>
 
-          <label
-            htmlFor="photoUpload"
-            className="mt-1 flex items-center gap-3 px-3 py-2 border-[0.5px] border-gray-200 rounded-md
+                <label
+                  htmlFor="photoUpload"
+                  className="mt-1 flex items-center gap-3 px-3 py-2 border-[0.5px] border-gray-200 rounded-md
                       cursor-pointer bg-white hover:border-[#6046B5] transition"
-          >
-            {/* Preview */}
-            <div className="w-9 h-9 rounded overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
-              {(photoPreview || formData.photo) ? (
-                <img
-                  src={photoPreview || getImageUrl(formData.photo)}
-                  alt="Patient"
-                  className="w-full h-full object-cover"
+                >
+                  {/* Preview */}
+                  <div className="w-9 h-9 rounded overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+                    {(photoPreview || formData.photo) ? (
+                      <img
+                        src={photoPreview || getImageUrl(formData.photo)}
+                        alt="Patient"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-[10px] text-gray-400">Photo</span>
+                    )}
+                  </div>
+
+                  {/* Text */}
+                  <p className="text-sm text-gray-600 truncate">
+                    {(photoPreview || formData.photo) ? "Change photo" : "Upload photo"}
+                  </p>
+                </label>
+
+                {/* Hidden input */}
+                <input
+                  id="photoUpload"
+                  type="file"
+                  name="photo"
+                  accept="image/*"
+                  onChange={handleChange}
+                  className="hidden"
                 />
-              ) : (
-                <span className="text-[10px] text-gray-400">Photo</span>
-              )}
-            </div>
-
-            {/* Text */}
-            <p className="text-sm text-gray-600 truncate">
-              {(photoPreview || formData.photo) ? "Change photo" : "Upload photo"}
-            </p>
-          </label>
-
-          {/* Hidden input */}
-          <input
-            id="photoUpload"
-            type="file"
-            name="photo"
-            accept="image/*"
-            onChange={handleChange}
-            className="hidden"
-          />
-        </div>
+              </div>
 
             </div>
 

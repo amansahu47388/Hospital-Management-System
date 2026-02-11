@@ -12,7 +12,10 @@ import ProfileDropdown from "./AdminProfileDropDown";
 import BedStatusModal from "./BedStatus";
 import { searchPatient } from "../../api/patientApi";
 
+import { useAuth } from "../../context/AuthContext";
+
 function Navbar({ role = "admin" }) {
+  const { logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -64,9 +67,8 @@ function Navbar({ role = "admin" }) {
   }, [searchQuery]);
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    window.location.href = "/admin/login";
+    logout();
+    navigate(role === "admin" ? "/admin/login" : "/login");
   };
 
   const handlePatientSelect = (patientId) => {

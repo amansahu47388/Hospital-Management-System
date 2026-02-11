@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Printer, Menu, Copy, FileSpreadsheet, FileText, FileDown } from "lucide-react";
-
 import PatientLayout from "../../../layout/PatientLayout";
 import { getAppointmentList } from "../../../api/appointmentApi";
 import { useNotify } from "../../../context/NotificationContext";
-
+import { useAuth } from "../../../context/AuthContext";
 import PatientProfileHeader from "../../../components/Patient_module/My_Appointment/PatientProfileHeader";
 import PatientAddAppointmentModal from "../../../components/Patient_module/My_Appointment/PatientAddAppointmentModal";
 import AppointmentDetailModal from "../../../components/Patient_module/My_Appointment/AppointmentDetailModal";
@@ -17,18 +16,33 @@ export default function PatientAppointmentsPage() {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
 
     const notify = useNotify();
+    const { user } = useAuth();
 
     useEffect(() => {
-        fetchAppointments();
-    }, []);
+        if (user) {
+            fetchAppointments();
+        }
+    }, [user]);
 
     const fetchAppointments = async () => {
         setLoading(true);
         try {
-            const response = await getAppointmentList();
-            setAppointments(Array.isArray(response?.data) ? response.data : []);
+            // Get patient ID from user object
+            const patientId = user?.patient_id || user?.id;
+
+            if (!patientId) {
+                notify("error", "Patient information not found");
+                setLoading(false);
+                return;
+            }
+
+            // Fetch appointments filtered by patient ID
+            const response = await getAppointmentList({ patient: patientId });
+            const appointmentsData = Array.isArray(response?.data) ? response.data : [];
+            setAppointments(appointmentsData);
         } catch (error) {
-            // notify("error", "Failed to fetch appointments");
+            console.error('Failed to fetch appointments:', error);
+            notify("error", "Failed to fetch appointments");
         } finally {
             setLoading(false);
         }
@@ -39,14 +53,36 @@ export default function PatientAppointmentsPage() {
         setOpenDetail(true);
     };
 
-    // fallback mock data to keep UI exactly same
-    const tableData = appointments.length > 0 ? appointments : [
-        { appointment_no: 'APPNO7620', date: '01/01/2026 03:46 PM', priority: 'Normal', specialist: 'Cardiologists, Gastroenterologists', doctor: 'Amit Singh (9009)', status: 'Approved', message: '', alternate_address: '' },
-        { appointment_no: 'APPNO7558', date: '12/01/2025 03:10 PM', priority: 'Normal', specialist: 'Cardiologists, Gastroenterologists', doctor: 'Amit Singh (9009)', status: 'Approved', message: '', alternate_address: '' },
-        { appointment_no: 'APPNO7498', date: '11/10/2025 05:46 PM', priority: 'Normal', specialist: 'Cardiologists', doctor: 'Sonia Bush (9002)', status: 'Approved', message: '', alternate_address: '' },
-        { appointment_no: 'APPNO7497', date: '11/05/2025 12:00 PM', priority: 'Normal', specialist: 'Cardiologists, Gastroenterologists', doctor: 'Amit Singh (9009)', status: 'Approved', message: 'Urgent Appointment', alternate_address: '' },
-        { appointment_no: 'APPNO7434', date: '10/05/2025 11:00 AM', priority: 'Normal', specialist: 'Cardiologists', doctor: 'Sonia Bush (9002)', status: 'Approved', message: 'Urgent Appointment -TBK', alternate_address: '' },
-    ];
+    // Format date for display
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    };
+
+    // Get status color
+    const getStatusColor = (status) => {
+        const statusLower = status?.toLowerCase();
+        switch (statusLower) {
+            case 'approved':
+                return 'bg-[#72B01D]';
+            case 'pending':
+                return 'bg-[#F29C11]';
+            case 'cancelled':
+                return 'bg-[#E74C3C]';
+            case 'scheduled':
+                return 'bg-[#3498DB]';
+            default:
+                return 'bg-gray-400';
+        }
+    };
 
     return (
         <PatientLayout>
@@ -77,82 +113,72 @@ export default function PatientAppointmentsPage() {
                             placeholder="Search..."
                             className="w-full md:w-64 pl-3 pr-10 py-1.5 border-b border-gray-200 focus:border-[#6046B5] outline-none text-sm"
                         />
-
-                        <div className="flex items-center gap-1">
-                            <button className="p-1.5 hover:bg-gray-100 rounded"><Copy size={16} /></button>
-                            <button className="p-1.5 hover:bg-gray-100 rounded"><FileSpreadsheet size={16} /></button>
-                            <button className="p-1.5 hover:bg-gray-100 rounded"><FileDown size={16} /></button>
-                            <button className="p-1.5 hover:bg-gray-100 rounded"><FileText size={16} /></button>
-                            <button className="p-1.5 hover:bg-gray-100 rounded"><Printer size={16} /></button>
-                        </div>
                     </div>
 
                     {/* Table */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-[13px]">
-                            <thead>
-                                <tr className="border-b bg-gray-50/30">
-                                    {[
-                                        "Appointment No",
-                                        "Appointment Date",
-                                        "Priority",
-                                        "Specialist",
-                                        "Doctor",
-                                        "Status",
-                                        "Message",
-                                        "Alternate Address",
-                                        "Action",
-                                    ].map((h) => (
-                                        <th key={h} className="px-4 py-3 text-left font-bold text-gray-700">
-                                            {h} <span className="text-[10px]">▼</span>
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-
-                            <tbody className="divide-y">
-                                {tableData.map((row) => (
-                                    <tr key={row.appointment_no} className="hover:bg-gray-50">
-                                        <td className="px-4 py-3 font-medium">{row.appointment_no}</td>
-                                        <td className="px-4 py-3">{row.date}</td>
-                                        <td className="px-4 py-3 text-center">{row.priority}</td>
-                                        <td className="px-4 py-3 truncate max-w-[150px]">{row.specialist}</td>
-                                        <td className="px-4 py-3 font-medium">{row.doctor}</td>
-
-                                        <td className="px-4 py-3 text-center">
-                                            <span className={`px-2 py-0.5 rounded text-[11px] text-white font-bold ${row.status === "Approved"
-                                                    ? "bg-[#72B01D]"
-                                                    : row.status === "Pending"
-                                                        ? "bg-[#F29C11]"
-                                                        : "bg-gray-400"
-                                                }`}>
-                                                {row.status}
-                                            </span>
-                                        </td>
-
-                                        <td className="px-4 py-3 text-[11px] italic text-gray-500">{row.message}</td>
-                                        <td className="px-4 py-3">{row.alternate_address}</td>
-
-                                        <td className="px-4 py-3 text-right">
-                                            <button className="p-1 hover:bg-gray-100 rounded">
-                                                <Printer size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleViewDetail(row)}
-                                                className="p-1 hover:bg-gray-100 rounded"
-                                            >
-                                                <Menu size={16} />
-                                            </button>
-                                        </td>
+                        {loading ? (
+                            <div className="flex justify-center items-center py-12">
+                                <div className="w-8 h-8 border-4 border-[#6046B5] border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        ) : appointments.length === 0 ? (
+                            <div className="text-center py-12 text-gray-500">
+                                <p className="text-lg font-medium">No appointments found</p>
+                                <p className="text-sm mt-2">Book your first appointment to get started</p>
+                            </div>
+                        ) : (
+                            <table className="w-full text-[13px]">
+                                <thead>
+                                    <tr className="bg-gray-200">
+                                        <th className="px-2 py-3 text-left">Appointment No</th>
+                                        <th className="px-2 py-3 text-left">Appointment Date</th>
+                                        <th className="px-2 py-3 text-left">Priority</th>
+                                        <th className="px-2 py-3 text-left">Department</th>
+                                        <th className="px-2 py-3 text-left">Doctor</th>
+                                        <th className="px-2 py-3 text-left">Status</th>
+                                        <th>Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                    {appointments.map((row) => (
+                                        <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-200">
+                                            <td className="px-2 py-3 font-medium text-left">APPNO{row.id}</td>
+                                            <td className="px-2 py-3 text-left">{formatDate(row.appointment_date)}</td>
+                                            <td className="px-2 py-3 text-left">
+                                                {row.priority_details?.priority || row.appontmet_priority || 'Normal'}
+                                            </td>
+                                            <td className="px-2 py-3 truncate max-w-[150px]">
+                                                {row.department || 'N/A'}
+                                            </td>
+                                            <td className="px-2 py-3 font-medium text-left">
+                                                {row.doctor_details?.full_name || row.doctor_name || 'N/A'}
+                                            </td>
+
+                                            <td className="px-2 py-3 text-left">
+                                                <span className={`px-2 py-0.5 rounded text-[11px] text-white font-bold capitalize ${getStatusColor(row.status)}`}>
+                                                    {row.status}
+                                                </span>
+                                            </td>
+
+                                            <td className="px-2 py-3 text-right">
+                                                <button
+                                                    onClick={() => handleViewDetail(row)}
+                                                    className="p-1 hover:bg-gray-100 rounded"
+                                                >
+                                                    <Menu size={16} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
 
                     {/* Footer */}
-                    <div className="p-4 border-t text-sm flex justify-between text-gray-500">
-                        <p>Records: 1 to {tableData.length} of 23</p>
+                    <div className="p-4 text-sm flex justify-between text-gray-500">
+                        <p>Records: 1 to {appointments.length} of {appointments.length}</p>
                         <div className="flex gap-1">
                             <button className="px-2 py-1 hover:bg-gray-100 rounded">{'<'}</button>
                             <button className="px-2 py-1 bg-[#6046B5] text-white rounded">1</button>

@@ -81,14 +81,12 @@ const adminNavItems = [
 const patientNavItems = [
   { to: "/patient-portal/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { to: "/patient-portal/appointments", label: "My Appointments", Icon: CalendarDays },
-  { to: "/patient-portal/opd-history", label: "OPD", Icon: Stethoscope },
-  { to: "/patient-portal/ipd", label: "IPD", Icon: Bed },
+  { to: "/patient-portal/opd-history/overview", label: "OPD", Icon: Stethoscope },
+  { to: "/patient-portal/ipd-history/overview", label: "IPD", Icon: Bed },
   { to: "/patient-portal/pharmacy", label: "Pharmacy", Icon: Pill },
   { to: "/patient-portal/pathology", label: "Pathology", Icon: FlaskConical },
   { to: "/patient-portal/radiology", label: "Radiology", Icon: FolderGit2 },
-  { to: "/patient-portal/blood-bank", label: "Blood Bank", Icon: Droplet },
   { to: "/patient-portal/ambulance", label: "Ambulance", Icon: Ambulance },
-  { to: "/patient-portal/download-center", label: "Download Center", Icon: Download },
 ];
 
 function Sidebar({ role = "admin" }) {

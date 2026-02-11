@@ -275,16 +275,27 @@ class OpdPatientCreateSerializer(serializers.ModelSerializer):
 class OpdPatientListSerializer(serializers.ModelSerializer):
     patient_detail = PatientSerializer(source="patient", read_only=True)
     doctor_detail = UserSerializer(source="doctor", read_only=True)
-    symptom_name = serializers.CharField(source="symptom.symptom_title", read_only=True)    # return nested created_by for list view
+    symptom_name = serializers.CharField(source="symptom.symptom_title", read_only=True)
+    symptom_details = SymptomSerializer(source="symptom", read_only=True)
     created_by = UserSerializer(read_only=True)
     case_id = serializers.CharField(source='case.case_id', read_only=True)
+    doctor_name = serializers.SerializerMethodField()
+    patient_name = serializers.SerializerMethodField()
+
     class Meta:
         model = OpdPatient
         fields = [
-            "opd_id","patient_detail","case","case_id","checkup_id",'allergies', "appointment_date","created_by",
-            "doctor_detail","reference","symptom_name","old_patient","previous_medical_issue",
+            "opd_id", "patient_detail", "patient_name", "case", "case_id", "checkup_id", 'allergies', 
+            "appointment_date", "created_by", "doctor_detail", "doctor_name", "reference", 
+            "symptom_name", "symptom_details", "old_patient", "previous_medical_issue",
             "discount", "total_amount", "paid_amount", "payment_mode", "casualty"
         ]
+
+    def get_doctor_name(self, obj):
+        return obj.doctor.full_name if obj.doctor else "-"
+
+    def get_patient_name(self, obj):
+        return obj.patient.full_name if obj.patient else "-"
 
 
 class OpdPatientUpdateSerializer(serializers.ModelSerializer):
@@ -360,15 +371,25 @@ class IpdPatientListSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
     bed = BedSerializer(read_only=True)
     symptom_name = serializers.CharField(source="symptom.symptom_title", read_only=True)
+    symptom_details = SymptomSerializer(source="symptom", read_only=True)
     case_id = serializers.CharField(source='case.case_id', read_only=True)
+    doctor_name = serializers.SerializerMethodField()
+    patient_name = serializers.SerializerMethodField()
 
     class Meta:
         model = IpdPatient
         fields = [
-            "ipd_id","case","case_id","patient_detail","admission_date","doctor_detail","bed","symptom_name",
-            "previous_medical_issue","credit_limit","created_by","created_at",
+            "ipd_id", "case", "case_id", "patient_detail", "patient_name", "admission_date", 
+            "doctor_detail", "doctor_name", "bed", "symptom_name", "symptom_details",
+            "previous_medical_issue", "credit_limit", "created_by", "created_at",
             "old_patient", "casualty", "reference", "allergies"
         ]
+
+    def get_doctor_name(self, obj):
+        return obj.doctor.full_name if obj.doctor else "-"
+
+    def get_patient_name(self, obj):
+        return obj.patient.full_name if obj.patient else "-"
 
 
 

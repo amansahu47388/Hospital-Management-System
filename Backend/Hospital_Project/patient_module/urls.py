@@ -8,7 +8,6 @@ urlpatterns = [
     path('patients/', PatientListView.as_view(), name='patient-list'),
     path('patients/create/', PatientCreateView.as_view(), name='patient-create'),
     path('patients/search/', PatientSearchView.as_view(), name='patient-search'),
-    path("patients/search/", PatientSearchAPIView.as_view(), name="patient-search"),
     path('patients/<int:patient_id>/', PatientDetailView.as_view(), name='patient-detail'),
     path('patients/<int:patient_id>/update/', PatientUpdateView.as_view(), name='patient-update'),
     path('patients/<int:patient_id>/delete/', PatientDeleteView.as_view(), name='patient-delete'),
