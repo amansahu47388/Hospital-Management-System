@@ -1,6 +1,7 @@
-import { X, Pencil, Trash2, Printer } from "lucide-react";
+import { Trash2, Pencil, Printer, X, Calendar, User, Phone, MapPin, Hash, Stethoscope, Clock, FileText } from "lucide-react";
 import { deleteAppointment } from "../../api/appointmentApi";
 import { getHeaders } from "../../api/setupApi";
+import { printReport } from "../../utils/printUtils";
 import { useNotify } from "../../context/NotificationContext";
 import { useState, useEffect } from "react";
 
@@ -47,133 +48,57 @@ export default function AppointmentDetailsModal({
   };
 
   const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    const headerImage = headerData?.appointment_header || "";
-    const footerText = headerData?.appointment_footer || "";
+    if (!data) return;
 
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Appointment Print - APP-${data.id}</title>
-          <style>
-            @page { size: auto;  margin: 0mm; }
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; color: #333; }
-            .header-container { width: 100%; text-align: center; }
-            .header-img { width: 100%; max-height: 150px; object-fit: contain; }
-            .content { padding: 40px; }
-            .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6046B5; padding-bottom: 10px; margin-bottom: 30px; }
-            .print-header h1 { margin: 0; color: #6046B5; font-size: 24px; }
-            .receipt-no { font-size: 14px; font-weight: bold; color: #666; }
-            
-            .details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-            .detail-group { margin-bottom: 15px; border-bottom: 1px border #f0f0f0; padding-bottom: 5px; }
-            .label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 600; display: block; margin-bottom: 2px; }
-            .value { font-size: 14px; color: #111; font-weight: 500; }
-            
-            .reason-box { margin-top: 30px; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #eee; }
-            .reason-box .label { border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 5px; }
-            
-            .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px 40px; text-align: center; font-size: 12px; border-top: 1px solid #eee; color: #666; background: white; }
-            .footer-content { line-height: 1.6; }
-
-            @media print {
-              .no-print { display: none; }
-              body { padding-bottom: 100px; }
-              .footer { position: fixed; bottom: 0; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header-container">
-            ${headerImage ? `<img src="${headerImage}" class="header-img" />` : `<div style="padding: 20px; background: #6046B5; color: white;"><h1>HOSPITAL APPOINTMENT</h1></div>`}
+    const content = `
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+          <h2 style="margin:0; color:#6046B5; font-size:20px;">APPOINTMENT SLIP</h2>
+          <div style="text-align:right; font-size:12px; font-weight:bold;">
+            <div>No: APP-${data.id}</div>
+            <div>Date: ${new Date(data.appointment_date).toLocaleString()}</div>
           </div>
+        </div>
 
-          <div class="content">
-            <div class="print-header">
-              <h1>Appointment Slip</h1>
-              <div class="receipt-no">No: APP-${data.id}</div>
-            </div>
+        <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+          <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${data.patient_details?.full_name || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Gender / Age</span><span class="data-value">: ${data.patient_details?.gender || "—"} / ${data.patient_details?.age || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Phone</span><span class="data-value">: ${data.phone || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Priority</span><span class="data-value">: ${data.priority_details?.priority || "Normal"}</span></div>
+          <div class="data-item"><span class="data-label">Doctor</span><span class="data-value">: ${data.doctor_name || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Department</span><span class="data-value">: ${data.department || "—"}</span></div>
+        </div>
 
-            <div class="details-grid">
-              <div class="detail-group">
-                <span class="label">Patient Name</span>
-                <span class="value">${data.patient_details?.full_name || "—"}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Appointment Date</span>
-                <span class="value">${new Date(data.appointment_date).toLocaleString()}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Gender</span>
-                <span class="value" style="text-transform: capitalize;">${data.patient_details?.gender || "—"}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Phone Number</span>
-                <span class="value">${data.phone || "—"}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Doctor Assigned</span>
-                <span class="value">${data.doctor_name || "—"}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Department</span>
-                <span class="value">${data.department || "—"}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Consultation Shift</span>
-                <span class="value">${data.shift_details?.shift || "—"}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Priority Level</span>
-                <span class="value">${data.priority_details?.priority || "—"}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Consultation Fees</span>
-                <span class="value">$${data.fees}</span>
-              </div>
-              <div class="detail-group">
-                <span class="label">Payment Mode</span>
-                <span class="value" style="text-transform: capitalize;">${data.payment_mode || "—"}</span>
-              </div>
-            </div>
+        <div class="report-section-title">Visit Information</div>
+        <div class="data-grid">
+          <div class="data-item"><span class="data-label">Shift</span><span class="data-value">: ${data.shift_details?.shift || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Fees</span><span class="data-value">: $${data.fees}</span></div>
+          <div class="data-item"><span class="data-label">Payment Mode</span><span class="data-value">: ${data.payment_mode || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Status</span><span class="data-value">: ${data.status || "Pending"}</span></div>
+        </div>
 
-            ${data.reason ? `
-              <div class="reason-box">
-                <span class="label">Reason / Clinical Note</span>
-                <div class="value">${data.reason}</div>
-              </div>
-            ` : ""}
+        <div class="report-section-title">Reason / Clinical Note</div>
+        <div style="padding:10px; background:#fcfcfc; border:1px solid #eee; border-radius:6px; font-size:13px; line-height:1.6;">
+          ${data.reason || "No clinical notes provided."}
+        </div>
 
-            <div style="margin-top: 50px; display: flex; justify-content: space-between;">
-              <div style="text-align: center;">
-                <div style="height: 60px;"></div>
-                <div style="border-top: 1px solid #777; width: 150px; font-size: 12px; padding-top: 5px;">Patient Signature</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="height: 60px;"></div>
-                <div style="border-top: 1px solid #777; width: 150px; font-size: 12px; padding-top: 5px;">Authorised Signatory</div>
-              </div>
-            </div>
+        <div class="signature-section">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-label">Authorised Signatory</div>
           </div>
-
-          <div class="footer">
-            <div class="footer-content">
-              ${footerText || "City Hospital - Digital Health Management System"}
-            </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-label">Patient Signature</div>
           </div>
+        </div>
+    `;
 
-          <script>
-            window.onload = function() {
-              setTimeout(() => {
-                window.print();
-                window.close();
-              }, 500);
-            };
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+    printReport({
+      title: `Appointment - APP-${data.id}`,
+      headerImg: headerData?.appointment_header,
+      footerText: headerData?.appointment_footer,
+      content: content
+    });
   };
 
   return (
@@ -280,16 +205,16 @@ export default function AppointmentDetailsModal({
 
             <div>
               <p className="text-xs text-gray-500 uppercase mb-1">Status</p>
-              <p className={`font-medium capitalize px-2 py-1 rounded text-xs inline-block ${data.status === "approved"
-                ? "bg-green-100 text-green-800"
-                : data.status === "pending"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : data.status === "scheduled"
-                    ? "bg-blue-100 text-blue-800"
-                    : data.status === "cancelled"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-gray-100 text-gray-800"
-                }`}>
+              <p className={`font - medium capitalize px - 2 py - 1 rounded text - xs inline - block ${data.status === "approved"
+                  ? "bg-green-100 text-green-800"
+                  : data.status === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : data.status === "scheduled"
+                      ? "bg-blue-100 text-blue-800"
+                      : data.status === "cancelled"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-gray-100 text-gray-800"
+                } `}>
                 {data.status}
               </p>
             </div>

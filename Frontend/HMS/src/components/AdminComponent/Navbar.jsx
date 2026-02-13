@@ -43,7 +43,7 @@ function Navbar() {
   const user = {
     name: adminProfile?.full_name || authUser?.full_name || "Admin User",
     role: authUser?.role || "Admin",
-    avatar: adminProfile?.profile_picture || authUser?.avatar || "/avatar.png",
+    avatar: adminProfile?.profile_picture || authUser?.avatar || null,
   };
 
   const [openBed, setOpenBed] = useState(false);

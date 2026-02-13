@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const COLORS = [
   "#2563EB", // blue
@@ -11,7 +11,7 @@ const COLORS = [
   "#EF4444", // red
 ];
 
-export default function AddTaskModal({ open, onClose, onSave }) {
+export default function AddTaskModal({ open, onClose, onSave, initialDate }) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -19,6 +19,13 @@ export default function AddTaskModal({ open, onClose, onSave }) {
   const [end, setEnd] = useState("");
   const [color, setColor] = useState(COLORS[0]);
   const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    if (initialDate) {
+      setDate(initialDate);
+      setEndDate(initialDate);
+    }
+  }, [initialDate, open]);
 
   if (!open) return null;
 

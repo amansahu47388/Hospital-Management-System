@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 
-export default function ShowEventModal({ open, event, onClose, onEdit }) {
+export default function ShowEventModal({ open, event, onClose, onEdit, readOnly }) {
   if (!open || !event) return null;
 
   return (
@@ -67,14 +67,16 @@ export default function ShowEventModal({ open, event, onClose, onEdit }) {
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end gap-3 p-4 border-t">
-          <button
-            onClick={onEdit}
-            className="px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded"
-          >
-            Edit
-          </button>
-        </div>
+        {!readOnly && (
+          <div className="flex justify-end gap-3 p-4 border-t">
+            <button
+              onClick={onEdit}
+              className="px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded"
+            >
+              Edit
+            </button>
+          </div>
+        )}
 
       </div>
     </div>

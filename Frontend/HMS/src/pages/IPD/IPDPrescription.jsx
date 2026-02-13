@@ -2,14 +2,15 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import IPDTabsNavbar from "../../components/ipd/IPDNavbar";
-import { Pencil, Trash2, Plus, X, Save, Eye, ClipboardList, Stethoscope, Loader2 } from "lucide-react";
+import { Pencil, Trash2, Plus, X, Printer, Save, Eye, ClipboardList, Stethoscope, Loader2 } from "lucide-react";
 import { getPrescriptions, createPrescription, updatePrescription, deletePrescription, } from "../../api/ipdApi";
 import { getMedicineCategories, getMedicines, getMedicineDosages, getDosages } from "../../api/pharmacyApi";
 import { getDoctors } from "../../api/appointmentApi";
-import { getFindings, getFindingCategories } from "../../api/setupApi";
+import { getFindings, getFindingCategories, getHeaders } from "../../api/setupApi";
 import { getPathologyTests } from "../../api/pathologyApi";
 import { getRadiologyTests } from "../../api/radiologyApi";
 import { useNotify } from "../../context/NotificationContext";
+import { printReport } from "../../utils/printUtils";
 
 export default function IPDPrescription() {
   const { ipdId } = useParams();
@@ -21,6 +22,7 @@ export default function IPDPrescription() {
   const [showView, setShowView] = useState(false);
   const [editId, setEditId] = useState(null);
   const [viewPrescription, setViewPrescription] = useState(null);
+  const [headerData, setHeaderData] = useState(null);
 
   // Dropdown Data
   const [dropdowns, setDropdowns] = useState({
@@ -61,7 +63,8 @@ export default function IPDPrescription() {
         findingRes,
         findingCatRes,
         pathRes,
-        radRes
+        radRes,
+        headerRes
       ] = await Promise.all([
         getPrescriptions({ ipd_patient: ipdId }),
         getDoctors(),
@@ -72,10 +75,14 @@ export default function IPDPrescription() {
         getFindings(),
         getFindingCategories(),
         getPathologyTests(),
-        getRadiologyTests()
+        getRadiologyTests(),
+        getHeaders()
       ]);
 
       setPrescriptions(prescRes.data);
+      if (headerRes.data && headerRes.data.length > 0) {
+        setHeaderData(headerRes.data[0]);
+      }
       setDropdowns({
         doctors: docRes.data,
         categories: catRes.data,
@@ -227,6 +234,102 @@ export default function IPDPrescription() {
   const handleView = (presc) => {
     setViewPrescription(presc);
     setShowView(true);
+  };
+
+  const handlePrint = () => {
+    if (!viewPrescription) return;
+
+    const content = `
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+          <h2 style="margin:0; color:#6046B5; font-size:20px;">IPD PRESCRIPTION</h2>
+          <div style="text-align:right; font-size:12px; font-weight:bold;">
+            <div>No: PRE-${viewPrescription.id}</div>
+            <div>Date: ${new Date(viewPrescription.created_at).toLocaleDateString()}</div>
+          </div>
+        </div>
+
+        <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+          <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${viewPrescription.patient_details?.name || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Age / Gender</span><span class="data-value">: ${viewPrescription.patient_details?.age || "—"} / ${viewPrescription.patient_details?.gender || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Phone</span><span class="data-value">: ${viewPrescription.patient_details?.phone || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Blood Group</span><span class="data-value">: ${viewPrescription.patient_details?.blood_group || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Prescribed By</span><span class="data-value">: ${viewPrescription.prescribed_by_details?.name || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Consultant</span><span class="data-value">: ${viewPrescription.consultant_doctor_details?.name || "—"}</span></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:10px;">
+          <div>
+            <div class="report-section-title">Findings</div>
+            <div style="padding:10px; border:1px solid #eee; border-radius:5px;">
+              <div style="font-weight:bold;">${viewPrescription.finding_name || "N/A"}</div>
+              <div style="font-style:italic; font-size:12px; color:#666;">${viewPrescription.finding_description || ""}</div>
+            </div>
+          </div>
+          <div>
+            <div class="report-section-title">Symptoms</div>
+            <p style="font-size:13px; line-height:1.5; margin:0;">${viewPrescription.symptoms_text || "None recorded."}</p>
+          </div>
+        </div>
+
+        <div class="report-section-title">Medicines</div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Category</th>
+              <th>Medicine</th>
+              <th>Dosage</th>
+              <th>Interval / Duration</th>
+              <th>Instruction</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${viewPrescription.medicines?.map((med, idx) => `
+              <tr>
+                <td>${idx + 1}</td>
+                <td>${med.category_name || "—"}</td>
+                <td style="font-weight:bold;">${med.medicine_name || "—"}</td>
+                <td>${med.dosage_name || "—"}</td>
+                <td>${med.interval_name || "—"} / ${med.duration_name || "—"}</td>
+                <td>${med.instruction || ""}</td>
+              </tr>
+            `).join("") || '<tr><td colspan="6" style="text-align: center;">No medicines prescribed.</td></tr>'}
+          </tbody>
+        </table>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+          <div>
+            <div class="report-section-title">Pathology Tests</div>
+            <ul style="padding-left:20px; font-size:12px;">
+              ${viewPrescription.pathology_details?.map(t => `<li>${t.test_name}</li>`).join("") || "<li>None</li>"}
+            </ul>
+          </div>
+          <div>
+            <div class="report-section-title">Radiology Tests</div>
+            <ul style="padding-left:20px; font-size:12px;">
+              ${viewPrescription.radiology_details?.map(t => `<li>${t.test_name}</li>`).join("") || "<li>None</li>"}
+            </ul>
+          </div>
+        </div>
+
+        <div class="signature-section">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-label">Pharmacist Signature</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-label">Doctor / Consultant</div>
+          </div>
+        </div>
+    `;
+
+    printReport({
+      title: `Prescription - PRE-${viewPrescription.id}`,
+      headerImg: headerData?.ipd_prescription_header,
+      footerText: headerData?.ipd_prescription_footer,
+      content: content
+    });
   };
 
   if (isLoading) {
@@ -616,13 +719,19 @@ export default function IPDPrescription() {
         {/* VIEW PRESCRIPTION MODAL - REDESIGNED */}
         {showView && viewPrescription && (
           <div className="fixed inset-0 bg-black/60 z-[100] flex justify-center items-center p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-5xl bg-white shadow-2xl overflow-hidden border border-gray-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[95vh]">
+            <div className="w-full max-w-5xl bg-white shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[95vh]">
               {/* Blue Header Bar */}
               <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] px-4 py-2 flex justify-between items-center text-white shrink-0">
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-sm">Prescription</h3>
                 </div>
                 <div className="flex items-center gap-3">
+                  <button
+                    onClick={handlePrint}
+                    className="hover:bg-white/20 p-1 rounded transition-colors"
+                  >
+                    <Printer size={16} />
+                  </button>
                   <button
                     onClick={() => setShowView(false)}
                     className="hover:bg-white/20 p-1 rounded transition-colors"
@@ -634,32 +743,6 @@ export default function IPDPrescription() {
 
               {/* Modal Content - Scrollable Part */}
               <div className="flex-grow overflow-y-auto bg-white p-6 printable-area">
-                {/* Hospital Header Section
-                <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-2">
-                  <div className="flex gap-4">
-                    <div className="bg-[#FF0000] p-1 rounded flex items-center justify-center w-12 h-12">
-                      <div className="text-white font-bold text-2xl">+</div>
-                    </div>
-                    <div>
-                      <div className="bg-[#FFC600] px-2 py-0.5 inline-block rounded-sm mb-1">
-                        <span className="text-black font-black text-xs uppercase italic">SMART HOSPITAL</span>
-                      </div>
-                      <h1 className="text-4xl font-black text-gray-900 leading-none">Smart Hospital & Research Center</h1>
-                    </div>
-                  </div>
-                  <div className="text-right text-sm leading-tight space-y-0.5 font-medium text-gray-800">
-                    <p><span className="font-bold">Address:</span> 25 Kings Street, CA</p>
-                    <p><span className="font-bold">Phone No.:</span> 89562423934</p>
-                    <p><span className="font-bold">Email:</span> smarthospitalrc@gmail.com</p>
-                    <p><span className="font-bold">Website:</span> www.smart-hospital.in</p>
-                  </div>
-                </div> */}
-
-                {/* Sub Header */}
-                {/* <div className="bg-black text-white text-center py-1 font-bold text-sm uppercase tracking-widest mb-4">
-                  IPD Prescription
-                </div> */}
-
                 {/* Prescription ID & Date */}
                 <div className="flex justify-between text-sm font-bold border-b border-gray-200 pb-2 mb-4">
                   <div>Prescription: IPDP{viewPrescription.id}</div>

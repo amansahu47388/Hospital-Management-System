@@ -4,12 +4,29 @@ import {
   getBirthRecordDetail,
   deleteBirthRecord,
 } from "../../api/birthDeathApi";
+import { getHeaders } from "../../api/setupApi";
+import { printReport } from "../../utils/printUtils";
 import { useNotify } from "../../context/NotificationContext";
 
 export default function BirthRecordDetails({ open, onClose, record }) {
   const [detailRecord, setDetailRecord] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [headerData, setHeaderData] = useState(null);
   const notify = useNotify();
+
+  useEffect(() => {
+    const fetchHeaders = async () => {
+      try {
+        const res = await getHeaders();
+        if (res.data && res.data.length > 0) {
+          setHeaderData(res.data[0]);
+        }
+      } catch (err) {
+        console.error("Error fetching record headers:", err);
+      }
+    };
+    fetchHeaders();
+  }, []);
 
   useEffect(() => {
     if (open && record?.id) {
@@ -38,7 +55,55 @@ export default function BirthRecordDetails({ open, onClose, record }) {
   /* ================= BUTTON HANDLERS ================= */
 
   const handlePrint = () => {
-    window.print();
+    if (!displayRecord) return;
+
+    const content = `
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+          <h2 style="margin:0; color:#6046B5; font-size:20px;">BIRTH RECORD REPORT</h2>
+          <div style="text-align:right; font-size:12px; font-weight:bold;">
+            <div>Ref No: BR${displayRecord.id}</div>
+            <div>Generated: ${new Date().toLocaleDateString()}</div>
+          </div>
+        </div>
+
+        <div style="text-align:center; padding:20px 0;">
+          <h1 style="margin:0; font-size:28px; color:#333; text-transform:uppercase;">Certificate of Birth</h1>
+        </div>
+
+        <div class="data-grid" style="background:#f9f9f9; padding:20px; border-radius:10px; border:1px solid #eee; margin-bottom:30px;">
+          <div class="data-item"><span class="data-label">Child Name</span><span class="data-value">: ${displayRecord.childName || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Gender</span><span class="data-value">: ${displayRecord.gender || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Date of Birth</span><span class="data-value">: ${displayRecord.birthDate || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Weight</span><span class="data-value">: ${displayRecord.weight ? displayRecord.weight + ' kg' : "—"}</span></div>
+          <div class="data-item"><span class="data-label">Mother Name</span><span class="data-value">: ${displayRecord.motherName || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Father Name</span><span class="data-value">: ${displayRecord.fatherName || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Mobile No</span><span class="data-value">: ${displayRecord.phone || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Address</span><span class="data-value">: ${displayRecord.address || "—"}</span></div>
+        </div>
+
+        <div class="report-section-title">Medical Observation</div>
+        <div style="padding:15px; background:#fff; border:1px solid #eee; border-radius:8px; font-size:14px; line-height:1.6; min-height:100px;">
+          ${displayRecord.report || "No specific medical observations recorded."}
+        </div>
+
+        <div class="signature-section" style="margin-top:80px;">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-label">Authorised Registrar</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-label">Medical Superintendent</div>
+          </div>
+        </div>
+    `;
+
+    printReport({
+      title: `Birth Record - ${displayRecord.childName}`,
+      headerImg: headerData?.birth_record_header,
+      footerText: headerData?.birth_record_footer,
+      content: content
+    });
   };
 
   const handleEdit = () => {

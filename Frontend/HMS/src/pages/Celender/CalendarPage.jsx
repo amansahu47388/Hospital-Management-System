@@ -1,21 +1,33 @@
 import { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
+import PatientLayout from "../../layout/PatientLayout";
 import CalendarHeader from "../../components/Celender/CalendarHeader";
 import CalendarGrid from "../../components/Celender/CalendarGrid";
 import WeekCalendar from "../../components/Celender/WeekCalendar";
 import DayCalendar from "../../components/Celender/DayCalendar";
 import TodoList from "../../components/Celender/TodoList";
 import AddTaskModal from "../../components/Celender/AddTaskModal";
-//import EventModal from "../../components/Celender/EventModal";
 import ShowEventModal from "../../components/Celender/ShowEventModal";
 import useCalendarTasks from "../../hooks/useCalendarTasks";
 import EventModal from "../../components/Celender/EventModal";
+import { useAuth } from "../../context/AuthContext";
+
 export default function CalendarPage() {
+  const { user } = useAuth();
+  const isPatient = user?.role?.toLowerCase() === "patient";
+
   const { tasks, addTask, removeTask, updateTask, loading } = useCalendarTasks();
 
   const [view, setView] = useState("month"); // month | week | day
   const [currentDate, setCurrentDate] = useState(new Date());
   const [openAdd, setOpenAdd] = useState(false);
+  const [initialDate, setInitialDate] = useState("");
+
+  const handleDateClick = (dateStr) => {
+    if (isPatient) return;
+    setInitialDate(dateStr);
+    setOpenAdd(true);
+  };
 
   /* NAVIGATION */
   const handlePrev = () => {
@@ -36,9 +48,7 @@ export default function CalendarPage() {
 
   const handleToday = () => setCurrentDate(new Date());
 
-
-
-  //celender
+  // calendar
   const [openEvent, setOpenEvent] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [openShow, setOpenShow] = useState(false);
@@ -49,6 +59,7 @@ export default function CalendarPage() {
   };
 
   const handleEditEvent = () => {
+    if (isPatient) return;
     setOpenShow(false);
     setOpenEvent(true);
   };
@@ -62,9 +73,12 @@ export default function CalendarPage() {
     removeTask(id);
     setOpenEvent(false);
   };
+
+  const Layout = isPatient ? PatientLayout : AdminLayout;
+
   return (
-    <AdminLayout>
-      <div className="min-h-full  p-1">
+    <Layout>
+      <div className="min-h-full p-1">
         {loading && (
           <div className="flex justify-center items-center py-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6046B5]"></div>
@@ -84,49 +98,72 @@ export default function CalendarPage() {
             />
 
             {view === "month" && (
-              <CalendarGrid tasks={tasks} date={currentDate} onEventClick={handleEventClick} />
+              <CalendarGrid
+                tasks={tasks}
+                date={currentDate}
+                onEventClick={handleEventClick}
+                onDateClick={handleDateClick}
+              />
             )}
 
             {view === "week" && (
-              <WeekCalendar tasks={tasks} date={currentDate} onEventClick={handleEventClick} />
+              <WeekCalendar
+                tasks={tasks}
+                date={currentDate}
+                onEventClick={handleEventClick}
+                onDateClick={handleDateClick}
+              />
             )}
 
             {view === "day" && (
-              <DayCalendar tasks={tasks} date={currentDate} onEventClick={handleEventClick} />
+              <DayCalendar
+                tasks={tasks}
+                date={currentDate}
+                onEventClick={handleEventClick}
+                onDateClick={handleDateClick}
+              />
             )}
           </div>
 
           {/* TODO */}
           <TodoList
             tasks={tasks}
-            onAddClick={() => setOpenAdd(true)}
+            readOnly={isPatient}
+            onAddClick={() => {
+              setInitialDate("");
+              setOpenAdd(true);
+            }}
             onDelete={removeTask}
           />
         </div>
 
-        <AddTaskModal
-          open={openAdd}
-          onClose={() => setOpenAdd(false)}
-          onSave={addTask}
-        />
+        {!isPatient && (
+          <AddTaskModal
+            open={openAdd}
+            initialDate={initialDate}
+            onClose={() => setOpenAdd(false)}
+            onSave={addTask}
+          />
+        )}
 
         <ShowEventModal
           open={openShow}
           event={selectedEvent}
+          readOnly={isPatient}
           onClose={() => setOpenShow(false)}
           onEdit={handleEditEvent}
         />
 
-        <EventModal
-          open={openEvent}
-          event={selectedEvent}
-          onClose={() => setOpenEvent(false)}
-          onSave={handleSaveEvent}
-          onDelete={handleDeleteEvent}
-        />
-
-
+        {!isPatient && (
+          <EventModal
+            open={openEvent}
+            event={selectedEvent}
+            onClose={() => setOpenEvent(false)}
+            onSave={handleSaveEvent}
+            onDelete={handleDeleteEvent}
+          />
+        )}
       </div>
-    </AdminLayout>
+    </Layout>
   );
 }

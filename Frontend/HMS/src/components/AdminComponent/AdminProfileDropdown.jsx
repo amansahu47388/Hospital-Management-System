@@ -19,21 +19,39 @@ export default function ProfileDropdown({ user, onLogout }) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* AVATAR */}
-      <img
-        src={user.profile_picture || user.avatar || "/avatar.png"}
-        alt="Profile"
-        className="
-          w-7 h-7 sm:w-8 sm:h-8 md:w-7 md:h-7
-          rounded-full cursor-pointer
-          border border-white/60
-          object-cover
-          hover:ring-2 hover:ring-white/50
-          active:scale-95
-          transition
-        "
-        onClick={() => setOpen(!open)}
-      />
+      {/* AVATAR TRIGGER */}
+      {user.profile_picture || user.avatar ? (
+        <img
+          src={user.profile_picture || user.avatar}
+          alt="Profile"
+          className="
+            w-7 h-7 sm:w-8 sm:h-8 md:w-7 md:h-7
+            rounded-full cursor-pointer
+            border border-white/60
+            object-cover
+            hover:ring-2 hover:ring-white/50
+            active:scale-95
+            transition
+          "
+          onClick={() => setOpen(!open)}
+        />
+      ) : (
+        <div
+          className="
+            w-7 h-7 sm:w-8 sm:h-8 md:w-7 md:h-7
+            rounded-full cursor-pointer
+            border border-white/60
+            flex items-center justify-center
+            bg-white/10 text-white
+            hover:bg-white/20
+            active:scale-95
+            transition
+          "
+          onClick={() => setOpen(!open)}
+        >
+          <User size={16} />
+        </div>
+      )}
 
       {/* DROPDOWN */}
       {open && (
@@ -47,11 +65,17 @@ export default function ProfileDropdown({ user, onLogout }) {
         >
           {/* HEADER */}
           <div className="flex items-center gap-3 p-4">
-            <img
-              src={user.profile_picture || user.avatar || "/avatar.png"}
-              alt="Profile"
-              className="w-9 h-9 rounded-full object-cover"
-            />
+            {user.profile_picture || user.avatar ? (
+              <img
+                src={user.profile_picture || user.avatar}
+                alt="Profile"
+                className="w-9 h-9 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                <User size={20} />
+              </div>
+            )}
             <div className="min-w-0">
               <p className="font-semibold text-gray-800 truncate">
                 {user.full_name || user.name}

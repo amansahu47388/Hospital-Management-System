@@ -1,4 +1,4 @@
-export default function DayCalendar({ tasks, date, onEventClick }) {
+export default function DayCalendar({ tasks, date, onEventClick, onDateClick }) {
   const HOUR_HEIGHT = 64;
 
   const startOfDay = new Date(date);
@@ -28,6 +28,11 @@ export default function DayCalendar({ tasks, date, onEventClick }) {
     const effectiveStart = eventStart < startOfDay ? startOfDay : eventStart;
     const effectiveEnd = eventEnd > endOfDay ? endOfDay : eventEnd;
     return { effectiveStart, effectiveEnd };
+  };
+
+  const handleGridClick = () => {
+    const formattedDate = date.toISOString().split("T")[0];
+    onDateClick?.(formattedDate);
   };
 
   return (
@@ -62,9 +67,9 @@ export default function DayCalendar({ tasks, date, onEventClick }) {
           </div>
 
           {/* GRID */}
-          <div className="relative h-[1536px] overflow-hidden">
+          <div className="relative h-[1536px] overflow-hidden cursor-pointer" onClick={handleGridClick}>
             {Array.from({ length: 24 }).map((_, h) => (
-              <div key={h} className="h-16 border-b" />
+              <div key={h} className="h-16 border-b hover:bg-gray-50 transition-colors" />
             ))}
 
             {/* EVENTS */}
@@ -74,7 +79,10 @@ export default function DayCalendar({ tasks, date, onEventClick }) {
               return (
                 <div
                   key={event.id}
-                  onClick={() => onEventClick?.(event)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEventClick?.(event);
+                  }}
                   className="
                     
                     absolute left-2 right-2

@@ -14,6 +14,8 @@ import { getPharmacyBills } from "../../api/pharmacyApi";
 import { getAmbulanceBills } from "../../api/ambulanceApi";
 import { getOpdPatientList } from "../../api/opdApi";
 import { getIpdPatientList } from "../../api/ipdApi";
+import { getHeaders } from "../../api/setupApi";
+import { printReport } from "../../utils/printUtils";
 import { useNotify } from "../../context/NotificationContext";
 
 
@@ -37,6 +39,7 @@ function BillingDetails() {
     const [ambulanceBills, setAmbulanceBills] = useState([]);
     const [opdVisits, setOpdVisits] = useState([]);
     const [ipdAdmissions, setIpdAdmissions] = useState([]);
+    const [headerData, setHeaderData] = useState(null);
 
     const [showSingleModuleBilling, setShowSingleModuleBilling] = useState(false);
 
@@ -166,11 +169,105 @@ function BillingDetails() {
     };
 
     useEffect(() => {
+        const fetchHeaders = async () => {
+            try {
+                const res = await getHeaders();
+                if (res.data && res.data.length > 0) {
+                    setHeaderData(res.data[0]);
+                }
+            } catch (error) {
+                console.error("Error fetching bill headers:", error);
+            }
+        };
+        fetchHeaders();
+
         if (location.state?.caseId) {
             setSearchCaseId(location.state.caseId);
             fetchDetails(location.state.caseId);
         }
     }, [location.state]);
+
+    const handlePrintBill = () => {
+        if (!patientData || charges.length === 0) return;
+
+        const totalCharges = charges.reduce((sum, c) => sum + parseFloat(c.amount || 0), 0);
+        const totalPayments = payments.reduce((sum, p) => sum + parseFloat(p.paid_amount || 0), 0);
+        const balance = totalCharges - totalPayments;
+
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">FINAL BILL / RECEIPT</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>Case ID: ${patientData.caseId}</div>
+                    <div>Date: ${new Date().toLocaleDateString()}</div>
+                </div>
+            </div>
+
+            <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee; margin-bottom:20px;">
+                <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${patientData.name}</span></div>
+                <div class="data-item"><span class="data-label">Age / Gender</span><span class="data-value">: ${patientData.age} / ${patientData.gender}</span></div>
+                <div class="data-item"><span class="data-label">Phone</span><span class="data-value">: ${patientData.phone}</span></div>
+                <div class="data-item"><span class="data-label">Appointment</span><span class="data-value">: ${patientData.appointmentDate}</span></div>
+            </div>
+
+            <div class="report-section-title">Billing Breakdown</div>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Description</th>
+                        <th style="text-align:right">Subtotal ($)</th>
+                        <th style="text-align:right">Discount ($)</th>
+                        <th style="text-align:right">Tax ($)</th>
+                        <th style="text-align:right">Total ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${charges.map((c, idx) => `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td>
+                                <div style="font-weight:600">${c.charge_name}</div>
+                                <div style="font-size:10px; color:#666;">${c.charge_type}</div>
+                            </td>
+                            <td style="text-align:right">${Number(c.standard_charge || 0).toFixed(2)}</td>
+                            <td style="text-align:right">${Number(c.discount || 0).toFixed(2)}</td>
+                            <td style="text-align:right">${Number(c.tax || 0).toFixed(2)}</td>
+                            <td style="text-align:right; font-weight:600">${Number(c.amount || 0).toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:30px;">
+                <div style="width:280px; font-size:13px; line-height:1.8;">
+                    <div style="display:flex; justify-content:space-between;"><span>Grand Total</span><span>$${totalCharges.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between; color:green;"><span>Total Paid</span><span>$${totalPayments.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; color:${balance > 0 ? 'red' : 'green'}; border-top:1px solid #eee; margin-top:5px; padding-top:5px;">
+                        <span>Final Balance</span><span>$${balance.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="signature-section" style="margin-top:50px;">
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Patient/Guardian Signature</div>
+                </div>
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Authorised Accountant</div>
+                </div>
+            </div>
+        `;
+
+        printReport({
+            title: `Final Bill - ${patientData.caseId}`,
+            headerImg: headerData?.opd_bill_header, // Generic billing header or OPD bill header
+            footerText: headerData?.opd_bill_footer,
+            content: content
+        });
+    };
 
     const formatVisitRows = (rows = []) => {
         return rows.map(r => {
@@ -887,7 +984,7 @@ function BillingDetails() {
                         <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                             <h3 className="font-semibold text-lg">Bill</h3>
                             <div className="flex items-center gap-3">
-                                <Printer className="cursor-pointer hover:opacity-80" />
+                                <Printer className="cursor-pointer hover:opacity-80" onClick={handlePrintBill} />
                                 <X className="cursor-pointer hover:opacity-80" onClick={() => setShowGenerateBill(false)} />
                             </div>
                         </div>

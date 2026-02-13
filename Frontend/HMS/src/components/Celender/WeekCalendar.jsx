@@ -1,4 +1,4 @@
-export default function WeekCalendar({ tasks, date, onEventClick }) {
+export default function WeekCalendar({ tasks, date, onEventClick, onDateClick }) {
   const start = new Date(date);
   start.setDate(start.getDate() - start.getDay());
 
@@ -11,7 +11,14 @@ export default function WeekCalendar({ tasks, date, onEventClick }) {
   return (
     <div className="grid grid-cols-7 border rounded overflow-hidden">
       {days.map((d) => (
-        <div key={d} className="border p-2 text-sm">
+        <div
+          key={d}
+          className="border p-2 text-sm cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={() => {
+            const formattedDate = d.toISOString().split("T")[0];
+            onDateClick?.(formattedDate);
+          }}
+        >
           <div className="font-semibold text-center">
             {d.toLocaleDateString()}
           </div>
@@ -26,7 +33,10 @@ export default function WeekCalendar({ tasks, date, onEventClick }) {
             .map((t) => (
               <div
                 key={t.id}
-                onClick={() => onEventClick?.(t)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEventClick?.(t);
+                }}
                 className="bg-pink-600 text-white text-xs p-1 rounded mt-1 cursor-pointer hover:opacity-80"
                 style={{ backgroundColor: t.color || "#EC4899" }}
               >

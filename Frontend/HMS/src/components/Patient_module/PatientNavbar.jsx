@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell } from "lucide-react";
+import { Bell, CalendarDays } from "lucide-react";
 import PatientProfileDropDown from "./PatientProfileDropDown";
 import { useAuth } from "../../context/AuthContext";
+
+
 import { getPatientDetail } from "../../api/patientApi";
 
 function PatientNavbar() {
@@ -62,6 +64,13 @@ function PatientNavbar() {
 
                 {/* RIGHT: ICONS + PROFILE */}
                 <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
+
+                   {/* CALENDAR */}
+                    <IconButton
+                    onClick={() => navigate("/admin/Calendar")}
+                    icon={CalendarDays}
+                    title="Calendar"
+                    />
 
                     {/* NOTIFICATION */}
                     <div className="relative">
