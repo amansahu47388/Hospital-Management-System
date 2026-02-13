@@ -281,9 +281,9 @@ function AddDischargePatient({ open, onClose, ipd, onDischarged }) {
 const FormField = ({ label, error, required, ...props }) => (
   <div>
     <label className="font-medium">
-      {label} {required && <span className="text-red-500">*</span>}
+      {label} {required && <span className="text-red-500 ">*</span>}
     </label>
-    <input {...props} className="w-full border px-3 py-2 rounded" />
+    <input {...props} className="w-full border px-3 py-2 rounded  border-gray-200" />
     {error && <p className="text-red-500 text-xs">{error}</p>}
   </div>
 );
@@ -293,7 +293,7 @@ const SelectField = ({ label, options, error, required, ...props }) => (
     <label className="font-medium">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
-    <select {...props} className="w-full border px-3 py-2 rounded">
+    <select {...props} className="w-full border-gray-200 px-3 py-2 rounded">
       {options.map(o => (
         <option key={o.value} value={o.value}>{o.label}</option>
       ))}

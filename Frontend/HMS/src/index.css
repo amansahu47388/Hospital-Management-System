@@ -199,3 +199,11 @@ button {
 .form-field.error:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
 }
+
+
+
+
+
+.input-field {
+  @apply border border-gray-200 rounded px-2 py-1 w-full;
+}

@@ -156,17 +156,17 @@ const handleDelete = async (id) => {
               <table className="min-w-full text-sm">
                 <thead className="bg-gray-200 ">
                   <tr>
-                    <th className="px-2 py-4 text-center">IPD No</th>
-                    <th className="px-2 py-4 text-center">Name</th>
-                    <th className="px-2 py-4 text-center">Case ID</th>
-                    <th className="px-2 py-4 text-center">Gender</th>
-                    <th className="px-2 py-4 text-center">phone</th>
-                    <th className="px-2 py-4 text-center">Created By</th>
-                    <th className="px-2 py-4 text-center">Doctor </th>
-                    <th className="px-2 py-4 text-center">Bed</th>
-                    <th className="px-2 py-4 text-center">Admision Date</th>
-                    <th className="px-2 py-4 text-center">Previous Medical Issue</th>
-                    <th className="px-2 py-4 text-center">Action</th>
+                    <th className="px-2 py-3 text-center">IPD No</th>
+                    <th className="px-2 py-3 text-center">Name</th>
+                    <th className="px-2 py-3 text-center">Case ID</th>
+                    <th className="px-2 py-3 text-center">Gender</th>
+                    <th className="px-2 py-3 text-center">phone</th>
+                    <th className="px-2 py-3 text-center">Created By</th>
+                    <th className="px-2 py-3 text-center">Doctor </th>
+                    <th className="px-2 py-3 text-center">Bed</th>
+                    <th className="px-2 py-3 text-center">Admision Date</th>
+                    <th className="px-2 py-3 text-center">Previous Medical Issue</th>
+                    <th className="px-2 py-3 text-center">Action</th>
                   </tr>
                 </thead>
 

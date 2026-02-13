@@ -458,11 +458,11 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
           </button>
         </div>
 
-        <div className="px-4 py-2 border-b flex gap-4 bg-gray-50 items-center">
-          <div className="flex items-center gap-2">
+        <div className="px-4 py-2  flex gap-4 bg-gray-50 items-center">
+          <div className="flex  items-center gap-2">
             <label className="text-sm font-medium text-gray-700">Case ID</label>
             <select
-              className="border px-3 py-1 rounded text-sm min-w-[150px]"
+              className="border border-gray-200 px-3 py-1 rounded text-sm min-w-[150px]"
               value={caseId}
               onChange={(e) => setCaseId(e.target.value)}
               disabled={!patientId}
@@ -481,7 +481,7 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
             <table className="min-w-full text-sm">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
+                  <th className="  px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
                     Medicine Category
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
@@ -526,7 +526,10 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                   <tr key={i}>
                     <td className="p-1">
                       <select
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded"
+                        className=" border border-gray-200  border border-gray-200
+                            focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.medicine_category_id}
                         onChange={(e) => handleCategoryChange(i, e.target.value)}
                       >
@@ -541,7 +544,10 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
 
                     <td className="p-1">
                       <select
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded"
+                        className="border border-gray-200   focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  
+                             w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.medicine_id}
                         onChange={(e) => handleMedicineChange(i, e.target.value)}
                         disabled={!row.medicine_category_id}
@@ -562,7 +568,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
 
                     <td className="p-1">
                       <select
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded"
+                        className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.stock_id || ""}
                         onChange={(e) => handleBatchChange(i, e.target.value)}
                         disabled={!row.medicine_id || row.batches.length === 0}
@@ -579,7 +587,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                     <td className="p-1">
                       <input
                         type="month"
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded"
+                        className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.expiry_date}
                         readOnly
                       />
@@ -590,7 +600,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                         type="number"
                         min="1"
                         max={row.available_qty}
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded"
+                        className="border border-gray-200    focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.quantity}
                         onChange={(e) => updateRow(i, "quantity", e.target.value)}
                         disabled={!row.stock_id}
@@ -600,7 +612,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                     <td className="p-1">
                       <input
                         type="number"
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
+                        className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
                         value={row.available_qty}
                         readOnly
                       />
@@ -610,7 +624,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
+                        className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
                         value={row.sale_price}
                         readOnly
                       />
@@ -620,7 +636,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
+                        className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
                         value={row.tax_percentage}
                         readOnly
                       />
@@ -629,7 +647,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                     <td className="p-1">
                       <input
                         type="text"
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded"
+                        className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.discount_percentage}
                         onChange={(e) => updateRow(i, "discount_percentage", e.target.value)}
                         disabled={!row.stock_id}
@@ -640,7 +660,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="border w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50 font-semibold"
+                        className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50 font-semibold"
                         value={row.amount}
                         readOnly
                       />
@@ -669,7 +691,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
               <select
                 value={doctorId}
                 onChange={(e) => setDoctorId(e.target.value)}
-                className="border w-full p-2 rounded text-sm sm:text-base"
+                className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  w-full p-2 rounded text-sm sm:text-base"
               >
                 <option value="">Select Doctor</option>
                 {doctors.map((d) => (
@@ -683,7 +707,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                 Note
               </label>
               <textarea
-                className="border w-full p-2 h-24 rounded text-sm sm:text-base"
+                className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full p-2 h-24 rounded text-sm sm:text-base"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Additional notes..."
@@ -716,7 +742,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                   Payment Mode
                 </label>
                 <select
-                  className="border w-full px-2 py-1 rounded text-sm sm:text-base"
+                  className="border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-2 py-1 rounded text-sm sm:text-base"
                   value={paymentMode}
                   onChange={(e) => setPaymentMode(e.target.value)}
                 >
@@ -740,7 +768,7 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
         </div>
 
         {/* ================= FOOTER ================= */}
-        <div className="px-3 sm:px-4 py-3 border-t flex justify-end bg-gray-50">
+        <div className="px-3 sm:px-4 py-3 border-t border-gray-200 flex justify-end bg-gray-50">
           <button
             onClick={handleSave}
             disabled={loading}
@@ -761,7 +789,9 @@ const InputRow = ({ label, value, onChange, readOnly, bold }) => (
     <input
       type="number"
       step="0.01"
-      className={`border px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""
+      className={`border border-gray-200  focus:outline-none
+                            focus:border-purple-400
+                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""
         } ${readOnly ? "bg-gray-50" : ""}`}
       value={value}
       readOnly={readOnly}

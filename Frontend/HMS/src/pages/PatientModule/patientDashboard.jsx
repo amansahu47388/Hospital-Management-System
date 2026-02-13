@@ -272,7 +272,7 @@ function PatientDashboard() {
                           onClick={() =>
                             navigate(`/admin/patients/${patient.id}`)
                           }
-                          className="text-xl text-gray-600 hover:text-gray-900"
+                          className="p-1 rounded hover:bg-purple-100 text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           title="View"
                         >
                           <Eye size={16} />
@@ -282,7 +282,7 @@ function PatientDashboard() {
                             setSelectedPatientId(patient.id);
                             setOpenUpdate(true);
                           }}
-                          className="text-xl text-gray-600 hover:text-gray-900"
+                          className="p-1 rounded hover:bg-green-100 text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Edit"
                         >
                           <Pencil size={16} />
@@ -291,7 +291,7 @@ function PatientDashboard() {
                         {isAdmin && (
                           <button
                             onClick={() => handleDeleteSingle(patient.id)}
-                            className={`text-xl text-gray-600 hover:text-red-600 ${deleteLoading === patient.id ? 'opacity-50 pointer-events-none' : ''}`}
+                            className={`p-1 rounded hover:bg-red-100 text-red-600 disabled:opacity-50 disabled:cursor-not-allowed ${deleteLoading === patient.id ? 'opacity-50 pointer-events-none' : ''}`}
                             title="Delete"
                             disabled={deleteLoading === patient.id}
                           >
@@ -304,7 +304,7 @@ function PatientDashboard() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div>    
         </main>
       </div >
       {/* UPDATE PATIENT MODAL - Only opens when edit button is clicked */}
