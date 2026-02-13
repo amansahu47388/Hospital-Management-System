@@ -1,14 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
+import { getHeaders, createHeader, updateHeader } from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
+
+// already existing components
 import PrintHeaderFooterMenu from "../../../components/Setup/Header_Footer/PrintHeaderFooterMenu";
 import FooterContentEditor from "../../../components/Setup/Header_Footer/FooterContentEditor";
 
 export default function DischargeCardHeaderFooter() {
-  const [preview, setPreview] = useState(null);
+  const notify = useNotify();
+  const [headerId, setHeaderId] = useState(null);
+  const [preview, setPreview] = useState("/uploads/printing/19.jpg");
+  const [headerFile, setHeaderFile] = useState(null);
+  const [footerContent, setFooterContent] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchHeaderData = async () => {
+      try {
+        const response = await getHeaders();
+        if (response.data && response.data.length > 0) {
+          const data = response.data[0];
+          setHeaderId(data.id);
+          if (data.patient_discharge_header) {
+            setPreview(data.patient_discharge_header);
+          }
+          if (data.patient_discharge_footer) {
+            setFooterContent(data.patient_discharge_footer);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching header data:", error);
+      }
+    };
+    fetchHeaderData();
+  }, []);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setHeaderFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      if (headerFile) {
+        formData.append("patient_discharge_header", headerFile);
+      }
+      formData.append("patient_discharge_footer", footerContent);
+
+      if (headerId) {
+        await updateHeader(headerId, formData);
+        notify("success", "Discharge Card Header & Footer updated successfully");
+      } else {
+        const response = await createHeader(formData);
+        setHeaderId(response.data.id);
+        notify("success", "Discharge Card Header & Footer created successfully");
+      }
+    } catch (error) {
+      console.error("Error saving header data:", error);
+      notify("error", "Failed to save Discharge Card Header & Footer");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AdminLayout>
       <div className="min-h-screen p-1 ">
+
         <div className="bg-white rounded-md p-4">
 
           <h2 className="text-lg font-semibold mb-4 border-b pb-2">
@@ -16,51 +80,56 @@ export default function DischargeCardHeaderFooter() {
           </h2>
 
           <div className="flex flex-col lg:flex-row gap-4">
+
+            {/* LEFT MENU */}
             <div className="w-full lg:w-64">
               <PrintHeaderFooterMenu />
             </div>
 
+            {/* RIGHT CONTENT */}
             <div className="flex-1 space-y-6">
 
               {/* HEADER IMAGE INPUT */}
-              <div>
-                <label className="text-sm font-medium">
-                  Header Image (2230px X 300px)
-                </label>
-
-                <div className="border rounded-md h-[180px] flex items-center justify-center relative mt-1">
-                  {preview ? (
-                    <img src={preview} className="h-full object-contain" />
-                  ) : (
-                    <span className="text-gray-400">
-                      Drop a file here or click
-                    </span>
-                  )}
-
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    onChange={(e) =>
-                      setPreview(URL.createObjectURL(e.target.files[0]))
-                    }
+              <div className="space-y-2">
+                {/* PREVIEW */}
+                <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
+                  <img
+                    src={preview}
+                    alt="Header Preview"
+                    className="w-full h-[140px] md:h-[180px] object-contain"
                   />
                 </div>
+
+                {/* FILE INPUT */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="block w-full text-sm text-gray-600
+                    file:mr-3 file:py-1.5 file:px-3
+                    file:rounded file:border-0
+                    file:text-sm file:font-medium
+                    file:bg-gray-100 file:text-gray-700
+                    hover:file:bg-gray-200 "
+                />
+
+                {/* FILE PATH */}
+                <p className="text-xs text-blue-600">
+                  {headerFile ? headerFile.name : (preview.includes('blob') ? 'New upload' : preview)}
+                </p>
               </div>
 
-              {/* FOOTER */}
+              {/* FOOTER CONTENT */}
               <FooterContentEditor
-                defaultValue="This invoice is printed electronically, so no signature is required"
+                footerContent={footerContent}
+                setFooterContent={setFooterContent}
+                handleSave={handleSave}
+                loading={loading}
               />
-
-              <div className="flex justify-end">
-                <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded-md">
-                  ✔ Save
-                </button>
-              </div>
 
             </div>
           </div>
+
         </div>
       </div>
     </AdminLayout>

@@ -37,6 +37,6 @@ const ProfileInfoGrid = ({ profile }) => {
 
     </div>
   );
-};;
+};
 
 export default ProfileInfoGrid;

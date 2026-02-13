@@ -6,15 +6,47 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 
 class UserSerializer(serializers.ModelSerializer):
     patient_id = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ['id', 'email', 'full_name', 'phone', 'role', 'is_active', 'is_staff', 'is_superuser', 'created_at', 'patient_id']
+        fields = ['id', 'email', 'full_name', 'phone', 'role', 'is_active', 'is_staff', 'is_superuser', 'created_at', 'patient_id', 'profile_picture']
     
     def get_patient_id(self, obj):
         """Return patient ID if user has a patient profile"""
-        if hasattr(obj, 'patient_profile') and obj.patient_profile:
-            return obj.patient_profile.id
+        patient_profile = getattr(obj, 'patient_profile', None)
+        if patient_profile:
+            return patient_profile.id
+        return None
+
+    def get_full_name(self, obj):
+        """Return full name from Patient model if patient, else from User model"""
+        patient_profile = getattr(obj, 'patient_profile', None)
+        if patient_profile:
+            return patient_profile.full_name
+        return obj.full_name
+
+    def get_profile_picture(self, obj):
+        """Return profile picture URL from AdminProfile or Patient profile"""
+        request = self.context.get('request')
+        image_url = None
+
+        # Check Admin Profile first (for staff/doctors)
+        admin_profile = getattr(obj, 'admin_profile', None)
+        if admin_profile and admin_profile.profile_picture:
+            image_url = admin_profile.profile_picture.url
+        
+        # Check Patient Profile (for patients)
+        if not image_url:
+            patient_profile = getattr(obj, 'patient_profile', None)
+            if patient_profile and patient_profile.photo:
+                image_url = patient_profile.photo.url
+        
+        if image_url:
+            if request:
+                return request.build_absolute_uri(image_url)
+            return image_url
         return None
 
 class UserRegisterSerializer(serializers.ModelSerializer):

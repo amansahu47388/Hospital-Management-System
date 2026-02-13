@@ -18,7 +18,7 @@ import IpdPatient from "./pages/IPD/IpdPatient";
 import AddOpd from "./pages/OPD/AddOpd";
 import AddIpd from "./pages/IPD/AddIpd";
 import UpdatePatient from "./components/PatientComponent/UpdatePatient";
-import AdminProfile from "./pages/AdminModule/AdminProfie";
+import AdminProfile from "./pages/AdminModule/AdminProfile";
 import DischargePatients from "./pages/IPD/DischargePatients";
 import UpdateOpdPatient from "./pages/OPD/UpdateOpdPatient";
 import UpdateIpdPatient from "./pages/IPD/UpdateIpdPatient";
@@ -65,19 +65,14 @@ import OpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/OpdPrescrip
 import OpdBillHeaderFooter from "./pages/Setup/Header_Footer/OpdBillHeaderFooter";
 import IpdPrescriptionHeaderFooter from "./pages/Setup/Header_Footer/IpdPrescriptionHeaderFooter";
 import IpdBillHeaderFooter from "./pages/Setup/Header_Footer/IpdBillHeaderFooter";
-import PaySlipHeaderFooter from "./pages/Setup/Header_Footer/PayslipHeaderFooter";
-import PharmacyBillHeaderFooter from "./pages/Setup/Header_Footer/PharmacyBillHeaderFooter";
+import PharmacyBillHeaderFooter from "./pages/Setup/Header_Footer/PharmacyHeaderFooter";
 import BillSummaryHeaderFooter from "./pages/Setup/Header_Footer/BillSummaryHeaderFooter";
-import PaymentReceiptHeaderFooter from "./pages/Setup/Header_Footer/PaymentReceiptHeaderFooter";
 import BirthRecordHeaderFooter from "./pages/Setup/Header_Footer/BirthRecordHeaderFooter";
 import DeathRecordHeaderFooter from "./pages/Setup/Header_Footer/DeathRecordHeaderFooter";
 import RadiologyHeaderFooter from "./pages/Setup/Header_Footer/RadiologyHeaderFooter";
 import PathologyHeaderFooter from "./pages/Setup/Header_Footer/PathologyHeaderFooter";
 import OperationHeaderFooter from "./pages/Setup/Header_Footer/OperationHeaderFooter";
-import AmbulanceHeaderFooter from "./pages/Setup/Header_Footer/OperationHeaderFooter";
-import ObstetricHistoryHeaderFooter from "./pages/Setup/Header_Footer/ObstetricHistoryHeaderFooter";
-import OpdAntenatalFindingHeaderFooter from "./pages/Setup/Header_Footer/OpdAntenatalFindingHeaderFooter";
-import IpdAntenatalFindingHeaderFooter from "./pages/Setup/Header_Footer/IpdAntenatalFindingHeaderFooter";
+import AmbulanceHeaderFooter from "./pages/Setup/Header_Footer/AmbulanceHeaderFooter";
 import DischargeCardHeaderFooter from "./pages/Setup/Header_Footer/DischargeCardHeaderFooter";
 import PurposeList from "./pages/Setup/Front_Office/PurposeList";
 import ComplaintType from "./pages/Setup/Front_Office/ComplaintType";
@@ -288,19 +283,14 @@ function App() {
             <Route path="/admin/setup/opd-bill-header-footer" element={<OpdBillHeaderFooter />} />
             <Route path="/admin/setup/ipd-prescription-header-footer" element={<IpdPrescriptionHeaderFooter />} />
             <Route path="/admin/setup/ipd-bill-header-footer" element={<IpdBillHeaderFooter />} />
-            <Route path="/admin/setup/payslip-header-footer" element={<PaySlipHeaderFooter />} />
             <Route path="/admin/setup/pharmacy-bill-header-footer" element={<PharmacyBillHeaderFooter />} />
             <Route path="/admin/setup/bill-summary-header-footer" element={<BillSummaryHeaderFooter />} />
-            <Route path="/admin/setup/payment-receipt-header-footer" element={<PaymentReceiptHeaderFooter />} />
             <Route path="/admin/setup/birth-record-header-footer" element={<BirthRecordHeaderFooter />} />
             <Route path="/admin/setup/death-record-header-footer" element={<DeathRecordHeaderFooter />} />
             <Route path="/admin/setup/radiology-header-footer" element={<RadiologyHeaderFooter />} />
             <Route path="/admin/setup/pathology-header-footer" element={<PathologyHeaderFooter />} />
             <Route path="/admin/setup/operation-header-footer" element={<OperationHeaderFooter />} />
             <Route path="/admin/setup/ambulance-header-footer" element={<AmbulanceHeaderFooter />} />
-            <Route path="/admin/setup/obstetric-history-header-footer" element={<ObstetricHistoryHeaderFooter />} />
-            <Route path="/admin/setup/opd-antenatal-finding-header-footer" element={<OpdAntenatalFindingHeaderFooter />} />
-            <Route path="/admin/setup/ipd-antenatal-finding-header-footer" element={<IpdAntenatalFindingHeaderFooter />} />
             <Route path="/admin/setup/discharge-card-header-footer" element={<DischargeCardHeaderFooter />} />
 
             {/* Front Office Setup Routes */}

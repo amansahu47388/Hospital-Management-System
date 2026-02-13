@@ -1,61 +1,18 @@
-import axios from 'axios';
+import api from './axiosInstance';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-const adminAPI = axios.create({
-  baseURL: `${API_BASE_URL}/admin`,
-});
-
-// Add token to requests
-adminAPI.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Don't set Content-Type for FormData
-    if (!(config.data instanceof FormData)) {
-      config.headers['Content-Type'] = 'application/json';
-    }
-
-    console.log('📤 Admin API Request:', config.method.toUpperCase(), config.url);
-    return config;
-  },
-  (error) => {
-    console.error('❌ Request error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Handle responses
-adminAPI.interceptors.response.use(
-  (response) => {
-    console.log('📥 Admin API Response:', response.status);
-    return response;
-  },
-  (error) => {
-    console.error('❌ Admin API Error:', error.response?.status, error.response?.data);
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/admin/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
+// Get doctors list
 export const getDoctors = async () => {
-  const response = await adminAPI.get('/doctors/');
-  return response;
+  return api.get('doctors/');
 };
 
+// Get admin profiles (typically one for the logged in user)
 export const getAdminProfiles = async () => {
-  const response = await adminAPI.get('/admin-profiles/');
-  return response;
+  return api.get('admin-profiles/');
 };
 
+// Update admin profile using PATCH to support partial updates and FormData
 export const updateAdminProfile = async (id, data) => {
-  const response = await adminAPI.put(`/admin-profiles/${id}/`, data);
-  return response;
+  // If data is FormData, we send it as is. If it's a plain object, we could optionally convert it or send as JSON.
+  // The axiosInstance handles Content-Type correctly for FormData.
+  return api.patch(`admin-profiles/${id}/`, data);
 };

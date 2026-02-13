@@ -14,6 +14,7 @@ const Field = ({ label, children }) => {
 
 const EditProfileModal = ({ profile, onClose, onSave }) => {
   const [showMoreDetails, setShowMoreDetails] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [formData, setFormData] = useState({
     staffId: profile?.staffId || "",
@@ -78,6 +79,12 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
     setFormData({ ...formData, [name]: processedValue });
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!profile || !profile.id) {
@@ -85,94 +92,68 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
       return;
     }
 
-    // Validation
-    if (!formData.firstName.trim()) {
-      alert("First Name is required.");
-      return;
+    const form = new FormData();
+    form.append("first_name", formData.firstName);
+    form.append("last_name", formData.lastName);
+    form.append("staff_id", formData.staffId);
+    form.append("designation", formData.designation);
+    form.append("department", formData.department);
+    form.append("specialist", formData.specialist);
+    form.append("gender", formData.gender);
+    form.append("merital_status", formData.maritalStatus);
+    form.append("blood_group", formData.bloodGroup);
+    if (formData.dob) form.append("date_of_birth", formData.dob);
+    if (formData.doj) form.append("date_of_joining", formData.doj);
+    form.append("emergency_contact", formData.emergencyContact);
+    form.append("current_address", formData.currentAddress);
+    form.append("permanent_address", formData.permanentAddress);
+    form.append("qualifications", formData.qualification);
+    form.append("experience_years", parseInt(formData.experience) || 0);
+    form.append("father_name", formData.fatherName);
+    form.append("mother_name", formData.motherName);
+    form.append("pan_number", formData.pan);
+    form.append("national_id", formData.nationalId);
+    form.append("local_id", formData.localId);
+    form.append("reference_contact", formData.referenceContact);
+    form.append("epf_no", formData.epfNo);
+    form.append("contract_type", formData.contractType);
+    form.append("basic_salary", parseFloat(formData.basicSalary) || 0);
+    form.append("work_shift", formData.workShift);
+    form.append("work_location", formData.workLocation);
+    if (formData.dateOfLeaving) form.append("date_of_leaving", formData.dateOfLeaving);
+
+    form.append("casual_leave", parseInt(formData.casualLeave) || 0);
+    form.append("privilege_leave", parseInt(formData.privilegeLeave) || 0);
+    form.append("sick_leave", parseInt(formData.sickLeave) || 0);
+    form.append("maternity_leave", parseInt(formData.maternityLeave) || 0);
+    form.append("paternity_leave", parseInt(formData.paternityLeave) || 0);
+    form.append("fever_leave", parseInt(formData.feverLeave) || 0);
+
+    form.append("account_title", formData.accountTitle);
+    form.append("bank_account_number", formData.bankAccountNumber);
+    form.append("bank_name", formData.bankName);
+    form.append("ifsc_code", formData.ifscCode);
+    form.append("bank_branch_name", formData.bankBranchName);
+
+    form.append("socia_media_links", JSON.stringify({
+      facebook: formData.facebook,
+      twitter: formData.twitter,
+      linkedin: formData.linkedin,
+      instagram: formData.instagram,
+    }));
+
+    if (selectedImage) {
+      form.append("profile_picture", selectedImage);
     }
-    if (!formData.lastName.trim()) {
-      alert("Last Name is required.");
-      return;
-    }
-    if (!formData.designation.trim()) {
-      alert("Designation is required.");
-      return;
-    }
-    // Add more validations as needed
 
     try {
-      // Helper function to clean date fields
-      const cleanDate = (dateStr) => {
-        if (!dateStr || dateStr.trim() === "") {
-          return null;
-        }
-        // Ensure it's in YYYY-MM-DD format
-        return dateStr;
-      };
-
-      // Map formData to backend fields
-      const dataToSend = {
-        first_name: formData.firstName.trim(),
-        last_name: formData.lastName.trim(),
-        staff_id: formData.staffId.trim() || "",
-        designation: formData.designation.trim(),
-        department: formData.department.trim() || "",
-        specialist: formData.specialist.trim() || "",
-        gender: formData.gender.trim() || "",
-        merital_status: formData.maritalStatus.trim() || "",
-        blood_group: formData.bloodGroup.trim() || "",
-        date_of_birth: cleanDate(formData.dob),
-        date_of_joining: cleanDate(formData.doj),
-        emergency_contact: formData.emergencyContact.trim() || "",
-        current_address: formData.currentAddress.trim() || "",
-        permanent_address: formData.permanentAddress.trim() || "",
-        qualifications: formData.qualification.trim() || "",
-        experience_years: parseInt(formData.experience) || 0,
-        father_name: formData.fatherName.trim() || "",
-        mother_name: formData.motherName.trim() || "",
-        pan_number: formData.pan.trim() || "",
-        national_id: formData.nationalId.trim() || "",
-        local_id: formData.localId.trim() || "",
-        reference_contact: formData.referenceContact.trim() || "",
-        epf_no: formData.epfNo.trim() || "",
-        contract_type: formData.contractType.trim() || "",
-        basic_salary: parseFloat(formData.basicSalary) || 0,
-        work_shift: formData.workShift.trim() || "",
-        work_location: formData.workLocation.trim() || "",
-        date_of_leaving: cleanDate(formData.dateOfLeaving),
-        casual_leave: parseInt(formData.casualLeave) || 0,
-        privilege_leave: parseInt(formData.privilegeLeave) || 0,
-        sick_leave: parseInt(formData.sickLeave) || 0,
-        maternity_leave: parseInt(formData.maternityLeave) || 0,
-        paternity_leave: parseInt(formData.paternityLeave) || 0,
-        fever_leave: parseInt(formData.feverLeave) || 0,
-        account_title: formData.accountTitle.trim() || "",
-        bank_account_number: formData.bankAccountNumber.trim() || "",
-        bank_name: formData.bankName.trim() || "",
-        ifsc_code: formData.ifscCode.trim() || "",
-        bank_branch_name: formData.bankBranchName.trim() || "",
-        socia_media_links: {
-          facebook: formData.facebook.trim() || "",
-          twitter: formData.twitter.trim() || "",
-          linkedin: formData.linkedin.trim() || "",
-          instagram: formData.instagram.trim() || "",
-        }
-      };
-
-      console.log("Payload to send:", dataToSend); // For debugging
-
-      await updateAdminProfile(profile.id, dataToSend);
+      await updateAdminProfile(profile.id, form);
       alert('Profile updated successfully!');
       if (onSave) onSave();
       onClose();
     } catch (error) {
       console.error('Error updating profile:', error);
-      if (error.response && error.response.data) {
-        console.error('Validation errors:', error.response.data);
-        alert('Validation errors: ' + JSON.stringify(error.response.data));
-      } else {
-        alert('Failed to update profile. Please try again.');
-      }
+      alert('Failed to update profile.');
     }
   };
 
@@ -191,8 +172,7 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
           className="p-6 space-y-6 max-h-[75vh] overflow-y-auto"
         >
 
-          {/* ================= BASIC INFORMATION (UNCHANGED) ================= */}
-         {/* Row 1 */}
+          {/* Row 1 */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <Field label="Staff ID">
               <input name="staffId" value={formData.staffId} onChange={handleChange} className="input" />
@@ -208,7 +188,6 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
                 <option>Radiologist</option>
                 <option>Accountant</option>
                 <option>Receptionist</option>
-
               </select>
             </Field>
 
@@ -216,7 +195,7 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
               <select name="designation" value={formData.designation} onChange={handleChange} className="input">
                 <option>Admin</option>
                 <option>Doctor</option>
-                 <option>IT Admin</option>
+                <option>IT Admin</option>
                 <option>Nurse</option>
                 <option>Pharmacist</option>
                 <option>Pathologist</option>
@@ -224,45 +203,42 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
                 <option>Accountant</option>
                 <option>Receptionist</option>
                 <option>Driver</option>
-
               </select>
             </Field>
 
             <Field label="Department">
-  <select
-    name="department"
-    value={formData.department}
-    onChange={handleChange}
-    className="input"
-  >
-    <option value="">Select</option>
-
-    <option value="OT">OT</option>
-    <option value="Doctor Department">Doctor Department</option>
-    <option value="Admin">Admin</option>
-    <option value="IPD Department">IPD Department</option>
-    <option value="OPD Department">OPD Department</option>
-    <option value="ICU">ICU</option>
-    <option value="Blood Bank Department">Blood Bank Department</option>
-    <option value="Pathology">Pathology</option>
-    <option value="Radiology">Radiology</option>
-    <option value="Pharmacy Department">Pharmacy Department</option>
-    <option value="Reception">Reception</option>
-    <option value="Human Resource">Human Resource</option>
-    <option value="Gynecology">Gynecology</option>
-    <option value="Finance">Finance</option>
-    <option value="Emergency Department">Emergency Department</option>
-    <option value="Cardiology">Cardiology</option>
-    <option value="BURN CARE">BURN CARE</option>
-    <option value="NICU">NICU</option>
-    <option value="Nursing Department">Nursing Department</option>
-  </select>
-</Field>
-
+              <select
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="">Select</option>
+                <option value="OT">OT</option>
+                <option value="Doctor Department">Doctor Department</option>
+                <option value="Admin">Admin</option>
+                <option value="IPD Department">IPD Department</option>
+                <option value="OPD Department">OPD Department</option>
+                <option value="ICU">ICU</option>
+                <option value="Blood Bank Department">Blood Bank Department</option>
+                <option value="Pathology">Pathology</option>
+                <option value="Radiology">Radiology</option>
+                <option value="Pharmacy Department">Pharmacy Department</option>
+                <option value="Reception">Reception</option>
+                <option value="Human Resource">Human Resource</option>
+                <option value="Gynecology">Gynecology</option>
+                <option value="Finance">Finance</option>
+                <option value="Emergency Department">Emergency Department</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="BURN CARE">BURN CARE</option>
+                <option value="NICU">NICU</option>
+                <option value="Nursing Department">Nursing Department</option>
+              </select>
+            </Field>
 
             <Field label="Specialist">
-              <select name="specialist" className="input">
-                <option>Select Specialist</option>
+              <select name="specialist" value={formData.specialist} onChange={handleChange} className="input">
+                <option value="">Select Specialist</option>
                 <option>Cardiology</option>
                 <option>Neurology</option>
                 <option>Urology</option>
@@ -300,7 +276,6 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
               <select name="gender" value={formData.gender} onChange={handleChange} className="input">
                 <option>Male</option>
                 <option>Female</option>
-             
               </select>
             </Field>
 
@@ -310,9 +285,8 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
                 <option>Married</option>
                 <option>Divorced</option>
                 <option>Widowed</option>
-                <option >Seprated</option>
+                <option>Seprated</option>
                 <option>No Seprated</option>
-
               </select>
             </Field>
 
@@ -322,7 +296,7 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
                 <option>A+</option>
                 <option>B+</option>
                 <option>AB+</option>
-                <option>O-</option> 
+                <option>O-</option>
               </select>
             </Field>
 
@@ -350,7 +324,7 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
             </Field>
 
             <Field label="Profile Photo">
-              <input type="file" className="input" />
+              <input type="file" onChange={handleImageChange} className="input" />
             </Field>
           </div>
 
@@ -404,7 +378,6 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
             <input name="referenceContact" value={formData.referenceContact} onChange={handleChange} className="input" />
           </Field>
 
-          
           {/* ================= ADD MORE DETAILS TOGGLE ================= */}
           <div
             onClick={() => setShowMoreDetails(!showMoreDetails)}

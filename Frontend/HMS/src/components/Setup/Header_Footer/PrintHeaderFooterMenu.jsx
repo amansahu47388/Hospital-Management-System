@@ -9,19 +9,13 @@ export default function PrintHeaderFooterMenu() {
     { label: "IPD Bill", path: "/admin/setup/ipd-bill-header-footer" },
     { label: "Bill Summary", path: "/admin/setup/bill-summary-header-footer" },
     { label: "Pharmacy Bill", path: "/admin/setup/pharmacy-bill-header-footer" },
-    { label: "Payslip", path: "/admin/setup/payslip-header-footer" },
-    { label: "Payment Receipt", path: "/admin/setup/payment-receipt-header-footer" },
     { label: "Birth Record", path: "/admin/setup/birth-record-header-footer" },
     { label: "Death Record", path: "/admin/setup/death-record-header-footer" },
     { label: "Pathology", path: "/admin/setup/pathology-header-footer" },
     { label: "Radiology", path: "/admin/setup/radiology-header-footer" },
     { label: "Operation", path: "/admin/setup/operation-header-footer" },
-    //{ label: "Blood Bank", path: "/admin/print/blood-bank" },
     { label: "Ambulance", path: "/admin/setup/ambulance-header-footer" },
     { label: "Discharge Card", path: "/admin/setup/discharge-card-header-footer" },
-    { label: "OPD Antenatal Finding", path: "/admin/setup/opd-antenatal-finding-header-footer" },
-    { label: "Obstetric History", path: "/admin/setup/obstetric-history-header-footer" },
-    { label: "IPD Antenatal Finding", path: "/admin/setup/ipd-antenatal-finding-header-footer" },
   ];
 
   return (

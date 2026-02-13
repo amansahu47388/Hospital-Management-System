@@ -1,7 +1,9 @@
-import { X } from "lucide-react";
 import { useState } from "react";
+import { X } from "lucide-react";
+import { changePassword } from "../../api/authApi";
 
 const ChangePasswordModal = ({ onClose }) => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -11,7 +13,7 @@ const ChangePasswordModal = ({ onClose }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -19,8 +21,17 @@ const ChangePasswordModal = ({ onClose }) => {
       return;
     }
 
-    console.log("Password Updated:", formData.password);
-    onClose();
+    try {
+      setLoading(true);
+      await changePassword({ password: formData.password });
+      alert("Password updated successfully!");
+      onClose();
+    } catch (error) {
+      console.error("Error changing password:", error);
+      alert("Failed to update password. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

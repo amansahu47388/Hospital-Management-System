@@ -1,16 +1,12 @@
-import { useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
-
 import ProfileHeader from "../../components/AdminComponent/ProfileHeader";
 import ProfileInfoGrid from "../../components/AdminComponent/ProfileInfoGrid";
-import ProfileTabs from "../../components/AdminComponent/ProfileTabs";
 import ProfileSection from "../../components/AdminComponent/ProfileSection";
 import ProfileRow from "../../components/AdminComponent/ProfileRow";
 import useAdminProfile from "../../hooks/useAdminProfile";
 
 const AdminProfile = () => {
   const { profile, loading, error, refreshProfile } = useAdminProfile();
-  const [activeTab, setActiveTab] = useState("Profile");
 
   if (loading) {
     return (
@@ -49,11 +45,6 @@ const AdminProfile = () => {
 
         <ProfileHeader profile={profile} refreshProfile={refreshProfile} />
         <ProfileInfoGrid profile={profile} />
-        <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {activeTab === "Profile" && (
-          <div className="space-y-6">
-
             <ProfileSection title="Personal Information">
               <ProfileRow label="Phone" value={profile.personal?.phone || 'N/A'} />
               <ProfileRow label="Emergency Contact" value={profile.personal?.emergencyPhone || 'N/A'} />
@@ -114,10 +105,6 @@ const AdminProfile = () => {
               <ProfileRow label="LinkedIn" value={profile.social?.linkedin || 'N/A'} />
               <ProfileRow label="Instagram" value={profile.social?.instagram || 'N/A'} />
             </ProfileSection>
-
-          </div>
-        )}
-
       </div>
 
     </AdminLayout>

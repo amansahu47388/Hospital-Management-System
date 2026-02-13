@@ -32,7 +32,7 @@ class LoginView(APIView):
 
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
-        user_data = UserSerializer(user).data
+        user_data = UserSerializer(user, context={'request': request}).data
 
         resp = Response({
             "access": str(access),
@@ -129,7 +129,7 @@ class RegisterUserView(APIView):
         access = refresh.access_token
 
         data = {
-            "user": UserSerializer(user).data,
+            "user": UserSerializer(user, context={'request': request}).data,
             "access": str(access),
             "refresh": str(refresh)
         }
@@ -178,7 +178,7 @@ class RegisterAdminView(APIView):
         try:
             refresh = RefreshToken.for_user(user)
             access = refresh.access_token
-            user_data = UserSerializer(user).data
+            user_data = UserSerializer(user, context={'request': request}).data
             
             data = {
                 "user": user_data,
@@ -206,3 +206,16 @@ class StaffList(APIView):
         users = User.objects.filter(is_staff=True)
         data = [{"id": u.id, "full_name": u.full_name} for u in users]
         return Response(data)
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        password = request.data.get("password")
+        if not password:
+            return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = request.user
+        user.set_password(password)
+        user.save()
+        return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)

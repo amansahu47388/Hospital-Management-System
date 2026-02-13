@@ -157,3 +157,14 @@ class VitalSerializer(serializers.ModelSerializer):
 
 # For backward compatibility with views using "VitalsSerializer"
 VitalsSerializer = VitalSerializer
+
+
+
+#***********************************************************************************#
+#                     HEADER SETUP SERIALIZERS                                       #
+#***********************************************************************************#
+
+class HeaderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Header
+        fields = "__all__"

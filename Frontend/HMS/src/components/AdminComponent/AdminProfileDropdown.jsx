@@ -21,7 +21,7 @@ export default function ProfileDropdown({ user, onLogout }) {
     <div className="relative" ref={dropdownRef}>
       {/* AVATAR */}
       <img
-        src={user.avatar || "/avatar.png"}
+        src={user.profile_picture || user.avatar || "/avatar.png"}
         alt="Profile"
         className="
           w-7 h-7 sm:w-8 sm:h-8 md:w-7 md:h-7
@@ -48,15 +48,15 @@ export default function ProfileDropdown({ user, onLogout }) {
           {/* HEADER */}
           <div className="flex items-center gap-3 p-4">
             <img
-              src={user.avatar || "/avatar.png"}
+              src={user.profile_picture || user.avatar || "/avatar.png"}
               alt="Profile"
               className="w-9 h-9 rounded-full object-cover"
             />
             <div className="min-w-0">
               <p className="font-semibold text-gray-800 truncate">
-                {user.name}
+                {user.full_name || user.name}
               </p>
-              <p className="text-sm text-gray-500 truncate">
+              <p className="text-sm text-gray-500 truncate capitalize">
                 {user.role}
               </p>
             </div>
@@ -66,16 +66,18 @@ export default function ProfileDropdown({ user, onLogout }) {
 
           {/* MENU */}
           <ul className="py-2 text-sm">
-            <li
-              className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
-              onClick={() => {
-                setOpen(false);
-                window.location.href = "/admin/profile";
-              }}
-            >
-              <User size={18} />
-              <span>Profile</span>
-            </li>
+            {user?.role?.toLowerCase() !== "patient" && (
+              <li
+                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
+                onClick={() => {
+                  setOpen(false);
+                  window.location.href = "/admin/profile";
+                }}
+              >
+                <User size={18} />
+                <span>Profile</span>
+              </li>
+            )}
 
             <li
               className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"

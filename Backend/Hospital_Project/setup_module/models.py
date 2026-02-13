@@ -169,3 +169,54 @@ class Vital(models.Model):
     
     def __str__(self):
         return self.vital_name
+
+
+
+
+#***********************************************************************************#
+#                       HEADER SETUP MODELS                                         #
+#***********************************************************************************#
+class Header(models.Model):
+    appointment_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    appointment_footer = models.TextField(blank=True, null=True)
+    
+    opd_prescription_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    opd_prescription_footer = models.TextField(blank=True, null=True)
+    
+    ipd_prescription_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    ipd_prescription_footer = models.TextField(blank=True, null=True)
+    
+    opd_bill_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    opd_bill_footer = models.TextField(blank=True, null=True)
+    
+    ipd_bill_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    ipd_bill_footer = models.TextField(blank=True, null=True)
+    
+    pharmacy_bill_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    pharmacy_bill_footer = models.TextField(blank=True, null=True)
+    
+    pathology_bill_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    pathology_bill_footer = models.TextField(blank=True, null=True)
+    
+    radiology_bill_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    radiology_bill_footer = models.TextField(blank=True, null=True)
+    
+    ambulance_bill_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    ambulance_bill_footer = models.TextField(blank=True, null=True)
+    
+    bill_summary_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    bill_summary_footer = models.TextField(blank=True, null=True)
+    
+    operation_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    operation_footer = models.TextField(blank=True, null=True)
+    
+    birth_record_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    birth_record_footer = models.TextField(blank=True, null=True)
+    
+    death_record_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    death_record_footer = models.TextField(blank=True, null=True)
+    
+    patient_discharge_header = models.ImageField(upload_to='header_images/', blank=True, null=True)
+    patient_discharge_footer = models.TextField(blank=True, null=True)
+
+

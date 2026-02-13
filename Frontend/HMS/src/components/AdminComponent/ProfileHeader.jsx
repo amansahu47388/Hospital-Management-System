@@ -48,7 +48,7 @@ const ProfileHeader = ({ profile, refreshProfile }) => {
         </div>
 
         {/* Right */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-4 md:mt-0 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-6 mt-4 md:mt-0 text-sm">
           <div>
             <p className="text-gray-500">Staff ID</p>
             <p className="font-medium">{profile.staffId}</p>
@@ -57,16 +57,6 @@ const ProfileHeader = ({ profile, refreshProfile }) => {
           <div>
             <p className="text-gray-500">Designation</p>
             <p className="font-medium">{profile.designation}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-500">Barcode</p>
-            <div className="h-8 bg-gray-200 rounded"></div>
-          </div>
-
-          <div>
-            <p className="text-gray-500">QR Code</p>
-            <div className="h-8 w-8 bg-gray-200 rounded"></div>
           </div>
         </div>
       </div>
