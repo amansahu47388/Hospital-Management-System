@@ -173,26 +173,6 @@ export default function OpdPatient() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="border px-3 py-2 rounded w-full lg:w-64"
               />
-
-              {/* Actions */}
-              <div className="flex flex-wrap gap-3 items-center justify-between lg:justify-end">
-                <select
-                  value={limit}
-                  onChange={(e) => setLimit(e.target.value)}
-                  className="border px-2 py-2 rounded text-sm"
-                >
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-
-                <div className="flex gap-2">
-                  <FileText size={18} className="cursor-pointer text-gray-600" />
-                  <FileSpreadsheet size={18} className="cursor-pointer text-gray-600" />
-                  <File size={18} className="cursor-pointer text-gray-600" />
-                  <Printer size={18} className="cursor-pointer text-gray-600" />
-                </div>
-              </div>
             </div>
 
             {/* TABLE */}

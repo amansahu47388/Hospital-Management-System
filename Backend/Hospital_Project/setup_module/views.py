@@ -594,8 +594,42 @@ class VitalAPI(APIView):
 
 
 
+#***********************************************************************************#
+#                      HEADER SETUP APIVIEW                                     #
+#***********************************************************************************#
 
+class HeaderAPI(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, pk=None):
+        if pk:
+            obj = get_object_or_404(Header, pk=pk)
+            serializer = HeaderSerializer(obj, context={'request': request})
+            return Response(serializer.data)
+
+        queryset = Header.objects.all().order_by("id")
+        serializer = HeaderSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = HeaderSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        obj = get_object_or_404(Header, pk=pk)
+        serializer = HeaderSerializer(obj, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        obj = get_object_or_404(Header, pk=pk)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
@@ -626,20 +660,6 @@ class HospitalChargesListAPIView(APIView):
         )
 
 
-# class BedListAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         status_filter = request.query_params.get('status')
-#         beds_qs = Bed.objects.all()
-        
-#         if status_filter:
-#             beds_qs = beds_qs.filter(status=status_filter)
-            
-#         data = list(beds_qs.values("id", "bed_name", "bed_type", "bed_group", "status", "floor"))
-#         return Response(data)
-
-
 class ChargeCategoryListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -652,3 +672,4 @@ class ChargeCategoryListAPIView(APIView):
 
 
     
+

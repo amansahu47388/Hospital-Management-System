@@ -13,10 +13,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("refresh/", RefreshTokenView.as_view(), name="refresh"),
     path("register/", RegisterUserView.as_view(), name="register"),  # user register
-    path(
-        "register/admin/",
-        RegisterAdminView.as_view(),
-        name="register_admin",
-    ),  # admin register
+    path("register/admin/", RegisterAdminView.as_view(), name="register_admin"),  # admin register
+    path("change-password/", ChangePasswordView.as_view(), name="change_password"),
     path("", include(router.urls)),
 ]

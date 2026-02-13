@@ -1,17 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
+import { getHeaders, createHeader, updateHeader } from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
 
-// already existing components (DO NOT recreate)
+// already existing components
 import PrintHeaderFooterMenu from "../../../components/Setup/Header_Footer/PrintHeaderFooterMenu";
 import FooterContentEditor from "../../../components/Setup/Header_Footer/FooterContentEditor";
 
 export default function OpdPrescriptionHeaderFooter() {
-  const [headerImage, setHeaderImage] = useState("/uploads/printing/1.jpg");
+  const notify = useNotify();
+  const [headerId, setHeaderId] = useState(null);
+  const [preview, setPreview] = useState("/uploads/printing/1.jpg");
+  const [headerFile, setHeaderFile] = useState(null);
+  const [footerContent, setFooterContent] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchHeaderData = async () => {
+      try {
+        const response = await getHeaders();
+        if (response.data && response.data.length > 0) {
+          const data = response.data[0];
+          setHeaderId(data.id);
+          if (data.opd_prescription_header) {
+            setPreview(data.opd_prescription_header);
+          }
+          if (data.opd_prescription_footer) {
+            setFooterContent(data.opd_prescription_footer);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching header data:", error);
+      }
+    };
+    fetchHeaderData();
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setHeaderImage(URL.createObjectURL(file));
+      setHeaderFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      if (headerFile) {
+        formData.append("opd_prescription_header", headerFile);
+      }
+      formData.append("opd_prescription_footer", footerContent);
+
+      if (headerId) {
+        await updateHeader(headerId, formData);
+        notify("success", "OPD Prescription Header & Footer updated successfully");
+      } else {
+        const response = await createHeader(formData);
+        setHeaderId(response.data.id);
+        notify("success", "OPD Prescription Header & Footer created successfully");
+      }
+    } catch (error) {
+      console.error("Error saving header data:", error);
+      notify("error", "Failed to save OPD Prescription Header & Footer");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -19,17 +73,15 @@ export default function OpdPrescriptionHeaderFooter() {
     <AdminLayout>
       <div className="min-h-screen p-1 ">
 
-        {/* MAIN CARD */}
         <div className="bg-white rounded-md p-4">
 
-          {/* PAGE TITLE */}
           <h2 className="text-lg font-semibold mb-4 border-b pb-2">
             OPD Prescription Header Footer
           </h2>
 
           <div className="flex flex-col lg:flex-row gap-4">
 
-            {/* LEFT SIDEBAR */}
+            {/* LEFT MENU */}
             <div className="w-full lg:w-64">
               <PrintHeaderFooterMenu />
             </div>
@@ -37,62 +89,43 @@ export default function OpdPrescriptionHeaderFooter() {
             {/* RIGHT CONTENT */}
             <div className="flex-1 space-y-6">
 
-              {/* HEADER IMAGE INPUT (APPOINTMENT STYLE) */}
-              <div className="border rounded-md">
-
-                <div className="px-4 py-2 border-b bg-gray-50">
-                  <p className="text-sm font-medium">
-                    Header Image (2230px X 300px)
-                  </p>
-                </div>
-
-                <div className="p-4 space-y-3">
-
-                  {/* FILE INPUT */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="block w-full text-sm
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded-md file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-gradient-to-b file:from-[#6046B5] file:to-[#8A63D2]
-                      file:text-white
-                      hover:file:opacity-90"
+              {/* HEADER IMAGE INPUT */}
+              <div className="space-y-2">
+                {/* PREVIEW */}
+                <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
+                  <img
+                    src={preview}
+                    alt="Header Preview"
+                    className="w-full h-[140px] md:h-[180px] object-contain"
                   />
-
-                  {/* IMAGE PREVIEW */}
-                  <div className="border rounded-md h-[180px] flex items-center justify-center bg-white">
-                    <img
-                      src={headerImage}
-                      alt="Header Preview"
-                      className="max-h-full object-contain"
-                    />
-                  </div>
-
                 </div>
-              </div>
 
-              {/* FOOTER CONTENT EDITOR */}
-              <div>
-               
-                <FooterContentEditor
-                  defaultValue="This invoice is printed electronically, so no signature is required"
+                {/* FILE INPUT */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="block w-full text-sm text-gray-600
+                    file:mr-3 file:py-1.5 file:px-3
+                    file:rounded file:border-0
+                    file:text-sm file:font-medium
+                    file:bg-gray-100 file:text-gray-700
+                    hover:file:bg-gray-200 "
                 />
+
+                {/* FILE PATH */}
+                <p className="text-xs text-blue-600">
+                  {headerFile ? headerFile.name : (preview.includes('blob') ? 'New upload' : preview)}
+                </p>
               </div>
 
-              {/* SAVE BUTTON */}
-              <div className="flex justify-end">
-                <button
-                  className="flex items-center gap-2
-                  bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-                  text-white px-6 py-2 rounded-md"
-                >
-                  ✔ Save
-                </button>
-              </div>
-
+              {/* FOOTER CONTENT */}
+              <FooterContentEditor
+                footerContent={footerContent}
+                setFooterContent={setFooterContent}
+                handleSave={handleSave}
+                loading={loading}
+              />
             </div>
           </div>
 

@@ -2,9 +2,16 @@ import logging
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.db.models.functions import ExtractYear
 from .models import *
 from .serializers import *
+
+from opd_ipd_module.models import OpdPatient, IpdPatient, Prescription
+from pharmacy_module.models import PharmacyBill
+from pathology_module.models import PathologyBill
+from radiology_module.models import RadiologyBill
+from ambulance_module.models import AmbulanceBill
 
 logger = logging.getLogger(__name__)
 
@@ -660,3 +667,104 @@ class PatientPaymentView(APIView):
         payment.is_active = False
         payment.save()
         return Response({"detail": "Payment deleted successfully"}, status=status.HTTP_200_OK)
+
+
+class PatientDashboardView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, patient_id):
+        try:
+            logger.info(f"📊 Fetching dashboard data for patient {patient_id}")
+            
+            # 1. Stats Grid
+            stats = [
+                {"label": "OPD", "count": OpdPatient.objects.filter(patient_id=patient_id).count()},
+                {"label": "IPD", "count": IpdPatient.objects.filter(patient_id=patient_id).count()},
+                {"label": "Pharmacy", "count": PharmacyBill.objects.filter(patient_id=patient_id).count()},
+                {"label": "Pathology", "count": PathologyBill.objects.filter(patient_id=patient_id).count()},
+                {"label": "Radiology", "count": RadiologyBill.objects.filter(patient_id=patient_id).count()},
+                {"label": "Consultation", "count": PatientConsultant.objects.filter(patient_id=patient_id).count()},
+                {"label": "Ambulance", "count": AmbulanceBill.objects.filter(patient_id=patient_id).count()},
+            ]
+
+            # 2. Medical History (Yearly counts)
+            years = set()
+            models_to_check = [
+                OpdPatient, IpdPatient, PharmacyBill, 
+                PathologyBill, RadiologyBill, 
+                PatientConsultant, AmbulanceBill
+            ]
+            
+            for model in models_to_check:
+                model_years = model.objects.filter(patient_id=patient_id).annotate(
+                    year=ExtractYear('created_at')
+                ).values_list('year', flat=True).distinct()
+                years.update([y for y in model_years if y])
+            
+            history = []
+            for year in sorted(list(years)):
+                history.append({
+                    "year": str(int(year)),
+                    "OPD": OpdPatient.objects.filter(patient_id=patient_id, created_at__year=year).count(),
+                    "IPD": IpdPatient.objects.filter(patient_id=patient_id, created_at__year=year).count(),
+                    "Pharmacy": PharmacyBill.objects.filter(patient_id=patient_id, created_at__year=year).count(),
+                    "Pathology": PathologyBill.objects.filter(patient_id=patient_id, created_at__year=year).count(),
+                    "Radiology": RadiologyBill.objects.filter(patient_id=patient_id, created_at__year=year).count(),
+                    "Consultation": PatientConsultant.objects.filter(patient_id=patient_id, created_at__year=year).count(),
+                    "Ambulance": AmbulanceBill.objects.filter(patient_id=patient_id, created_at__year=year).count(),
+                })
+
+            # 3. Top 10 Findings
+            findings = Prescription.objects.filter(
+                patient_id=patient_id, 
+                findings__isnull=False
+            ).values('findings__finding_name').annotate(
+                value=Count('findings')
+            ).order_by('-value')[:10]
+            
+            COLORS = ["#2D6A4F", "#34A0A4", "#D4A373", "#6A4C93", "#4CAF50", "#F4A261", "#E9C46A", "#E63946", "#26648E", "#4FB0C6"]
+            
+            findings_data = [
+                {
+                    "name": f['findings__finding_name'], 
+                    "value": f['value'],
+                    "fill": COLORS[i % len(COLORS)]
+                } for i, f in enumerate(findings)
+            ]
+
+            # 4. Top 10 Symptoms
+            opd_symptoms = OpdPatient.objects.filter(
+                patient_id=patient_id, 
+                symptom__isnull=False
+            ).values('symptom__symptom_title').annotate(value=Count('symptom'))
+            
+            ipd_symptoms = IpdPatient.objects.filter(
+                patient_id=patient_id, 
+                symptom__isnull=False
+            ).values('symptom__symptom_title').annotate(value=Count('symptom'))
+            
+            symptoms_map = {}
+            for s in opd_symptoms:
+                title = s['symptom__symptom_title']
+                symptoms_map[title] = symptoms_map.get(title, 0) + s['value']
+            for s in ipd_symptoms:
+                title = s['symptom__symptom_title']
+                symptoms_map[title] = symptoms_map.get(title, 0) + s['value']
+            
+            symptoms_data = sorted(
+                [{"name": k, "value": v} for k, v in symptoms_map.items()], 
+                key=lambda x: x['value'], 
+                reverse=True
+            )[:10]
+
+            logger.info("✅ Dashboard data fetched successfully")
+            return Response({
+                "stats": stats,
+                "history": history,
+                "findings": findings_data,
+                "symptoms": symptoms_data
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"❌ Error fetching dashboard data: {str(e)}", exc_info=True)
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

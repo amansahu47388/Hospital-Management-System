@@ -1,17 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../../layout/AdminLayout";
+import { getHeaders, createHeader, updateHeader } from "../../../api/setupApi";
+import { useNotify } from "../../../context/NotificationContext";
 
 // already existing components
 import PrintHeaderFooterMenu from "../../../components/Setup/Header_Footer/PrintHeaderFooterMenu";
 import FooterContentEditor from "../../../components/Setup/Header_Footer/FooterContentEditor";
 
 export default function IpdPrescriptionHeaderFooter() {
+  const notify = useNotify();
+  const [headerId, setHeaderId] = useState(null);
   const [preview, setPreview] = useState("/uploads/printing/3.jpg");
+  const [headerFile, setHeaderFile] = useState(null);
+  const [footerContent, setFooterContent] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchHeaderData = async () => {
+      try {
+        const response = await getHeaders();
+        if (response.data && response.data.length > 0) {
+          const data = response.data[0];
+          setHeaderId(data.id);
+          if (data.ipd_prescription_header) {
+            setPreview(data.ipd_prescription_header);
+          }
+          if (data.ipd_prescription_footer) {
+            setFooterContent(data.ipd_prescription_footer);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching header data:", error);
+      }
+    };
+    fetchHeaderData();
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setHeaderFile(file);
       setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      if (headerFile) {
+        formData.append("ipd_prescription_header", headerFile);
+      }
+      formData.append("ipd_prescription_footer", footerContent);
+
+      if (headerId) {
+        await updateHeader(headerId, formData);
+        notify("success", "IPD Prescription Header & Footer updated successfully");
+      } else {
+        const response = await createHeader(formData);
+        setHeaderId(response.data.id);
+        notify("success", "IPD Prescription Header & Footer created successfully");
+      }
+    } catch (error) {
+      console.error("Error saving header data:", error);
+      notify("error", "Failed to save IPD Prescription Header & Footer");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,12 +91,8 @@ export default function IpdPrescriptionHeaderFooter() {
 
               {/* HEADER IMAGE INPUT */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium">
-                  Header Image (2230px X 300px)
-                </label>
-
                 {/* PREVIEW */}
-                <div className="border rounded-md overflow-hidden bg-white">
+                <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
                   <img
                     src={preview}
                     alt="Header Preview"
@@ -61,35 +111,21 @@ export default function IpdPrescriptionHeaderFooter() {
                     file:text-sm file:font-medium
                     file:bg-gray-100 file:text-gray-700
                     hover:file:bg-gray-200 "
-                  
                 />
 
                 {/* FILE PATH */}
                 <p className="text-xs text-blue-600">
-                  uploads/printing/3.jpg
+                  {headerFile ? headerFile.name : (preview.includes('blob') ? 'New upload' : preview)}
                 </p>
               </div>
 
               {/* FOOTER CONTENT */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Footer Content
-                </label>
-
-                <FooterContentEditor
-                  defaultValue="This invoice is printed electronically, so no signature is required"
-                />
-              </div>
-
-              {/* SAVE */}
-              <div className="flex justify-end">
-                <button
-                  className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-                  text-white px-6 py-2 rounded-md"
-                >
-                  ✔ Save
-                </button>
-              </div>
+              <FooterContentEditor
+                footerContent={footerContent}
+                setFooterContent={setFooterContent}
+                handleSave={handleSave}
+                loading={loading}
+              />
 
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   Bold,
   Italic,
@@ -18,54 +18,77 @@ import {
   X
 } from "lucide-react";
 
-export default function FooterContentEditor({ footerContent, setFooterContent, handleSave }) {
+export default function FooterContentEditor({ footerContent, setFooterContent, handleSave, loading }) {
   const editorRef = useRef(null);
   const [selectedFormat, setSelectedFormat] = useState("normal");
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [linkText, setLinkText] = useState("");
 
-  const execCommand = (cmd, value = null) => {
-    document.execCommand(cmd, false, value);
-    // Update state after command
+  // Fix: Sync external content (initial load) to editor, but avoid cursor jumps during typing
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== footerContent) {
+      editorRef.current.innerHTML = footerContent || "";
+    }
+  }, [footerContent]);
+
+  // Ensure consistent formatting behavior across browsers
+  useEffect(() => {
     if (editorRef.current) {
-      setFooterContent(editorRef.current.innerHTML);
+      document.execCommand('styleWithCSS', false, false);
+      document.execCommand('defaultParagraphSeparator', false, 'p');
+    }
+  }, []);
+
+  const execCommand = (cmd, value = null) => {
+    if (!editorRef.current) return;
+
+    editorRef.current.focus();
+
+    // Use a small timeout for certain commands to ensure browser handles selection correctly
+    // especially when triggered from dropdowns or async events
+    const applyCommand = () => {
+      document.execCommand(cmd, false, value);
+      handleEditorInput();
+    };
+
+    if (cmd === 'formatBlock') {
+      applyCommand();
+    } else {
+      applyCommand();
     }
   };
 
   const handleEditorInput = () => {
     if (editorRef.current) {
+      // Direct call to set state without dangerouslySetInnerHTML re-render jump
       setFooterContent(editorRef.current.innerHTML);
     }
   };
 
   const handleFormatChange = (format) => {
     setSelectedFormat(format);
+    if (!editorRef.current) return;
+
+    // Refocus the editor to ensure command applies to correct selection
+    editorRef.current.focus();
+
+    let tag = 'p';
     switch (format) {
-      case 'normal':
-        execCommand('formatBlock', 'p');
-        break;
-      case 'h1':
-        execCommand('formatBlock', 'h1');
-        break;
-      case 'h2':
-        execCommand('formatBlock', 'h2');
-        break;
-      case 'h3':
-        execCommand('formatBlock', 'h3');
-        break;
-      case 'h4':
-        execCommand('formatBlock', 'h4');
-        break;
-      case 'h5':
-        execCommand('formatBlock', 'h5');
-        break;
-      case 'h6':
-        execCommand('formatBlock', 'h6');
-        break;
-      default:
-        break;
+      case 'h1': tag = 'h1'; break;
+      case 'h2': tag = 'h2'; break;
+      case 'h3': tag = 'h3'; break;
+      case 'h4': tag = 'h4'; break;
+      case 'h5': tag = 'h5'; break;
+      case 'h6': tag = 'h6'; break;
+      default: tag = 'p'; break;
     }
+
+    // Use the most compatible way to apply block formatting
+    document.execCommand('formatBlock', false, tag);
+
+    // Sync state
+    handleEditorInput();
   };
 
   const handleInsertLink = () => {
@@ -114,7 +137,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Bold */}
         <button
-          onClick={() => execCommand("bold")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("bold"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Bold"
         >
@@ -123,7 +146,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Italic */}
         <button
-          onClick={() => execCommand("italic")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("italic"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Italic"
         >
@@ -132,29 +155,35 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Underline */}
         <button
-          onClick={() => execCommand("underline")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("underline"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Underline"
         >
           <Underline size={18} className="text-gray-700" />
         </button>
 
-        <div className="w-px h-6 bg-gray-300"></div>
-
-        {/* Small Text */}
-        <button
-          onClick={() => execCommand("fontSize", "2")}
-          className="px-2 py-1 text-xs border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors font-medium"
-          title="Small"
+        {/* Font Size Dropdown */}
+        <select
+          onChange={(e) => execCommand("fontSize", e.target.value)}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-[110px]"
+          title="Font Size"
         >
-          Small
-        </button>
+          <option value="3">Font Size</option>
+          <option value="1">Tiny</option>
+          <option value="2">Small</option>
+          <option value="3">Normal</option>
+          <option value="4">Large</option>
+          <option value="5">Extra Large</option>
+          <option value="6">Huge</option>
+          <option value="7">Giant</option>
+        </select>
 
         <div className="w-px h-6 bg-gray-300"></div>
 
         {/* Quote */}
         <button
-          onClick={() => execCommand("formatBlock", "blockquote")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("formatBlock", "blockquote"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Quote"
         >
@@ -165,7 +194,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Bullet List */}
         <button
-          onClick={() => execCommand("insertUnorderedList")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("insertUnorderedList"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Bullet List"
         >
@@ -174,7 +203,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Numbered List */}
         <button
-          onClick={() => execCommand("insertOrderedList")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("insertOrderedList"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Numbered List"
         >
@@ -185,7 +214,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Indent Decrease */}
         <button
-          onClick={() => execCommand("outdent")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("outdent"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Decrease Indent"
         >
@@ -194,7 +223,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Indent Increase */}
         <button
-          onClick={() => execCommand("indent")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("indent"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Increase Indent"
         >
@@ -205,7 +234,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Align Left */}
         <button
-          onClick={() => execCommand("justifyLeft")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("justifyLeft"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Align Left"
         >
@@ -214,7 +243,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Align Center */}
         <button
-          onClick={() => execCommand("justifyCenter")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("justifyCenter"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Align Center"
         >
@@ -223,7 +252,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Align Right */}
         <button
-          onClick={() => execCommand("justifyRight")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("justifyRight"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Align Right"
         >
@@ -232,7 +261,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Align Justify */}
         <button
-          onClick={() => execCommand("justifyFull")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("justifyFull"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Justify"
         >
@@ -243,7 +272,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Clear Formatting */}
         <button
-          onClick={() => execCommand("removeFormat")}
+          onMouseDown={(e) => { e.preventDefault(); execCommand("removeFormat"); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Clear Formatting"
         >
@@ -254,7 +283,7 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
 
         {/* Insert Link */}
         <button
-          onClick={() => setShowLinkModal(true)}
+          onMouseDown={(e) => { e.preventDefault(); setShowLinkModal(true); }}
           className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 transition-colors"
           title="Insert Link"
         >
@@ -270,11 +299,56 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
         className="
           border border-gray-300 rounded p-4 min-h-[250px] bg-white
           focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500
-          text-gray-800 leading-relaxed
+          text-gray-800 leading-relaxed edit-content-area
         "
-        style={{ fontFamily: 'Arial, sans-serif', fontSize: '14px' }}
-        dangerouslySetInnerHTML={{ __html: footerContent }}
+        style={{
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '14px',
+          outline: 'none'
+        }}
       ></div>
+
+      <style>
+        {`
+          .edit-content-area p {
+            margin-bottom: 1rem !important;
+            display: block !important;
+          }
+          .edit-content-area ul {
+            list-style-type: disc !important;
+            padding-left: 2rem !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+          }
+          .edit-content-area ol {
+            list-style-type: decimal !important;
+            padding-left: 2rem !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+          }
+          .edit-content-area li {
+            display: list-item !important;
+          }
+          .edit-content-area h1 { font-size: 2.25rem; font-weight: 800 !important; display: block !important; margin: 0.5rem 0 !important; line-height: 1.2 !important; }
+          .edit-content-area h2 { font-size: 1.875rem; font-weight: 700 !important; display: block !important; margin: 0.5rem 0 !important; line-height: 1.3 !important; }
+          .edit-content-area h3 { font-size: 1.5rem; font-weight: 600 !important; display: block !important; margin: 0.5rem 0 !important; line-height: 1.4 !important; }
+          .edit-content-area h4 { font-size: 1.25rem; font-weight: 600 !important; display: block !important; margin: 0.5rem 0 !important; }
+          .edit-content-area h5 { font-size: 1.125rem; font-weight: 600 !important; display: block !important; margin: 0.5rem 0 !important; }
+          .edit-content-area h6 { font-size: 1rem; font-weight: 600 !important; display: block !important; margin: 0.5rem 0 !important; }
+          
+          /* Font size mappings for document.execCommand('fontSize') */
+          .edit-content-area font[size="1"] { font-size: 10px; }
+          .edit-content-area font[size="2"] { font-size: 13px; }
+          .edit-content-area font[size="3"] { font-size: 16px; }
+          .edit-content-area font[size="4"] { font-size: 18px; }
+          .edit-content-area font[size="5"] { font-size: 24px; }
+          .edit-content-area font[size="6"] { font-size: 32px; }
+          .edit-content-area font[size="7"] { font-size: 48px; }
+          .edit-content-area blockquote { border-left: 4px solid #e5e7eb !important; padding-left: 1rem !important; color: #4b5563 !important; font-style: italic !important; margin: 1rem 0 !important; }
+        `}
+      </style>
 
       {/* INSERT LINK MODAL */}
       {showLinkModal && (
@@ -353,14 +427,24 @@ export default function FooterContentEditor({ footerContent, setFooterContent, h
       <div className="flex justify-end mt-4">
         <button
           onClick={handleSave}
+          disabled={loading}
           className="
             flex items-center gap-2 px-5 py-2.5 rounded text-white text-sm font-medium
             bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-            transition-colors duration-200 shadow-sm
+            transition-colors duration-200 shadow-sm disabled:opacity-70
           "
         >
-          <Save size={16} />
-          Save
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              Saving...
+            </span>
+          ) : (
+            <>
+              <Save size={16} />
+              Save
+            </>
+          )}
         </button>
       </div>
     </>

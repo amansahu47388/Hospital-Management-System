@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/CommonComponent/Sidebar";
-import Navbar from "../components/AdminComponent/Navbar";
+import PatientNavbar from "../components/Patient_module/PatientNavbar";
 import { useAuth } from "../context/AuthContext";
 
 const PatientLayout = ({ children }) => {
@@ -25,7 +25,7 @@ const PatientLayout = ({ children }) => {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
-                <Navbar role="patient" />
+                <PatientNavbar />
                 <div className="flex-1 overflow-y-auto p-4 md:p-6">
                     {children}
                 </div>

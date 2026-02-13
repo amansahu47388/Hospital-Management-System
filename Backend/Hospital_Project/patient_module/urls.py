@@ -38,4 +38,7 @@ urlpatterns = [
     # Patient Payment URLs
     path('patients/<int:patient_id>/payments/', PatientPaymentView.as_view(), name='patient-payment-list-create'),
     path('patients/<int:patient_id>/payments/<int:pk>/', PatientPaymentView.as_view(), name='patient-payment-detail'),
+
+    # Dashboard URL
+    path('patients/<int:patient_id>/dashboard/', PatientDashboardView.as_view(), name='patient-dashboard'),
 ]

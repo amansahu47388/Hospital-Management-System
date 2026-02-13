@@ -272,4 +272,24 @@ export const updateFindingCategory = (id, data) => {
 
 export const deleteFindingCategory = (id) => {
   return api.delete(`setup/finding-categories/${id}/delete/`);
-};  
+};
+
+// ***************************************************************************** //
+//                              HEADER SETUP API                                //
+// ******************************************************************************//
+
+export const getHeaders = () => {
+  return api.get("setup/headers/");
+};
+
+export const createHeader = (data) => {
+  return api.post("setup/headers/create/", data);
+};
+
+export const updateHeader = (id, data) => {
+  return api.put(`setup/headers/${id}/update/`, data);
+};
+
+export const deleteHeader = (id) => {
+  return api.delete(`setup/headers/${id}/delete/`);
+};

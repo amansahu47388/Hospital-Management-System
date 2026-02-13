@@ -111,14 +111,18 @@ urlpatterns = [
     path("finding-categories/<int:pk>/delete/", FindingCategoryAPI.as_view(), name="finding-categories-delete"),
 
 
-
-
-
-
-
-
     path("charges/", HospitalChargesListAPIView.as_view(), name="hospital-charges-list"),
     path("symptoms/", SymptomListAPIView.as_view(), name="symptom-list"),
     # path("beds/", BedListAPIView.as_view(), name="bed-list"),
+
+
+#***********************************************************************************#
+#                            HEADER SETUP ROUTES                                    #
+#***********************************************************************************#
+
+    path("headers/", HeaderAPI.as_view(), name="headers-list"),
+    path("headers/create/", HeaderAPI.as_view(), name="headers-create"),
+    path("headers/<int:pk>/update/", HeaderAPI.as_view(), name="headers-update"),
+    path("headers/<int:pk>/delete/", HeaderAPI.as_view(), name="headers-delete"),
     
 ]

@@ -79,3 +79,6 @@ export const getUsers = () => {
 export const getStaffList = () => {
   return API.get("/auth/staff/");
 }
+
+export const changePassword = (data) =>
+  API.post("/auth/change-password/", data);

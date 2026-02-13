@@ -176,6 +176,12 @@ export const updatePatientPayment = (patientId, paymentId, data) => {
 };
 
 // 🔹 Delete patient payment
-export const deletePatientPayment = (patientId, paymentId) => {
-  return api.delete(`patients/${patientId}/payments/${paymentId}/`);
+export const deletePatientPayment = (patient_id, paymentId) => {
+  return api.delete(`patients/${patient_id}/payments/${paymentId}/`);
+};
+
+
+// 🔹 Get patient dashboard statistics
+export const getPatientDashboard = (patientId) => {
+  return api.get(`patients/${patientId}/dashboard/`);
 };
