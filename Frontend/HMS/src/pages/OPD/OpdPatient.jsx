@@ -166,18 +166,53 @@ export default function OpdPatient() {
             {/* SEARCH + ACTIONS */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
               {/* Search */}
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="border px-3 py-2 rounded w-full lg:w-64"
-              />
+                              <input
+                    type="text"
+                    placeholder="Search..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="
+                      w-full lg:w-64
+                      px-3 py-2
+                      rounded-md
+                      bg-white
+                      border border-gray-200
+                      text-gray-800
+                      placeholder-gray-400
+                      hover:border-purple-400
+                      focus:outline-none
+                      focus:border-purple-400
+                      focus:ring-2
+                      focus:ring-purple-400/30
+                      transition
+                    "
+                  />
+
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-3 items-center justify-between lg:justify-end">
+                <select
+                  value={limit}
+                  onChange={(e) => setLimit(e.target.value)}
+                  className="border px-2 py-2 rounded text-sm"
+                >
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+
+                <div className="flex gap-2">
+                  <FileText size={18} className="cursor-pointer text-gray-600" />
+                  <FileSpreadsheet size={18} className="cursor-pointer text-gray-600" />
+                  <File size={18} className="cursor-pointer text-gray-600" />
+                  <Printer size={18} className="cursor-pointer text-gray-600" />
+                </div>
+              </div>
             </div>
 
             {/* TABLE */}
             <div className="overflow-x-auto thin-scrollbar">
-              <table className="min-w-full text-sm">
+              <table className="min-w-full text-sm ">
                 <thead className="bg-gray-200">
                   {activeTab === "patient" ? (
                     /* ================= PATIENT TABLE HEADER ================= */
@@ -224,7 +259,7 @@ export default function OpdPatient() {
                       </tr>
                     ) : (
                       filteredPatientList.slice(0, limit).map((patient) => (
-                        <tr key={patient.id} className="border-t">
+                        <tr key={patient.id} className="border-t  border-gray-200">
                           <td className="p-2">PTN{patient?.id}</td>
                           <td className="p-2 text-blue-600 cursor-pointer"
                             onClick={() => navigate(`/admin/patients/${patient.id}`)}>
@@ -249,7 +284,7 @@ export default function OpdPatient() {
                     )
                   ) : (
                     filteredOpdList.slice(0, limit).map((opd) => (
-                      <tr key={opd.opd_id} className="border-t">
+                      <tr key={opd.opd_id} className="border-t border-gray-200">
                         <td className="p-2">OPDN{opd.opd_id}</td>
                         <td
                           className="p-2 text-blue-600 cursor-pointer"
@@ -271,7 +306,7 @@ export default function OpdPatient() {
                         <td className="p-4">{opd.previous_medical_issue || "-"}</td>
                         <td className="p-4 flex gap-2">
                           <button
-                            className=" hover:text-blue-600 text-sm"
+                            className="p-1 rounded hover:bg-purple-100 text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="view"
                             onClick={() => {
                               setSelectedOpd(opd);
@@ -280,7 +315,7 @@ export default function OpdPatient() {
                           >
                             <Eye size={16} />
                           </button>
-                          <button className="cursor-pointer hover:opacity-80"
+                          <button className="p-1 rounded hover:bg-green-100 text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Update"
                             onClick={() => navigate(`/admin/opd-patients/${opd.opd_id}/update`)}>
                             <Pencil size={16} />
@@ -288,14 +323,14 @@ export default function OpdPatient() {
 
                           <button
                             title="Delete OPD"
-                            className={`cursor-pointer hover:opacity-80 ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            className={`p-1 rounded hover:bg-red-100 text-red-600 disabled:opacity-50 disabled:cursor-not-allowed ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
                             onClick={() => handleDelete(opd.opd_id)}
                             disabled={deleting}
                           >
                             <Trash2 size={16} />
                           </button>
                           <button
-                            className=" hover:text-blue-600 text-sm"
+                            className="p-1 rounded hover:bg-purple-100 text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Move in IPD"
                             onClick={() => {
                               setSelectedMovePatient(opd);

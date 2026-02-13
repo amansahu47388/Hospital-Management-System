@@ -174,7 +174,7 @@ export default function UpdateOpdPatient() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Symptoms Type</label>
                       <select
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.symptom_type}
                         onChange={(e) => {
                           setFormData(prev => ({
@@ -196,7 +196,7 @@ export default function UpdateOpdPatient() {
                       <label className="block text-sm font-medium mb-1">Symptoms Title</label>
 
                       <select
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.symptom}
                         onChange={(e) => {
                           const sym = symptoms.find(s => s.id === Number(e.target.value));
@@ -221,7 +221,7 @@ export default function UpdateOpdPatient() {
                     <div className="col-span-2">
                       <label className="block text-sm font-medium mb-1">Symptoms Description</label>
                       <textarea
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.symptom_description}
                         readOnly
                       />
@@ -232,7 +232,7 @@ export default function UpdateOpdPatient() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1">Any Known Allergies</label>
-                      <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <textarea className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         placeholder="Any Known Allergies"
                         value={formData.allergies}
                         onChange={(e) => setFormData(prev => ({ ...prev, allergies: e.target.value }))}
@@ -240,7 +240,7 @@ export default function UpdateOpdPatient() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Previous Medical Issue</label>
-                      <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
+                      <textarea className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
                         value={formData.previousIssue}
                         onChange={(e) => setFormData(prev => ({ ...prev, previous_medical_issue: e.target.value }))}
                       />
@@ -254,7 +254,7 @@ export default function UpdateOpdPatient() {
                     <label className="block text-sm font-medium mb-1">Appointment Date</label>
                     <input
                       type="datetime-local"
-                      className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                       value={formatDateTimeLocal(formData.appointment_date)}
                       onChange={(e) =>
                         setFormData(prev => ({
@@ -268,7 +268,7 @@ export default function UpdateOpdPatient() {
                     <label className="block text-sm font-medium mb-1">Case ID</label>
                     <input
                       type="text"
-                      className="w-full border border-gray-600 px-3 py-2 rounded text-sm bg-gray-100"
+                      className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm bg-gray-100"
                       value={formData.case_id}
                       readOnly
                     />
@@ -279,7 +279,7 @@ export default function UpdateOpdPatient() {
                       name="doctor"
                       value={formData.doctor}
                       onChange={handleInputChange}
-                      className="w-full border px-3 py-2 rounded"
+                      className="form-field w-full border px-3 py-2 rounded"
                       required
                     >
                       <option value="">Select Doctor</option>
@@ -294,7 +294,7 @@ export default function UpdateOpdPatient() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1">Casualty</label>
-                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <select className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.casualty}
                         onChange={(e) =>
                           setFormData(prev => ({
@@ -309,7 +309,7 @@ export default function UpdateOpdPatient() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Old Patient</label>
-                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <select className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.old_patient}
                         onChange={(e) =>
                           setFormData(prev => ({
@@ -325,7 +325,7 @@ export default function UpdateOpdPatient() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Reference</label>
-                    <input placeholder="Reference" className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                    <input placeholder="Reference" className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                       value={formData.reference}
                       onChange={(e) => setFormData(prev => ({ ...prev, reference: e.target.value }))}
                     />
@@ -336,7 +336,7 @@ export default function UpdateOpdPatient() {
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-sm font-medium mb-1">Payment Mode</label>
-                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <select className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.payment_mode}
                         onChange={handleInputChange}
                         name="payment_mode"
@@ -352,7 +352,7 @@ export default function UpdateOpdPatient() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Total Amount ($)</label>
-                      <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Total Amount ($)"
+                      <input type="number" className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Total Amount ($)"
                         value={formData.total_amount}
                         onChange={handleInputChange}
                         name="total_amount"
@@ -363,7 +363,7 @@ export default function UpdateOpdPatient() {
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-sm font-medium mb-1">Paid Amount ($)</label>
-                      <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Paid Amount ($)"
+                      <input type="number" className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Paid Amount ($)"
                         value={formData.paid_amount}
                         onChange={handleInputChange}
                         name="paid_amount"
