@@ -151,25 +151,14 @@ export default function PharmacyBillList() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="border px-3 py-2 rounded w-64"
+                className="border border-gray-300 px-3 py-2 
+                rounded w-64 focus:outline-none
+                 focus:ring-2 focus:ring-purple-400
+                 focus:border-purple-400
+                  transition-all duration-200"
               />
 
-              <div className="flex items-center gap-2">
-                <select
-                  value={limit}
-                  onChange={(e) => setLimit(e.target.value)}
-                  className="border px-2 py-1 rounded"
-                >
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-
-                <button className="border px-2 py-1 rounded">📄</button>
-                <button className="border px-2 py-1 rounded">📑</button>
-                <button className="border px-2 py-1 rounded">🖨</button>
-              </div>
+             
             </div>
           </div>
 

@@ -333,7 +333,7 @@ export default function AddOpd() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Symptoms Type</label>
                       <select
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.symptom_type}
                         onChange={(e) => {
                           setFormData(prev => ({
@@ -355,7 +355,7 @@ export default function AddOpd() {
                       <label className="block text-sm font-medium mb-1">Symptoms Title</label>
 
                       <select
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.symptom}
                         onChange={(e) => {
                           const sym = symptoms.find(s => s.id === Number(e.target.value));
@@ -380,7 +380,7 @@ export default function AddOpd() {
                     <div className="col-span-2">
                       <label className="block text-sm font-medium mb-1">Symptoms Description</label>
                       <textarea
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.symptom_description}
                         readOnly
                       />
@@ -391,7 +391,7 @@ export default function AddOpd() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1">Any Known Allergies</label>
-                      <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <textarea className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         placeholder="Any Known Allergies"
                         value={formData.allergies}
                         onChange={(e) => update("allergies", e.target.value)}
@@ -399,7 +399,7 @@ export default function AddOpd() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Previous Medical Issue</label>
-                      <textarea className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
+                      <textarea className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
                         value={formData.previousIssue}
                         onChange={(e) => update("previousIssue", e.target.value)}
                       />
@@ -413,7 +413,7 @@ export default function AddOpd() {
                     <label className="block text-sm font-medium mb-1">Appointment Date</label>
                     <input
                       type="datetime-local"
-                      className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                       value={formatDateTimeLocal(formData.appointment_date)}
                       onChange={(e) =>
                         setFormData(prev => ({
@@ -430,7 +430,7 @@ export default function AddOpd() {
                       name="doctor"
                       value={formData.doctor}
                       onChange={handleInputChange}
-                      className="w-full border px-3 py-2 rounded"
+                      className=" form-field w-full border px-3 py-2 rounded"
                       required
                     >
                       <option value="">Select Doctor</option>
@@ -445,7 +445,7 @@ export default function AddOpd() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1">Casualty</label>
-                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <select className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.casualty}
                         onChange={(e) =>
                           setFormData(prev => ({
@@ -460,7 +460,7 @@ export default function AddOpd() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Old Patient</label>
-                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <select className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.old_patient}
                         onChange={(e) =>
                           setFormData(prev => ({
@@ -476,7 +476,7 @@ export default function AddOpd() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Reference</label>
-                    <input placeholder="Reference" className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                    <input placeholder="Reference" className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                       value={formData.reference}
                       onChange={(e) => update("reference", e.target.value)}
                     />
@@ -486,7 +486,7 @@ export default function AddOpd() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Charge Category</label>
                       <select
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.charge_category}
                         onChange={(e) => {
                           setFormData(prev => ({
@@ -509,7 +509,7 @@ export default function AddOpd() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Charge name</label>
                       <select
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className=" form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.charge_id}
                         onChange={(e) => {
                           const charge = charges.find(c => c.id === Number(e.target.value));
@@ -542,14 +542,14 @@ export default function AddOpd() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1"> Charge Amount($)</label>
-                      <input type="number" disabled className="w-full border border-gray-600 px-3 py-2 rounded text-sm bg-gray-100"
+                      <input type="number" disabled className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm bg-gray-100"
                         value={formData.charge_amount}
                         onChange={(e) => update("charge_amount", e.target.value)}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Tax %</label>
-                      <input disabled type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm bg-gray-100" placeholder="Tax %"
+                      <input disabled type="number" className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm bg-gray-100" placeholder="Tax %"
                         value={formData.tax}
                         onChange={(e) => update("tax", e.target.value)}
                       />
@@ -559,7 +559,7 @@ export default function AddOpd() {
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-sm font-medium mb-1">Payment Mode</label>
-                      <select className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                      <select className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         value={formData.payment_mode}
                         onChange={handleInputChange}
                         name="payment_mode"
@@ -577,7 +577,7 @@ export default function AddOpd() {
                       <label className="block text-sm font-medium mb-1">Discount %</label>
                       <input
                         type="number"
-                        className="w-full border border-gray-600 px-3 py-2 rounded text-sm"
+                        className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm"
                         placeholder="Discount %"
                         value={formData.discount}
                         onChange={(e) => {
@@ -603,14 +603,14 @@ export default function AddOpd() {
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-sm font-medium mb-1">Total Amount ($)</label>
-                      <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Total Amount ($)"
+                      <input type="number" className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Total Amount ($)"
                         value={formData.total_amount}
                         onChange={(e) => update("total_amount", e.target.value)}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Paid Amount ($)</label>
-                      <input type="number" className="w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Paid Amount ($)"
+                      <input type="number" className="form-field w-full border border-gray-600 px-3 py-2 rounded text-sm" placeholder="Paid Amount ($)"
                         value={formData.paid_amount}
                         onChange={(e) => update("paid_amount", e.target.value)}
                       />
