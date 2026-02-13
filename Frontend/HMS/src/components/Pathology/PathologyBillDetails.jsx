@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Printer } from "lucide-react";
 import { getPathologyBillDetail } from "../../api/pathologyApi";
+import { getHeaders } from "../../api/setupApi";
+import { printReport } from "../../utils/printUtils";
 import { useNotify } from "../../context/NotificationContext";
 
 export default function PathologyBillDetails({ open, billId, onClose }) {
@@ -11,6 +13,21 @@ export default function PathologyBillDetails({ open, billId, onClose }) {
     items: [],
   });
   const [loading, setLoading] = useState(false);
+  const [headerData, setHeaderData] = useState(null);
+
+  useEffect(() => {
+    const fetchHeaders = async () => {
+      try {
+        const res = await getHeaders();
+        if (res.data && res.data.length > 0) {
+          setHeaderData(res.data[0]);
+        }
+      } catch (err) {
+        console.error("Error fetching pathology headers:", err);
+      }
+    };
+    fetchHeaders();
+  }, []);
 
   useEffect(() => {
     if (!open || !billId) return;
@@ -38,6 +55,85 @@ export default function PathologyBillDetails({ open, billId, onClose }) {
     fetchDetail();
   }, [open, billId, notify, onClose]);
 
+  const handlePrint = () => {
+    if (!bill) return;
+
+    const content = `
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+          <h2 style="margin:0; color:#6046B5; font-size:20px;">PATHOLOGY BILL</h2>
+          <div style="text-align:right; font-size:12px; font-weight:bold;">
+            <div>No: PBILL${bill.id}</div>
+            <div>Date: ${new Date(bill.created_at).toLocaleDateString()}</div>
+          </div>
+        </div>
+
+        <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+          <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${bill.patient_name || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Patient ID</span><span class="data-value">: PID${bill.patient || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Gender / Age</span><span class="data-value">: ${bill.patient_gender || "—"} / ${bill.patient_age ? bill.patient_age + 'Y' : "—"}</span></div>
+          <div class="data-item"><span class="data-label">Consultant Doctor</span><span class="data-value">: ${bill.doctor_name || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Blood Group</span><span class="data-value">: ${bill.patient_blood_group || "—"}</span></div>
+          <div class="data-item"><span class="data-label">Case ID</span><span class="data-value">: ${bill.case_id || "—"}</span></div>
+        </div>
+
+        <div class="report-section-title">Diagnostic Test Details</div>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Test Name</th>
+              <th>Report Date</th>
+              <th style="text-align:right">Price ($)</th>
+              <th style="text-align:right">Tax ($)</th>
+              <th style="text-align:right">Total ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${bill.items?.map((item, idx) => `
+              <tr>
+                <td>${idx + 1}</td>
+                <td style="font-weight:600">${item.test_name}</td>
+                <td>${item.report_date ? new Date(item.report_date).toLocaleDateString() : "—"}</td>
+                <td style="text-align:right">${Number(item.price || 0).toFixed(2)}</td>
+                <td style="text-align:right">${Number(item.tax || 0).toFixed(2)}</td>
+                <td style="text-align:right; font-weight:600">${(Number(item.price || 0) + Number(item.tax || 0)).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:30px;">
+          <div style="width:250px; font-size:13px; line-height:1.8;">
+            <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><span>$${Number(bill.subtotal || 0).toFixed(2)}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span>Total Tax</span><span>$${Number(bill.tax || 0).toFixed(2)}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span>Discount</span><span>$${Number(bill.discount || 0).toFixed(2)}</span></div>
+            <div style="display:flex; justify-content:space-between; font-weight:bold; border-top:1px solid #eee; margin-top:5px; padding-top:5px;"><span>Net Amount</span><span>$${Number(bill.total_amount || 0).toFixed(2)}</span></div>
+            <div style="display:flex; justify-content:space-between; color:green;"><span>Paid Amount</span><span>$${Number(bill.paid_amount || 0).toFixed(2)}</span></div>
+            <div style="display:flex; justify-content:space-between; font-weight:bold; color:red; border-top:1px dashed #ccc; margin-top:5px; padding-top:5px;"><span>Balance Due</span><span>$${Number(bill.balance || 0).toFixed(2)}</span></div>
+          </div>
+        </div>
+
+        <div class="signature-section">
+          <div class="sig-box">
+             <div style="font-size:11px; color:#888;">Generated By: ${bill.created_by_name || "—"}</div>
+            <div class="sig-line"></div>
+            <div class="sig-label">Pathologist Signature</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-label">Authorised Signatory</div>
+          </div>
+        </div>
+    `;
+
+    printReport({
+      title: `Pathology Bill - PBILL${bill.id}`,
+      headerImg: headerData?.pathology_bill_header,
+      footerText: headerData?.pathology_bill_footer,
+      content: content
+    });
+  };
+
   if (!open) return null;
 
   if (loading) {
@@ -51,14 +147,22 @@ export default function PathologyBillDetails({ open, billId, onClose }) {
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       {/* ================= HEADER ================= */}
-      <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 flex justify-between items-center">
+      <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 flex justify-between items-center no-print">
         <h2 className="font-semibold text-xl">Bill Details</h2>
         <div className="flex gap-3">
-          <X
-            size={18}
-            className="cursor-pointer"
+          <button
+            onClick={handlePrint}
+            className="hover:bg-white/10 p-1.5 rounded-lg transition-colors"
+            title="Print Bill"
+          >
+            <Printer size={20} />
+          </button>
+          <button
             onClick={onClose}
-          />
+            className="hover:bg-white/10 p-1.5 rounded-lg transition-colors"
+          >
+            <X size={20} />
+          </button>
         </div>
       </div>
 
@@ -95,8 +199,8 @@ export default function PathologyBillDetails({ open, billId, onClose }) {
             <Detail label="Tax ($)" value={bill.tax ? `$${Number(bill.tax).toFixed(2)}` : "-"} />
             <Detail label="Net Amount ($)" value={bill.total_amount ? `$${Number(bill.total_amount).toFixed(2)}` : "-"} bold />
             <Detail label="Paid Amount ($)" value={bill.paid_amount ? `$${Number(bill.paid_amount).toFixed(2)}` : "-"} />
-            <Detail 
-              label="Balance ($)" 
+            <Detail
+              label="Balance ($)"
               value={bill.balance !== null && bill.balance !== undefined ? `$${Number(bill.balance).toFixed(2)}` : "-"}
               className={bill.balance > 0 ? "text-red-600 font-semibold" : bill.balance === 0 ? "text-green-600 font-semibold" : ""}
             />
@@ -130,8 +234,8 @@ export default function PathologyBillDetails({ open, billId, onClose }) {
                       </Td>
                       <Td>{item.report_days ? `${item.report_days} days` : "-"}</Td>
                       <Td>
-                        {item.report_date 
-                          ? new Date(item.report_date).toLocaleDateString() 
+                        {item.report_date
+                          ? new Date(item.report_date).toLocaleDateString()
                           : "-"}
                       </Td>
                       <Td>${Number(item.price || 0).toFixed(2)}</Td>

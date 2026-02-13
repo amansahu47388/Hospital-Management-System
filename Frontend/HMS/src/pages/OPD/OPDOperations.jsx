@@ -13,6 +13,7 @@ import { getOpdPatientDetail } from "../../api/opdApi";
 import { getDoctors } from "../../api/appointmentApi";
 import { getOperationSetups, getHeaders } from "../../api/setupApi";
 import { useNotify } from "../../context/NotificationContext";
+import { printReport } from "../../utils/printUtils";
 
 
 
@@ -181,77 +182,62 @@ export default function OPDOperations() {
         : operationSetups;
 
     const handlePrint = () => {
-        const printWindow = window.open("", "_blank");
-        const headerImage = headerData?.operation_header || "";
-        const footerText = headerData?.operation_footer || "";
+        if (!selectedOperation) return;
 
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>Operation Report - OTREF${selectedOperation.id}</title>
-              <style>
-                @page { size: A4; margin: 10mm; }
-                body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; color: #333; }
-                .header-img { width: 100%; max-height: 150px; object-fit: contain; }
-                .content { padding: 30px; }
-                .report-title { text-align: center; border-bottom: 2px solid #6046B5; padding-bottom: 10px; margin-bottom: 30px; }
-                .report-title h1 { margin: 0; color: #6046B5; font-size: 24px; text-transform: uppercase; }
-                .patient-info { display: flex; justify-content: space-between; margin-bottom: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px; }
-                .info-item { display: flex; flex-direction: column; }
-                .label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 600; }
-                .value { font-size: 14px; font-weight: 600; }
-                .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-                .detail-row { border-bottom: 1px solid #eee; padding: 8px 0; display: flex; justify-content: space-between; }
-                .detail-label { font-weight: 600; color: #555; font-size: 13px; }
-                .detail-value { color: #000; font-size: 13px; text-align: right; }
-                .remarks-section { margin-top: 30px; }
-                .section-header { font-weight: 700; color: #6046B5; border-bottom: 1px solid #6046B5; margin-bottom: 10px; padding-bottom: 5px; font-size: 14px; }
-                .remark-text { font-size: 13px; line-height: 1.6; }
-                .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px 40px; text-align: center; font-size: 11px; border-top: 1px solid #eee; background: white; }
-                @media print { .no-print { display: none; } }
-              </style>
-            </head>
-            <body>
-              <div class="header-container">
-                ${headerImage ? `<img src="${headerImage}" class="header-img"/>` : `<div style="padding:20px; background:#6046B5; color:white; text-align:center"><h1>City Hospital</h1></div>`}
-              </div>
-              <div class="content">
-                <div class="report-title"><h1>Operation Report</h1></div>
-                <div class="patient-info">
-                  <div class="info-item"><span class="label">Patient Name</span><span class="value">${patientDetail?.patient_detail?.full_name || patientDetail?.patient_name || "—"}</span></div>
-                  <div class="info-item"><span class="label">Patient ID</span><span class="value">PID${patientDetail?.patient || "—"}</span></div>
-                  <div class="info-item"><span class="label">OPD NO</span><span class="value">OPD${opdId}</span></div>
-                  <div class="info-item"><span class="label">Reference No</span><span class="value">OTREF${selectedOperation.id}</span></div>
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">OPERATION REPORT</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>No: OTREF${selectedOperation.id}</div>
+                    <div>Date: ${selectedOperation.operation_date}</div>
                 </div>
-                <div class="details-grid">
-                   <div class="detail-row"><span class="detail-label">Operation Date</span><span class="detail-value">${selectedOperation.operation_date}</span></div>
-                   <div class="detail-row"><span class="detail-label">Operation Name</span><span class="detail-value">${selectedOperation.operation_name}</span></div>
-                   <div class="detail-row"><span class="detail-label">Operation Type</span><span class="detail-value">${selectedOperation.operation_type}</span></div>
-                   <div class="detail-row"><span class="detail-label">Consultant Doctor</span><span class="detail-value">${selectedOperation.doctor_name}</span></div>
-                   <div class="detail-row"><span class="detail-label">Anesthetist</span><span class="detail-value">${selectedOperation.anesthetist || "N/A"}</span></div>
-                   <div class="detail-row"><span class="detail-label">Anaesthesia Type</span><span class="detail-value">${selectedOperation.anesthesia_type || "N/A"}</span></div>
-                   <div class="detail-row"><span class="detail-label">OT Technician</span><span class="detail-value">${selectedOperation.ot_technician || "N/A"}</span></div>
-                   <div class="detail-row"><span class="detail-label">OT Assistant</span><span class="detail-value">${selectedOperation.ot_assistant || "N/A"}</span></div>
+            </div>
+
+            <div class="data-grid" style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid #eee;">
+                <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${patientDetail?.patient_detail?.full_name || patientDetail?.patient_name || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Patient ID</span><span class="data-value">: PID${patientDetail?.patient || "—"}</span></div>
+                <div class="data-item"><span class="data-label">OPD NO</span><span class="data-value">: OPD${opdId}</span></div>
+                <div class="data-item"><span class="data-label">Operation Name</span><span class="data-value">: ${selectedOperation.operation_name}</span></div>
+            </div>
+
+            <div class="report-section-title">Clinical Details</div>
+            <div class="data-grid">
+                <div class="data-item"><span class="data-label">Operation Type</span><span class="data-value">: ${selectedOperation.operation_type}</span></div>
+                <div class="data-item"><span class="data-label">Consultant Doctor</span><span class="data-value">: ${selectedOperation.doctor_name}</span></div>
+                <div class="data-item"><span class="data-label">Anesthetist</span><span class="data-value">: ${selectedOperation.anesthetist || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">Anaesthesia Type</span><span class="data-value">: ${selectedOperation.anesthesia_type || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">OT Technician</span><span class="data-value">: ${selectedOperation.ot_technician || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">OT Assistant</span><span class="data-value">: ${selectedOperation.ot_assistant || "N/A"}</span></div>
+            </div>
+
+            <div class="report-section-title">Findings & Results</div>
+            <div style="margin-bottom: 20px;">
+                <p style="font-weight:bold; font-size:13px; margin-bottom:5px;">Result:</p>
+                <div style="padding:10px; background:#f4f4f4; border-radius:5px; font-size:13px;">${selectedOperation.result || "No records."}</div>
+            </div>
+            <div>
+                <p style="font-weight:bold; font-size:13px; margin-bottom:5px;">Remark / Observation:</p>
+                <p style="font-size:13px; color:#555; line-height:1.6;">${selectedOperation.remark || "No records."}</p>
+            </div>
+
+            <div class="signature-section">
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Doctor Signature</div>
                 </div>
-                <div class="remarks-section">
-                  <div class="section-header">Result</div>
-                  <div class="remark-text">${selectedOperation.result || "No records."}</div>
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Authorised Signatory</div>
                 </div>
-                <div class="remarks-section">
-                  <div class="section-header">Remark / Observation</div>
-                  <div class="remark-text">${selectedOperation.remark || "No records."}</div>
-                </div>
-                <div style="margin-top: 60px; display: flex; justify-content: space-between;">
-                  <div style="text-align: center;"><div style="height: 40px; border-bottom: 1px solid #000; width: 150px;"></div><p style="font-size: 11px;">Doctor Signature</p></div>
-                  <div style="text-align: center;"><div style="height: 40px; border-bottom: 1px solid #000; width: 150px;"></div><p style="font-size: 11px;">Authorised Signatory</p></div>
-                </div>
-              </div>
-              <div class="footer">${footerText || "Digital Health Management System"}</div>
-              <script>window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 500); }</script>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
+            </div>
+        `;
+
+        printReport({
+            title: `Operation Report - OTREF${selectedOperation.id}`,
+            headerImg: headerData?.operation_header,
+            footerText: headerData?.operation_footer,
+            content: content
+        });
     };
 
     return (

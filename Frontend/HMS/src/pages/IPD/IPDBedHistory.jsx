@@ -48,15 +48,14 @@ export default function IPDBedHistory() {
 
         <div className="p-4 md:p-6">
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] p-4 flex items-center gap-3">
-              <Home className="text-white" size={24} />
-              <h2 className="text-white font-bold text-lg">Bed History</h2>
+            <div className="bg-white p-4 flex items-center gap-3">
+              <h2 className="text-gray-800 font-bold text-lg">Bed History</h2>
             </div>
 
             <div className="p-4 md:p-6">
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20">
-                  <Loader2 className="animate-spin text-[#6046B5] mb-4" size={40} />
+                  <Loader2 className="animate-spin text-gray-800 mb-4" size={40} />
                   <p className="text-gray-500 font-medium tracking-wide">Loading bed history...</p>
                 </div>
               ) : bedHistory.length > 0 ? (
@@ -75,10 +74,8 @@ export default function IPDBedHistory() {
                       {bedHistory.map((item, index) => (
                         <tr key={index} className="hover:bg-purple-50/30 transition-colors">
                           <td className="p-4 text-gray-700 font-medium">{item.bed_group}</td>
-                          <td className="p-4">
-                            <span className="bg-[#F3EEFF] text-[#6046B5] px-3 py-1.5 rounded-md font-bold border border-purple-100">
-                              {item.bed_name}
-                            </span>
+                          <td className="p-4 text-gray-700 font-medium">
+                            {item.bed_name}
                           </td>
                           <td className="p-4 text-gray-600">
                             {new Date(item.from_date).toLocaleDateString()} {new Date(item.from_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

@@ -1,12 +1,117 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { X, Printer } from "lucide-react";
+import { getHeaders } from "../../api/setupApi";
+import { printReport } from "../../utils/printUtils";
 
 const BillSummary = ({ isOpen, onClose, charges, payments }) => {
+    const [headerData, setHeaderData] = useState(null);
+
+    useEffect(() => {
+        const fetchHeaders = async () => {
+            try {
+                const res = await getHeaders();
+                if (res.data && res.data.length > 0) {
+                    setHeaderData(res.data[0]);
+                }
+            } catch (err) {
+                console.error("Error fetching summary headers:", err);
+            }
+        };
+        if (isOpen) fetchHeaders();
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const totalCharges = charges.reduce((sum, c) => sum + parseFloat(c.amount || 0), 0);
     const totalPayments = payments.reduce((sum, p) => sum + parseFloat(p.paid_amount || 0), 0);
     const balanceAmount = totalCharges - totalPayments;
+
+    const handlePrint = () => {
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">BILL SUMMARY REPORT</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>Date: ${new Date().toLocaleDateString()}</div>
+                </div>
+            </div>
+
+            <div class="report-section-title">Case Charges Breakdown</div>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Charge</th>
+                        <th>Category</th>
+                        <th style="text-align:right">Subtotal ($)</th>
+                        <th style="text-align:right">Total ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${charges.map(c => `
+                        <tr>
+                            <td>${c.charge_date || new Date(c.created_at).toLocaleDateString()}</td>
+                            <td>${c.charge_name}</td>
+                            <td>${c.charge_category}</td>
+                            <td style="text-align:right">${Number(c.standard_charge || 0).toFixed(2)}</td>
+                            <td style="text-align:right; font-weight:600">${Number(c.amount || 0).toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                    ${charges.length === 0 ? '<tr><td colspan="5" style="text-align:center">No charges found</td></tr>' : ''}
+                </tbody>
+            </table>
+
+            <div class="report-section-title">Transactions / Payments</div>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Service</th>
+                        <th>Mode</th>
+                        <th style="text-align:right">Paid Amount ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${payments.map(p => `
+                        <tr>
+                            <td>${p.payment_date}</td>
+                            <td>${p.service_type || "General"}</td>
+                            <td>${p.payment_mode}</td>
+                            <td style="text-align:right; font-weight:600">${Number(p.paid_amount || 0).toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                    ${payments.length === 0 ? '<tr><td colspan="4" style="text-align:center">No payments found</td></tr>' : ''}
+                </tbody>
+            </table>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:30px;">
+                <div style="width:280px; font-size:14px; line-height:2;">
+                    <div style="display:flex; justify-content:space-between;"><span>Gross Total</span><span>$${totalCharges.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between; color:green;"><span>Total Collected</span><span>$${totalPayments.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; border-top:2px solid #6046B5; margin-top:5px; padding-top:5px;">
+                        <span>Final Balance</span><span>$${balanceAmount.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="signature-section" style="margin-top:60px;">
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Accountant Signature</div>
+                </div>
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Authorised Officer</div>
+                </div>
+            </div>
+        `;
+
+        printReport({
+            title: "Patient Bill Summary",
+            headerImg: headerData?.bill_summary_header,
+            footerText: headerData?.bill_summary_footer,
+            content: content
+        });
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -14,7 +119,7 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                 <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                     <h3 className="text-lg font-semibold">Bill Summary</h3>
                     <div className="flex items-center gap-3">
-                        <Printer className="cursor-pointer hover:opacity-80" />
+                        <Printer className="cursor-pointer hover:opacity-80" onClick={handlePrint} />
                         <X className="cursor-pointer hover:opacity-80 text-xl" onClick={onClose} />
                     </div>
                 </div>

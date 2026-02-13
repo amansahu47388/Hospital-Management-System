@@ -1,4 +1,4 @@
-export default function CalendarGrid({ tasks, date, onEventClick }) {
+export default function CalendarGrid({ tasks, date, onEventClick, onDateClick }) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -43,13 +43,22 @@ export default function CalendarGrid({ tasks, date, onEventClick }) {
             }
           );
 
+          const formattedDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
           return (
-            <div key={index} className="h-24 border p-1 text-xs">
+            <div
+              key={index}
+              className="h-24 border p-1 text-xs cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => onDateClick?.(formattedDate)}
+            >
               <div className="text-right font-semibold">{day}</div>
               {dayTasks.map((t) => (
                 <div
                   key={t.id}
-                  onClick={() => onEventClick?.(t)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEventClick?.(t);
+                  }}
                   className="bg-pink-600 text-white px-1 py-0.5 rounded mt-1 truncate cursor-pointer hover:opacity-80"
                   style={{ backgroundColor: t.color || "#EC4899" }}
                 >

@@ -14,8 +14,9 @@ import {
 } from "../../api/patientApi";
 import { getIpdPatientDetail } from "../../api/ipdApi";
 import { getDoctors } from "../../api/appointmentApi";
-import { getOperationSetups } from "../../api/setupApi";
+import { getOperationSetups, getHeaders } from "../../api/setupApi";
 import { useNotify } from "../../context/NotificationContext";
+import { printReport } from "../../utils/printUtils";
 
 
 
@@ -32,6 +33,8 @@ export default function IPDOperations() {
     const [doctors, setDoctors] = useState([]);
     const [operationSetups, setOperationSetups] = useState([]);
     const [operationTypes, setOperationTypes] = useState([]);
+    const [headerData, setHeaderData] = useState(null);
+    const [ipdDetail, setIpdDetail] = useState(null);
 
     const [formData, setFormData] = useState({
         operation: "",
@@ -53,16 +56,22 @@ export default function IPDOperations() {
             if (ipdId) {
                 setLoading(true);
                 try {
-                    const [ipdRes, docRes, setupRes] = await Promise.all([
+                    const [ipdRes, docRes, setupRes, headerRes] = await Promise.all([
                         getIpdPatientDetail(ipdId),
                         getDoctors(),
-                        getOperationSetups()
+                        getOperationSetups(),
+                        getHeaders()
                     ]);
                     setPatientId(ipdRes.data.patient);
+                    setIpdDetail(ipdRes.data);
                     setDoctors(docRes.data || []);
 
                     const setups = setupRes.data || [];
                     setOperationSetups(setups);
+
+                    if (headerRes.data && headerRes.data.length > 0) {
+                        setHeaderData(headerRes.data[0]);
+                    }
 
                     // Extract unique operation types
                     const types = [...new Set(setups.map(s => s.operation_type).filter(Boolean))];
@@ -158,6 +167,67 @@ export default function IPDOperations() {
     const handleOpenDetail = (op) => {
         setSelectedOperation(op);
         setShowDetailModal(true);
+    };
+
+    const handlePrint = () => {
+        if (!selectedOperation) return;
+
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">OPERATION REPORT</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>No: OTREF${selectedOperation.id}</div>
+                    <div>Date: ${selectedOperation.operation_date}</div>
+                </div>
+            </div>
+
+            <div class="data-grid" style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid #eee;">
+                <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${ipdDetail?.patient_detail?.full_name || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Patient ID</span><span class="data-value">: PID${ipdDetail?.patient || "—"}</span></div>
+                <div class="data-item"><span class="data-label">IPD NO</span><span class="data-value">: IPDN${ipdId}</span></div>
+                <div class="data-item"><span class="data-label">Operation Name</span><span class="data-value">: ${selectedOperation.operation_name}</span></div>
+            </div>
+
+            <div class="report-section-title">Clinical Details</div>
+            <div class="data-grid">
+                <div class="data-item"><span class="data-label">Operation Type</span><span class="data-value">: ${selectedOperation.operation_type}</span></div>
+                <div class="data-item"><span class="data-label">Consultant Doctor</span><span class="data-value">: ${selectedOperation.doctor_name}</span></div>
+                <div class="data-item"><span class="data-label">Anesthetist</span><span class="data-value">: ${selectedOperation.anesthetist || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">Anaesthesia Type</span><span class="data-value">: ${selectedOperation.anesthesia_type || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">OT Technician</span><span class="data-value">: ${selectedOperation.ot_technician || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">OT Assistant</span><span class="data-value">: ${selectedOperation.ot_assistant || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">Assistant 1</span><span class="data-value">: ${selectedOperation.assistant_consultant_1 || "N/A"}</span></div>
+                <div class="data-item"><span class="data-label">Assistant 2</span><span class="data-value">: ${selectedOperation.assistant_consultant_2 || "N/A"}</span></div>
+            </div>
+
+            <div class="report-section-title">Findings & Results</div>
+            <div style="margin-bottom: 20px;">
+                <p style="font-weight:bold; font-size:13px; margin-bottom:5px;">Result:</p>
+                <div style="padding:10px; background:#f4f4f4; border-radius:5px; font-size:13px;">${selectedOperation.result || "No records."}</div>
+            </div>
+            <div>
+                <p style="font-weight:bold; font-size:13px; margin-bottom:5px;">Remark / Observation:</p>
+                <p style="font-size:13px; color:#555; line-height:1.6;">${selectedOperation.remark || "No records."}</p>
+            </div>
+
+            <div class="signature-section">
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Doctor Signature</div>
+                </div>
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Authorised Signatory</div>
+                </div>
+            </div>
+        `;
+
+        printReport({
+            title: `Operation Report - OTREF${selectedOperation.id}`,
+            headerImg: headerData?.operation_header,
+            footerText: headerData?.operation_footer,
+            content: content
+        });
     };
 
     const handleOpenEdit = (op) => {
@@ -530,7 +600,11 @@ export default function IPDOperations() {
                                 Operation Report Details
                             </h3>
                             <div className="flex items-center gap-2">
-                                <button className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white" title="Print Report">
+                                <button
+                                    onClick={handlePrint}
+                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
+                                    title="Print Report"
+                                >
                                     <Printer size={20} />
                                 </button>
                                 <button
