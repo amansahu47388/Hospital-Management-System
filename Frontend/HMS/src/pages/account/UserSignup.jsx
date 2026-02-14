@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { userRegister } from "../../api/authApi";
 import { useNotify } from "../../context/NotificationContext";
 import bgImage from "../../assets/hospital-management-system.jpg";
@@ -21,6 +22,7 @@ export default function UserSignup() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateFullName = (name) => {
     if (!name || name.trim() === "") {
@@ -115,12 +117,12 @@ export default function UserSignup() {
 
   const submit = async (e) => {
     e.preventDefault();
-    
+
     const fullNameError = validateFullName(form.full_name);
     const emailError = validateEmail(form.email);
     const phoneError = validatePhone(form.phone);
     const passwordError = validatePassword(form.password);
-    
+
     if (fullNameError || emailError || phoneError || passwordError) {
       setErrors({
         full_name: fullNameError,
@@ -131,7 +133,7 @@ export default function UserSignup() {
       notify("error", fullNameError || emailError || phoneError || passwordError);
       return;
     }
-    
+
     setLoading(true);
     try {
       const res = await userRegister(form);
@@ -194,7 +196,7 @@ export default function UserSignup() {
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
                   focus:border-[#6046B5]
-                  focus:ring-2 focus:ring-[#8A63D2]
+                  focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
                 "
@@ -216,7 +218,7 @@ export default function UserSignup() {
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
                   focus:border-[#6046B5]
-                  focus:ring-2 focus:ring-[#8A63D2]
+                  focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
                 "
@@ -237,7 +239,7 @@ export default function UserSignup() {
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
                   focus:border-[#6046B5]
-                  focus:ring-2 focus:ring-[#8A63D2]
+                  focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
                 "
@@ -250,21 +252,31 @@ export default function UserSignup() {
 
             <label className="block text-sm text-gray-700">
               Password
-              <input
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                className="
-                  mt-2 w-full px-3 py-2 rounded-md
-                  border border-gray-300
-                  focus:border-[#6046B5]
-                  focus:ring-2 focus:ring-[#8A63D2]
-                  outline-none
-                  transition
-                "
-                placeholder="Create a password"
-              />
+              <div className="relative mt-2">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={handleChange}
+                  className="
+                    w-full px-3 py-2 rounded-md
+                    border border-gray-300
+                    focus:border-[#6046B5]
+                    focus:ring-1 focus:ring-[#8A63D2]
+                    outline-none
+                    transition
+                    pr-10
+                  "
+                  placeholder="Create a password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-xs text-red-600 mt-1">{errors.password}</p>
               )}
@@ -277,11 +289,11 @@ export default function UserSignup() {
                 mt-2 w-full py-2 rounded-md text-white font-medium
                 bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                 hover:opacity-90
-                focus:ring-2 focus:ring-[#8A63D2]
+                focus:ring-1 focus:ring-[#8A63D2]
                 transition
               "
             >
-              {loading ? "Signing up..." : "Register"}
+              {loading ? "Signing up..." : "Sign Up"}
             </button>
 
             <p className="text-sm text-center text-gray-600">

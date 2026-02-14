@@ -1,7 +1,7 @@
-import { Lock, Pencil } from "lucide-react";
+import { Lock, Pencil, User } from "lucide-react";
 import { useState } from "react";
 import EditProfileModal from "./EditProfile";
-import ChangePasswordModal from "./ChangePasswordModal";
+import ChangePasswordModal from "../CommonComponent/ChangePasswordModal";
 
 const ProfileHeader = ({ profile, refreshProfile }) => {
   const [openEdit, setOpenEdit] = useState(false);
@@ -13,11 +13,17 @@ const ProfileHeader = ({ profile, refreshProfile }) => {
 
         {/* Left */}
         <div className="flex items-center gap-4">
-          <img
-            src={profile.avatar}
-            alt="profile"
-            className="w-20 h-20 rounded-full object-cover"
-          />
+          {profile.avatar ? (
+            <img
+              src={profile.avatar}
+              alt="profile"
+              className="w-20 h-20 rounded-full object-cover border-2 border-gray-100"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 border-2 border-gray-100">
+              <User size={40} />
+            </div>
+          )}
 
           <div>
             {/* Name + Icons */}

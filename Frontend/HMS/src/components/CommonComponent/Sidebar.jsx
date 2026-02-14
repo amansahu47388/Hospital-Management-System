@@ -81,6 +81,7 @@ const adminNavItems = [
 const patientNavItems = [
   { to: "/patient-portal/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { to: "/patient-portal/appointments", label: "My Appointments", Icon: CalendarDays },
+  { to: "/patient-portal/calendar", label: "Calendar", Icon: Calendar },
   { to: "/patient-portal/opd-history/overview", label: "OPD", Icon: Stethoscope },
   { to: "/patient-portal/ipd-history/overview", label: "IPD", Icon: Bed },
   { to: "/patient-portal/pharmacy", label: "Pharmacy", Icon: Pill },

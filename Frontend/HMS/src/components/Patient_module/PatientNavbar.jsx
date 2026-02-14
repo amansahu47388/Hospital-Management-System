@@ -65,11 +65,11 @@ function PatientNavbar() {
                 {/* RIGHT: ICONS + PROFILE */}
                 <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
 
-                   {/* CALENDAR */}
+                    {/* CALENDAR */}
                     <IconButton
-                    onClick={() => navigate("/admin/Calendar")}
-                    icon={CalendarDays}
-                    title="Calendar"
+                        onClick={() => navigate("/patient-portal/calendar")}
+                        icon={CalendarDays}
+                        title="Calendar"
                     />
 
                     {/* NOTIFICATION */}

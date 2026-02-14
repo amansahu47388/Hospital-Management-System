@@ -82,3 +82,9 @@ export const getStaffList = () => {
 
 export const changePassword = (data) =>
   API.post("/auth/change-password/", data);
+
+export const forgotPassword = (data) =>
+  API.post("/auth/forgot-password/", data);
+
+export const resetPassword = (data) =>
+  API.post("/auth/reset-password/", data);

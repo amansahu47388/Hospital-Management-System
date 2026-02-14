@@ -15,5 +15,7 @@ urlpatterns = [
     path("register/", RegisterUserView.as_view(), name="register"),  # user register
     path("register/admin/", RegisterAdminView.as_view(), name="register_admin"),  # admin register
     path("change-password/", ChangePasswordView.as_view(), name="change_password"),
+    path("forgot-password/", ForgotPasswordView.as_view(), name="forgot_password"),
+    path("reset-password/", ResetPasswordView.as_view(), name="reset_password"),
     path("", include(router.urls)),
 ]
