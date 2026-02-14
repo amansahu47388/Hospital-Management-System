@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { userLogin } from "../../api/authApi";
 import { useAuth } from "../../context/AuthContext";
 import { useNotify } from "../../context/NotificationContext";
@@ -13,6 +14,7 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateEmail = (email) => {
     if (!email || email.trim() === "") {
@@ -125,7 +127,7 @@ export default function AdminLogin() {
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
                   focus:border-[#6046B5]
-                  focus:ring-2 focus:ring-[#8A63D2]
+                  focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
                 "
@@ -138,21 +140,31 @@ export default function AdminLogin() {
 
             <label className="block text-sm text-gray-700">
               Password
-              <input
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                className="
-                  mt-2 w-full px-3 py-2 rounded-md
-                  border border-gray-300
-                  focus:border-[#6046B5]
-                  focus:ring-2 focus:ring-[#8A63D2]
-                  outline-none
-                  transition
-                "
-                placeholder="Your password"
-              />
+              <div className="relative mt-2">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={handleChange}
+                  className="
+                    w-full px-3 py-2 rounded-md
+                    border border-gray-300
+                    focus:border-[#6046B5]
+                    focus:ring-1 focus:ring-[#8A63D2]
+                    outline-none
+                    transition
+                    pr-10
+                  "
+                  placeholder="Your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-xs text-red-600 mt-1">{errors.password}</p>
               )}
@@ -174,7 +186,7 @@ export default function AdminLogin() {
                 mt-2 w-full py-2 rounded-md text-white font-medium
                 bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                 hover:opacity-90
-                focus:ring-2 focus:ring-[#8A63D2]
+                focus:ring-1 focus:ring-[#8A63D2]
                 transition
               "
             >

@@ -18,7 +18,7 @@ const useAdminProfile = () => {
           role: "Admin",
           designation: adminProfile.designation,
           staffId: adminProfile.staff_id,
-          avatar: adminProfile.profile_picture || "https://randomuser.me/api/portraits/women/44.jpg",
+          avatar: adminProfile.profile_picture,
 
           job: {
             department: adminProfile.department,

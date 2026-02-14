@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { User, KeyRound, LogOut } from "lucide-react";
+import ChangePasswordModal from "../CommonComponent/ChangePasswordModal";
 
 export default function PatientProfileDropDown({ user, onLogout }) {
     const [open, setOpen] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
     const dropdownRef = useRef(null);
 
     /* Close dropdown on outside click */
@@ -66,20 +68,11 @@ export default function PatientProfileDropDown({ user, onLogout }) {
 
                     {/* MENU */}
                     <ul className="py-2 text-sm">
-                        {/* <li
-                            className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
-                            onClick={() => {
-                                setOpen(false);
-                                window.location.href = "/patient/profile";
-                            }}
-                        >
-                            <User size={18} />
-                            <span>My Profile</span>
-                        </li> */}
                         <li
                             className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
                             onClick={() => {
                                 setOpen(false);
+                                setShowPasswordModal(true);
                             }}
                         >
                             <KeyRound size={18} />
@@ -95,6 +88,11 @@ export default function PatientProfileDropDown({ user, onLogout }) {
                         </li>
                     </ul>
                 </div>
+            )}
+
+            {/* Password Modal */}
+            {showPasswordModal && (
+                <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />
             )}
         </div>
     );

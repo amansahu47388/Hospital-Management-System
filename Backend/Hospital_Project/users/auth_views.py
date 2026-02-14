@@ -8,6 +8,10 @@ from .serializers import UserSerializer, UserRegisterSerializer, AdminRegisterSe
 from .models import User
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
 
 
 
@@ -211,11 +215,76 @@ class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        password = request.data.get("password")
-        if not password:
-            return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
+        current_password = request.data.get("current_password")
+        new_password = request.data.get("password")
+        
+        if not current_password or not new_password:
+            return Response({"error": "Both current and new password are required"}, status=status.HTTP_400_BAD_REQUEST)
         
         user = request.user
-        user.set_password(password)
+        if not user.check_password(current_password):
+            return Response({"error": "Incorrect current password"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        user.set_password(new_password)
         user.save()
         return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+
+class ForgotPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(email=email)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            
+            reset_link = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
+            
+            subject = "Password Reset Request - Hospital Management System"
+            message = f"Hello {user.full_name},\n\nYou requested a password reset. Click the link below to set a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nHospital Management Team"
+            
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            
+            return Response({
+                "message": "We have sent a password reset link."
+            }, status=status.HTTP_200_OK)
+            
+        except User.DoesNotExist:
+            return Response({"message": "We have sent a password reset link."}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
+            return Response({"error": "Failed to send reset email. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ResetPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        uidb64 = request.data.get("uid")
+        token = request.data.get("token")
+        new_password = request.data.get("password")
+
+        if not all([uidb64, token, new_password]):
+            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            user.set_password(new_password)
+            user.save()
+            return Response({"message": "Password has been reset successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid or expired reset link"}, status=status.HTTP_400_BAD_REQUEST)
