@@ -303,12 +303,6 @@ export default function UserSignup() {
               </Link>
             </p>
           </form>
-          {/* Switch to Admin signup */}
-          <div className="mt-6 text-center">
-            <Link to="/admin/signup" className="text-sm text-gray-500 hover:underline">
-              Admin Signup
-            </Link>
-          </div>
         </div>
       </main>
     </div>

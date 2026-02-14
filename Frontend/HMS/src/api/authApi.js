@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const RAW_API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-// Auth endpoints live at /auth/* (no /api prefix). Strip trailing "/api" if present.
-const AUTH_BASE_URL = RAW_API_URL.replace(/\/api\/?$/, "");
+const RAW_API_URL = import.meta.env.VITE_API_URL;
+// Auth endpoints now live at /api/auth/* (with /api prefix)
+const AUTH_BASE_URL = RAW_API_URL;
 
 const API = axios.create({
   baseURL: `${AUTH_BASE_URL}`,

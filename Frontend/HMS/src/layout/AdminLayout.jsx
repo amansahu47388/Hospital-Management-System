@@ -10,7 +10,7 @@ const AdminLayout = ({ children }) => {
     <div className="flex h-screen bg-gray-100 overflow-hidden">
 
       {/* Sidebar */}
-      <Sidebar role={userRole} />
+      <Sidebar role={userRole} user={user} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">

@@ -41,7 +41,8 @@ class LoginView(APIView):
         resp = Response({
             "access": str(access),
             "refresh": str(refresh),
-            "user": user_data
+            "user": user_data,
+            "is_first_login": user.is_first_login  # Add first login flag
         }, status=status.HTTP_200_OK)
 
         cookie_max_age = int(settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].total_seconds())
