@@ -13,6 +13,8 @@ import { useAuth } from "../../../context/AuthContext";
 import { useNotify } from "../../../context/NotificationContext";
 import { getAmbulanceBills, getAmbulanceBillDetail } from "../../../api/ambulanceApi";
 import { createPatientPayment, getPatientPayments } from "../../../api/patientApi";
+import { getHeaders } from "../../../api/setupApi";
+import { printReport } from "../../../utils/printUtils";
 
 export default function Ambulance() {
     const { user } = useAuth();
@@ -28,13 +30,20 @@ export default function Ambulance() {
     const [paymentHistory, setPaymentHistory] = useState([]);
     const [paymentAmount, setPaymentAmount] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [headerData, setHeaderData] = useState(null);
 
     const fetchBills = useCallback(async () => {
         if (!user?.patient_id) return;
         setLoading(true);
         try {
-            const res = await getAmbulanceBills("", user.patient_id);
-            setBills(res.data || []);
+            const [billsRes, headersRes] = await Promise.all([
+                getAmbulanceBills("", user.patient_id),
+                getHeaders()
+            ]);
+            setBills(billsRes.data || []);
+            if (headersRes.data && headersRes.data.length > 0) {
+                setHeaderData(headersRes.data[0]);
+            }
         } catch (error) {
             console.error("Error fetching ambulance bills:", error);
             notify("error", "Failed to load ambulance bills");
@@ -107,6 +116,74 @@ export default function Ambulance() {
         }
     };
 
+    const handlePrint = () => {
+        if (!selectedBill) return;
+
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">AMBULANCE BILL</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>Bill No: AMBB${selectedBill.id}</div>
+                    <div>Date: ${new Date(selectedBill.created_at).toLocaleDateString()}</div>
+                </div>
+            </div>
+
+            <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+                <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${selectedBill.patient_name || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Phone</span><span class="data-value">: ${selectedBill.patient_phone || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Case ID</span><span class="data-value">: ${selectedBill.case_id || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Vehicle No</span><span class="data-value">: ${selectedBill.ambulance_details?.vehicle_number || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Vehicle Model</span><span class="data-value">: ${selectedBill.ambulance_details?.vehicle_model || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Driver</span><span class="data-value">: ${selectedBill.ambulance_details?.driver_name || "—"}</span></div>
+            </div>
+
+            <div class="report-section-title">Charge Details</div>
+            <div style="padding:10px; background:white; border:1px solid #eee; border-radius:4px; font-size:13px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-weight:bold;">${selectedBill.charge_details?.charge_name || "Ambulance Service"}</span>
+                    <span>${selectedBill.charge_details?.category || ""}</span>
+                </div>
+                <div style="color:#666; font-size:11px;">Note: ${selectedBill.note || "No additional notes"}</div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+                <div style="width: 250px; font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Subtotal:</span>
+                        <span>₹${parseFloat(selectedBill.total_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Discount:</span>
+                        <span>₹${parseFloat(selectedBill.discount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Tax:</span>
+                        <span>₹${parseFloat(selectedBill.tax).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid #eee; font-weight: bold; font-size: 15px; color: #6046B5;">
+                        <span>Net Amount:</span>
+                        <span>₹${parseFloat(selectedBill.net_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Paid:</span>
+                        <span>₹${parseFloat(selectedBill.paid_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0; font-weight: bold; color: #dc2626;">
+                        <span>Due:</span>
+                        <span>₹${parseFloat(selectedBill.balance).toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        printReport({
+            title: `Ambulance Bill - AMBB${selectedBill.id}`,
+            headerImg: headerData?.ambulance_bill_header,
+            footerText: headerData?.ambulance_bill_footer,
+            content: content
+        });
+    };
+
     const filteredBills = bills.filter(bill =>
         String(bill.id).toLowerCase().includes(searchTerm.toLowerCase()) ||
         bill.ambulance_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -119,23 +196,14 @@ export default function Ambulance() {
             <div className="min-h-screen transition-all duration-300">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-fade-in-up">
                     {/* Header */}
-                    <div className="p-5 border-b flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
+                    <div className="px-3 py-4 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
                         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                             Ambulance Bills
                         </h2>
-
-                        <div className="flex gap-2">
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Print"
-                            >
-                                <Printer size={18} />
-                            </button>
-                        </div>
                     </div>
 
                     {/* Search Bar */}
-                    <div className="p-4 border-b border-gray-100 bg-white">
+                    <div className="px-3 py-2 bg-white">
                         <div className="relative max-w-sm">
                             <Search
                                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -146,7 +214,7 @@ export default function Ambulance() {
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 focus:bg-white transition-colors"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6046B5] rounded"
                             />
                         </div>
                     </div>
@@ -230,17 +298,17 @@ export default function Ambulance() {
                                                     <div className="flex gap-1 justify-end w-full">
                                                         <button
                                                             onClick={() => handleShowDetails(bill)}
-                                                            className=""
+                                                            className="text-purple-600 hover:bg-purple-100 p-1 rounded"
                                                             title="Show Details"
                                                         >
-                                                            <Eye size={14} />
+                                                            <Eye size={16} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleShowPayments(bill)}
-                                                            className=""
+                                                            className="text-purple-600 hover:bg-purple-100 p-1 rounded"
                                                             title="View Payments"
                                                         >
-                                                            <AlignJustify size={14} />
+                                                            <AlignJustify size={16} />
                                                         </button>
                                                         {parseFloat(bill.balance) > 0 && (
                                                             <button
@@ -260,7 +328,7 @@ export default function Ambulance() {
                             </table>
                         )}
                     </div>
-                    <div className="p-4 border-t text-xs text-gray-500 bg-gray-50">
+                    <div className="p-4 border-t border-gray-200 text-xs text-gray-500 bg-gray-50">
                         Records: 1 to {filteredBills.length} of {filteredBills.length}
                     </div>
                 </div>
@@ -276,7 +344,7 @@ export default function Ambulance() {
                                 Bill Details - AMBB{selectedBill.id}
                             </h3>
                             <div className="flex items-center gap-3">
-                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={() => window.print()}>
+                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={handlePrint}>
                                     <Printer size={20} />
                                 </button>
                                 <button
@@ -335,7 +403,7 @@ export default function Ambulance() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-end gap-2 text-sm text-gray-800 pr-4 mt-8 border-t pt-8">
+                            <div className="flex flex-col items-end gap-2 text-sm text-gray-800 pr-4 mt-8 border-t border-gray-200 pt-8">
                                 <div className="flex justify-between w-64">
                                     <span>Total (₹)</span>
                                     <span className="font-semibold">{parseFloat(selectedBill.total_amount).toFixed(2)}</span>
@@ -348,7 +416,7 @@ export default function Ambulance() {
                                     <span>Tax (₹)</span>
                                     <span>{parseFloat(selectedBill.tax).toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between w-64 font-bold text-base border-t pt-2 mt-1">
+                                <div className="flex justify-between w-64 font-bold text-base border-t border-gray-200 pt-2 mt-1">
                                     <span>Net Amount (₹)</span>
                                     <span>{parseFloat(selectedBill.net_amount).toFixed(2)}</span>
                                 </div>
@@ -392,7 +460,7 @@ export default function Ambulance() {
                                     type="number"
                                     value={paymentAmount}
                                     onChange={(e) => setPaymentAmount(e.target.value)}
-                                    className="flex-1 p-2 border border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+                                    className="flex-1 p-2 border border-gray-300 focus:ring-1 focus:ring-[#6046B5] rounded"
                                 />
                             </div>
 
@@ -428,7 +496,7 @@ export default function Ambulance() {
                         {/* Modal Content */}
                         <div className="p-0">
                             <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-50 text-gray-700 font-bold border-b">
+                                <thead className="bg-gray-50 text-gray-700 font-bold border-b border-gray-200">
                                     <tr>
                                         <th className="p-4">Date</th>
                                         <th className="p-4">Note</th>

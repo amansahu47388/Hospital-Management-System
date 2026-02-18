@@ -290,16 +290,16 @@ export default function IPDCharges() {
 
           <div className="overflow-x-auto mt-6">
             <table className="w-full text-left border-collapse">
-              <thead className="bg-gray-100 text-gray-800">
+              <thead className="bg-gray-100 text-gray-700">
                 <tr>
                   <th className="px-4 py-3 text-sm">Date</th>
                   <th className="px-4 py-3 text-sm">Charge Name</th>
                   <th className="px-4 py-3 text-sm">Charge Type</th>
                   <th className="px-4 py-3 text-sm">Charge Category</th>
                   <th className="px-4 py-3 text-sm">Standard Charge($)</th>
-                  <th className="px-4 py-3 text-sm">Discount($)</th>
-                  <th className="px-4 py-3 text-sm">Tax($)</th>
-                  <th className="px-4 py-3 text-sm">Amount($)</th>
+                  <th className="px-4 py-3 text-sm">Discount</th>
+                  <th className="px-4 py-3 text-sm">Tax</th>
+                  <th className="px-4 py-3 text-sm">Amount</th>
                   <th className="px-4 py-3 text-sm">Action</th>
                 </tr>
               </thead>
@@ -323,18 +323,18 @@ export default function IPDCharges() {
                       <td className="px-4 py-4 text-sm ">${Number(row.standard_charge).toFixed(2)}</td>
                       <td className="px-4 py-4 text-sm ">${Number(row.discount).toFixed(2)}</td>
                       <td className="px-4 py-4 text-sm ">${Number(row.tax).toFixed(2)}</td>
-                      <td className="px-4 py-4 text-sm font-bold text-gray-900">${Number(row.amount).toFixed(2)}</td>
+                      <td className="px-4 py-4 text-sm font-bold text-gray-800">${Number(row.amount).toFixed(2)}</td>
                       <td className="px-4 py-4 text-sm ">
-                        <div className="flex gap-2">
+                        <div className="flex gap-1">
                           <button
                             onClick={() => handleOpenEdit(row)}
-                            className="hover:bg-purple-200 text-purple-600 p-1.5 rounded transition shadow-sm"
+                            className="hover:bg-purple-100 text-purple-600 p-1 rounded"
                           >
                             <Pencil size={15} />
                           </button>
                           <button
                             onClick={() => handleDelete(row.id)}
-                            className="hover:bg-red-200 text-red-600 p-1.5 rounded transition shadow-sm"
+                            className="hover:bg-red-100 text-red-600 p-1 rounded"
                           >
                             <Trash2 size={15} />
                           </button>
@@ -352,7 +352,7 @@ export default function IPDCharges() {
                 {charges.length > 0 && (
                   <tr className="bg-gray-50 font-bold">
                     <td colSpan="7" className="px-4 py-4 text-right">Grand Total:</td>
-                    <td className="px-4 py-4 text-gray-900">
+                    <td className="px-4 py-4 text-gray-800">
                       ${charges.reduce((sum, c) => sum + Number(c.amount), 0).toFixed(2)}
                     </td>
                   </tr>
@@ -387,7 +387,7 @@ export default function IPDCharges() {
                 <div className="space-y-1.5 font-outfit">
                   <label className="block text-sm font-bold text-gray-500">Charge Type <span className="text-red-500">*</span></label>
                   <select
-                    className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                    className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5]"
                     value={formData.charge_type}
                     onChange={(e) => setFormData({
                       ...formData,
@@ -405,7 +405,7 @@ export default function IPDCharges() {
                 <div className="space-y-1.5 font-outfit">
                   <label className="block text-sm  font-bold text-gray-500 ">Charge Category <span className="text-red-500">*</span></label>
                   <select
-                    className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                    className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5]"
                     value={formData.charge_category}
                     onChange={(e) => setFormData({
                       ...formData,
@@ -426,7 +426,7 @@ export default function IPDCharges() {
                 <div className="space-y-1.5 font-outfit">
                   <label className="block text-sm font-bold text-gray-500 ">Charge Name <span className="text-red-500">*</span></label>
                   <select
-                    className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                    className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5]"
                     value={formData.charge_name}
                     onChange={(e) => {
                       const name = e.target.value;
@@ -452,7 +452,7 @@ export default function IPDCharges() {
                   <input
                     type="number"
                     readOnly
-                    className="w-full border p-2 rounded bg-gray-50 outline-none text-sm font-bold text-blue-600"
+                    className="w-full border border-gray-300 p-2 rounded outline-none text-sm font-bold focus:ring-1 focus:ring-[#6046B5]"
                     value={formData.standard_charge}
                   />
                 </div>
@@ -461,14 +461,14 @@ export default function IPDCharges() {
               {/* Row 2: Summary and Note */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-3 pr-4">
-                  <div className="flex justify-between items-center py-2 border-b">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-300 focus:ring-1 focus:ring-[#6046B5]">
                     <span className="text-sm font-bold text-gray-600">Total ($)</span>
-                    <span className="text-lg font-bold underline font-outfit text-gray-900 pr-4">{currentFin.total.toFixed(2)}</span>
+                    <span className="text-lg font-bold underline font-outfit text-gray-600 pr-4">{currentFin.total.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b gap-4">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-300 focus:ring-1 focus:ring-[#6046B5] gap-4">
                     <span className="text-sm font-bold text-gray-600">Discount (%)</span>
                     <div className="flex items-center gap-4 w-1/2 justify-end">
-                      <div className="flex items-center gap-1 border-b">
+                      <div className="flex items-center gap-1 border-b border-gray-300 focus:ring-1 focus:ring-[#6046B5]">
                         <input
                           type="number"
                           className="w-16 outline-none text-right text-sm py-1"
@@ -480,10 +480,10 @@ export default function IPDCharges() {
                       <span className="font-bold text-sm w-20 text-right">${currentFin.discountVal.toFixed(2)}</span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b gap-4">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-300 focus:ring-1 focus:ring-[#6046B5] gap-4">
                     <span className="text-sm font-bold text-gray-600">Tax (%)</span>
                     <div className="flex items-center gap-4 w-1/2 justify-end">
-                      <div className="flex items-center gap-1 border-b">
+                      <div className="flex items-center gap-1 border-b border-gray-300 focus:ring-1 focus:ring-[#6046B5]">
                         <input
                           type="number"
                           className="w-16 outline-none text-right text-sm py-1"
@@ -495,10 +495,10 @@ export default function IPDCharges() {
                       <span className="font-bold text-sm w-20 text-right">${currentFin.taxVal.toFixed(2)}</span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center py-4 bg-blue-50/50 px-4 rounded-lg">
-                    <span className="text-lg font-bold text-purple-600">Net Amount ($)</span>
-                    <span className="text-2xl font-bold text-purple-600 font-outfit">
-                      ${currentFin.netAmount.toFixed(2)}
+                  <div className="flex justify-between items-center py-4 px-4 rounded-lg border border-gray-300 focus:ring-1 focus:ring-[#6046B5]">
+                    <span className="text-md font-bold text-gray-600">Net Amount ($)</span>
+                    <span className="text-xl font-bold text-gray-600 font-outfit">
+                      {currentFin.netAmount.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -508,7 +508,7 @@ export default function IPDCharges() {
                     <div>
                       <label className="block text-sm font-bold text-gray-500  mb-2">Charge Note</label>
                       <textarea
-                        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400 h-32 resize-none text-sm placeholder:italic"
+                        className="w-full border border-gray-300 p-3 rounded-lg outline-none focus:ring-1 focus:ring-[#6046B5] h-32 resize-none text-sm placeholder:italic"
                         placeholder="Add some notes about this charge..."
                         value={formData.charge_note}
                         onChange={(e) => setFormData({ ...formData, charge_note: e.target.value })}
@@ -518,7 +518,7 @@ export default function IPDCharges() {
                       <label className="block text-sm font-bold text-gray-500  mb-2">Date <span className="text-red-500">*</span></label>
                       <input
                         type="date"
-                        className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                        className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5] text-sm bg-white"
                         value={formData.charge_date}
                         onChange={(e) => setFormData({ ...formData, charge_date: e.target.value })}
                       />
@@ -527,7 +527,7 @@ export default function IPDCharges() {
                   <div className="flex justify-end pt-4">
                     <button
                       onClick={addToPending}
-                      className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-8 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:opacity-90 transition font-bold text-sm"
+                      className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-8 py-2 rounded flex items-center gap-2 shadow-md hover:opacity-90 transition text-sm"
                     >
                       <Plus size={18} /> ADD TO LIST
                     </button>
@@ -592,17 +592,11 @@ export default function IPDCharges() {
           </div>
 
           {/* Footer */}
-          <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t shrink-0">
-            <button
-              onClick={() => setShowAddModal(false)}
-              className="px-8 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-bold text-sm hover:bg-white active:bg-gray-100 transition shadow-sm"
-            >
-              Cancel
-            </button>
+          <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-300 shrink-0">
             <button
               onClick={handleSaveAll}
               disabled={loading || pendingCharges.length === 0}
-              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-12 py-2.5 rounded-lg flex items-center justify-center gap-2 shadow-lg"
+              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded flex items-center justify-center gap-2 shadow"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle size={18} />}
               Save charges
@@ -633,7 +627,7 @@ export default function IPDCharges() {
                 <div className="space-y-1.5 font-outfit">
                   <label className="block text-sm font-bold text-gray-500">Charge Type <span className="text-red-500">*</span></label>
                   <select
-                    className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                    className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5] text-sm bg-white"
                     value={selectedCharge.charge_type}
                     onChange={(e) => setSelectedCharge({
                       ...selectedCharge,
@@ -655,7 +649,7 @@ export default function IPDCharges() {
                 <div className="space-y-1.5 font-outfit">
                   <label className="block text-sm font-bold text-gray-500">Charge Category <span className="text-red-500">*</span></label>
                   <select
-                    className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                    className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5] text-sm bg-white"
                     value={selectedCharge.charge_category}
                     onChange={(e) => setSelectedCharge({
                       ...selectedCharge,
@@ -680,7 +674,7 @@ export default function IPDCharges() {
                 <div className="space-y-1.5 font-outfit">
                   <label className="block text-sm font-bold text-gray-500">Charge Name <span className="text-red-500">*</span></label>
                   <select
-                    className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                    className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5] text-sm bg-white"
                     value={selectedCharge.charge_name}
                     onChange={(e) => {
                       const name = e.target.value;
@@ -705,9 +699,9 @@ export default function IPDCharges() {
                   <label className="block text-sm font-bold text-gray-500">Standard Charge ($)</label>
                   <input
                     type="number"
-                    className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm font-bold text-blue-600"
+                    readOnly
+                    className="w-full border border-gray-300 p-2 rounded outline-none text-sm font-bold focus:ring-1 focus:ring-[#6046B5]"
                     value={selectedCharge.standard_charge}
-                    onChange={(e) => setSelectedCharge({ ...selectedCharge, standard_charge: Number(e.target.value) })}
                   />
                 </div>
               </div>
@@ -716,16 +710,16 @@ export default function IPDCharges() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 {/* Left: Financial Summary */}
                 <div className="space-y-3 pr-4">
-                  <div className="flex justify-between items-center py-2 border-b">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-300">
                     <span className="text-sm font-bold text-gray-600">Total ($)</span>
-                    <span className="text-lg font-bold underline font-outfit text-gray-900 pr-4">
+                    <span className="text-lg font-bold underline font-outfit text-gray-600 pr-4">
                       {Number(selectedCharge.standard_charge || 0).toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b gap-4">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-300 gap-4">
                     <span className="text-sm font-bold text-gray-600">Discount (%)</span>
                     <div className="flex items-center gap-4 w-1/2 justify-end">
-                      <div className="flex items-center gap-1 border-b">
+                      <div className="flex items-center gap-1 border-b border-gray-300">
                         <input
                           type="number"
                           className="w-16 outline-none text-right text-sm py-1"
@@ -743,15 +737,15 @@ export default function IPDCharges() {
                         />
                         <span className="text-[10px] text-gray-400 font-bold">%</span>
                       </div>
-                      <span className="font-bold text-sm w-20 text-right">
+                      <span className="font-bold text-sm w-20 text-right text-gray-600">
                         ${(Number(selectedCharge.standard_charge || 0) * Number(selectedCharge.discount_percent || 0) / 100).toFixed(2)}
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b gap-4">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-300 gap-4">
                     <span className="text-sm font-bold text-gray-600">Tax (%)</span>
                     <div className="flex items-center gap-4 w-1/2 justify-end">
-                      <div className="flex items-center gap-1 border-b">
+                      <div className="flex items-center gap-1 border-b border-gray-300">
                         <input
                           type="number"
                           className="w-16 outline-none text-right text-sm py-1"
@@ -771,7 +765,7 @@ export default function IPDCharges() {
                         />
                         <span className="text-[10px] text-gray-400 font-bold">%</span>
                       </div>
-                      <span className="font-bold text-sm w-20 text-right">
+                      <span className="font-bold text-sm w-20 text-right text-gray-600">
                         ${(() => {
                           const total = Number(selectedCharge.standard_charge || 0);
                           const discountVal = (total * Number(selectedCharge.discount_percent || 0)) / 100;
@@ -782,10 +776,10 @@ export default function IPDCharges() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center py-4 bg-blue-50/50 px-4 rounded-lg">
-                    <span className="text-lg font-bold text-purple-600">Net Amount ($)</span>
-                    <span className="text-2xl font-bold text-purple-600 font-outfit">
-                      ${(() => {
+                  <div className="flex justify-between items-center py-4 px-4 rounded-lg border border-gray-300 focus:ring-1 focus:ring-[#6046B5]">
+                    <span className="text-md font-bold text-gray-600">Net Amount ($)</span>
+                    <span className="text-xl font-bold text-gray-600 font-outfit">
+                      {(() => {
                         const total = Number(selectedCharge.standard_charge || 0);
                         const discountVal = (total * Number(selectedCharge.discount_percent || 0)) / 100;
                         const subtotal = total - discountVal;
@@ -807,7 +801,7 @@ export default function IPDCharges() {
                     <div>
                       <label className="block text-sm font-bold text-gray-500 mb-2">Charge Note</label>
                       <textarea
-                        className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400 h-32 resize-none text-sm placeholder:italic"
+                        className="w-full border border-gray-300 p-3 rounded-lg outline-none focus:ring-1 focus:ring-[#6046B5] h-32 resize-none text-sm placeholder:italic"
                         placeholder="Add some notes about this charge..."
                         value={selectedCharge.charge_note || ''}
                         onChange={(e) => setSelectedCharge({ ...selectedCharge, charge_note: e.target.value })}
@@ -817,7 +811,7 @@ export default function IPDCharges() {
                       <label className="block text-sm font-bold text-gray-500 mb-2">Date <span className="text-red-500">*</span></label>
                       <input
                         type="date"
-                        className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                        className="w-full border border-gray-300 p-2 rounded outline-none focus:ring-1 focus:ring-[#6046B5] text-sm bg-white"
                         value={selectedCharge.charge_date}
                         onChange={(e) => setSelectedCharge({ ...selectedCharge, charge_date: e.target.value })}
                       />
@@ -829,17 +823,17 @@ export default function IPDCharges() {
           </div>
 
           {/* Footer */}
-          <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t shrink-0">
+          <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-300 shrink-0">
             <button
               onClick={() => setShowEditModal(false)}
-              className="px-8 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-bold text-sm hover:bg-white active:bg-gray-100 transition shadow-sm"
+              className="px-8 py-2 rounded border border-gray-300 text-gray-700 font-semibold text-sm hover:bg-white active:bg-gray-100 transition shadow-sm"
             >
               Cancel
             </button>
             <button
               onClick={handleUpdate}
               disabled={loading}
-              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-8 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 transition disabled:opacity-50"
+              className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-8 py-2 rounded font-semibold text-sm flex items-center gap-2 shadow-md hover:opacity-90 transition disabled:opacity-50"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle size={18} />}
               SAVE UPDATED CHANGES

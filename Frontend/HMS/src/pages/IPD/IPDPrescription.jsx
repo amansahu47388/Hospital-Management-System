@@ -352,9 +352,6 @@ export default function IPDPrescription() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="flex justify-between items-center p-4 border-b border-gray-100 bg-white">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-blue-50 rounded-lg">
-                  <ClipboardList size={20} className="text-blue-600" />
-                </div>
                 <h2 className="text-xl font-bold text-gray-800">Prescription</h2>
               </div>
               <button
@@ -372,52 +369,52 @@ export default function IPDPrescription() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 text-gray-600 font-semibold border-b border-gray-100">
                   <tr>
-                    <th className="p-4 text-left">Prescription No</th>
-                    <th className="p-4 text-left">Date</th>
-                    <th className="p-4 text-left">Finding</th>
-                    <th className="p-4 text-left">Prescribed By</th>
-                    <th className="p-4 text-right">Action</th>
+                    <th className="px-3 py-2 text-left">Prescription No</th>
+                    <th className="px-3 py-2 text-left">Date</th>
+                    <th className="px-3 py-2 text-left">Finding</th>
+                    <th className="px-3 py-2 text-left">Prescribed By</th>
+                    <th className="px-3 py-2 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {prescriptions.map((presc) => (
                     <tr key={presc.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="p-4 font-medium text-blue-600">PRE-{presc.id}</td>
-                      <td className="p-4 text-gray-600">{new Date(presc.created_at).toLocaleDateString()}</td>
-                      <td className="p-4 text-gray-600">
+                      <td className="px-3 py-2 font-medium text-blue-600">PRE-{presc.id}</td>
+                      <td className="px-3 py-2 text-gray-600">{new Date(presc.created_at).toLocaleDateString()}</td>
+                      <td className="px-3 py-2 text-gray-600">
                         {presc.finding_name || "N/A"}
                       </td>
-                      <td className="p-4 text-gray-600">
+                      <td className="px-3 py-2 text-gray-600">
                         {presc.prescribed_by_details?.name || "N/A"}
                       </td>
-                      <td className="p-4 text-right flex justify-end gap-2">
+                      <td className="px-3 py-2 text-center flex justify-center gap-1">
                         <button
                           onClick={() => handleView(presc)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1 text-purple-600 hover:bg-purple-100 rounded"
                           title="View"
                         >
-                          <Eye size={18} />
+                          <Eye size={16} />
                         </button>
                         <button
                           onClick={() => handleEdit(presc)}
-                          className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                          className="p-1 text-green-600 hover:bg-green-100 rounded"
                           title="Edit"
                         >
-                          <Pencil size={18} />
+                          <Pencil size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(presc.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-1 text-red-600 hover:bg-red-100 rounded"
                           title="Delete"
                         >
-                          <Trash2 size={18} />
+                          <Trash2 size={16} />
                         </button>
                       </td>
                     </tr>
                   ))}
                   {prescriptions.length === 0 && (
                     <tr>
-                      <td colSpan="5" className="p-8 text-center text-gray-400">
+                      <td colSpan="5" className="px-3 py-2 text-center text-gray-400">
                         No prescriptions found for this patient.
                       </td>
                     </tr>
@@ -443,7 +440,7 @@ export default function IPDPrescription() {
                   <button
                     type="button"
                     onClick={() => setShowAdd(false)}
-                    className="hover:bg-white/20 p-1.5 rounded-full transition-colors"
+                    className="hover:bg-white/20 p-1 rounded transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -458,7 +455,7 @@ export default function IPDPrescription() {
                         <div className="space-y-1.5">
                           <label className="text-[12px] font-bold text-gray-500 uppercase">Finding Category</label>
                           <select
-                            className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full border border-gray-300 p-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none "
                             value={formData.findingCategory}
                             onChange={(e) => setFormData({ ...formData, findingCategory: e.target.value, findings: "", finding_description: "" })}
                           >
@@ -471,7 +468,7 @@ export default function IPDPrescription() {
                         <div className="space-y-1.5">
                           <label className="text-[12px] font-bold text-gray-500 uppercase">Findings</label>
                           <select
-                            className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full border border-gray-300 p-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none "
                             value={formData.findings}
                             onChange={(e) => {
                               const findingId = parseInt(e.target.value);
@@ -499,7 +496,7 @@ export default function IPDPrescription() {
                         <div className="space-y-1.5 md:col-span-1">
                           <label className="text-[12px] font-bold text-gray-500 uppercase">Finding Description</label>
                           <textarea
-                            className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none transition-all h-[38px] resize-none"
+                            className="w-full border border-gray-300 p-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none "
                             placeholder="Description"
                             value={formData.finding_description}
                             onChange={(e) => setFormData({ ...formData, finding_description: e.target.value })}
@@ -533,7 +530,7 @@ export default function IPDPrescription() {
                                   <tr key={index} className="group hover:bg-gray-50/50 transition-colors">
                                     <td className="p-2">
                                       <select
-                                        className="w-full border-gray-200 border rounded-lg p-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                                        className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                                         value={med.medicine_category}
                                         onChange={(e) => handleMedicineChange(index, "medicine_category", e.target.value)}
                                       >
@@ -545,7 +542,7 @@ export default function IPDPrescription() {
                                     </td>
                                     <td className="p-2">
                                       <select
-                                        className="w-full border-gray-200 border rounded-lg p-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                                        className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                                         value={med.medicine}
                                         onChange={(e) => handleMedicineChange(index, "medicine", e.target.value)}
                                       >
@@ -559,7 +556,7 @@ export default function IPDPrescription() {
                                     </td>
                                     <td className="p-2">
                                       <select
-                                        className="w-full border-gray-200 border rounded-lg p-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                                        className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                                         value={med.medicine_dosage}
                                         onChange={(e) => handleMedicineChange(index, "medicine_dosage", e.target.value)}
                                       >
@@ -573,7 +570,7 @@ export default function IPDPrescription() {
                                     </td>
                                     <td className="p-2">
                                       <select
-                                        className="w-full border-gray-200 border rounded-lg p-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                                        className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                                         value={med.dosage}
                                         onChange={(e) => handleMedicineChange(index, "dosage", e.target.value)}
                                       >
@@ -585,7 +582,7 @@ export default function IPDPrescription() {
                                     </td>
                                     <td className="p-2">
                                       <input
-                                        className="w-full border-gray-200 border rounded-lg p-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                                        className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                                         placeholder="Instruction"
                                         value={med.instruction}
                                         onChange={(e) => handleMedicineChange(index, "instruction", e.target.value)}
@@ -610,7 +607,7 @@ export default function IPDPrescription() {
                         <button
                           type="button"
                           onClick={addMedicineRow}
-                          className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#1976D2] text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all shadow-sm mt-4"
+                          className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#1976D2] text-white px-4 py-2 rounded text-xs font-bold flex items-center gap-2 transition-all shadow-sm mt-4"
                         >
                           <Plus size={14} /> Add Medicine
                         </button>
@@ -624,7 +621,7 @@ export default function IPDPrescription() {
                         <div className="space-y-1.5">
                           <label className="text-[12px] font-bold text-gray-500 uppercase">Prescribe By <span className="text-red-500">*</span></label>
                           <select
-                            className="w-full border border-gray-200 p-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 bg-white shadow-sm"
+                            className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                             required
                             value={formData.prescribed_by}
                             onChange={(e) => setFormData({ ...formData, prescribed_by: e.target.value })}
@@ -640,7 +637,7 @@ export default function IPDPrescription() {
                           <label className="text-[12px] font-bold text-gray-500 uppercase">Pathology</label>
                           <div className="relative">
                             <select
-                              className="w-full border border-gray-200 p-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 bg-white shadow-sm"
+                              className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                               value=""
                               onChange={(e) => toggleMultiSelect("pathology", parseInt(e.target.value))}
                             >
@@ -667,7 +664,7 @@ export default function IPDPrescription() {
                           <label className="text-[12px] font-bold text-gray-500 uppercase">Radiology</label>
                           <div className="relative">
                             <select
-                              className="w-full border border-gray-200 p-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 bg-white shadow-sm"
+                              className="w-full px-2 py-1 border-gray-300 border rounded text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
                               value=""
                               onChange={(e) => toggleMultiSelect("radiology", parseInt(e.target.value))}
                             >
@@ -695,18 +692,11 @@ export default function IPDPrescription() {
                 </div>
 
                 {/* FOOTER ACTIONS */}
-                <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t">
-                  <button
-                    type="button"
-                    onClick={() => setShowAdd(false)}
-                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-bold text-sm hover:bg-white transition-all shadow-sm"
-                  >
-                    Cancel
-                  </button>
+                <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#1976D2] text-white px-8 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-sm disabled:opacity-50"
+                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#1976D2] text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-sm disabled:opacity-50"
                   >
                     {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} Save
                   </button>

@@ -63,7 +63,7 @@ export default function Operations() {
 
       <div className="min-h-screen p-4 md:p-6">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="px-5 py-4 border-b flex justify-between items-center">
+          <div className="px-5 py-4  flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-800">Operations</h2>
           </div>
 
@@ -76,25 +76,25 @@ export default function Operations() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-100 text-gray-600">
                   <tr>
-                    <th className="p-4 text-left">Reference No</th>
-                    <th className="p-4 text-left">Date</th>
-                    <th className="p-4 text-left">Operation</th>
-                    <th className="p-4 text-left">Type</th>
-                    <th className="p-4 text-left">OT Technician</th>
-                    <th className="p-4 text-left">Anesthesia</th>
-                    <th className="p-4 text-center">Action</th>
+                    <th className="px-3 py-2 text-left">Reference No</th>
+                    <th className="px-3 py-2 text-left">Date</th>
+                    <th className="px-3 py-2 text-left">Operation</th>
+                    <th className="px-3 py-2 text-left">Type</th>
+                    <th className="px-3 py-2 text-left">OT Technician</th>
+                    <th className="px-3 py-2 text-left">Anesthesia</th>
+                    <th className="px-3 py-2 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {operations.length > 0 ? operations.map((d, i) => (
-                    <tr key={i} className="border-t hover:bg-indigo-50/40 transition">
-                      <td className="p-4 font-medium text-[#6046B5]">OTREF{d.id}</td>
-                      <td className="p-4">{formatDate(d.operation_date)}</td>
-                      <td className="p-4">{d.operation_name || "N/A"}</td>
-                      <td className="p-4">{d.operation_type || "N/A"}</td>
-                      <td className="p-4">{d.ot_technician || "N/A"}</td>
-                      <td className="p-4">{d.anesthesia_type || "N/A"}</td>
-                      <td className="p-4 text-center">
+                    <tr key={i} className="border-b border-gray-200  hover:bg-indigo-50/40 transition">
+                      <td className="px-3 py-2 font-medium text-[#6046B5]">OTREF{d.id}</td>
+                      <td className="px-3 py-2">{formatDate(d.operation_date)}</td>
+                      <td className="px-3 py-2">{d.operation_name}</td>
+                      <td className="px-3 py-2">{d.operation_type}</td>
+                      <td className="px-3 py-2">{d.ot_technician}</td>
+                      <td className="px-3 py-2">{d.anesthesia_type}</td>
+                      <td className="px-3 py-2 text-center">
                         <button
                           onClick={() => handleOpenModal(d)}
                           className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-full transition"
@@ -120,7 +120,7 @@ export default function Operations() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="bg-[#6046B5] p-5 flex justify-between items-center text-white">
+            <div className="bg-[#6046B5] px-3 py-2 flex justify-between items-center text-white">
               <div className="flex items-center gap-3">
                 <Scissors className="p-2 bg-white/20 rounded-lg" size={40} />
                 <div>
@@ -230,10 +230,10 @@ export default function Operations() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t bg-gray-50 flex justify-end">
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end">
               <button
                 onClick={handleCloseModal}
-                className="px-6 py-2 bg-[#6046B5] text-white rounded-xl font-semibold hover:bg-[#4d3794] transition shadow-md"
+                className="px-3 py-2 bg-[#6046B5] text-white rounded font-semibold hover:bg-[#4d3794] transition shadow-md"
               >
                 Close
               </button>

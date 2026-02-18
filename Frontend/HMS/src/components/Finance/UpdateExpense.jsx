@@ -64,8 +64,20 @@ export default function UpdateExpense({
   };
 
   const handleSubmit = async () => {
-    if (!form.expense_head || !form.name || !form.amount || !form.date) {
-      notify("warning", "Please fill all required fields");
+    if (!form.expense_head) {
+      notify("warning", "Expense head is required");
+      return;
+    }
+    if (!form.name) {
+      notify("warning", "Name is required");
+      return;
+    }
+    if (!form.date) {
+      notify("warning", "Date is required");
+      return;
+    }
+    if (!form.amount) {
+      notify("warning", "Amount is required");
       return;
     }
 
@@ -102,12 +114,12 @@ export default function UpdateExpense({
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div>
-            <label>Expense Head *</label>
+            <label>Expense Head <span className="text-red-500">*</span></label>
             <select
               name="expense_head"
               value={form.expense_head}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             >
               <option value="">Select</option>
               {expenseHeads.map((h) => (
@@ -117,34 +129,34 @@ export default function UpdateExpense({
           </div>
 
           <div>
-            <label>Name *</label>
+            <label>Name <span className="text-red-500">*</span></label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
           </div>
 
           <div>
-            <label>Date *</label>
+            <label>Date <span className="text-red-500">*</span></label>
             <input
               type="date"
               name="date"
               value={form.date}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
           </div>
 
           <div>
-            <label>Amount *</label>
+            <label>Amount <span className="text-red-500">*</span></label>
             <input
               type="number"
               name="amount"
               value={form.amount}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
           </div>
 
@@ -155,14 +167,14 @@ export default function UpdateExpense({
               value={form.description}
               onChange={handleChange}
               rows={3}
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
           </div>
 
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end p-4 border-t">
+        <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

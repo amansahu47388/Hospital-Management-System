@@ -69,7 +69,7 @@ export default function BirthRecord() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+                className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
               />
             </div>
 
@@ -104,7 +104,7 @@ export default function BirthRecord() {
 
               <tbody>
                 {records.map((item, i) => (
-                  <tr key={i} className=" text-sm group hover:bg-gray-50 transition">
+                  <tr key={i} className=" text-sm group hover:bg-gray-50 transition border-b border-gray-200">
                     <td className="px-3 py-2">{item.id}</td>
                     <td className="px-3 py-2">{item.caseId}</td>
                     <td className="px-3 py-2">{item.generatedBy}</td>
@@ -116,19 +116,22 @@ export default function BirthRecord() {
 
                     {/* ACTIONS */}
                     <td className="px-3 py-2">
-                      <div className="flex gap-3">
-                        <Eye
-                          className="w-4 h-4 text-blue-600 cursor-pointer"
+                      <div className="flex gap-1">
+                        <button className="p-1 rounded text-purple-600 hover:bg-purple-100"
                           onClick={() => handleView(item)}
-                        />
-                        <Pencil
-                          className="w-4 h-4 text-green-600 cursor-pointer"
+                        >
+                          <Eye size={16}/>
+                        </button>
+                        <button className="p-1 rounded text-green-600 hover:bg-green-100"
                           onClick={() => handleEdit(item)}
-                        />
-                        <Trash2
-                          className="w-4 h-4 text-red-600 cursor-pointer"
+                        >
+                          <Pencil size={16}/>
+                        </button>
+                        <button className="p-1 rounded text-red-600 hover:bg-red-100"
                           onClick={() => handleDelete(item)}
-                        />
+                       >
+                        <Trash2 size={16}/>
+                        </button>
                       </div>
                     </td>
                   </tr>

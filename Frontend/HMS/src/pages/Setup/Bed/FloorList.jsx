@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
 import AddFloor from "../../../components/Setup/Bed/AddFloor";
+import BedSidebarMenu from "../../../components/Setup/Bed/BedSidebarMenu";
 import { getFloors, deleteFloor } from "../../../api/setupApi";
 import { useNotify } from "../../../context/NotificationContext";
 
@@ -21,7 +22,7 @@ export default function FloorList() {
       const res = await getFloors();
       setFloors(res.data);
     } catch (error) {
-      notify( "error", "Failed to load floors",);
+      notify("error", "Failed to load floors",);
     } finally {
       setLoading(false);
     }
@@ -47,11 +48,11 @@ export default function FloorList() {
     try {
       await deleteFloor(floor.id);
 
-      notify("success","Floor deleted successfully");
+      notify("success", "Floor deleted successfully");
 
       fetchFloors();
     } catch (error) {
-      notify("error","Failed to delete floor");
+      notify("error", "Failed to delete floor");
     }
   };
 
@@ -77,29 +78,8 @@ export default function FloorList() {
         <div className="flex gap-4">
 
           {/* LEFT MENU */}
-          <div className="w-64 bg-white rounded-md p-3 shadow">
-            <ul className="space-y-1 text-sm">
-              {[
-                { label: "Bed Status", path: "/admin/setup/bed-status" },
-                { label: "Bed", path: "/admin/setup/bed" },
-                { label: "Bed Type", path: "/admin/setup/bed-type" },
-                { label: "Bed Group", path: "/admin/setup/bed-group" },
-                { label: "Floor", path: "/admin/setup/floor" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      isActive
-                        ? "block px-3 py-2 rounded bg-purple-200 text-purple-600 font-bold"
-                        : "block px-3 py-2 rounded hover:bg-purple-50"
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+          <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
+            <BedSidebarMenu />
           </div>
 
           {/* TABLE */}
@@ -115,7 +95,7 @@ export default function FloorList() {
 
               <tbody>
                 {floors.map((floor) => (
-                  <tr key={floor.id} className="hover:bg-gray-50">
+                  <tr key={floor.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                     <td className="px-3 py-2 font-medium">
                       {floor.floor_name}
                     </td>
@@ -124,13 +104,13 @@ export default function FloorList() {
                       <div className="flex gap-3">
                         <button
                           onClick={() => handleEdit(floor)}
-                          className="text-purple-600 hover:text-purple-800"
+                          className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                         >
                           <Pencil size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(floor)}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                         >
                           <Trash2 size={16} />
                         </button>

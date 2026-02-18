@@ -225,6 +225,21 @@ export default function GenerateRadiologyBill({ open, onClose }) {
       return;
     }
 
+    if (Number(paidAmount) > netAmount) {
+      notify("warning", "Paid amount cannot be greater than net amount");
+      return;
+    }
+
+    if (Number(paidAmount) < 0) {
+      notify("warning", "Paid amount cannot be negative");
+      return;
+    }
+
+    if (tests.length === 0) {
+      notify("warning", "Please select at least one test");
+      return;
+    }
+
     const payload = {
       patient_id: selectedPatient.id,
       doctor_id: selectedDoctor ? Number(selectedDoctor) : null,
@@ -421,7 +436,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                   className="grid grid-cols-6 gap-3 items-center"
                 >
                   <select
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                     value={row.testId}
                     onChange={(e) =>
                       updateRow(row.id, e.target.value)
@@ -436,12 +451,12 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                   </select>
 
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                     value={test ? `${test.report_days} days` : ""}
                     disabled
                   />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                     value={
                       test && test.report_days
                         ? new Date(Date.now() + test.report_days * 24 * 60 * 60 * 1000).toLocaleDateString()
@@ -450,12 +465,12 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                     disabled
                   />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                     value={test?.tax ?? ""}
                     disabled
                   />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                     value={test?.standard_charge ?? ""}
                     disabled
                   />
@@ -476,14 +491,14 @@ export default function GenerateRadiologyBill({ open, onClose }) {
             </button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 border-t p-4">
+          <div className="grid md:grid-cols-2 gap-6 border-t border-gray-300 p-4">
 
             {/* LEFT */}
             <div className="space-y-4">
               <div>
                 <label>Referral Doctor</label>
                 <select
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
                 >
@@ -499,7 +514,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
               <div>
                 <label>Note</label>
                 <textarea
-                  className="w-full border p-2 rounded h-24"
+                  className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none h-24"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Enter any additional notes..."
@@ -512,7 +527,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                     type="checkbox"
                     checked={previousReportValue}
                     onChange={(e) => setPreviousReportValue(e.target.checked)}
-                    className="w-4 h-4"
+                    className="w-4 h-4 border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                   />
                   Previous Report Value
                 </label>
@@ -536,7 +551,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-20"
                     placeholder="%"
                     value={discountPercent}
                     onChange={(e) => {
@@ -547,7 +562,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                   <span>or</span>
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-20"
                     placeholder="$"
                     value={discount}
                     onChange={(e) => {
@@ -565,7 +580,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                 </div>
               )}
 
-              <div className="flex justify-between font-bold text-lg border-t pt-2">
+              <div className="flex justify-between font-bold text-lg border-t border-gray-300 pt-2">
                 <span>Net Amount ($)</span>
                 <span>{netAmount.toFixed(2)}</span>
               </div>
@@ -574,7 +589,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                 <div>
                   <label>Payment Mode</label>
                   <select
-                    className="border p-2 w-full"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-full"
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
                   >
@@ -591,7 +606,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
                   <label>Paid Amount ($)</label>
                   <input
                     type="number"
-                    className="border p-2 w-full"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-full"
                     value={paidAmount}
                     onChange={(e) => setPaidAmount(e.target.value)}
                     placeholder="0.00"
@@ -610,7 +625,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
             </div>
           </div>
 
-          <div className="flex justify-end px-4 py-4 border-t bg-gray-100">
+          <div className="flex justify-end px-4 py-4 border-t border-gray-300">
             <button
               onClick={handleSave}
               disabled={loading}

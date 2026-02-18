@@ -159,8 +159,48 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
   const handleSave = async () => {
     if (loading) return;
 
-    if (!supplierId  || !billNo) {
-      notify("warning", "fill all required fields");
+    if (!supplierId) {
+      notify("warning", "supplier is required");
+      return;
+    }
+    if (!batchNo) {
+      notify("warning", "batch no is required");
+      return;
+    }
+    if (!expiryMonth) {
+      notify("warning", "expiry month is required");
+      return;
+    }
+    if (!mrp) {
+      notify("warning", "mrp is required");
+      return;
+    }
+    if (!purchasePrice) {
+      notify("warning", "purchase price is required");
+      return;
+    }
+    if (!salePrice) {
+      notify("warning", "sale price is required");
+      return;
+    }
+    if (!packingQty) {
+      notify("warning", "packing qty is required");
+      return;
+    }
+    if (!quantity) {
+      notify("warning", "quantity is required");
+      return;
+    }
+    if (!purchasePrice) {
+      notify("warning", "purchase price is required");
+      return;
+    }
+    if (!taxPercentage) {
+      notify("warning", "tax percentage is required");
+      return;
+    }
+    if (!amount) {
+      notify("warning", "amount is required");
       return;
     }
 
@@ -231,7 +271,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
         {/* ================= HEADER ================= */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 px-3 sm:px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
           <select
-            className="bg-white text-black px-3 py-1 rounded w-full sm:w-80 text-sm sm:text-base"
+            className="bg-white text-black px-3 py-1 rounded w-full sm:w-80 text-sm sm:text-base focus:outline-none"
             value={supplierId}
             onChange={(e) => setSupplierId(e.target.value)}
           >
@@ -249,11 +289,11 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
         </div>
 
         {/* ================= BILL INFO ================= */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 px-3 sm:px-4 py-2 bg-gray-100 border-b text-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 px-3 sm:px-4 py-2 bg-gray-100 border-b border-gray-300 text-sm">
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <label className="font-medium whitespace-nowrap">Bill No</label>
             <input
-              className="border px-2 py-1 rounded w-full sm:w-40 text-sm sm:text-base"
+              className="border border-gray-300 px-2 py-1 rounded w-full sm:w-40 text-sm sm:text-base focus:outline-none focus:border-[#6046B5]"
               value={billNo}
               onChange={(e) => setBillNo(e.target.value)}
             />
@@ -273,25 +313,19 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
             <table className="min-w-full text-sm">
               <thead className="bg-gray-200">
                 <tr>
-                  {[
-                    "Medicine Category *",
-                    "Medicine Name *",
-                    "Batch No *",
-                    "Expiry Month *",
-                    "MRP ($) *",
-                    "Batch Amount ($)",
-                    "Sale Price ($) *",
-                    "Packing Qty",
-                    "Quantity *",
-                    "Purchase Price ($) *",
-                    "Tax % *",
-                    "Amount ($) *",
-                  ].map((h) => (
-                    <th key={h} className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                      {h}
-                    </th>
-                  ))}
-                  <th className="px-1 sm:px-2 py-1 text-center">
+                  <th className="px-1 py-1 text-left ">Medicine Category <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Medicine Name <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Batch No <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Expiry Month <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">MRP <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Batch Amount <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Sale Price <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Packing Qty <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Quantity <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Purchase Price <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Tax % <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-left ">Amount <span className="text-red-500"> *</span></th>
+                  <th className="px-1 py-1 text-center">
                     <Plus onClick={addRow} className="cursor-pointer text-purple-600" size={16} />
                   </th>
                 </tr>
@@ -302,7 +336,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
                   <tr key={i}>
                     <td>
                       <select
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.medicine_category_id}
                         onChange={(e) =>
                           updateRow(i, "medicine_category_id", e.target.value)
@@ -319,7 +353,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
 
                     <td className=" p-1">
                       <select
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.medicine_id}
                         onChange={(e) =>
                           updateRow(i, "medicine_id", e.target.value)
@@ -342,7 +376,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
 
                     <td className=" p-1">
                       <input
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.batch_no}
                         onChange={(e) =>
                           updateRow(i, "batch_no", e.target.value)
@@ -353,7 +387,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
                     <td className=" p-1">
                       <input
                         type="month"
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.expiry_month}
                         onChange={(e) =>
                           updateRow(i, "expiry_month", e.target.value)
@@ -363,7 +397,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
 
                     <td className=" p-1">
                       <input
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.mrp}
                         onChange={(e) => updateRow(i, "mrp", e.target.value)}
                       />
@@ -371,7 +405,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
 
                     <td className=" p-1">
                       <input
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.batch_amount}
                         onChange={(e) =>
                           updateRow(i, "batch_amount", e.target.value)
@@ -381,7 +415,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
 
                     <td className=" p-1">
                       <input
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.sale_price}
                         onChange={(e) =>
                           updateRow(i, "sale_price", e.target.value)
@@ -391,7 +425,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
 
                     <td className=" p-1">
                       <input
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.packing_qty}
                         onChange={(e) =>
                           updateRow(i, "packing_qty", e.target.value)
@@ -402,7 +436,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
                     <td className=" p-1">
                       <input
                         type="number"
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.quantity}
                         onChange={(e) =>
                           updateRow(i, "quantity", e.target.value)
@@ -413,7 +447,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
                     <td className=" p-1">
                       <input
                         type="number"
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.purchase_price}
                         onChange={(e) =>
                           updateRow(i, "purchase_price", e.target.value)
@@ -424,7 +458,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
                     <td className=" p-1">
                       <input
                         type="number"
-                        className="border w-full px-1 py-1"
+                        className="border border-gray-300 w-full px-1 py-1 rounded focus:outline-none focus:border-[#6046B5]"
                         value={row.tax_percentage}
                         onChange={(e) =>
                           updateRow(i, "tax_percentage", e.target.value)
@@ -456,7 +490,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
             <div>
               <label className="font-medium block mb-1 text-sm sm:text-base">Note</label>
               <textarea
-                className="border w-full p-2 h-24 rounded text-sm sm:text-base"
+                className="border border-gray-300 w-full p-2 h-24 rounded text-sm sm:text-base focus:outline-none focus:border-[#6046B5]"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
               />
@@ -464,7 +498,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
               <label className="font-medium block mt-4 text-sm sm:text-base">Attach Document</label>
               <input
                 type="file"
-                className="border w-full p-2 rounded text-sm sm:text-base"
+                className="border border-gray-300 w-full p-2 rounded text-sm sm:text-base focus:outline-none focus:border-[#6046B5]"
                 onChange={(e) =>
                   setAttachment(e.target.files?.[0] || null)
                 }
@@ -482,7 +516,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
               <div>
                 <label className="block font-medium text-sm sm:text-base">Payment Mode</label>
                 <select
-                  className="border w-full px-2 py-1 rounded text-sm sm:text-base"
+                  className="border border-gray-300 w-full px-2 py-1 rounded text-sm sm:text-base focus:outline-none focus:border-[#6046B5]"
                   value={paymentMode}
                   onChange={(e) => setPaymentMode(e.target.value)}
                 >
@@ -495,7 +529,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
               <div>
                 <label className="block font-medium text-sm sm:text-base">Payment Note</label>
                 <textarea
-                  className="border w-full p-2 rounded text-sm sm:text-base"
+                  className="border border-gray-300 w-full p-2 rounded text-sm sm:text-base focus:outline-none focus:border-[#6046B5]"
                   value={paymentNote}
                   onChange={(e) => setPaymentNote(e.target.value)}
                 />
@@ -505,7 +539,7 @@ export default function PurchaseMedicine({ open, onClose, onSaved }) {
         </div>
 
         {/* ================= FOOTER ================= */}
-        <div className="px-3 sm:px-4 py-3 border-t flex justify-end bg-gray-50">
+        <div className="px-3 sm:px-4 py-3 border-t border-gray-300 flex justify-end ">
           <button
             onClick={handleSave}
             disabled={loading}
@@ -524,7 +558,7 @@ const InputRow = ({ label, value, onChange, readOnly, bold }) => (
   <div className="flex justify-between items-center gap-2">
     <span className={bold ? "font-semibold" : ""}>{label}</span>
     <input
-      className={`border px-2 py-1 w-20 sm:w-24 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""}`}
+      className={`border border-gray-300 px-2 py-1 w-20 sm:w-24 rounded text-xs sm:text-sm focus:outline-none focus:border-[#6046B5] ${bold ? "font-semibold" : ""}`}
       value={value}
       readOnly={readOnly}
       onChange={onChange ? (e) => onChange(e.target.value) : undefined}

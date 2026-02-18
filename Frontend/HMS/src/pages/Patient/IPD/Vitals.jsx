@@ -34,7 +34,7 @@ export default function Vitals() {
 
       <div className="min-h-screen p-4 md:p-6">
         <div className="bg-white rounded-xl shadow-xl overflow-hidden">
-          <div className="px-5 py-4 border-b flex justify-between items-center">
+          <div className="px-5 py-4 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-800">Vitals</h2>
             <span className="text-xs px-3 py-1 rounded-full bg-indigo-100 text-indigo-700">
               Total Records: {vitals.length}
@@ -65,7 +65,7 @@ export default function Vitals() {
                   </thead>
                   <tbody>
                     {vitals.map((v) => (
-                      <tr key={v.id} className="border-t hover:bg-indigo-50/40 transition">
+                      <tr key={v.id} className="border-t hover:bg-indigo-50/40 transition border-b border-gray-200">
                         <td className="px-2 py-3 font-medium">{new Date(v.vital_date).toLocaleString()}</td>
                         <td className="px-2 py-3">{v.height ? `${v.height} cm` : "-"}</td>
                         <td className="px-2 py-3">{v.weight ? `${v.weight} kg` : "-"}</td>

@@ -92,12 +92,13 @@ class PatientSerializer(serializers.ModelSerializer):
 class PatientCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating patients"""
     gender = serializers.CharField(required=False)
+    send_invitation = serializers.BooleanField(default=True, write_only=True)
     
     class Meta:
         model = Patient
         fields = ['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state',
             'zip_code', 'date_of_birth', 'gender', 'blood_group', 'medical_history', 'allergies',
-              'emergency_contact_name', 'emergency_contact_phone', 'photo',
+              'emergency_contact_name', 'emergency_contact_phone', 'photo', 'send_invitation'
         ]
 
     def validate_first_name(self, value):
@@ -206,43 +207,42 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        """Create a new patient with associated user account"""
+        """Create a new patient with temporary password (similar to staff management)"""
+        import secrets
+        import string
+        
         logger.info(f"Creating new patient")
+        
+        # Remove non-model fields
+        send_invitation = validated_data.pop('send_invitation', True)
+        
         try:
-            from users.models import User
-            from django.db import transaction
-            
             # Extract photo if present (will be set separately)
             photo = validated_data.pop('photo', None)
             
-            with transaction.atomic():
-                # Prepare full_name for User model
-                first_name = validated_data['first_name']
-                last_name = validated_data.get('last_name', '')
-                full_name = f"{first_name} {last_name}".strip()
-                
-                # Create User account for patient
-                user = User.objects.create_user(
-                    email=validated_data['email'],
-                    full_name=full_name,
-                    password='Patient@123',  # Default password - should be changed on first login
-                    phone=validated_data.get('phone'),
-                    role='patient',
-                    is_staff=False
-                )
-                logger.info(f"✅ User account created for patient: {user.email}")
-                
-                # Create Patient record linked to user
-                validated_data['created_by'] = self.context['request'].user
-                validated_data['user'] = user
-                
-                # Add photo back if it was present
-                if photo:
-                    validated_data['photo'] = photo
-                
-                patient = Patient.objects.create(**validated_data)
-                logger.info(f"✅ Patient created: ID={patient.id}, Name={patient.full_name}")
-                
+            # Get the admin who is creating this patient
+            request = self.context.get('request')
+            created_by = request.user if request and request.user.is_authenticated else None
+            
+            # Generate temporary password (same pattern as staff)
+            alphabet = string.ascii_letters + string.digits + "!@#$%"
+            temp_password = ''.join(secrets.choice(alphabet) for i in range(12))
+            
+            # Create Patient record
+            validated_data['created_by'] = created_by
+            
+            # Add photo back if it was present
+            if photo:
+                validated_data['photo'] = photo
+            
+            patient = Patient.objects.create(**validated_data)
+            
+            # Store temp password and send_invitation flag for view to use
+            patient._temp_password = temp_password
+            patient._send_invitation = send_invitation
+            
+            logger.info(f"✅ Patient created: ID={patient.id}, Name={patient.full_name}, Temp Password: {temp_password}")
+            
             return patient
         except Exception as e:
             logger.error(f"❌ Error creating patient: {str(e)}", exc_info=True)
@@ -251,6 +251,10 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Update an existing patient"""
         logger.info(f"Updating patient ID={instance.id}")
+        
+        # Remove send_invitation if present (not needed for updates)
+        validated_data.pop('send_invitation', None)
+        
         try:
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)

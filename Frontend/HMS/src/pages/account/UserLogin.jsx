@@ -128,7 +128,6 @@ export default function UserLogin() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -153,7 +152,6 @@ export default function UserLogin() {
                   className="
                     w-full px-3 py-2 rounded-md
                     border border-gray-300
-                    focus:border-[#6046B5]
                     focus:ring-1 focus:ring-[#8A63D2]
                     outline-none
                     transition
@@ -190,7 +188,7 @@ export default function UserLogin() {
                 mt-2 w-full py-2 rounded-md text-white font-medium
                 bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                 hover:opacity-90
-                focus:ring-2 focus:ring-[#8A63D2]
+                focus:ring-1 focus:ring-[#8A63D2]
                 transition
               "
             >

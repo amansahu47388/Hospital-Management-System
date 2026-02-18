@@ -37,11 +37,10 @@ export default function AddComplain({ open, onClose, refresh }) {
   };
 
   const handleSubmit = async () => {
-    if (!form.complain_type || !form.source || !form.complain_by || !form.date || !form.phone){
-      notify("warning","Please fill required fields");
+    if (!form.complain_by ){
+      notify("warning","Complain by is required");
       return;
     }
-
     try {
       setLoading(true);
       await createComplaint(form);
@@ -73,9 +72,9 @@ export default function AddComplain({ open, onClose, refresh }) {
         <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
 
           <div>
-            <label>Complain Type *</label>
+            <label>Complain Type</label>
             <select name="complain_type" value={form.complain_type} onChange={handleChange}
-              className="w-full border rounded px-3 py-2">
+              className="w-full border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]">
               <option value="">Select</option>
               {types.map(t => (
                 <option key={t.id} value={t.id}>{t.complaint_type}</option>
@@ -84,9 +83,9 @@ export default function AddComplain({ open, onClose, refresh }) {
           </div>
 
           <div>
-            <label>Source *</label>
+            <label>Source</label>
             <select name="source" value={form.source} onChange={handleChange}
-              className="w-full border rounded px-3 py-2">
+              className="w-full border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]">
               <option value="">Select</option>
               {sources.map(s => (
                 <option key={s.id} value={s.id}>{s.source_name}</option>
@@ -94,7 +93,7 @@ export default function AddComplain({ open, onClose, refresh }) {
             </select>
           </div>
 
-          <Input label="Complain By *" name="complain_by" value={form.complain_by} onChange={handleChange} />
+          <Input label="Complain By" name="complain_by" value={form.complain_by} onChange={handleChange} required />
           <Input label="Phone" name="phone" value={form.phone} onChange={handleChange} />
           <Input type="date" label="Date" name="date" value={form.date} onChange={handleChange} />
 
@@ -123,14 +122,16 @@ export default function AddComplain({ open, onClose, refresh }) {
 
 const Input = ({ label, ...props }) => (
   <div>
-    <label className="text-gray-800">{label}</label>
-    <input {...props} className="w-full border rounded px-3 py-2" />
+    <label className="text-gray-800">{label}
+      {props.required && <span className="text-red-500"> *</span>}
+    </label>
+    <input {...props} className="w-full border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
   </div>
 );
 
 const Textarea = ({ label, ...props }) => (
   <div className="sm:col-span-2">
     <label>{label}</label>
-    <textarea {...props} rows="3" className="w-full border rounded px-3 py-2" />
+    <textarea {...props} rows="3" className="w-full border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
   </div>
 );

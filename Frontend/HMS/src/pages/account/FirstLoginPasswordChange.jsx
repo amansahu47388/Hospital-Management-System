@@ -115,10 +115,10 @@ export default function FirstLoginPasswordChange() {
             <div className="fixed inset-0 backdrop-blur-sm" />
 
             <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl px-6  sm:px-8 sm:py-10">
+                <div className="w-full max-w-md bg-white rounded shadow px-6  sm:px-8 sm:py-10">
                     {/* Header */}
                     <div className="text-center mb-6">
-                        <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-2">
+                        <div className="mx-auto w-16 h-16 bg-purple-100 rounded flex items-center justify-center mb-2">
                             <Lock className="text-purple-600" size={32} />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -141,7 +141,7 @@ export default function FirstLoginPasswordChange() {
                                     name="temporary_password"
                                     value={formData.temporary_password}
                                     onChange={handleChange}
-                                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.temporary_password ? "border-red-500" : "border-gray-300"
+                                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none ${errors.temporary_password ? "border-red-500" : "border-gray-300"
                                         }`}
                                     placeholder="Enter temporary password"
                                 />
@@ -169,7 +169,7 @@ export default function FirstLoginPasswordChange() {
                                     name="new_password"
                                     value={formData.new_password}
                                     onChange={handleChange}
-                                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.new_password ? "border-red-500" : "border-gray-300"
+                                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none ${errors.new_password ? "border-red-500" : "border-gray-300"
                                         }`}
                                     placeholder="Create new password"
                                 />
@@ -198,7 +198,7 @@ export default function FirstLoginPasswordChange() {
                                     name="confirm_password"
                                     value={formData.confirm_password}
                                     onChange={handleChange}
-                                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.confirm_password ? "border-red-500" : "border-gray-300"
+                                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none ${errors.confirm_password ? "border-red-500" : "border-gray-300"
                                         }`}
                                     placeholder="Confirm new password"
                                 />
@@ -219,14 +219,14 @@ export default function FirstLoginPasswordChange() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2 rounded-lg text-white font-medium bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:from-[#8A63D2] hover:to-[#6046B5] focus:ring-2 focus:ring-purple-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                            className="w-full py-2 rounded-lg text-white font-medium bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:from-[#8A63D2] hover:to-[#6046B5] focus:ring-1 focus:ring-[#6046B5] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
                         >
                             {loading ? "Changing Password..." : "Change Password"}
                         </button>
                     </form>
 
                     {/* Info */}
-                    <div className="mt-6 bg-purple-50 border border-purple-200 rounded-lg p-3">
+                    <div className="mt-6 bg-purple-50 border border-purple-300 rounded-lg p-3">
                         <p className="text-xs text-purple-800">
                             <strong>Note:</strong> After changing your password, you will be logged out and need to login again with your new password.
                         </p>

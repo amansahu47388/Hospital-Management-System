@@ -428,7 +428,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
               return (
                 <div key={row.id} className="grid grid-cols-6 gap-3 items-center">
                   <select
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                     value={row.testId}
                     onChange={(e) => updateRow(row.id, e.target.value)}
                   >
@@ -440,9 +440,9 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
                     ))}
                   </select>
 
-                  <input className="border p-2 rounded" disabled value={test?.report_days || ""} />
+                  <input className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none" disabled value={test?.report_days || ""} />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                     value={
                       test && test.report_days
                         ? new Date(Date.now() + test.report_days * 24 * 60 * 60 * 1000).toLocaleDateString()
@@ -450,8 +450,8 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
                     }
                     disabled
                   />
-                  <input className="border p-2 rounded" disabled value={test?.tax || ""} />
-                  <input className="border p-2 rounded" disabled value={test?.standard_charge || ""} />
+                  <input className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none" disabled value={test?.tax || ""} />
+                  <input className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none" disabled value={test?.standard_charge || ""} />
 
                   <button onClick={() => removeRow(row.id)}>
                     <Trash2 className="text-red-500" size={18} />
@@ -474,7 +474,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
               <div>
                 <label>Referral Doctor</label>
                 <select
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none"
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
                 >
@@ -490,7 +490,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
               <div>
                 <label>Note</label>
                 <textarea
-                  className="w-full border p-2 rounded h-24"
+                  className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none h-24"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Enter any additional notes..."
@@ -503,7 +503,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
                     type="checkbox"
                     checked={previousReportValue}
                     onChange={(e) => setPreviousReportValue(e.target.checked)}
-                    className="w-4 h-4"
+                    className="w-4 h-4 "
                   />
                   Previous Report Value
                 </label>
@@ -527,7 +527,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-20"
                     placeholder="%"
                     value={discountPercent}
                     onChange={(e) => {
@@ -538,7 +538,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
                   <span>or</span>
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-20"
                     placeholder="$"
                     value={discount}
                     onChange={(e) => {
@@ -565,7 +565,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
                 <div>
                   <label>Payment Mode</label>
                   <select
-                    className="border p-2 w-full"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-full"
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
                   >
@@ -582,7 +582,7 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
                   <label>Paid Amount ($)</label>
                   <input
                     type="number"
-                    className="border p-2 w-full"
+                    className="border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none w-full"
                     value={paidAmount}
                     onChange={(e) => setPaidAmount(e.target.value)}
                     placeholder="0.00"

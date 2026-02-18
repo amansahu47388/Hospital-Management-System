@@ -68,8 +68,16 @@ export default function UpdateDeathRecord({
     e.preventDefault();
 
     // Validation
-    if (!form.patientName || !form.deathDate) {
-      notify("error", "Please fill in all required fields (Patient Name and Death Date)");
+    if (!form.patientName) {
+      notify("error", "Patient name is required");
+      return;
+    }
+    if (!form.deathDate) {
+      notify("error", "Death date is required");
+      return;
+    }
+    if (!form.guardianName) {
+      notify("error", "Guardian name is required");
       return;
     }
 
@@ -115,9 +123,9 @@ export default function UpdateDeathRecord({
           {/* GRID 1 */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Input label="Case ID" name="caseId" value={form.caseId} onChange={handleChange} />
-            <Input label="Patient Name *" name="patientName" value={form.patientName} onChange={handleChange} />
-            <Input label="Death Date *" type="date" name="deathDate" value={form.deathDate} onChange={handleChange} />
-            <Input label="Guardian Name" name="guardianName" value={form.guardianName} onChange={handleChange} />
+            <Input label="Patient Name " name="patientName" value={form.patientName} onChange={handleChange} required />
+            <Input label="Death Date " type="date" name="deathDate" value={form.deathDate} onChange={handleChange} required />
+            <Input label="Guardian Name" name="guardianName" value={form.guardianName} onChange={handleChange} required />
           </div>
 
           {/* GRID 2 */}
@@ -153,7 +161,7 @@ function Input({ label, ...props }) {
       </label>
       <input
         {...props}
-        className="w-full border rounded-md px-3 py-2 mt-1"
+        className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
       />
     </div>
   );
@@ -165,7 +173,7 @@ function Textarea({ label, ...props }) {
       <label className="text-sm">{label}</label>
       <textarea
         {...props}
-        className="w-full border rounded-md px-3 py-2 mt-1 h-24 resize-none"
+        className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
       />
     </div>
   );
@@ -175,7 +183,7 @@ function File({ label, onChange }) {
   return (
     <div>
       <label className="text-sm">{label}</label>
-      <label className="mt-1 border rounded-md px-3 py-2 flex items-center gap-2 cursor-pointer text-gray-500">
+      <label className="mt-1 border border-dashed rounded-md p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
         <UploadCloud size={16} /> Drop a file here or click
         <input type="file" hidden onChange={onChange} />
       </label>

@@ -61,10 +61,23 @@ export default function UpdateIncome({
   };
 
   const handleSubmit = async () => {
-    if (!form.income_head || !form.name || !form.amount || !form.date) {
-      notify( "warning","Please fill all required fields");
+    if (!form.income_head) {
+      notify( "warning","Income Head is required");
       return;
     }
+    if (!form.name) {
+      notify( "warning","Name is required");
+      return;
+    }
+    if (!form.date) {
+      notify( "warning","Date is required");
+      return;
+    }
+    if (!form.amount) {
+      notify( "warning","Amount is required");
+      return;
+    }
+
 
     setLoading(true);
     try {
@@ -102,12 +115,12 @@ export default function UpdateIncome({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
               <div>
-                <label className="text-sm font-medium">Income Head *</label>
+                <label className="text-sm font-medium">Income Head <span className="text-red-500">*</span></label>
                 <select
                   name="income_head"
                   value={form.income_head}
                   onChange={handleChange}
-                  className="w-full mt-1 border rounded px-3 py-2"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
                 >
                   <option value="">Select</option>
                   {incomeHeads.map((head) => (
@@ -119,34 +132,34 @@ export default function UpdateIncome({
               </div>
 
               <div>
-                <label className="text-sm font-medium">Name *</label>
+                <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
                 <input
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full mt-1 border rounded px-3 py-2"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium">Date *</label>
+                <label className="text-sm font-medium">Date <span className="text-red-500">*</span></label>
                 <input
                   type="date"
                   name="date"
                   value={form.date}
                   onChange={handleChange}
-                  className="w-full mt-1 border rounded px-3 py-2"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium">Amount *</label>
+                <label className="text-sm font-medium">Amount <span className="text-red-500">*</span></label>
                 <input
                   type="number"
                   name="amount"
                   value={form.amount}
                   onChange={handleChange}
-                  className="w-full mt-1 border rounded px-3 py-2"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
                 />
               </div>
 
@@ -157,7 +170,7 @@ export default function UpdateIncome({
                   value={form.description}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full mt-1 border rounded px-3 py-2"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
                 />
               </div>
 
@@ -166,7 +179,7 @@ export default function UpdateIncome({
         </div>
 
         {/* FOOTER */}
-        <div className="sticky bottom-0 z-10 flex justify-end px-4 py-3 border-t bg-gray-50">
+        <div className="sticky bottom-0 z-10 flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

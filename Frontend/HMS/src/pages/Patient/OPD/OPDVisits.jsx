@@ -63,36 +63,36 @@ export default function OPDVisits() {
 
       <div className="min-h-screen p-4 md:p-6 ">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="px-5 py-4 border-b flex justify-between items-center">
+          <div className="px-5 py-4 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-800">Visits</h2>
           </div>
 
           <div className="overflow-x-auto">
             {loading ? (
               <div className="flex items-center justify-center p-12">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#6046B5]"></div>
+                <div className="animate-spin rounded-full h-10 w-10  border-[#6046B5]"></div>
               </div>
             ) : (
               <table className="w-full text-sm">
-                <thead className="bg-gray-100 text-gray-600">
+                <thead className="bg-gray-200 text-gray-600">
                   <tr>
-                    <th className="p-4 text-left">OPD No</th>
-                    <th className="p-4 text-left">Checkup ID</th>
-                    <th className="p-4 text-left">Appointment Date</th>
-                    <th className="p-4 text-left">Consultant Doctor</th>
-                    <th className="p-4 text-left">Symptoms</th>
-                    <th className="p-4 text-center">Action</th>
+                    <th className="px-3 py-2 text-left">OPD No</th>
+                    <th className="px-3 py-2 text-left">Checkup ID</th>
+                    <th className="px-3 py-2 text-left">Appointment Date</th>
+                    <th className="px-3 py-2 text-left">Consultant Doctor</th>
+                    <th className="px-3 py-2 text-left">Symptoms</th>
+                    <th className="px-3 py-2 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {visits.length > 0 ? visits.map((d, i) => (
-                    <tr key={i} className="border-t hover:bg-indigo-50/40 transition">
-                      <td className="p-4 font-medium text-[#6046B5]">OPDN{d.opd_id}</td>
-                      <td className="p-4">{d.checkup_id}</td>
-                      <td className="p-4">{formatDate(d.appointment_date)}</td>
-                      <td className="p-4 font-medium">{d.doctor_name}</td>
-                      <td className="p-4">{d.symptom_details?.symptom_title || "N/A"}</td>
-                      <td className="p-4 text-center">
+                    <tr key={i} className=" border-b border-gray-200 hover:bg-indigo-50/40 transition">
+                      <td className="px-3 py-2 font-medium text-[#6046B5]">OPDN{d.opd_id}</td>
+                      <td className="px-3 py-2">{d.checkup_id}</td>
+                      <td className="px-3 py-2">{formatDate(d.appointment_date)}</td>
+                      <td className="px-3 py-2 font-medium">{d.doctor_name}</td>
+                      <td className="px-3 py-2">{d.symptom_details?.symptom_title || "N/A"}</td>
+                      <td className="px-3 py-2 text-center">
                         <button
                           onClick={() => handleOpenModal(d)}
                           className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-full transition"
@@ -118,7 +118,7 @@ export default function OPDVisits() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="bg-[#6046B5] p-5 flex justify-between items-center text-white">
+            <div className="bg-[#6046B5] px-3 py-2 flex justify-between items-center text-white">
               <div className="flex items-center gap-3">
                 <ShieldCheck className="p-2 bg-white/20 rounded-lg" size={40} />
                 <div>
@@ -199,41 +199,43 @@ export default function OPDVisits() {
               </div>
 
               {/* Payment Info */}
-              <div className="bg-gray-900 rounded-2xl p-6 text-white shadow-lg">
-                <div className="flex items-center gap-2 mb-6 border-b border-gray-700 pb-4">
+              <div className="p-6 text-gray-900 shadow-lg">
+                <div className="flex items-center gap-2 mb-6 border-b border-gray-200 pb-4">
                   <DollarSign className="text-green-400" size={20} />
-                  <h4 className="text-sm font-bold uppercase tracking-widest">Billing Summary</h4>
+                  <h4 className="text-sm font-bold">Billing Summary</h4>
                 </div>
-                <div className="grid grid-cols-3 gap-8">
+                <div className="grid grid-cols-4 gap-8">
                   <div className="space-y-1">
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Amount</p>
-                    <p className="text-lg font-bold">₹{parseFloat(selectedVisit.total_amount || 0).toFixed(2)}</p>
+                    <p className="text-[10px] text-gray-600 font-bold">Total Amount</p>
+                    <p className=" font-bold">₹{parseFloat(selectedVisit.total_amount || 0).toFixed(2)}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Discount</p>
-                    <p className="text-lg font-bold text-orange-400">₹{parseFloat(selectedVisit.discount || 0).toFixed(2)}</p>
+                    <p className="text-[10px] text-gray-600 font-bold">Discount</p>
+                    <p className=" font-bold ">₹{parseFloat(selectedVisit.discount || 0).toFixed(2)}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-green-400 font-bold uppercase tracking-wider">Paid Amount</p>
-                    <p className="text-xl font-black text-green-400">₹{parseFloat(selectedVisit.paid_amount || 0).toFixed(2)}</p>
+                    <p className="text-[10px] text-gray-600 font-bold">Paid Amount</p>
+                    <p className=" font-black ">₹{parseFloat(selectedVisit.paid_amount || 0).toFixed(2)}</p>
                   </div>
+                  <div className="space-y-1">
+                  <p className="text-[10px] text-gray-600 font-bold">Payment Mode</p>
+                  <p className="text-sm font-bold ">{selectedVisit.payment_mode || "N/A"}</p>
                 </div>
-                <div className="mt-6 pt-6 border-t border-gray-800 flex justify-between items-center bg-gray-800/50 p-3 rounded-xl">
-                  <span className="text-xs text-gray-400 font-medium tracking-wide">Payment Mode</span>
-                  <span className="text-xs font-bold uppercase bg-white/10 px-3 py-1 rounded-full">{selectedVisit.payment_mode || "N/A"}</span>
+
                 </div>
+                
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t bg-gray-50 flex justify-between items-center px-6">
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center px-6">
               <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold uppercase">
                 <Clock size={12} />
                 ID: {selectedVisit.case_id || "No Case Linked"}
               </div>
               <button
                 onClick={handleCloseModal}
-                className="px-8 py-2.5 bg-[#6046B5] text-white rounded-xl font-bold hover:bg-[#4d3794] transition shadow-md"
+                className="px-3 py-2 bg-[#6046B5] text-white rounded hover:bg-[#4d3794] transition shadow-md"
               >
                 Close Details
               </button>

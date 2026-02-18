@@ -243,7 +243,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
             <div className="bg-white w-[98%] md:w-[90%] lg:w-[70%] rounded-lg shadow-lg max-h-[90vh] overflow-y-auto mx-auto">
                 <form onSubmit={handleSubmit}>
                     {/* HEADER */}
-                    <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
+                    <div className="flex justify-between sticky top-0 z-10 items-center px-6 py-4 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                         <h2 className="text-lg font-semibold">Edit Appointment</h2>
                         <button type="button" onClick={onClose} className="text-xl font-bold">×</button>
                     </div>
@@ -259,12 +259,12 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                         {/* ROW 1 */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label className="font-medium">Patient *</label>
+                                <label className="font-medium">Patient <span className="text-red-500"> *</span></label>
                                 <select
                                     name="patient"
                                     value={formData.patient}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                     required
                                 >
                                     <option value="">Select Patient</option>
@@ -277,12 +277,12 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                             </div>
 
                             <div>
-                                <label className="font-medium">Doctor *</label>
+                                <label className="font-medium">Doctor <span className="text-red-500"> *</span></label>
                                 <select
                                     name="doctor"
                                     value={formData.doctor}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                     required
                                 >
                                     <option value="">Select Doctor</option>
@@ -295,13 +295,13 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                             </div>
 
                             <div>
-                                <label className="font-medium">Appointment Date *</label>
+                                <label className="font-medium">Appointment Date <span className="text-red-500"> *</span></label>
                                 <input
                                     type="datetime-local"
                                     name="appointment_date"
                                     value={formData.appointment_date}
                                     onChange={handleInputChange}
-                                    className="form-field w-full border px-3 py-2 rounded"
+                                    className="form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                     required
                                 />
                             </div>
@@ -315,7 +315,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="shift"
                                     value={formData.shift}
                                     onChange={handleInputChange}
-                                    className="form-field w-full border px-3 py-2 rounded"
+                                    className="form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                 >
                                     <option value="">Select Shift</option>
                                     {shifts.map(s => (
@@ -330,7 +330,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="appontmet_priority"
                                     value={formData.appontmet_priority}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                 >
                                     <option value="">Select Priority</option>
                                     {priorities.map(p => (
@@ -345,7 +345,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="status"
                                     value={formData.status}
                                     onChange={handleInputChange}
-                                    className="form-field w-full border px-3 py-2 rounded"
+                                    className="form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                 >
                                     <option value="pending">Pending</option>
                                     <option value="scheduled">Scheduled</option>
@@ -363,7 +363,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="payment_mode"
                                     value={formData.payment_mode}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                 >
                                     <option value="">Select</option>
                                     <option value="cash">Cash</option>
@@ -378,7 +378,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="source"
                                     value={formData.source}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                 >
                                     <option value="online">Online</option>
                                     <option value="offline">Offline</option>
@@ -391,7 +391,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                     placeholder="Phone number"
                                 />
                             </div>
@@ -405,7 +405,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="chargeCategory"
                                     value={formData.chargeCategory}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                 >
                                     <option value="">Select Category</option>
                                     {chargeCategories.map(cat => (
@@ -419,7 +419,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="charge"
                                     value={formData.charge}
                                     onChange={handleInputChange}
-                                    className=" form-field w-full border px-3 py-2 rounded disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                    className=" form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                     disabled={!formData.chargeCategory}
                                 >
                                     <option value="">Select Charge</option>
@@ -436,7 +436,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                     name="fees"
                                     value={formData.fees}
                                     onChange={handleInputChange}
-                                    className="form-field w-full border px-3 py-2 rounded bg-gray-50"
+                                    className="form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                     step="0.01"
                                     readOnly
                                 />
@@ -450,7 +450,7 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                                 name="reason"
                                 value={formData.reason}
                                 onChange={handleInputChange}
-                                className="form-field w-full border px-3 py-2 rounded"
+                                className="form-field w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                                 rows="3"
                                 placeholder="Reason for appointment"
                             />
@@ -458,18 +458,19 @@ export default function EditAppointmentModal({ open, onClose, data, onSuccess })
                     </div>
 
                     {/* FOOTER */}
-                    <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-lg">
+                    <div className="flex flex-col sm:flex-row justify-end gap-3 px-6 py-4 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
+                            className="px-6 py-2 rounded bg-gray-200"
+                            disabled={loading}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
+                            className="px-6 py-2 rounded text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2] disabled:opacity-50"
                             disabled={loading}
-                            className="px-4 py-2 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white rounded hover:opacity-90 disabled:opacity-50"
                         >
                             {loading ? 'Updating...' : 'Update Appointment'}
                         </button>

@@ -123,20 +123,20 @@ export default function IncomeHead() {
                 {list.map((row) => (
                   <tr
                     key={row.id}
-                    className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0"
+                    className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all"
                   >
                     <td className="px-3 py-2">{row.name}</td>
                     <td className="px-3 py-2">
                       <div className="flex gap-3">
                         <button
                           onClick={() => openEdit(row)}
-                          className="text-purple-600 hover:text-purple-800 transition"
+                          className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                         >
                           <Pencil size={16} />
                         </button>
                         <button
                           onClick={() => deleteRow(row.id)}
-                          className="text-red-600 hover:text-red-800 transition"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -193,7 +193,7 @@ export default function IncomeHead() {
                     setForm({ ...form, name: e.target.value })
                   }
                   placeholder="Enter income head"
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 />
               </div>
 
@@ -207,13 +207,13 @@ export default function IncomeHead() {
                     setForm({ ...form, desc: e.target.value })
                   }
                   placeholder="Enter description"
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition min-h-[100px]"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 min-h-[100px]"
                 />
               </div>
             </div>
 
             {/* MODAL FOOTER */}
-            <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+            <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
               <button
                 onClick={saveData}
                 className="px-6 py-2 text-white rounded-md

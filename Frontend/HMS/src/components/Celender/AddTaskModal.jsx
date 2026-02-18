@@ -40,52 +40,52 @@ export default function AddTaskModal({ open, onClose, onSave, initialDate }) {
         </div>
 
         <div className="p-4 space-y-3">
-          <label className="font-medium">Event Title *</label>
+          <label className="font-medium">Event Title <span className="text-red-500">*</span></label>
           <input
             placeholder="Title"
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#8A63D2] outline-none"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <label className="font-medium">Start Date *</label>
+          <label className="font-medium">Start Date <span className="text-red-500">*</span></label>
           <input
             type="date"
             placeholder="Date"
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#8A63D2] outline-none"
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
-          <label className="font-medium">End Date (optional) *</label>
+          <label className="font-medium">End Date <span className="text-red-500">*</span></label>
           <input
             type="date"
             placeholder="End Date (optional)"
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#8A63D2] outline-none"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
-          <label className="font-medium">Start Time *</label>
+          <label className="font-medium">Start Time <span className="text-red-500">*</span></label>
           <div className="grid grid-cols-2 gap-2">
             <input
               type="time"
               placeholder="Start Time"
-              className="border px-3 py-2 rounded"
+              className="border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#8A63D2] outline-none"
               value={start}
               onChange={(e) => setStart(e.target.value)}
             />
           </div>
-          <label className="font-medium">End Time *</label>
+          <label className="font-medium">End Time <span className="text-red-500">*</span></label>
           <div className="grid grid-cols-2 gap-2">
             <input
               type="time"
               placeholder="End Time"
-              className="border px-3 py-2 rounded"
+              className="border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#8A63D2] outline-none"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
             />
           </div>
           <textarea
             placeholder="Description"
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#8A63D2] outline-none"
             rows="2"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -105,7 +105,7 @@ export default function AddTaskModal({ open, onClose, onSave, initialDate }) {
           </div>
         </div>
 
-        <div className="flex justify-end p-4 border-t">
+        <div className="flex justify-end p-4 border-t border-gray-300 ">
           <button
             onClick={() => {
               const startDateTime = date && start ? `${date}T${start}` : "";

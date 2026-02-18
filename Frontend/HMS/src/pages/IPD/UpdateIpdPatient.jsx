@@ -163,7 +163,7 @@ export default function UpdateIpdPatient() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Symptoms Type</label>
                       <select
-                        className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                        className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.symptom_type}
                         onChange={(e) => {
                           setFormData(prev => ({
@@ -185,7 +185,7 @@ export default function UpdateIpdPatient() {
                       <label className="block text-sm font-medium mb-1">Symptoms Title</label>
 
                       <select
-                        className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                        className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.symptom}
                         onChange={(e) => {
                           const sym = symptoms.find(s => s.id === Number(e.target.value));
@@ -209,7 +209,7 @@ export default function UpdateIpdPatient() {
                     <div className="col-span-2">
                       <label className="block text-sm font-medium mb-1">Symptoms Description</label>
                       <textarea
-                        className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                        className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.symptom_description}
                         readOnly
                       />
@@ -220,7 +220,7 @@ export default function UpdateIpdPatient() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1">Any Known Allergies</label>
-                      <textarea className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                      <textarea className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         placeholder="Any Known Allergies"
                         value={formData.allergies}
                         onChange={(e) => handleChange("allergies", e.target.value)}
@@ -228,7 +228,7 @@ export default function UpdateIpdPatient() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Previous Medical Issue</label>
-                      <textarea className="w-full border border-gray-200 px-3 py-2 rounded text-sm" placeholder="Previous Medical Issue"
+                      <textarea className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none" placeholder="Previous Medical Issue"
                         value={formData.previous_medical_issue}
                         onChange={(e) => handleChange("previous_medical_issue", e.target.value)}
                       />
@@ -239,10 +239,10 @@ export default function UpdateIpdPatient() {
                 {/* RIGHT */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Admission Date</label>
+                    <label className="block text-sm font-medium mb-1">Admission Date <span className="text-red-500">*</span></label>
                     <input
                       type="datetime-local"
-                      className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                      className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                       value={formatDateTimeLocal(formData.admission_date)}
                       onChange={(e) =>
                         setFormData(prev => ({
@@ -256,18 +256,18 @@ export default function UpdateIpdPatient() {
                     <label className="block text-sm font-medium mb-1">Case ID</label>
                     <input
                       type="text"
-                      className="w-full border border-gray-200 px-3 py-2 rounded text-sm "
+                      className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                       value={formData.case_id}
                       readOnly
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Consultant Doctor</label>
+                    <label className="block text-sm font-medium mb-1">Consultant Doctor <span className="text-red-500">*</span></label>
                     <select
                       name="doctor"
                       value={formData.doctor}
                       onChange={(e) => handleChange("doctor", e.target.value)}
-                      className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                      className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                       required
                     >
                       <option value="">Select Doctor</option>
@@ -282,7 +282,7 @@ export default function UpdateIpdPatient() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1">Casualty</label>
-                      <select className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                      <select className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.casualty}
                         onChange={(e) =>
                           setFormData(prev => ({
@@ -297,7 +297,7 @@ export default function UpdateIpdPatient() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Old Patient</label>
-                      <select className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                      <select className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.old_patient}
                         onChange={(e) =>
                           setFormData(prev => ({
@@ -314,17 +314,17 @@ export default function UpdateIpdPatient() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1">Reference</label>
-                      <input placeholder="Reference" className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                      <input placeholder="Reference" className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.reference}
                         onChange={(e) => handleChange("reference", e.target.value)}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Credit Limit</label>
+                      <label className="block text-sm font-medium mb-1">Credit Limit <span className="text-red-500">*</span> </label>
                       <input placeholder="credit_limit"
                         type="number"
                         name="credit_limit"
-                        className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                        className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.credit_limit}
                         onChange={(e) => handleChange("credit_limit", e.target.value)}
                       />
@@ -333,9 +333,9 @@ export default function UpdateIpdPatient() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Bed Type</label>
+                      <label className="block text-sm font-medium mb-1">Bed Type <span className="text-red-500">*</span></label>
                       <select
-                        className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                        className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.bed_type}
                         onChange={(e) => {
                           setFormData(prev => ({
@@ -356,9 +356,9 @@ export default function UpdateIpdPatient() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Bed Name</label>
+                      <label className="block text-sm font-medium mb-1">Bed Name <span className="text-red-500">*</span></label>
                       <select
-                        className="w-full border border-gray-200 px-3 py-2 rounded text-sm"
+                        className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                         value={formData.bed}
                         onChange={(e) => handleChange("bed", e.target.value)}
                         disabled={!formData.bed_type}

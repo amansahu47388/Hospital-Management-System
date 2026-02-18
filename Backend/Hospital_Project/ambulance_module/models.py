@@ -37,20 +37,19 @@ class AmbulanceBill(models.Model):
 
     patient = models.ForeignKey('patient_module.Patient', on_delete=models.CASCADE, related_name="ambulance_bills")
     case = models.ForeignKey('patient_module.MedicalCase', on_delete=models.SET_NULL, null=True, blank=True, related_name="ambulance_bills")
-    # bill_no = models.CharField(max_length=50, unique=True, null=True, blank=True)
     ambulance = models.ForeignKey(Ambulance, on_delete=models.SET_NULL, null=True, blank=True)
     hospital_charge = models.ForeignKey(HospitalCharges, on_delete=models.SET_NULL, null=True, blank=True, related_name="ambulance_bills")
-    date = models.DateField()
+    date = models.DateField(null=True, blank=True)
     note = models.TextField(blank=True, null=True)
     payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES, blank=True, null=True)
 
     # Financial fields
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    net_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00    , null=True, blank=True)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    net_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

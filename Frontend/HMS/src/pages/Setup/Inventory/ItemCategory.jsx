@@ -37,12 +37,12 @@ export default function ItemCategory() {
       notify("error", "Category name is required");
       return;
     }
-  
+
     const payload = {
       name: form.name.trim(),
       description: form.description?.trim() || "",
     };
-  
+
     try {
       if (form.id) {
         // Only update if name is changed OR no duplicates
@@ -60,7 +60,7 @@ export default function ItemCategory() {
       notify("error", msg);
     }
   };
-  
+
 
   // 🔹 DELETE
   const remove = async (id) => {
@@ -106,7 +106,7 @@ export default function ItemCategory() {
               </thead>
               <tbody>
                 {items.map((row) => (
-                  <tr key={row.id} className="border-b border-gray-200">
+                  <tr key={row.id} className="hover:bg-gray-100 border-b border-gray-200">
                     <td className="px-3 py-2">{row.name}</td>
                     <td className="px-3 py-2">
                       <div className="flex gap-3">
@@ -115,13 +115,13 @@ export default function ItemCategory() {
                             setForm(row);
                             setOpen(true);
                           }}
-                          className="text-purple-600"
+                          className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                         >
                           <Pencil size={16} />
                         </button>
                         <button
                           onClick={() => remove(row.id)}
-                          className="text-red-600"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -148,16 +148,23 @@ export default function ItemCategory() {
             </div>
 
             <div className="p-4 space-y-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Item Category <span className="text-red-500">*</span>
+              </label>
               <input
-                className="w-full border px-3 py-2 rounded-md"
+                className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 placeholder="Item Category"
                 value={form.name}
                 onChange={(e) =>
                   setForm({ ...form, name: e.target.value })
                 }
               />
+
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
               <textarea
-                className="w-full border px-3 py-2 rounded-md"
+                className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 placeholder="Description"
                 value={form.description || ""}
                 onChange={(e) =>
@@ -166,7 +173,7 @@ export default function ItemCategory() {
               />
             </div>
 
-            <div className="flex justify-end px-4 py-3 border-t">
+            <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
               <button
                 onClick={save}
                 className="px-6 py-2 text-white rounded-md

@@ -62,7 +62,7 @@ export default function IPDBedHistory() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse">
                     <thead>
-                      <tr className="bg-gray-50 text-gray-700 uppercase text-[10px] md:text-xs font-bold tracking-wider">
+                      <tr className="bg-gray-100 text-gray-700 md:text-xs font-bold tracking-wider">
                         <th className="p-3 text-left border-b-2 border-gray-100">Bed Group</th>
                         <th className="p-3 text-left border-b-2 border-gray-100">Bed</th>
                         <th className="p-3 text-left border-b-2 border-gray-100">From Date</th>

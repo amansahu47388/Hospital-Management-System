@@ -88,8 +88,7 @@ export default function IPDTreatmentHistory() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Treatment History</h2>
 
               {/* Search Bar */}
-              <div className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2">
-                <Search size={20} className="text-gray-500" />
+              <div>
                 <input
                   type="text"
                   placeholder="Search by IPD No, Symptoms, Doctor or Bed..."
@@ -98,7 +97,7 @@ export default function IPDTreatmentHistory() {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                  className="border border-gray-300 rounded-lg px-4 py-2 bg-transparent outline-none text-gray-900 placeholder-gray-500"
                 />
               </div>
             </div>
@@ -117,7 +116,7 @@ export default function IPDTreatmentHistory() {
                 </thead>
                 <tbody>
                   {loading ? (
-                    <tr>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
                       <td colSpan="5" className="px-4 py-12 text-center">
                         <div className="flex flex-col items-center gap-2 text-gray-500">
                           <Loader2 className="animate-spin" size={32} />
@@ -139,14 +138,14 @@ export default function IPDTreatmentHistory() {
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-900 font-medium">{item.consultant}</td>
                         <td className="px-4 py-3 text-sm text-gray-900">
-                          <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded border border-purple-100 font-medium tracking-wide">
+                          <span className=" px-2 py-1 rounded font-medium tracking-wide">
                             {item.bed}
                           </span>
                         </td>
                       </tr>
                     ))
                   ) : (
-                    <tr>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
                       <td colSpan="5" className="px-4 py-12 text-center text-gray-500 italic">
                         No treatment history records found for this patient.
                       </td>

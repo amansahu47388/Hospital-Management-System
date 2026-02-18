@@ -5,7 +5,7 @@ import React from "react";
     <div className="bg-white rounded-2xl p-4 shadow-card overflow-auto thin-scrollbar">
       <table className="w-full text-sm  ">
         <thead>
-          <tr className="text-left text-muted ">
+          <tr className="text-left text-muted border-b border-gray-300">
             {columns.map((c) => (
               <th key={c.key} className="py-2 px-2">{c.label}</th>
             ))}
@@ -13,7 +13,7 @@ import React from "react";
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.id} className="border-t last:border-b">
+            <tr key={r.id} className="border-t border-gray-300 last:border-b">
               {columns.map((c) => (
                 <td className="py-3 px-2" key={c.key}>
                   {c.render ? c.render(r) : r[c.key]}

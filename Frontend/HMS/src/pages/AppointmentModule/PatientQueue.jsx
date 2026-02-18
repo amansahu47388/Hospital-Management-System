@@ -70,7 +70,7 @@ export default function PatientQueue() {
         <Navbar />
 
        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
-  <div className="bg-white rounded-lg shadow border border-gray-200 p-4 sm:p-6">
+  <div className="bg-white rounded shadow border border-gray-300 p-4 sm:p-6">
 
     {/* TITLE */}
     <h2 className="text-lg font-semibold mb-4">Patient Queue</h2>
@@ -94,7 +94,7 @@ export default function PatientQueue() {
         <select
           value={doctor}
           onChange={(e) => setDoctor(e.target.value)}
-          className="w-full border rounded px-3 py-2 text-sm mt-1 form-field"
+          className="w-full border border-gray-300 focus:ring-1 focus:ring-[#6046B5] outline-none rounded px-3 py-2 text-sm mt-1 form-field"
         >
           <option value="">Select</option>
           {doctors.map((d) => (
@@ -113,7 +113,7 @@ export default function PatientQueue() {
         <select
           value={shift}
           onChange={(e) => setShift(e.target.value)}
-          className="w-full border rounded px-3 py-2 text-sm mt-1 form-field"
+          className="w-full border border-gray-300 focus:ring-1 focus:ring-[#6046B5] outline-none rounded px-3 py-2 text-sm mt-1 form-field"
         >
           <option value="">Select</option>
           {shifts.map((s) => (
@@ -137,7 +137,7 @@ export default function PatientQueue() {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border rounded px-3 py-2 text-sm mt-1 pr-10 form-field"
+            className="w-full border border-gray-300 focus:ring-1 focus:ring-[#6046B5] outline-none rounded px-3 py-2 text-sm mt-1 pr-10 form-field"
           />
           <Calendar
             size={18}
@@ -152,7 +152,7 @@ export default function PatientQueue() {
         <select
           value={slot}
           onChange={(e) => setSlot(e.target.value)}
-          className="w-full border rounded px-3 py-2 text-sm mt-1 form-field"
+          className="w-full border border-gray-300 focus:ring-1 focus:ring-[#6046B5] outline-none rounded px-3 py-2 text-sm mt-1 form-field"
         >
           <option value="">Select</option>
           {slots.map((s) => (

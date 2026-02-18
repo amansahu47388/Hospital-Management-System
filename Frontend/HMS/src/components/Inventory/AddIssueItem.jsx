@@ -117,15 +117,44 @@ export default function AddIssueItem({ open, onClose, onSave }) {
     e.preventDefault();
 
     if (
-      !form.userType ||
-      !form.issueTo ||
-      !form.issueDate ||
-      !form.store ||
-      !form.item ||
-      !form.category ||
-      !form.quantity
-    ) {
-      notify("error", "Please fill all required fields");
+      !form.userType) {
+      notify("error", "User Type is required");
+      return;
+    }
+
+    if (
+      !form.issueTo) {
+      notify("error", "Issue To is required");
+      return;
+    }
+
+    if (
+      !form.issueDate) {
+      notify("error", "Issue Date is required");
+      return;
+    }
+
+    if (
+      !form.store) {
+      notify("error", "Store is required");
+      return;
+    }
+
+    if (
+      !form.item) {
+      notify("error", "Item is required");
+      return;
+    }
+
+    if (
+      !form.category) {
+      notify("error", "Category is required");
+      return;
+    }
+
+    if (
+      !form.quantity) {
+      notify("error", "Quantity is required");
       return;
     }
 
@@ -204,7 +233,7 @@ export default function AddIssueItem({ open, onClose, onSave }) {
           {/* ROW 1 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Select
-            label="User Type *"
+            label="User Type"
             value={form.userType}
             onChange={(e) => handleUserTypeChange(e.target.value)}
             options={[
@@ -215,17 +244,19 @@ export default function AddIssueItem({ open, onClose, onSave }) {
               "Radiologist",
               "Accountant",
               "Receptionist",
-              "Staff",
+              "Nurse",
             ]}
+            required
           />
             <Select
-              label="Issue To *"
+              label="Issue To"
               value={form.issueTo}
               onChange={(e) => setForm({ ...form, issueTo: e.target.value })}
               options={filteredUsers.map((u) => ({
                 label: u.full_name,
                 value: u.id,
               }))}
+              required
             />
 
 
@@ -236,10 +267,11 @@ export default function AddIssueItem({ open, onClose, onSave }) {
           {/* ROW 2 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
-              label="Issue Date *"
+              label="Issue Date"
               type="date"
               value={form.issueDate}
               onChange={(e) => setForm({ ...form, issueDate: e.target.value })}
+              required
             />
 
             <Input
@@ -261,44 +293,48 @@ export default function AddIssueItem({ open, onClose, onSave }) {
           {/* ROW 3 - Store */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select
-              label="Store *"
+              label="Store"
               value={form.store}
               onChange={(e) => handleStoreChange(e.target.value)}
               options={stores.map((s) => ({
                 label: s.store_name,
                 value: s.id,
               }))}
+              required
             />
 
             <Select
-              label="Item Category *"
+              label="Item Category"
               value={form.category}
               onChange={(e) => handleCategoryChange(e.target.value)}
               options={categories.map((c) => ({
                 label: c.name,
                 value: c.id,
               }))}
+              required
             />
 
             <Select
-              label="Item *"
+              label="Item"
               value={form.item}
               onChange={(e) => handleItemChange(e.target.value)}
               options={filteredItems.map((i) => ({
                 label: i.item_name,
                 value: i.id,
               }))}
+              required
             />
           </div>
 
           {/* ROW 4 - Quantity */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
-              label="Quantity *"
+              label="Quantity "
               type="number"
               min="1"
               value={form.quantity}
               onChange={(e) => setForm({ ...form, quantity: e.target.value })}
+              required
             />
           </div>
 
@@ -325,20 +361,22 @@ export default function AddIssueItem({ open, onClose, onSave }) {
 
 /* ---------------- UI CONTROLS ---------------- */
 
-function Input({ label, ...props }) {
+function Input({ label, required = false, ...props }) {
   return (
     <div>
-      <label className="text-sm">{label}</label>
-      <input {...props} className="w-full border rounded px-3 py-2 mt-1" />
+      <label className="text-sm font-medium">{label}</label>
+      <span className="text-red-500">{required && "*"}</span>
+      <input {...props} className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2" />
     </div>
   );
 }
 
-function Select({ label, value, onChange, options = [] }) {
+function Select({ label, value, onChange, options, required = false }) {
   return (
     <div>
-      <label className="text-sm">{label}</label>
-      <select value={value} onChange={onChange} className="w-full border rounded px-3 py-2 mt-1">
+      <label className="text-sm font-medium">{label}</label>
+      <span className="text-red-500">{required && " *"}</span>
+      <select value={value} onChange={onChange} className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2">
         <option value="">Select</option>
         {options.map((o, i) =>
           typeof o === "string" ? (

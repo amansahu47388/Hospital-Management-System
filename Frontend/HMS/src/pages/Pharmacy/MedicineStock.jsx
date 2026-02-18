@@ -116,7 +116,7 @@ const handleDelete = async (id) => {
               }}
 
               placeholder="Search..."
-              className="border rounded px-3 py-2 w-full"
+              className="border border-gray-300 rounded px-3 py-2 w-full focus:ring-1 focus:ring-[#6046B5] focus:outline-none"
             />
           </div>
 
@@ -143,7 +143,7 @@ const handleDelete = async (id) => {
                   return (
                     <tr
                       key={item.id}
-                      className="hover:bg-gray-50 text-sm">
+                      className="hover:bg-gray-50 text-sm border-b border-gray-200">
                       <td className="p-2 font-medium">{item.name}</td>
                       <td className="p-2">{item.company_name}</td>
                       <td className="p-2">{item.composition}</td>
@@ -162,10 +162,10 @@ const handleDelete = async (id) => {
                       </td> 
 
                       <td>
-                      <div className="flex flex-wrap justify-center gap-2">
+                      <div className="flex flex-wrap justify-center gap-1">
                           <button
                           title="View"
-                          className="text-blue-600"
+                          className="text-purple-600 hover:bg-purple-100 p-1 rounded" 
                           onClick={async () => {
                             const res = await getMedicineDetail(item.id);
                             const stockRes = await getMedicineStock(item.id);
@@ -175,18 +175,19 @@ const handleDelete = async (id) => {
                           }}
 
                         >
-                          <Eye size={18} />
+                          <Eye size={16} />
                         </button>
-                        <button onClick={() => setEditMedicine(item)} className="text-purple-600">
-                            <Pencil size={18} />
+                        <button onClick={() => setEditMedicine(item)} 
+                        className="text-green-600 hover:bg-green-100 p-1 rounded">
+                            <Pencil size={16} />
                           </button>
 
                           <button
                           title="Delete"
-                          className="text-red-600"
+                          className="text-red-600 hover:bg-red-100 p-1 rounded"
                           onClick={() => handleDelete(item.id)}
                         >
-                          <Trash2 size={18} />
+                          <Trash2 size={16} />
                         </button>
 
                         </div>

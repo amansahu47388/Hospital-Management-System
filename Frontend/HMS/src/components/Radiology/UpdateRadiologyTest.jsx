@@ -191,11 +191,11 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
 
             {/* BASIC INFO */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input label="Test Name" name="test_name" value={formData.test_name} onChange={handleChange} />
-              <Input label="Short Name" name="short_name" value={formData.short_name} onChange={handleChange} />
-              <Input label="Test Type" name="test_type" value={formData.test_type} onChange={handleChange} />
+              <Input label="Test Name" name="test_name" value={formData.test_name} onChange={handleChange} required />
+              <Input label="Short Name" name="short_name" value={formData.short_name} onChange={handleChange} required />
+              <Input label="Test Type" name="test_type" value={formData.test_type} onChange={handleChange}/>
 
-              <Select label="Category" name="category" value={formData.category} onChange={handleChange}>
+              <Select label="Category" name="category" value={formData.category} onChange={handleChange} required>
                 <option value="">Select</option>
                 {radiologyCategory.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -220,11 +220,13 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
                     chargesList.filter((c) => c.charge_category === cat)
                   );
                 }}
+                required
               >
                 <option value="">Select</option>
                 {[...new Set(chargesList.map(c => c.charge_category))].map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
+
               </Select>
 
               <Select
@@ -250,6 +252,7 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
                     });
                   }
                 }}
+                required
               >
                 <option value="">Select</option>
                 {filteredCharges.map((c) => (
@@ -259,23 +262,23 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
                 ))}
               </Select>
 
-              <Input label="Tax (%)" value={formData.tax} disabled />
-              <Input label="Standard Charge ($)" value={formData.standard_charge} disabled />
-              <Input label="Total Amount ($)" value={formData.amount} disabled />
+              <Input label="Tax (%)" value={formData.tax} disabled required/>
+              <Input label="Standard Charge ($)" value={formData.standard_charge} disabled required />
+              <Input label="Total Amount ($)" value={formData.amount} disabled required />
             </div>
 
             {/* PARAMETERS */}
             <div>
               <div className="grid grid-cols-12 gap-3 font-semibold text-gray-700">
-                <div className="col-span-4">Parameter</div>
-                <div className="col-span-4">Reference Range</div>
-                <div className="col-span-3">Unit</div>
+                <div className="col-span-4">Parameter <span className="text-red-500">*</span></div>
+                <div className="col-span-4">Reference Range <span className="text-red-500">*</span></div>
+                <div className="col-span-3">Unit <span className="text-red-500">*</span></div>
               </div>
 
               {parameters.map((p, i) => (
                 <div key={i} className="grid grid-cols-12 gap-3 mt-2">
                   <select
-                    className="col-span-4 border px-2 py-1 rounded"
+                    className="col-span-4 border border-gray-300 px-2 py-1 rounded focus:border-[#6046B5] focus:outline-none"
                     value={p.parameter_id || ""}
                     onChange={(e) =>
                       handleParameterChange(i, "parameter_id", e.target.value)
@@ -290,12 +293,12 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
                   </select>
 
                   <input
-                    className="col-span-4 border px-2 py-1 rounded"
+                    className="col-span-4 border border-gray-300 px-2 py-1 rounded focus:border-[#6046B5] focus:outline-none"
                     value={p.reference_range}
                     readOnly
                   />
                   <input
-                    className="col-span-3 border px-2 py-1 rounded"
+                    className="col-span-3 border border-gray-300 px-2 py-1 rounded focus:border-[#6046B5] focus:outline-none"
                     value={p.unit}
                     readOnly
                   />
@@ -321,14 +324,7 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
           </div>
 
           {/* FOOTER */}
-          <div className="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 border rounded"
-            >
-              Cancel
-            </button>
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
             <button
               type="submit"
               disabled={loading}
@@ -348,14 +344,14 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
 const Input = ({ label, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>
-    <input {...props} className="w-full border px-3 py-2 rounded" />
+    <input {...props} className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none" />
   </div>
 );
 
 const Select = ({ label, children, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>
-    <select {...props} className="w-full border px-3 py-2 rounded">
+    <select {...props} className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-1  focus:ring-[#6046B5] focus:outline-none">
       {children}
     </select>
   </div>

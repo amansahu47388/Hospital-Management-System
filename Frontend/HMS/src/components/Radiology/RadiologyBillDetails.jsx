@@ -190,7 +190,7 @@ export default function RadiologyBillDetails({ open, billId, onClose }) {
         </div>
 
         {/* FINANCIAL SUMMARY */}
-        <div className="grid md:grid-cols-3 gap-6 border-t pt-4">
+        <div className="grid md:grid-cols-3 gap-6 border-t border-gray-300 pt-4">
           <div />
           <div />
           <div>
@@ -210,10 +210,10 @@ export default function RadiologyBillDetails({ open, billId, onClose }) {
 
         {/* TEST TABLE */}
         <div className="overflow-x-auto">
-          <table className="w-full border text-sm">
+          <table className="w-full  text-sm">
             <thead className="bg-gray-100">
               <tr>
-                <Th>#</Th>
+                <Th>S.No</Th>
                 <Th>Test Name</Th>
                 <Th>Report Days</Th>
                 <Th>Report Date</Th>
@@ -274,7 +274,7 @@ const Detail = ({ label, value, bold, className = "" }) => (
 );
 
 const Th = ({ children }) => (
-  <th className="border px-2 py-1 text-left font-semibold">
+  <th className="  px-2 py-1 text-left font-semibold">
     {children}
   </th>
 );

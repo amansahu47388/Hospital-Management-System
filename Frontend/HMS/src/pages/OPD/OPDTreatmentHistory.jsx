@@ -76,134 +76,91 @@ export default function OPDTreatmentHistory() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50 pt-1 md:pt-6 pb-6">
-        {/* Navbar */}
-        <div className="mx-4 md:mx-6">
-          <OPDNavbar activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
+      <div className="min-h-screen bg-gray-50 pb-6">
+        <OPDNavbar />
 
         {/* Main Content */}
         <div className="mx-4 md:mx-6 mt-6 ">
-          <div className="bg-white rounded-lg shadow-lg">
+          <div className="bg-white rounded-lg shadow-xl overflow-hidden min-h-[550px]">
             {/* Header */}
-            <div className="p-4 md:p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Treatment History</h2>
+            <div className="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+              <h2 className="text-2xl font-bold text-gray-800">Treatment History</h2>
 
               {/* Search Bar */}
-              <div className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2">
-                <Search size={20} className="text-gray-500" />
+              <div className="relative group w-full md:w-96">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search size={18} className="text-gray-400 group-focus-within:text-[#6046B5] transition-colors" />
+                </div>
                 <input
                   type="text"
-                  placeholder="Search by OPD No, Symptoms, Doctor or Bed..."
+                  placeholder="Search OPD No, Symptoms, Doctor..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                  className=" w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded outline-none focus:ring-1 focus:ring-[#6046B5] focus:bg-white transition-all text-sm group"
                 />
               </div>
             </div>
 
             {/* Table */}
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-gray-100 text-gray-900">
-                    <th className="px-4 py-3 text-left text-sm font-semibold">OPD No</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Case ID</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Appointment Date</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Symptoms</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Consultant Doctor</th>
-                
+                  <tr className="bg-gray-50 text-gray-600">
+                    <th className="px-3 py-2 bg-gray-200">OPD No</th>
+                    <th className="px-3 py-2 bg-gray-200 text-center">Case ID</th>
+                    <th className="px-3 py-2 bg-gray-200">Appointment Date</th>
+                    <th className="px-3 py-2 bg-gray-200">Symptoms</th>
+                    <th className="px-3 py-2 bg-gray-200">Consultant Doctor</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {loading ? (
                     <tr>
-                      <td colSpan="5" className="px-4 py-12 text-center">
-                        <div className="flex flex-col items-center gap-2 text-gray-500">
+                      <td colSpan="5" className="px-6 py-20 text-center">
+                        <div className="flex flex-col items-center gap-3 text-[#6046B5]">
                           <Loader2 className="animate-spin" size={32} />
-                          <span>Loading treatment history...</span>
+                          <span className="font-bold text-sm tracking-wide">Retrieving Medical Records...</span>
                         </div>
                       </td>
                     </tr>
                   ) : paginatedData.length > 0 ? (
                     paginatedData.map((item) => (
-                      <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
-                        <td className="px-4 py-3 text-sm font-bold text-[#6046B5]">
-                          {item.opdNo}
+                      <tr key={item.id} className="hover:bg-purple-50/20 transition-all border-b border-gray-50">
+                        <td className="px-3 py-2 text-gray-600">
+                          <span className=" px-3 py-1 rounded">
+                            {item.opdNo}
+                          </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 font-medium">
+                        <td className="px-3 py-2 text-gray-600">
                           {item.caseId}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 max-w-xs truncate">
+                        <td className="px-3 py-2 text-gray-600">
                           {item.appointmentDate}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-900 font-medium">{item.symptoms}</td>
-                        <td className="px-4 py-3 text-sm text-gray-900">
-                          <span className=" text-gray-900 px-2 py-1font-medium">
-                            {item.consultant}
-                          </span>
+                        <td className="px-3 py-2 text-gray-600 max-w-xs truncate ">
+                          {item.symptoms}
+                        </td>
+                        <td className="px-3 py-2 text-gray-600">
+                          <div className="flex items-center gap-2">
+                           
+                            <span className=" text-gray-600">{item.consultant}</span>
+                          </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="px-4 py-12 text-center text-gray-500 italic">
-                        No treatment history records found for this patient.
+                      <td colSpan="5" className="px-6 py-20 text-center text-gray-500 italic">
+                        No previous medical records found for this patient profile.
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
-
-            {/* Footer */}
-            {filteredData.length > 0 && (
-              <div className="px-4 md:px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="text-sm text-gray-600">
-                  Records: {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
-                  {filteredData.length}
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <select
-                    value={itemsPerPage}
-                    onChange={(e) => {
-                      setItemsPerPage(parseInt(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
-                  >
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </select>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      disabled={currentPage === 1}
-                      className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
-                    >
-                      <ChevronLeft size={20} className="text-gray-600" />
-                    </button>
-                    <span className="text-sm font-bold text-[#6046B5] bg-purple-50 w-8 h-8 flex items-center justify-center rounded-full border border-purple-100">
-                      {currentPage}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                      disabled={currentPage === totalPages || totalPages === 0}
-                      className="p-1 hover:bg-gray-100 rounded transition disabled:opacity-50"
-                    >
-                      <ChevronRight size={20} className="text-gray-600" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

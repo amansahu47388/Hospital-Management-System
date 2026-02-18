@@ -63,6 +63,10 @@ export default function FindingSetup() {
       notify("warning", "Finding name is required");
       return;
     }
+    if (!form.finding_category.trim()) {
+      notify("error", "Category is required");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -143,7 +147,7 @@ export default function FindingSetup() {
                   </tr>
                 ) : (
                   findings.map((row) => (
-                    <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
+                    <tr key={row.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                       <td className="px-3 py-2">{row.finding_name}</td>
                       <td className="px-3 py-2">{row.finding_category}</td>
                       <td className="px-3 py-2 max-w-md">{row.description}</td>
@@ -151,13 +155,13 @@ export default function FindingSetup() {
                         <div className="flex gap-3">
                           <button
                             onClick={() => openEdit(row)}
-                            className="text-purple-600 hover:text-purple-800 transition"
+                            className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                           >
                             <Pencil size={16} />
                           </button>
                           <button
                             onClick={() => deleteRow(row.id)}
-                            className="text-red-600 hover:text-red-800 transition"
+                            className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -200,20 +204,20 @@ export default function FindingSetup() {
                   onChange={(e) =>
                     setForm({ ...form, finding_name: e.target.value })
                   }
-                  className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
+                  Category <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={form.finding_category || ""}
                   onChange={(e) =>
                     setForm({ ...form, finding_category: e.target.value })
                   }
-                  className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 >
                   <option value="">Select Category</option>
                   {categories.map((cat) => (
@@ -234,13 +238,13 @@ export default function FindingSetup() {
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
                   }
-                  className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   rows={3}
                 />
               </div>
             </div>
 
-            <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+            <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
               <button
                 onClick={saveData}
                 className="px-6 py-2 text-white rounded-md

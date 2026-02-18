@@ -347,7 +347,7 @@ function BillingDetails() {
                                     type="text"
                                     value={searchCaseId}
                                     onChange={(e) => setSearchCaseId(e.target.value)}
-                                    className="border rounded px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 w-48"
+                                    className="border border-gray-300 rounded px-3 py-1 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
                                 />
                             </div>
                             <button
@@ -491,7 +491,7 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left">Balance ($)</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-100 border-b border-gray-300">
                                         {opdRows.length > 0 ? opdRows.map((row) => (
                                             <tr key={row.id} className="hover:bg-gray-50">
                                                 <td className="px-3 py-2 text-gray-600 font-medium whitespace-nowrap">
@@ -520,7 +520,7 @@ function BillingDetails() {
                                             </tr>
                                         )}
 
-                                        <tr className="bg-gray-100 font-bold border-b border-gray-100">
+                                        <tr className="bg-gray-100 font-bold border-b border-gray-300">
                                             <td colSpan="6" className="text-right px-3 py-2 text-gray-800">Total :</td>
                                             <td className="px-3 py-2 text-gray-800">${opdTotals.net.toFixed(2)}</td>
                                             <td className="px-3 py-2 text-green-600">${opdTotals.paid.toFixed(2)}</td>
@@ -534,7 +534,7 @@ function BillingDetails() {
                         {activeTab === "IPD" && (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full text-left text-[13px] whitespace-nowrap">
-                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-100">
+                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-300">
                                         <tr>
                                             <th className="px-3 py-2 text-left">Date</th>
                                             <th className="px-3 py-2 text-left">Charge Name</th>
@@ -547,9 +547,9 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left">Balance ($)</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-100 border-b border-gray-300">
                                         {ipdRows.length > 0 ? ipdRows.map((row) => (
-                                            <tr key={row.id} className="hover:bg-gray-50">
+                                            <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-300">
                                                 <td className="px-3 py-2 text-gray-600 font-medium whitespace-nowrap">
                                                     {new Date(row.admission_date || row.created_at).toLocaleDateString()}
                                                 </td>
@@ -590,7 +590,7 @@ function BillingDetails() {
                         {activeTab === "Pharmacy" && (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full text-left text-[13px] whitespace-nowrap">
-                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-100">
+                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-300">
                                         <tr>
                                             <th className="px-3 py-2 text-left ">Bill No</th>
                                             <th className="px-3 py-2 text-left ">Date</th>
@@ -603,10 +603,10 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left ">Balance ($)</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-100 border-b border-gray-300">
                                         {pharmacyBills.length > 0 ? (
                                             pharmacyBills.map((bill) => (
-                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-100 cursor-pointer">
+                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-300 cursor-pointer">
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.id}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.date || new Date(bill.created_at).toLocaleDateString()}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.doctor_name || "N/A"}</td>
@@ -631,7 +631,7 @@ function BillingDetails() {
                         {activeTab === "Pathology" && (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full text-left text-[13px] whitespace-nowrap">
-                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-100">
+                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-300">
                                         <tr>
                                             <th className="px-3 py-2 text-left">Bill No</th>
                                             <th className="px-3 py-2 text-left">Date</th>
@@ -643,10 +643,10 @@ function BillingDetails() {
                                             <th className="px-3 py-2 text-left">Balance ($)</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-100 border-b border-gray-300">
                                         {pathologyBills.length > 0 ? (
                                             pathologyBills.map((bill) => (
-                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-100 cursor-pointer">
+                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-300 cursor-pointer">
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.id}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.date || new Date(bill.created_at).toLocaleDateString()}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.doctor_name || "N/A"}</td>
@@ -670,7 +670,7 @@ function BillingDetails() {
                         {activeTab === "Radiology" && (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full text-left text-[13px] whitespace-nowrap">
-                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-100">
+                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-300">
                                         <tr>
                                             <th className="px-3 py-2 text-left ">Bill No</th>
                                             <th className="px-3 py-2 text-left ">Date</th>
@@ -685,7 +685,7 @@ function BillingDetails() {
                                     <tbody className="divide-y divide-gray-100">
                                         {radiologyBills.length > 0 ? (
                                             radiologyBills.map((bill) => (
-                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-100 cursor-pointer">
+                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-300 cursor-pointer">
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.id}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.date || new Date(bill.created_at).toLocaleDateString()}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.doctor_name || "N/A"}</td>
@@ -709,7 +709,7 @@ function BillingDetails() {
                         {activeTab === "Ambulance" && (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full text-left text-[13px] whitespace-nowrap">
-                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-100">
+                                    <thead className="bg-[#f2f2f2] text-gray-700 font-semibold border-b border-gray-300">
                                         <tr>
                                             <th className="px-3 py-2 text-left ">Bill No</th>
                                             <th className="px-3 py-2 text-left ">Vehicle No</th>
@@ -722,7 +722,7 @@ function BillingDetails() {
                                     <tbody className="divide-y divide-gray-100">
                                         {ambulanceBills.length > 0 ? (
                                             ambulanceBills.map((bill) => (
-                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-100 cursor-pointer">
+                                                <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-300 cursor-pointer">
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.id || "N/A"}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.ambulance_number || bill.vehicle_no || "N/A"}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.date || new Date(bill.created_at).toLocaleDateString()}</td>

@@ -26,8 +26,16 @@ export default function AddAmbulance({ open, onClose, onSuccess }) {
 
   const handleSave = async () => {
     // Basic validation
-    if (!form.vehicleNumber || !form.vehicleModel || !form.vehicleType) {
-      notify("error", "Please fill in all required fields");
+    if (!form.vehicleNumber) {
+      notify("error", "Vehicle Number is required");
+      return;
+    }
+    if (!form.vehicleModel) {
+      notify("error", "Vehicle Model is required");
+      return;
+    }
+    if (!form.vehicleType) {
+      notify("error", "Vehicle Type is required");
       return;
     }
 
@@ -60,8 +68,8 @@ export default function AddAmbulance({ open, onClose, onSuccess }) {
         {/* BODY */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
 
-          <Input label="Vehicle Number *" name="vehicleNumber" onChange={handleChange} />
-          <Input label="Vehicle Model *" name="vehicleModel" onChange={handleChange} />
+          <Input label="Vehicle Number" name="vehicleNumber" onChange={handleChange} required />
+          <Input label="Vehicle Model" name="vehicleModel" onChange={handleChange} required />
           <Input label="Year Made" name="yearMade" onChange={handleChange} />
 
           <Input label="Driver Name" name="driverName" onChange={handleChange} />
@@ -73,7 +81,7 @@ export default function AddAmbulance({ open, onClose, onSuccess }) {
             <select
               name="vehicleType"
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2 focus:ring-2 focus:ring-[#6046B5]"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:ring-1 focus:ring-[#6046B5] outline-none required"
             >
               <option value="">Select</option>
               <option value="Owned">Owned</option>
@@ -87,7 +95,7 @@ export default function AddAmbulance({ open, onClose, onSuccess }) {
               name="note"
               rows="3"
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2 focus:ring-2 focus:ring-[#6046B5]"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:ring-1 focus:ring-[#6046B5] outline-none"
             />
           </div>
         </div>
@@ -111,11 +119,13 @@ export default function AddAmbulance({ open, onClose, onSuccess }) {
 function Input({ label, name, ...props }) {
   return (
     <div>
-      <label className="text-sm font-medium">{label}</label>
+      <label className="text-sm font-medium">{label}
+        {props.required && <span className="text-red-500"> *</span>}
+      </label>
       <input
         name={name}
         {...props}
-        className="w-full mt-1 border rounded px-3 py-2 focus:ring-2 focus:ring-[#6046B5]"
+        className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:ring-1 focus:ring-[#6046B5] outline-none"
       />
     </div>
   );

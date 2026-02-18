@@ -126,7 +126,7 @@ export default function UpdateCharges({ open, onClose, data, refresh }) {
             name="charge_type"
             value={form.charge_type}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
             <option value="">Select</option>
             {lists.types.map((t) => (
@@ -143,7 +143,7 @@ export default function UpdateCharges({ open, onClose, data, refresh }) {
             name="charge_category"
             value={form.charge_category}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
             <option value="">Select</option>
             {lists.categories.map((c) => (
@@ -155,22 +155,22 @@ export default function UpdateCharges({ open, onClose, data, refresh }) {
         </div>
 
         <div className="flex flex-col gap-1">
-            <label className="font-medium">Charge Name</label>
+            <label className="font-medium">Charge Name <span className="text-red-500">*</span></label>
             <input
             name="charge_name"
             value={form.charge_name}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
         </div>
 
         <div className="flex flex-col gap-1">
-            <label className="font-medium">Unit</label>
+            <label className="font-medium">Unit <span className="text-red-500">*</span></label>
             <select
             name="unit"
             value={form.unit}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
             <option value="">Select</option>
             {lists.units.map((u) => (
@@ -186,7 +186,7 @@ export default function UpdateCharges({ open, onClose, data, refresh }) {
             <select
             value={form.tax_id}
             onChange={handleTaxChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
             <option value="">Select Tax</option>
             {lists.taxes.map((t) => (
@@ -203,17 +203,17 @@ export default function UpdateCharges({ open, onClose, data, refresh }) {
             type="number"
             readOnly
             value={form.tax_percentage}
-            className="border p-2 rounded bg-gray-100"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
         </div>
 
         <div className="flex flex-col gap-1">
-            <label className="font-medium">Amount</label>
+            <label className="font-medium">Amount <span className="text-red-500">*</span></label>
             <input
             name="charge_amount"
             value={form.charge_amount}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
         </div>
 
@@ -223,7 +223,7 @@ export default function UpdateCharges({ open, onClose, data, refresh }) {
             name="charge_description"
             value={form.charge_description}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
         </div>
 
@@ -231,7 +231,7 @@ export default function UpdateCharges({ open, onClose, data, refresh }) {
 
 
         {/* FOOTER */}
-        <div className="flex justify-end p-4 border-t">
+        <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

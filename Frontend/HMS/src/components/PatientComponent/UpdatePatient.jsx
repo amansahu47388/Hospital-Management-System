@@ -149,7 +149,7 @@ function UpdatePatient({ open, onClose, patientId }) {
       <div className="bg-white w-[98%] md:w-[90%] lg:w-[80%] rounded-lg max-h-[90vh] overflow-y-auto">
 
         {/* HEADER */}
-        <div className="flex justify-between px-6 py-4 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
+        <div className="flex sticky top-0 z-10 justify-between px-6 py-4 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
           <h2 className="text-xl font-bold">Update Patient</h2>
           <button onClick={onClose}><X /></button>
         </div>
@@ -162,14 +162,14 @@ function UpdatePatient({ open, onClose, patientId }) {
 
             {/* PERSONAL */}
             <div className=" grid md:grid-cols-2 gap-4 ">
-              <Input label="First Name" name="first_name" value={formData.first_name} onChange={handleChange} error={errors.first_name} />
+              <Input label="First Name" name="first_name" required value={formData.first_name} onChange={handleChange} error={errors.first_name} />
               <Input label="Last Name" name="last_name" value={formData.last_name} onChange={handleChange} error={errors.last_name} />
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
-              <Input label="Email" name="email" value={formData.email} onChange={handleChange} error={errors.email} />
-              <Input label="Phone" name="phone" value={formData.phone} onChange={handleChange} error={errors.phone} />
-              <Input label="DOB" type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} />
+              <Input label="Email" name="email" value={formData.email} required onChange={handleChange} error={errors.email} />
+              <Input label="Phone" name="phone" value={formData.phone} required onChange={handleChange} error={errors.phone} />
+              <Input label="DOB" type="date" name="date_of_birth" value={formData.date_of_birth} required onChange={handleChange} />
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
@@ -256,9 +256,6 @@ function UpdatePatient({ open, onClose, patientId }) {
 
             {/* FOOTER */}
             <div className="flex justify-end gap-4  pt-4">
-              <button type="button" onClick={onClose} className="px-6 py-2 border rounded">
-                Cancel
-              </button>
               <button type="submit" disabled={loading}
                 className="px-6 py-2 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white rounded">
                 {loading ? <Loader className="animate-spin" /> : "Update Patient"}
@@ -277,12 +274,14 @@ function UpdatePatient({ open, onClose, patientId }) {
 /* ==================== FIELDS ==================== */
 
 const baseField =
-  "w-full px-3 py-2 rounded-md bg-white border-[0.5px]  border-gray-200 text-gray-800 " +
-  "focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400  transition";
+  "w-full px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-800 " +
+  "focus:outline-none focus:ring-1 focus:ring-[#6046B5]  transition";
 
 const Input = ({ label, error, ...props }) => (
   <div>
-    <label className="font-semibold text-gray-700">{label}</label>
+    <label className="font-semibold text-gray-700">{label}
+      {props.required && <span className="text-red-500"> *</span>}
+    </label>
     <input
       {...props}
       className={`${baseField} ${error ? "border-red-500" : "border-[#8A63D2]"}`}
@@ -293,7 +292,9 @@ const Input = ({ label, error, ...props }) => (
 
 const Select = ({ label, options, ...props }) => (
   <div>
-    <label className="font-semibold text-gray-700">{label}</label>
+    <label className="font-semibold text-gray-700">{label}
+      {props.required && <span className="text-red-500"> *</span>}
+    </label>
     <select
       {...props}
       className={`${baseField} border-[#8A63D2]`}
@@ -309,7 +310,9 @@ const Select = ({ label, options, ...props }) => (
 
 const Textarea = ({ label, ...props }) => (
   <div>
-    <label className="font-semibold text-gray-700">{label}</label>
+    <label className="font-semibold text-gray-700">{label}
+      {props.required && <span className="text-red-500"> *</span>}
+    </label>
     <textarea
       {...props}
       rows={3}

@@ -23,7 +23,7 @@ export default function AddBedType({ open, onClose, editData, refresh }) {
 
   const handleSubmit = async () => {
     if (!bedType.trim()) {
-      notify("warning","Bed type name is required");
+      notify("warning", "Bed type name is required");
       return;
     }
 
@@ -37,13 +37,13 @@ export default function AddBedType({ open, onClose, editData, refresh }) {
         notify("success", "Bed type updated successfully");
       } else {
         await createBedType(payload);
-        notify( "success", "Bed type added successfully");
+        notify("success", "Bed type added successfully");
       }
 
       refresh();
       onClose();
     } catch (err) {
-      notify( "error","Save failed");
+      notify("error", "Save failed");
     } finally {
       setLoading(false);
     }
@@ -70,13 +70,13 @@ export default function AddBedType({ open, onClose, editData, refresh }) {
           <input
             value={bedType}
             onChange={(e) => setBedType(e.target.value)}
-            className="w-full mt-1 border rounded px-3 py-2"
+            className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             placeholder="Enter bed type"
           />
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+        <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

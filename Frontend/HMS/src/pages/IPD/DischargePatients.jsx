@@ -61,26 +61,26 @@ useEffect(() => {
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="border px-3 py-2 rounded w-full lg:w-64"
+                className="border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none w-full lg:w-64"
               />
 
               <div className="flex flex-wrap gap-3 items-center justify-between lg:justify-end">
                 <select
                   value={limit}
                   onChange={(e) => setLimit(e.target.value)}
-                  className="border px-2 py-2 rounded text-sm"
+                  className="border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                 >
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
 
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                   <FileText size={18} className="cursor-pointer text-gray-600" />
                   <FileSpreadsheet size={18} className="cursor-pointer text-gray-600" />
                   <File size={18} className="cursor-pointer text-gray-600" />
                   <Printer size={18} className="cursor-pointer text-gray-600" />
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -89,45 +89,45 @@ useEffect(() => {
               <table className="min-w-full text-sm">
                 <thead className="bg-gray-200 ">
                   <tr>
-                    <th className="px-2 py-4 text-center">Name</th>
-                    <th className="px-2 py-4 text-center">Patient ID</th>
-                    <th className="px-2 py-4 text-center">Case ID</th>
-                    <th className="px-2 py-4 text-center">Gender</th>
-                    <th className="px-2 py-4 text-center">phone</th>
-                    <th className="px-2 py-4 text-center">Created By</th>
-                    <th className="px-2 py-4 text-center">Consultant Doctor </th>
-                    <th className="px-2 py-4 text-center">admidion Date</th>
-                    <th className="px-2 py-4 text-center">Discharge Date</th>
-                    <th className="px-2 py-4 text-center">Status</th>
-                    <th className="px-2 py-4 text-center">Action</th>
+                    <th className="px-3 py-2 text-left">Name</th>
+                    <th className="px-3 py-2 text-left">Patient ID</th>
+                    <th className="px-3 py-2 text-left">Case ID</th>
+                    <th className="px-3 py-2 text-left">Gender</th>
+                    <th className="px-3 py-2 text-left">phone</th>
+                    <th className="px-3 py-2 text-left">Created By</th>
+                    <th className="px-3 py-2 text-left">Consultant Doctor </th>
+                    <th className="px-3 py-2 text-left">admidion Date</th>
+                    <th className="px-3 py-2 text-left">Discharge Date</th>
+                    <th className="px-3 py-2 text-left">Status</th>
+                    <th className="px-3 py-2 text-left">Action</th>
                    
                   </tr>
                 </thead>
 
                 <tbody className="divide-y">
                   {patients.map((ipd) => (
-                    <tr key={ipd.ipd_id}>
-                      <td className="p-2 text-center text-blue-600 hover:text-blue-700 cursor-pointer"
+                    <tr key={ipd.ipd_id} className="border-b border-gray-300">
+                      <td className="p-2 text-left text-blue-600 hover:text-blue-700 cursor-pointer"
                       onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}`)}>
                         {ipd.patient_detail.first_name}{" "}
                         {ipd.patient_detail.last_name}
                       </td>
-                      <td className="p-2 text-center">IPDN{ipd.ipd_id}</td>
+                      <td className="p-2 text-left">IPDN{ipd.ipd_id}</td>
                       <td className="p-">{ipd.case_id}</td>
-                      <td className="p-2 text-center">{ipd.patient_detail.gender}</td>
-                      <td className="p-2 text-center">{ipd.patient_detail.phone}</td>
-                      <td className="p-2 text-center">{ipd.created_by?.role}</td>
-                      <td className="p-2 text-center">
+                      <td className="p-2 text-left">{ipd.patient_detail.gender}</td>
+                      <td className="p-2 text-left">{ipd.patient_detail.phone}</td>
+                      <td className="p-2 text-left">{ipd.created_by?.role}</td>
+                      <td className="p-2 text-left">
                         {ipd.doctor_detail?.full_name}
                       </td> 
-                      <td className="p-2 text-center">
+                      <td className="p-2 text-left">
                         {new Date(ipd.appointment_date).toLocaleString()}
                       </td>
-                      <td className="p-2 text-center">
+                      <td className="p-2 text-left">
                         {new Date(ipd.discharge_date).toLocaleString()}
                       </td>
-                      <td className="p-2 text-center">{ipd.discharge.status}</td>
-                      <td className="p-2 text-center">
+                      <td className="p-2 text-left">{ipd.discharge.status}</td>
+                      <td className="p-2 text-left">
                         <div className="relative inline-flex items-center group">
                           <button
                           title="view"
@@ -135,6 +135,7 @@ useEffect(() => {
                               setSelectedDischarge(ipd);
                               setShowDetail(true);
                             }} 
+                            className="p-1 text-purple-600 hover:bg-purple-100 rounded cursor-pointer"
                           >
                             <Eye size={16} />
                           </button>

@@ -12,6 +12,8 @@ import { useAuth } from "../../../context/AuthContext";
 import { useNotify } from "../../../context/NotificationContext";
 import { getRadiologyBills, getRadiologyBillDetail } from "../../../api/radiologyApi";
 import { createPatientPayment, getPatientPayments } from "../../../api/patientApi";
+import { getHeaders } from "../../../api/setupApi";
+import { printReport } from "../../../utils/printUtils";
 
 export default function Radiology() {
     const { user } = useAuth();
@@ -27,13 +29,20 @@ export default function Radiology() {
     const [paymentHistory, setPaymentHistory] = useState([]);
     const [paymentAmount, setPaymentAmount] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [headerData, setHeaderData] = useState(null);
 
     const fetchBills = useCallback(async () => {
         if (!user?.patient_id) return;
         setLoading(true);
         try {
-            const res = await getRadiologyBills("", user.patient_id);
-            setBills(res.data || []);
+            const [billsRes, headersRes] = await Promise.all([
+                getRadiologyBills("", user.patient_id),
+                getHeaders()
+            ]);
+            setBills(billsRes.data || []);
+            if (headersRes.data && headersRes.data.length > 0) {
+                setHeaderData(headersRes.data[0]);
+            }
         } catch (error) {
             console.error("Error fetching radiology bills:", error);
             notify("error", "Failed to load radiology bills");
@@ -106,6 +115,82 @@ export default function Radiology() {
         }
     };
 
+    const handlePrint = () => {
+        if (!selectedBill) return;
+
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">RADIOLOGY BILL</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>Bill No: RADIOB${selectedBill.id}</div>
+                    <div>Date: ${new Date(selectedBill.created_at).toLocaleDateString()}</div>
+                </div>
+            </div>
+
+            <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+                <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${selectedBill.patient_name || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Phone</span><span class="data-value">: ${selectedBill.patient_phone || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Case ID</span><span class="data-value">: ${selectedBill.case_id || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Doctor</span><span class="data-value">: ${selectedBill.doctor_name || "Self"}</span></div>
+            </div>
+
+            <div class="report-section-title">Test Details</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Test Name</th>
+                        <th>Report Date</th>
+                        <th>Report Days</th>
+                        <th style="text-align:right">Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${selectedBill.items?.map((item, idx) => `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td>
+                                <div>${item.test_name}</div>
+                                <div style="font-size:10px; color:#666;">${item.test_detail?.short_name || ""}</div>
+                            </td>
+                            <td>${new Date(item.report_date).toLocaleDateString()}</td>
+                            <td>${item.report_days} Days</td>
+                            <td style="text-align:right">${parseFloat(item.price || 0).toFixed(2)}</td>
+                        </tr>
+                    `).join("") || '<tr><td colspan="5" style="text-align: center;">No items found.</td></tr>'}
+                </tbody>
+            </table>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                <div style="width: 250px; font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Subtotal:</span>
+                        <span>₹${parseFloat(selectedBill.subtotal).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Discount:</span>
+                        <span>₹${parseFloat(selectedBill.discount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Tax:</span>
+                        <span>₹${parseFloat(selectedBill.tax).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid #eee; font-weight: bold; font-size: 15px; color: #6046B5;">
+                        <span>Net Amount:</span>
+                        <span>₹${parseFloat(selectedBill.total_amount).toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        printReport({
+            title: `Radiology Bill - RADIOB${selectedBill.id}`,
+            headerImg: headerData?.radiology_bill_header,
+            footerText: headerData?.radiology_bill_footer,
+            content: content
+        });
+    };
+
     const filteredBills = bills.filter(bill =>
         String(bill.id).toLowerCase().includes(searchTerm.toLowerCase()) ||
         bill.doctor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -117,23 +202,14 @@ export default function Radiology() {
             <div className="min-h-screen transition-all duration-300">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-fade-in-up">
                     {/* Header */}
-                    <div className="p-5 border-b flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
+                    <div className="px-3 py-2 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
                         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                             Radiology Test Reports
                         </h2>
-
-                        <div className="flex gap-2">
-                            <button
-                                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200"
-                                title="Print"
-                            >
-                                <Printer size={18} />
-                            </button>
-                        </div>
                     </div>
 
                     {/* Search Bar */}
-                    <div className="p-4 border-b border-gray-100 bg-white">
+                    <div className="px-3 py-2 border-b border-gray-100 bg-white">
                         <div className="relative max-w-sm">
                             <Search
                                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -144,7 +220,7 @@ export default function Radiology() {
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 focus:bg-white transition-colors"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6046B5] rounded"
                             />
                         </div>
                     </div>
@@ -224,17 +300,17 @@ export default function Radiology() {
                                                     <div className="flex gap-1 justify-end w-full">
                                                         <button
                                                             onClick={() => handleShowDetails(bill)}
-                                                            className=""
+                                                            className="text-purple-600 hover:bg-purple-100 p-1 rounded"
                                                             title="Show Details"
                                                         >
-                                                            <Eye size={14} />
+                                                            <Eye size={16} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleShowPayments(bill)}
-                                                            className=""
+                                                            className="text-purple-600 hover:bg-purple-100 p-1 rounded"
                                                             title="View Payments"
                                                         >
-                                                            <AlignJustify size={14} />
+                                                            <AlignJustify size={16} />
                                                         </button>
                                                         {parseFloat(bill.balance) > 0 && (
                                                             <button
@@ -254,7 +330,7 @@ export default function Radiology() {
                             </table>
                         )}
                     </div>
-                    <div className="p-4 border-t text-xs text-gray-500 bg-gray-50">
+                    <div className="p-4 border-t border-gray-200 text-xs text-gray-500 bg-gray-50">
                         Records: 1 to {filteredBills.length} of {filteredBills.length}
                     </div>
                 </div>
@@ -270,7 +346,7 @@ export default function Radiology() {
                                 Bill Details - RADIOB{selectedBill.id}
                             </h3>
                             <div className="flex items-center gap-3">
-                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={() => window.print()}>
+                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={handlePrint}>
                                     <Printer size={20} />
                                 </button>
                                 <button
@@ -314,8 +390,8 @@ export default function Radiology() {
                             </div>
 
                             <div className="overflow-x-auto mb-6">
-                                <table className="w-full text-sm text-left border">
-                                    <thead className="bg-gray-100 text-gray-700 font-semibold border-b">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-gray-100 text-gray-700 font-semibold border-b border-gray-200">
                                         <tr>
                                             <th className="p-3">Test Name</th>
                                             <th className="p-3">Report Date</th>
@@ -354,7 +430,7 @@ export default function Radiology() {
                                     <span>Tax (₹)</span>
                                     <span>{parseFloat(selectedBill.tax).toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between w-64 font-bold text-base border-t pt-2 mt-1">
+                                <div className="flex justify-between w-64 font-bold text-base border-t border-gray-200 pt-2 mt-1">
                                     <span>Net Amount (₹)</span>
                                     <span>{parseFloat(selectedBill.total_amount).toFixed(2)}</span>
                                 </div>
@@ -398,7 +474,7 @@ export default function Radiology() {
                                     type="number"
                                     value={paymentAmount}
                                     onChange={(e) => setPaymentAmount(e.target.value)}
-                                    className="flex-1 p-2 border border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+                                    className="flex-1 p-2 border border-gray-300 focus:ring-1 focus:ring-[#6046B5] outline-none transition-all rounded"
                                 />
                             </div>
 
@@ -434,13 +510,12 @@ export default function Radiology() {
                         {/* Modal Content */}
                         <div className="p-0">
                             <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-50 text-gray-700 font-bold border-b">
+                                <thead className="bg-gray-50 text-gray-700 font-bold border-b border-gray-200">
                                     <tr>
                                         <th className="p-4">Date</th>
                                         <th className="p-4">Note</th>
                                         <th className="p-4">Payment Mode</th>
                                         <th className="p-4 text-right">Paid Amount (₹)</th>
-                                        <th className="p-4 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
@@ -452,11 +527,6 @@ export default function Radiology() {
                                             <td className="p-4">{payment.note}</td>
                                             <td className="p-4">{payment.payment_mode}</td>
                                             <td className="p-4 text-right">{parseFloat(payment.paid_amount || 0).toFixed(2)}</td>
-                                            <td className="p-4 text-right">
-                                                <button className="text-gray-500 hover:text-indigo-600" title="Print">
-                                                    <Printer size={16} />
-                                                </button>
-                                            </td>
                                         </tr>
                                     ))}
                                     <tr className="bg-gray-100 font-bold">

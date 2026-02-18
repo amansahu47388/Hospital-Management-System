@@ -116,15 +116,14 @@ export default function AppointmentTable({ data, onUpdate }) {
                 {/* ACTIONS CELL */}
                 <td className="p-0 relative h-10 overflow-hidden">
                   <div className="relative flex items-center justify-center h-full w-full">
-                    <div className=" flex items-center justify-center gap-2 bg-white">
+                    <div className=" flex items-center justify-center gap-1 bg-white">
                       <button
                         title="Details"
                         onClick={() => {
                           setSelectedAppointment(row);
                           setShowDetails(true);
                         }}
-                        className="hover:bg-purple-600/10 hover:text-purple-800
-                              transition"
+                        className="hover:bg-purple-100 text-purple-600 p-1 rounded"
                       >
                         <Eye size={16} />
                       </button>
@@ -135,7 +134,7 @@ export default function AppointmentTable({ data, onUpdate }) {
                           setSelectedAppointment(row);
                           setShowEdit(true);
                         }}
-                        className="text-green-600 hover:text-green-800 transition hover:bg-green-600/10"
+                        className="text-green-600 hover:bg-green-100 p-1 rounded"
                       >
                         <Pencil size={16} />
                       </button>
@@ -143,7 +142,7 @@ export default function AppointmentTable({ data, onUpdate }) {
                       <button
                         title="Delete"
                         onClick={() => handleDelete(row)}
-                        className="text-red-600 hover:text-red-800  hover:bg-red-600/10 transition"
+                        className="text-red-600 hover:bg-red-100 p-1 rounded"
                       >
                         <Trash2 size={16} />
                       </button>

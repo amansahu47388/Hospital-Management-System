@@ -7,14 +7,14 @@ export default function AppointmentTabs({ activeTab, setActiveTab }) {
   ];
 
   return (
-    <div className="flex gap-6 border-b border-gray-200 text-sm font-semibold">
+    <div className="flex gap-6 border-b border-gray-300 text-sm font-semibold">
       {tabs.map((tab) => (
         <button
           key={tab.key}
           onClick={() => setActiveTab(tab.key)}
           className={`pb-2 ${
             activeTab === tab.key
-              ? "border-b-2 border-purple-600 text-purple-600"
+              ? "border-b-2 border-[#6046B5] text-[#6046B5]"
               : "text-gray-600"
           }`}
         >

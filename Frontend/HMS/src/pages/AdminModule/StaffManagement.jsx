@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-    Plus, Search, Edit2, Trash2, Power, Mail, Eye,
+    Plus, Search, Pencil, Trash2, Power, Mail, Eye,
     UserCheck, UserX, RefreshCw
 } from "lucide-react";
 import { getStaffList, deleteStaff, toggleStaffActive, resendInvitation } from "../../api/staffApi";
@@ -182,7 +182,7 @@ export default function StaffManagement() {
                                 placeholder="Search staff..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] focus:border-[#6046B5] outline-none"
                             />
                         </div>
 
@@ -190,7 +190,7 @@ export default function StaffManagement() {
                         <select
                             value={filterRole}
                             onChange={(e) => setFilterRole(e.target.value)}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] focus:border-[#6046B5] outline-none"
                         >
                             <option value="all">All Roles</option>
                             {roles.map(role => (
@@ -204,7 +204,7 @@ export default function StaffManagement() {
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] focus:border-[#6046B5] outline-none"
                         >
                             <option value="all">All Status</option>
                             <option value="active">Active</option>
@@ -307,41 +307,41 @@ export default function StaffManagement() {
                                                 {formatDate(staff.created_at)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1">
                                                     <button
                                                         onClick={() => handleViewDetails(staff)}
-                                                        className="text-blue-600 hover:text-blue-800"
+                                                        className="text-blue-600 hover:bg-blue-100 p-1 rounded"
                                                         title="View Details"
                                                     >
-                                                        <Eye size={18} />
+                                                        <Eye size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleEdit(staff)}
-                                                        className="text-green-600 hover:text-green-800"
+                                                        className="text-green-600 hover:bg-green-100 p-1 rounded"
                                                         title="Edit"
                                                     >
-                                                        <Edit2 size={18} />
+                                                        <Pencil size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleToggleActive(staff)}
-                                                        className={staff.is_active ? "text-orange-600 hover:text-orange-800" : "text-green-600 hover:text-green-800"}
+                                                        className={staff.is_active ? "text-orange-600 hover:bg-orange-100 p-1 rounded" : "text-green-600 hover:bg-green-100 p-1 rounded"}
                                                         title={staff.is_active ? "Deactivate" : "Activate"}
                                                     >
-                                                        <Power size={18} />
+                                                        <Power size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleResendInvitation(staff)}
-                                                        className="text-purple-600 hover:text-purple-800"
+                                                        className="text-purple-600 hover:bg-purple-100 p-1 rounded"
                                                         title="Resend Invitation"
                                                     >
-                                                        <Mail size={18} />
+                                                        <Mail size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(staff)}
-                                                        className="text-red-600 hover:text-red-800"
+                                                        className="text-red-600 hover:bg-red-100 p-1 rounded"
                                                         title="Delete"
                                                     >
-                                                        <Trash2 size={18} />
+                                                        <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             </td>

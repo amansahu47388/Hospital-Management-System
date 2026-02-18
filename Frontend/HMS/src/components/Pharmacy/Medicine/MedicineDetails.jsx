@@ -116,13 +116,8 @@ export default function MedicineDetails({ open, onClose, medicine, stockList }) 
           <input
             type="text"
             placeholder="Search..."
-            className="border px-3 py-1 rounded w-full md:w-64"
+            className="border border-gray-300 px-3 py-1 rounded w-full md:w-64 focus:outline-none focus:border-[#6046B5]"
           />
-          <div className="flex gap-4 text-gray-600">
-            <FileText size={18} />
-            <Download size={18} />
-            <Printer size={18} />
-          </div>
         </div>
 
         <div className="overflow-x-auto">

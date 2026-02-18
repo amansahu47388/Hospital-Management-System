@@ -74,16 +74,22 @@ class PatientCreateView(APIView):
                 context={'request': request}
             )
             
-            if serializer.is_valid():
-                patient = serializer.save()
-                response_serializer = PatientSerializer(patient)
-                return Response(
-                    response_serializer.data,
-                    status=status.HTTP_201_CREATED
-                )
-            else:
-                logger.error(f"❌ Serializer validation errors: {serializer.errors}")
+            if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            patient = serializer.save()
+            
+            # Create User account and send invitation email (same pattern as staff)
+            if getattr(patient, '_send_invitation', True):
+                self.create_user_and_send_invitation(patient, getattr(patient, '_temp_password', ''))
+            
+            response_data = PatientSerializer(patient).data
+            response_data['temporary_password'] = getattr(patient, '_temp_password', '')
+            
+            return Response({
+                'message': 'Patient account created successfully',
+                'patient': response_data
+            }, status=status.HTTP_201_CREATED)
                 
         except Exception as e:
             logger.error(f"❌ Error creating patient: {str(e)}", exc_info=True)
@@ -91,6 +97,98 @@ class PatientCreateView(APIView):
                 {"detail": f"Internal server error: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+    
+    def create_user_and_send_invitation(self, patient, temp_password):
+        """Create User account for patient and send invitation email (same pattern as staff)"""
+        from django.core.mail import send_mail
+        from django.conf import settings
+        from users.models import User
+        
+        # Check if user already exists
+        if patient.user:
+            logger.info(f"Patient {patient.id} already has a user account")
+            return
+        
+        # Check if email is already used by another user
+        if User.objects.filter(email=patient.email).exists():
+            logger.warning(f"Email {patient.email} already exists in User table")
+            return
+        
+        # Create User account
+        user = User.objects.create(
+            email=patient.email,
+            full_name=patient.full_name,
+            role='patient',
+            is_staff=False,
+            is_superuser=False,
+            is_first_login=True,
+            is_active=True
+        )
+        user.set_password(temp_password)
+        user.save()
+        
+        # Link user to patient
+        patient.user = user
+        patient.save()
+        
+        logger.info(f"✅ User account created for patient {patient.id}")
+        
+        # Send invitation email
+        try:
+            subject = "Welcome to Hospital Management System - Patient Portal Access"
+            login_url = f"{settings.FRONTEND_URL}/login"
+            
+            message = f"""Dear {patient.full_name},
+
+Welcome to our Hospital Management System!
+
+Your patient portal account has been created successfully. You can now access your medical records, appointments, and other healthcare information online.
+
+Account Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email: {patient.email}
+Temporary Password: {temp_password}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔐 IMPORTANT SECURITY NOTICE:
+For security reasons, you MUST change your password on first login.
+
+Login here: {login_url}
+
+Steps to get started:
+1. Visit the login page
+2. Use your email and temporary password
+3. You will be prompted to create a new password
+4. Access your patient portal dashboard
+
+Through the patient portal, you can:
+✓ View your medical records
+✓ Check appointment history
+✓ Access test results
+✓ View billing information
+✓ Update your profile
+
+If you did not expect this account creation or have any questions, please contact our hospital reception.
+
+Best regards,
+Hospital Management Team
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This is an automated message. Please do not reply to this email.
+"""
+            
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [patient.email],
+                fail_silently=False,
+            )
+            logger.info(f"✅ Invitation email sent to {patient.email}")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to send invitation email to {patient.email}: {str(e)}")
+
 
 class PatientUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]

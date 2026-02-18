@@ -40,20 +40,20 @@ export default function UpdateBed({ open, onClose, bed }) {
         <div className="p-4 space-y-4 overflow-y-auto">
 
           <div>
-            <label className="text-sm font-medium">Name *</label>
+            <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
             <input
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Bed Type *</label>
+            <label className="text-sm font-medium">Bed Type <span className="text-red-500">*</span></label>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option>Standard</option>
               <option>VIP</option>
@@ -62,11 +62,11 @@ export default function UpdateBed({ open, onClose, bed }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Bed Group *</label>
+            <label className="text-sm font-medium">Bed Group <span className="text-red-500">*</span></label>
             <select
               value={form.group}
               onChange={(e) => setForm({ ...form, group: e.target.value })}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option>VIP Ward - Ground Floor</option>
               <option>Private Ward - 3rd Floor</option>
@@ -89,7 +89,7 @@ export default function UpdateBed({ open, onClose, bed }) {
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+        <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
             text-white px-6 py-2 rounded-md"

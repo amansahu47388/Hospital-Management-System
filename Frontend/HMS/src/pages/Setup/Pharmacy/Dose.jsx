@@ -84,7 +84,7 @@ export default function Dose() {
           <h2 className="text-lg font-semibold">Dose Interval List</h2>
           <button
             onClick={() => { setForm({ id: null, dosage_interval: "", dosage_duration: "" }); setOpen(true); }}
-            className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-1.5 rounded-md text-sm hover:opacity-90"
+            className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded-md text-sm hover:opacity-90"
           >
             <Plus size={16} /> Add Dose
           </button>
@@ -109,13 +109,6 @@ export default function Dose() {
                   className="w-full pl-2 pr-2 py-1 border-b focus:border-[#8A63D2] outline-none text-sm"
                 />
               </div>
-              <div className="flex items-center gap-4 text-gray-500">
-                <button className="hover:text-[#6046B5]"><Copy size={16} /></button>
-                <button className="hover:text-[#6046B5]"><FileSpreadsheet size={16} /></button>
-                <button className="hover:text-[#6046B5]"><FileText size={16} /></button>
-                <button className="hover:text-[#6046B5]"><FileDown size={16} /></button>
-                <button className="hover:text-[#6046B5]"><Printer size={16} /></button>
-              </div>
             </div>
 
             <div className="overflow-x-auto thin-scrollbar                                                                                          ">
@@ -138,20 +131,20 @@ export default function Dose() {
                     </tr>
                   ) : (
                     filteredList.map(row => (
-                      <tr key={row.id} className="hover:bg-gray-50 border-b">
+                      <tr key={row.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                         <td className="px-3 py-2">{row.dosage_duration}</td>
                         <td className="px-3 py-2">{row.dosage_interval}</td>
                         <td className="px-3 py-2 text-right">
                           <div className="flex gap-2 justify-end">
                             <button
                               onClick={() => { setForm(row); setOpen(true); }}
-                              className="text-gray-400 hover:text-[#6046B5]"
+                              className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded"
                             >
                               <Pencil size={14} />
                             </button>
                             <button
                               onClick={() => handleDelete(row.id)}
-                              className="text-gray-400 hover:text-red-500"
+                              className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded"
                             >
                               <Trash2 size={14} />
                             </button>
@@ -162,7 +155,7 @@ export default function Dose() {
                   )}
                 </tbody>
               </table>
-              <div className="mt-4 text-[10px] text-gray-500">
+              <div className="px-3 py-2 text-xs text-gray-500">
                 Records: 1 to {filteredList.length} of {filteredList.length}
               </div>
             </div>
@@ -181,27 +174,27 @@ export default function Dose() {
 
             <div className="p-4 space-y-4">
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Dose Interval *</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Dose Interval <span className="text-red-500">*</span></label>
                 <input
                   value={form.dosage_interval}
                   onChange={(e) => setForm({ ...form, dosage_interval: e.target.value })}
-                  className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   placeholder="e.g. Twice a day"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Dose Duration *</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Dose Duration <span className="text-red-500">*</span></label>
                 <input
                   value={form.dosage_duration}
                   onChange={(e) => setForm({ ...form, dosage_duration: e.target.value })}
-                  className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   placeholder="e.g. 5 Days"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end p-4 border-t bg-gray-50">
+            <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
               <button
                 onClick={save}
                 className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-6 py-2 rounded text-sm transition-colors"

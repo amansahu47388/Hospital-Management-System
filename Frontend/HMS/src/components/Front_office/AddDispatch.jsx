@@ -22,8 +22,8 @@ export default function AddDispatch({ open, onClose, refresh }) {
 
   const handleSubmit = async () => {
     try {
-      if (!form.reference_no || !form.to_title || !form.from_title || !form.date) {
-        notify("warning","please fill all required fields");
+      if ( !form.to_title) {
+        notify("warning","To title is required");
         return;
       }
 
@@ -64,43 +64,43 @@ export default function AddDispatch({ open, onClose, refresh }) {
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div>
-            <label className="text-sm font-medium">To Title *</label>
+            <label className="text-sm font-medium">To Title <span className="text-red-500">*</span></label>
             <input
               name="to_title"
               value={form.to_title}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
            <div>
-            <label className="text-sm font-medium">From Title *</label>
+            <label className="text-sm font-medium">From Title </label>
             <input
               name="from_title"
               value={form.from_title}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Reference No *</label>
+            <label className="text-sm font-medium">Reference No </label>
             <input
               name="reference_no"
               value={form.reference_no}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Date *</label>
+            <label className="text-sm font-medium">Date </label>
             <input
               type="date"
               name="date"
               value={form.date}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2 bg-gray-100"
+              className="w-full mt-1 border rounded px-3 py-2 bg-gray-100 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -110,7 +110,7 @@ export default function AddDispatch({ open, onClose, refresh }) {
               name="address"
               value={form.address}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -120,14 +120,14 @@ export default function AddDispatch({ open, onClose, refresh }) {
               name="note"
               value={form.note}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+        <div className="flex justify-end px-4 py-3 border-t bg-gray-100 ">
           <button
             onClick={handleSubmit}
             className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded-md"

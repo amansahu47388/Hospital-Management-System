@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import useAmbulanceCalls from "../../hooks/useAmbulanceCalls";
 import GenerateAmbulanceBill from "../../components/Ambulance/GenerateAmbulanceBill";
-import UpdateAmbulance from "../../components/Ambulance/UpdateAmbulance";
+import UpdateAmbulance from "../../components/Ambulance/UpdateAmbulanceBill";
 import AmbulanceBillDetail from "../../components/Ambulance/AmbulanceBillDetail";
 import { deleteAmbulanceBill } from "../../api/ambulanceApi";
 import { useNotify } from "../../context/NotificationContext";
@@ -52,7 +52,7 @@ export default function AmbulanceCallList() {
                 placeholder="Search by Bill No or Patient"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-md text-sm outline-none border border-gray-300 focus:ring-2 focus:ring-purple-600 focus:border-purple-600"
+                className="w-full px-3 py-2 rounded-md text-sm outline-none border border-gray-300 focus:ring-0.5 focus:ring-purple-600 focus:border-purple-600"
               />
             </div>
           </div>

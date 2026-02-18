@@ -427,7 +427,7 @@ function AddPatient({ open, onClose }) {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
             <button
               type="button"
               onClick={onClose}
@@ -461,7 +461,7 @@ function FormField({ label, name, type = "text", value, onChange, error, require
         name={name}
         value={value}
         onChange={onChange}
-        className={`w-full border   px-3 py-2 rounded focus:ring-2 focus:ring-purple-400 outline-none ${error ? "border-red-500" : "border-gray-300"
+        className={`w-full border border-gray-300 focus:ring-1 focus:ring-[#6046B5] rounded px-3 py-2 outline-none ${error ? "border-red-500" : "border-gray-300"
           }`}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
@@ -477,7 +477,7 @@ function SelectField({ label, name, value, onChange, options }) {
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-purple-400 outline-none"
+        className="w-full border border-gray-300 focus:ring-1 focus:ring-[#6046B5] rounded px-3 py-2 outline-none"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -498,7 +498,7 @@ function TextAreaField({ label, name, value, onChange, rows = "3" }) {
         value={value}
         onChange={onChange}
         rows={rows}
-        className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full border border-gray-300  focus:ring-1 focus:ring-[#6046B5] rounded px-3 py-2 outline-none"
       />
     </div>
   );

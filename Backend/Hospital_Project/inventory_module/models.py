@@ -22,12 +22,12 @@ class ItemStore(models.Model):
 
 
 class ItemSupplier(models.Model):
-    supplier_name = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
+    supplier_name = models.CharField(max_length=200, unique=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(blank=True, null=True)
-    address = models.TextField()
+    address = models.TextField(null=True, blank=True)
     contact_person = models.CharField(max_length=150)
-    contact_person_phone = models.CharField(max_length=20)
+    contact_person_phone = models.CharField(max_length=20, null=True, blank=True)
     contact_person_email = models.EmailField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -138,7 +138,7 @@ export default function Payment() {
             <div className="min-h-screen p-4 md:p-6 transition-all duration-300">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                     {/* Header */}
-                    <div className="bg-white p-5 border-b flex flex-col md:flex-row justify-between items-center bg-gray-50/50 gap-4">
+                    <div className="bg-white px-3 py-2 flex flex-col md:flex-row justify-between items-center bg-gray-50/50 gap-4">
                         <div className="flex flex-col gap-1">
                             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                                 <CreditCard className="text-[#6046B5]" />
@@ -162,21 +162,21 @@ export default function Payment() {
                             <table className="w-full text-sm text-left border-collapse">
                                 <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
                                     <tr>
-                                        <th className="p-4 text-left">Transaction ID</th>
-                                        <th className="p-4 text-left">Date</th>
-                                        <th className="p-4 text-left">Note</th>
-                                        <th className="p-4 text-left">Mode</th>
-                                        <th className="p-4 text-left">Paid Amount</th>
+                                        <th className="px-3 py-2 text-left">Transaction ID</th>
+                                        <th className="px-3 py-2 text-left">Date</th>
+                                        <th className="px-3 py-2 text-left">Note</th>
+                                        <th className="px-3 py-2 text-left">Mode</th>
+                                        <th className="px-3 py-2 text-left">Paid Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {payments.length > 0 ? payments.map((p) => (
                                         <tr key={p.id} className="hover:bg-indigo-50/30 transition-colors">
-                                            <td className="p-4 font-medium">TRANS{p.id}</td>
-                                            <td className="p-4">{new Date(p.payment_date).toLocaleDateString()}</td>
-                                            <td className="p-4 truncate max-w-[200px]">{p.note || "-"}</td>
-                                            <td className="p-4">{p.payment_mode}</td>
-                                            <td className="p-4 font-semibold">
+                                            <td className="px-3 py-2 font-medium">TRANS{p.id}</td>
+                                            <td className="px-3 py-2">{new Date(p.payment_date).toLocaleDateString()}</td>
+                                            <td className="px-3 py-2 truncate max-w-[200px]">{p.note || "-"}</td>
+                                            <td className="px-3 py-2">{p.payment_mode}</td>
+                                            <td className="px-3 py-2 font-semibold">
                                                 ₹{Number(p.paid_amount).toLocaleString()}
                                             </td>
                                         </tr>
@@ -187,10 +187,10 @@ export default function Payment() {
                                     )}
                                 </tbody>
                                 {payments.length > 0 && (
-                                    <tfoot className="bg-gray-50 font-bold text-gray-800 border-t-2">
+                                    <tfoot className="bg-gray-50 font-bold text-gray-800 border-t border-gray-200">
                                         <tr>
-                                            <td colSpan="4" className="p-4 text-left">Total Paid :</td>
-                                            <td className="p-4 text-left font-semibold text-sm">₹{totalPaidSum.toLocaleString()}</td>
+                                            <td colSpan="4" className="px-3 py-2 text-left">Total Paid :</td>
+                                            <td className="px-3 py-2 text-left font-semibold text-sm">₹{totalPaidSum.toLocaleString()}</td>
                                         </tr>
                                     </tfoot>
                                 )}
@@ -228,7 +228,7 @@ export default function Payment() {
                                         required
                                         value={formData.payment_date}
                                         onChange={(e) => setFormData({ ...formData, payment_date: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6046B5] outline-none text-sm"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm"
                                     />
                                 </div>
                                 <div>
@@ -241,7 +241,7 @@ export default function Payment() {
                                         required
                                         value={formData.paid_amount}
                                         onChange={(e) => setFormData({ ...formData, paid_amount: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6046B5] outline-none text-sm font-bold text-[#6046B5]"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm font-bold text-[#6046B5]"
                                         placeholder="0.00"
                                     />
                                 </div>
@@ -253,7 +253,7 @@ export default function Payment() {
                                 <select
                                     value={formData.payment_mode}
                                     onChange={(e) => setFormData({ ...formData, payment_mode: e.target.value })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6046B5] outline-none text-sm font-medium"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm font-medium"
                                 >
                                     <option value="Online">Online</option>
                                     <option value="UPI">UPI</option>
@@ -269,7 +269,7 @@ export default function Payment() {
                                 <textarea
                                     value={formData.note}
                                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6046B5] outline-none text-sm min-h-[80px] resize-none"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm min-h-[80px] resize-none"
                                     placeholder="Enter payment details..."
                                 ></textarea>
                             </div>

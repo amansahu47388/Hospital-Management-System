@@ -39,11 +39,11 @@ class Unit(models.Model):
 
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=255,unique=True)
-    supplier_contact = models.CharField(max_length=20,help_text="Supplier main contact number")
-    contact_person_name = models.CharField(max_length=255)
-    contact_person_phone = models.CharField(max_length=20)
-    drug_license_number = models.CharField(max_length=100,unique=True)
-    address = models.TextField()
+    supplier_contact = models.CharField(max_length=20,null=True, blank=True)
+    contact_person_name = models.CharField(max_length=255, null=True, blank=True)
+    contact_person_phone = models.CharField(max_length=20, null=True, blank=True)
+    drug_license_number = models.CharField(max_length=100,unique=True, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

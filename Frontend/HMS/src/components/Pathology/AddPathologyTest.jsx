@@ -144,9 +144,25 @@ export default function AddPathologyTest({ open, onClose }) {
     setErrors({});
 
     const validationErrors = {};
-    if (!formData.test_name) validationErrors.test_name = "Required";
+    if (!formData.test_name) validationErrors.test_name = "Test name is required";
+    if (!formData.short_name) validationErrors.short_name = "Short name is required";
+    if (!formData.category) validationErrors.category = "Category is required";
+    if (!formData.report_days) validationErrors.report_days = "Report days is required";
+    if (!formData.tax) validationErrors.tax = "Tax is required";
     if (!formData.standard_charge || Number(formData.standard_charge) <= 0)
       validationErrors.standard_charge = "Charge must be greater than 0";
+    if (!formData.report_days || Number(formData.report_days) <= 0)
+      validationErrors.report_days = "Report days must be greater than 0";
+    if (!formData.tax || Number(formData.tax) < 0)
+      validationErrors.tax = "Tax must be greater than or equal to 0";
+    if (!formData.amount || Number(formData.amount) <= 0)
+      validationErrors.amount = "Amount must be greater than 0";
+    if (!FormField.parameter_name)
+      validationErrors.parameter_name = "Parameter name is required";
+    if (!FormField.reference_range)
+      validationErrors.reference_range = "Reference range is required";
+    if (!FormField.unit)
+      validationErrors.unit = "Unit is required";
 
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
@@ -346,6 +362,7 @@ export default function AddPathologyTest({ open, onClose }) {
                 value={formData.tax}
                 onChange={handleChange}
                 error={errors.tax}
+
               />
               <FormField
                 label="standard Charge($)"
@@ -354,6 +371,7 @@ export default function AddPathologyTest({ open, onClose }) {
                 value={formData.standard_charge}
                 onChange={handleChange}
                 error={errors.standard_charge}
+                required
               />
               <FormField
                 label="Amount($)"
@@ -363,6 +381,7 @@ export default function AddPathologyTest({ open, onClose }) {
                 onChange={handleChange}
                 error={errors.amount}
                 disabled
+                required
               />
             </div>
 
@@ -403,7 +422,7 @@ export default function AddPathologyTest({ open, onClose }) {
                       onChange={(e) =>
                         handleParameterChange(index, "reference_range", e.target.value)
                       }
-                      className="w-full border border-gray-300 px-3 py-2 rounded"
+                      className="w-full border border-gray-300 px-3 py-1 rounded required"
                     />
                   </div>
 
@@ -416,7 +435,7 @@ export default function AddPathologyTest({ open, onClose }) {
                       onChange={(e) =>
                         handleParameterChange(index, "unit", e.target.value)
                       }
-                      className="w-full border border-gray-300 px-3 py-2 rounded"
+                      className="w-full border border-gray-300 px-3 py-1 rounded"
                     />
                   </div>
 
@@ -448,11 +467,11 @@ export default function AddPathologyTest({ open, onClose }) {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 border border-gray-300 rounded font-medium text-gray-700 hover:bg-gray-100"
+              className="px-6 py-1 border border-gray-300 rounded font-medium text-gray-700 hover:bg-gray-100"
             >
               Cancel
             </button>
@@ -482,7 +501,7 @@ function FormField({ label, name, type = "text", value, onChange, error, require
         name={name}
         value={value}
         onChange={onChange}
-        className={`${className} w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none ${error ? "border-red-500" : "border-gray-400"
+        className={`${className} w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${error ? "border-red-500" : "border-gray-300"
           }`}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
@@ -498,7 +517,7 @@ function SelectField({ label, name, value, onChange, options, children }) {
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-400 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
       >
         {options && options.length > 0 ? (
           options.map((opt) => (
@@ -523,7 +542,7 @@ function TextAreaField({ label, name, value, onChange, rows = "3" }) {
         value={value}
         onChange={onChange}
         rows={rows}
-        className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
       />
     </div>
   );

@@ -174,7 +174,7 @@ export default function IPDPayment() {
                                         "Paid Amount ($)",
                                         "Action",
                                     ].map((head) => (
-                                        <th key={head} className="px-6 py-4 text-sm bg-gray-200">
+                                        <th key={head} className="px-6 py-2 text-sm bg-gray-200">
                                             {head}
                                         </th>
                                     ))}
@@ -193,23 +193,23 @@ export default function IPDPayment() {
                                 ) : payments.length > 0 ? (
                                     payments.map((row) => (
                                         <tr key={row.id} className="hover:bg-gray-100 transition-colors">
-                                            <td className="px-6 py-4 text-sm text-gray-900 font-medium">TRANID{row.id}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">{new Date(row.payment_date).toLocaleDateString()}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600 truncate max-w-[200px]">{row.note || "-"}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">{row.payment_mode}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600 font-bold">${Number(row.paid_amount).toFixed(2)}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">
-                                                <div className="flex gap-2">
+                                            <td className="px-6 py-2 text-sm text-gray-900 font-medium">TRANID{row.id}</td>
+                                            <td className="px-6 py-2 text-sm text-gray-600">{new Date(row.payment_date).toLocaleDateString()}</td>
+                                            <td className="px-6 py-2 text-sm text-gray-600 truncate max-w-[200px]">{row.note || "-"}</td>
+                                            <td className="px-6 py-2 text-sm text-gray-600">{row.payment_mode}</td>
+                                            <td className="px-6 py-2 text-sm text-gray-600 font-bold">${Number(row.paid_amount).toFixed(2)}</td>
+                                            <td className="px-6 py-2 text-sm text-gray-600">
+                                                <div className="flex gap-1">
                                                     <button
                                                         onClick={() => handleOpenEdit(row)}
-                                                        className="hover:bg-purple-200 text-purple-600 px-2 py-1 rounded-md transition-colors"
+                                                        className="hover:bg-purple-100 text-purple-600 px-2 py-1 rounded"
                                                         title="Edit"
                                                     >
                                                         <Edit2 size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(row.id)}
-                                                        className="hover:bg-red-200 text-red-600 px-2 py-1 rounded-md transition-colors"
+                                                        className="hover:bg-red-100 text-red-600 px-2 py-1 rounded"
                                                         title="Delete">
                                                         <Trash2 size={16} />
                                                     </button>
@@ -242,7 +242,7 @@ export default function IPDPayment() {
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all animate-in zoom-in duration-200">
                         {/* Modal Header */}
-                        <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] px-6 py-4 flex justify-between items-center text-white shrink-0">
+                        <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] px-6 py-2 flex justify-between items-center text-white shrink-0">
                             <h3 className="text-xl font-bold flex items-center gap-2">
                                 {showAddModal ? "Add Payment" : "Edit Payment"}
                             </h3>
@@ -251,7 +251,7 @@ export default function IPDPayment() {
                                     setShowAddModal(false);
                                     setShowEditModal(false);
                                 }}
-                                className="hover:bg-white/20 p-1 rounded-full transition-colors"
+                                className="hover:bg-white/20 p-1 rounded transition-colors"
                             >
                                 <X size={24} />
                             </button>
@@ -264,7 +264,7 @@ export default function IPDPayment() {
                                     <label className="text-sm font-bold text-gray-700">Date <span className="text-red-500">*</span></label>
                                     <input
                                         type="date"
-                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm transition-all"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none"
                                         value={formData.payment_date}
                                         onChange={(e) => setFormData({ ...formData, payment_date: e.target.value })}
                                     />
@@ -273,7 +273,7 @@ export default function IPDPayment() {
                                     <label className="text-sm font-bold text-gray-700">Amount ($) <span className="text-red-500">*</span></label>
                                     <input
                                         type="number"
-                                        className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm transition-all font-bold text-blue-600"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none"
                                         value={formData.paid_amount}
                                         onChange={(e) => setFormData({ ...formData, paid_amount: e.target.value })}
                                         placeholder="0.00"
@@ -285,7 +285,7 @@ export default function IPDPayment() {
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-sm font-bold text-gray-700">Payment Mode</label>
                                 <select
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm font-bold transition-all"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none"
                                     value={formData.payment_mode}
                                     onChange={(e) => setFormData({ ...formData, payment_mode: e.target.value })}
                                 >
@@ -300,7 +300,7 @@ export default function IPDPayment() {
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-sm font-bold text-gray-700">Note</label>
                                 <textarea
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm min-h-[100px] resize-none transition-all"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none min-h-[100px] resize-none"
                                     placeholder="Enter payment details..."
                                     value={formData.note}
                                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
@@ -311,18 +311,9 @@ export default function IPDPayment() {
                         {/* Modal Footer */}
                         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
                             <button
-                                onClick={() => {
-                                    setShowAddModal(false);
-                                    setShowEditModal(false);
-                                }}
-                                className="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-bold text-sm hover:bg-white active:bg-gray-100 transition shadow-sm"
-                            >
-                                Cancel
-                            </button>
-                            <button
                                 onClick={handleSave}
                                 disabled={loading}
-                                className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-8 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-sm"
+                                className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-8 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-sm"
                             >
                                 {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle size={18} />}
                                 {showAddModal ? "Save Payment" : "Update Payment"}

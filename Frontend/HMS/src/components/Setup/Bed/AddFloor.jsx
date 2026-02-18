@@ -38,16 +38,16 @@ export default function AddFloor({ open, onClose, editData, refresh }) {
 
       if (editData) {
         await updateFloor(editData.id, payload);
-        notify( "success", "Floor updated successfully");
+        notify("success", "Floor updated successfully");
       } else {
         await createFloor(payload);
-        notify("success","Floor added successfully");
+        notify("success", "Floor added successfully");
       }
 
       refresh();
       onClose();
     } catch (error) {
-      notify("error","Something went wrong. Please try again.");
+      notify("error", "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,11 +73,11 @@ export default function AddFloor({ open, onClose, editData, refresh }) {
         {/* BODY */}
         <div className="p-4 space-y-4">
           <div>
-            <label className="text-sm font-medium">Name *</label>
+            <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
             <input
               value={floorName}
               onChange={(e) => setFloorName(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               placeholder="Enter floor name"
             />
           </div>
@@ -88,13 +88,13 @@ export default function AddFloor({ open, onClose, editData, refresh }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows="3"
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+        <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

@@ -52,6 +52,14 @@ export default function PathologyParameter() {
       notify("error", "Parameter name is required");
       return;
     }
+    if (!form.rangeFrom.trim() || !form.rangeTo.trim()) {
+      notify("error", "Range is required");
+      return;
+    }
+    if (!form.unit.trim()) {
+      notify("error", "Unit is required");
+      return;
+    }
 
     const payload = {
       parameter_name: form.parameter_name,
@@ -153,8 +161,8 @@ export default function PathologyParameter() {
                 <tbody>
                   {list.length > 0 ? (
                     list.map((p) => (
-                      <tr key={p.id} className="hover:bg-gray-100 border-b border-gray-200">
-                        <td className="px-3 py-2 text-left text-purple-600 font-medium">{p.parameter_name}</td>
+                      <tr key={p.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
+                        <td className="px-3 py-2 text-left">{p.parameter_name}</td>
                         <td className="px-3 py-2 text-left">{p.reference_range}</td>
                         <td className="px-3 py-2 text-left">{p.unit}</td>
                         <td className="px-3 py-2 text-left text-gray-500 max-w-xs truncate">{p.description}</td>
@@ -162,13 +170,13 @@ export default function PathologyParameter() {
                           <div className="flex gap-3">
                             <button
                               onClick={() => openEdit(p)}
-                              className="text-purple-600 hover:text-purple-800"
+                              className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                             >
                               <Pencil size={16} />
                             </button>
                             <button
                               onClick={() => handleDelete(p.id)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -200,33 +208,33 @@ export default function PathologyParameter() {
 
             <div className="p-4 grid md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500 uppercase">Parameter Name *</label>
-                <input placeholder="Parameter Name" className="w-full border p-2 rounded focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition" value={form.parameter_name}
+                <label className="text-xs font-medium text-gray-600 ">Parameter Name <span className="text-red-500">*</span></label>
+                <input placeholder="Parameter Name" className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2" value={form.parameter_name}
                   onChange={(e) => setForm({ ...form, parameter_name: e.target.value })} />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500 uppercase">Unit</label>
-                <input placeholder="Unit" className="w-full border p-2 rounded focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition" value={form.unit}
+                <label className="text-xs font-medium text-gray-600 ">Unit <span className="text-red-500">*</span></label>
+                <input placeholder="Unit" className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2" value={form.unit}
                   onChange={(e) => setForm({ ...form, unit: e.target.value })} />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500 uppercase">Range From</label>
-                <input placeholder="Range From" className="w-full border p-2 rounded focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition" value={form.rangeFrom}
+                <label className="text-xs font-medium text-gray-600 ">Range From <span className="text-red-500">*</span></label>
+                <input placeholder="Range From" className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2" value={form.rangeFrom}
                   onChange={(e) => setForm({ ...form, rangeFrom: e.target.value })} />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500 uppercase">Range To</label>
-                <input placeholder="Range To" className="w-full border p-2 rounded focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition" value={form.rangeTo}
+                <label className="text-xs font-medium text-gray-600 ">Range To <span className="text-red-500">*</span></label>
+                <input placeholder="Range To" className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2" value={form.rangeTo}
                   onChange={(e) => setForm({ ...form, rangeTo: e.target.value })} />
               </div>
               <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-medium text-gray-500 uppercase">Description</label>
-                <textarea placeholder="Description" className="w-full border p-2 rounded focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition"
+                <label className="text-xs font-medium text-gray-600 ">Description</label>
+                <textarea placeholder="Description" className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
               </div>
             </div>
 
-            <div className="flex justify-end p-4 border-t bg-gray-50">
+            <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
               <button
                 onClick={save}
                 disabled={actionLoading}

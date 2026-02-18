@@ -76,7 +76,7 @@ export default function ComplainList() {
                 searchRef.current = e.target.value;
                 forceRender((n) => n + 1);
               }}
-              className="border px-3 py-2 mt-2 rounded text-sm w-64"
+              className="border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
           </div>
 
@@ -110,7 +110,7 @@ export default function ComplainList() {
 
             <tbody>
               {filtered.map((c) => (
-                <tr key={c.id} className=" hover:bg-gray-50">
+                <tr key={c.id} className=" hover:bg-gray-50 border-b border-gray-200">
                   <td className="px-3 py-2">{c.id}</td>
                   <td className="px-3 py-2">{c.complain_type_name}</td>
                   <td className="px-3 py-2">{c.source_name}</td>
@@ -121,21 +121,21 @@ export default function ComplainList() {
                   <td className="p-3 flex justify-center gap-2">
                    <button
                       onClick={() => setViewId(c.id)}
-                      className="bg-blue-100 p-2 rounded text-blue-600"
+                      className="p-1 rounded text-purple-600 hover:bg-purple-100"
                     >
                       <Eye size={16} />
                     </button>
 
                     <button
                       onClick={() => setEditId(c.id)}
-                      className="bg-green-100 p-2 rounded text-green-600"
+                      className="p-1 rounded text-green-600 hover:bg-green-100"
                     >
                       <Pencil size={16} />
                     </button>
 
                     <button
                       onClick={() => handleDelete(c.id)}
-                      className="bg-red-100 p-2 rounded text-red-600"
+                      className="p-1 rounded text-red-600 hover:bg-red-100"
                     >
                       <Trash2 size={16} />
                     </button>

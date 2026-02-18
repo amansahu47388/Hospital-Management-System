@@ -41,69 +41,69 @@ const AdminProfile = () => {
   return (
     <AdminLayout>
 
-      <div className="w-full bg-white rounded-lg shadow-sm p-6 space-y-6">
+      <div className="w-full bg-white rounded shadow p-6 space-y-6">
 
         <ProfileHeader profile={profile} refreshProfile={refreshProfile} />
         <ProfileInfoGrid profile={profile} />
             <ProfileSection title="Personal Information">
-              <ProfileRow label="Phone" value={profile.personal?.phone || 'N/A'} />
-              <ProfileRow label="Emergency Contact" value={profile.personal?.emergencyPhone || 'N/A'} />
-              <ProfileRow label="Email" value={profile.personal?.email || 'N/A'} />
-              <ProfileRow label="Gender" value={profile.personal?.gender || 'N/A'} />
-              <ProfileRow label="Blood Group" value={profile.personal?.bloodGroup || 'N/A'} />
-              <ProfileRow label="Date of Birth" value={profile.personal?.dob || 'N/A'} />
-              <ProfileRow label="Marital Status" value={profile.personal?.maritalStatus || 'N/A'} />
-              <ProfileRow label="Father Name" value={profile.personal?.fatherName || 'N/A'} />
-              <ProfileRow label="Mother Name" value={profile.personal?.motherName || 'N/A'} />
-              <ProfileRow label="Current Address" value={profile.personal?.currentAddress || 'N/A'} />
-              <ProfileRow label="Permanent Address" value={profile.personal?.permanentAddress || 'N/A'} />
+              <ProfileRow label="Phone" value={profile.personal?.phone} />
+              <ProfileRow label="Emergency Contact" value={profile.personal?.emergencyPhone} />
+              <ProfileRow label="Email" value={profile.personal?.email} />
+              <ProfileRow label="Gender" value={profile.personal?.gender} />
+              <ProfileRow label="Blood Group" value={profile.personal?.bloodGroup} />
+              <ProfileRow label="Date of Birth" value={profile.personal?.dob} />
+              <ProfileRow label="Marital Status" value={profile.personal?.maritalStatus} />
+              <ProfileRow label="Father Name" value={profile.personal?.fatherName} />
+              <ProfileRow label="Mother Name" value={profile.personal?.motherName} />
+              <ProfileRow label="Current Address" value={profile.personal?.currentAddress} />
+              <ProfileRow label="Permanent Address" value={profile.personal?.permanentAddress} />
             </ProfileSection>
 
             <ProfileSection title="Professional Information">
-              <ProfileRow label="Qualification" value={profile.professional?.qualification || 'N/A'} />
-              <ProfileRow label="Experience (Years)" value={profile.professional?.experience || 'N/A'} />
-              <ProfileRow label="Specialization" value={profile.professional?.specialization || 'N/A'} />
-              <ProfileRow label="Department" value={profile.job?.department || 'N/A'} />
-              <ProfileRow label="Work Shift" value={profile.payroll?.workShift || 'N/A'} />
-              <ProfileRow label="Work Location" value={profile.payroll?.workLocation || 'N/A'} />
+              <ProfileRow label="Qualification" value={profile.professional?.qualification} />
+              <ProfileRow label="Experience (Years)" value={profile.professional?.experience} />
+              <ProfileRow label="Specialization" value={profile.professional?.specialization} />
+              <ProfileRow label="Department" value={profile.job?.department} />
+              <ProfileRow label="Work Shift" value={profile.payroll?.workShift} />
+              <ProfileRow label="Work Location" value={profile.payroll?.workLocation} />
             </ProfileSection>
 
             <ProfileSection title="Identification">
-              <ProfileRow label="PAN Number" value={profile.identification?.pan || 'N/A'} />
-              <ProfileRow label="National ID" value={profile.identification?.nationalId || 'N/A'} />
-              <ProfileRow label="Local ID" value={profile.identification?.localId || 'N/A'} />
-              <ProfileRow label="Reference Contact" value={profile.identification?.referenceContact || 'N/A'} />
+              <ProfileRow label="PAN Number" value={profile.identification?.pan} />
+              <ProfileRow label="National ID" value={profile.identification?.nationalId} />
+              <ProfileRow label="Local ID" value={profile.identification?.localId} />
+              <ProfileRow label="Reference Contact" value={profile.identification?.referenceContact} />
             </ProfileSection>
 
             <ProfileSection title="Payroll Information">
-              <ProfileRow label="EPF No" value={profile.payroll?.epfNo || 'N/A'} />
-              <ProfileRow label="Contract Type" value={profile.payroll?.contractType || 'N/A'} />
-              <ProfileRow label="Basic Salary" value={profile.payroll?.basicSalary || 'N/A'} />
-              <ProfileRow label="Date Of Leaving" value={profile.payroll?.dateOfLeaving || 'N/A'} />
+              <ProfileRow label="EPF No" value={profile.payroll?.epfNo} />
+              <ProfileRow label="Contract Type" value={profile.payroll?.contractType} />
+              <ProfileRow label="Basic Salary" value={profile.payroll?.basicSalary} />
+              <ProfileRow label="Date Of Leaving" value={profile.payroll?.dateOfLeaving} />
             </ProfileSection>
 
             <ProfileSection title="Leave Information">
-              <ProfileRow label="Casual Leave" value={profile.leave?.casualLeave || 'N/A'} />
-              <ProfileRow label="Privilege Leave" value={profile.leave?.privilegeLeave || 'N/A'} />
-              <ProfileRow label="Sick Leave" value={profile.leave?.sickLeave || 'N/A'} />
-              <ProfileRow label="Maternity Leave" value={profile.leave?.maternityLeave || 'N/A'} />
-              <ProfileRow label="Paternity Leave" value={profile.leave?.paternityLeave || 'N/A'} />
-              <ProfileRow label="Fever Leave" value={profile.leave?.feverLeave || 'N/A'} />
+              <ProfileRow label="Casual Leave" value={profile.leave?.casualLeave} />
+              <ProfileRow label="Privilege Leave" value={profile.leave?.privilegeLeave} />
+              <ProfileRow label="Sick Leave" value={profile.leave?.sickLeave} />
+              <ProfileRow label="Maternity Leave" value={profile.leave?.maternityLeave} />
+              <ProfileRow label="Paternity Leave" value={profile.leave?.paternityLeave} />
+              <ProfileRow label="Fever Leave" value={profile.leave?.feverLeave} />
             </ProfileSection>
 
             <ProfileSection title="Bank Account Details">
-              <ProfileRow label="Account Title" value={profile.bank?.accountTitle || 'N/A'} />
-              <ProfileRow label="Bank Account Number" value={profile.bank?.bankAccountNumber || 'N/A'} />
-              <ProfileRow label="Bank Name" value={profile.bank?.bankName || 'N/A'} />
-              <ProfileRow label="IFSC Code" value={profile.bank?.ifscCode || 'N/A'} />
-              <ProfileRow label="Bank Branch Name" value={profile.bank?.bankBranchName || 'N/A'} />
+              <ProfileRow label="Account Title" value={profile.bank?.accountTitle} />
+              <ProfileRow label="Bank Account Number" value={profile.bank?.bankAccountNumber} />
+              <ProfileRow label="Bank Name" value={profile.bank?.bankName} />
+              <ProfileRow label="IFSC Code" value={profile.bank?.ifscCode} />
+              <ProfileRow label="Bank Branch Name" value={profile.bank?.bankBranchName} />
             </ProfileSection>
 
             <ProfileSection title="Social Media Links">
-              <ProfileRow label="Facebook" value={profile.social?.facebook || 'N/A'} />
-              <ProfileRow label="Twitter" value={profile.social?.twitter || 'N/A'} />
-              <ProfileRow label="LinkedIn" value={profile.social?.linkedin || 'N/A'} />
-              <ProfileRow label="Instagram" value={profile.social?.instagram || 'N/A'} />
+              <ProfileRow label="Facebook" value={profile.social?.facebook} />
+              <ProfileRow label="Twitter" value={profile.social?.twitter} />
+              <ProfileRow label="LinkedIn" value={profile.social?.linkedin} />
+              <ProfileRow label="Instagram" value={profile.social?.instagram} />
             </ProfileSection>
       </div>
 

@@ -322,6 +322,27 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
       notify("error", "Please select a patient");
       return;
     }
+    if (!medicineId) {
+      notify("error", "Please select a medicine");
+      return;
+    }
+    if (!batchId) {
+      notify("error", "Please select a batch");
+      return;
+    }
+    if (!stockId) {
+      notify("error", "Please select a stock");
+      return;
+    }
+    if (!quantity) {
+      notify("error", "Please enter a quantity");
+      return;
+    }
+    if (!amount) {
+      notify("error", "Please enter an amount");
+      return;
+    }
+
 
     // Filter valid rows (must have medicine, batch, and quantity > 0)
     const validRows = rows.filter(
@@ -434,7 +455,7 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
             </div>
 
             {showPatientDropdown && patientList.length > 0 && (
-              <div className="absolute top-full left-0 right-0 bg-white border shadow-lg z-50 text-black max-h-60 overflow-y-auto rounded-b text-sm">
+              <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 shadow-lg z-50 text-black max-h-60 overflow-y-auto rounded-b text-sm">
                 {patientList.map((p) => (
                   <div
                     key={p.id}
@@ -462,7 +483,7 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
           <div className="flex  items-center gap-2">
             <label className="text-sm font-medium text-gray-700">Case ID</label>
             <select
-              className="border border-gray-200 px-3 py-1 rounded text-sm min-w-[150px]"
+              className="border border-gray-200 px-3 py-1 rounded text-sm min-w-[150px] focus:outline-none focus:border-[#6046B5]"
               value={caseId}
               onChange={(e) => setCaseId(e.target.value)}
               disabled={!patientId}
@@ -482,34 +503,34 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
               <thead className="bg-gray-200">
                 <tr>
                   <th className="  px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Medicine Category
+                    Medicine Category <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Medicine Name
+                    Medicine Name <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Batch No
+                    Batch No <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Expiry Date
+                    Expiry Date <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Quantity
+                    Quantity <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Available Qty
+                    Available Qty <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Sale Price
+                    Sale Price <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Tax (%)
+                    Tax (%) <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Discount (%)
+                    Discount (%) <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-left whitespace-nowrap text-xs sm:text-sm">
-                    Amount
+                    Amount <span className="text-red-500">*</span>
                   </th>
                   <th className="px-1 sm:px-2 py-1 text-center">
                     <Plus
@@ -526,9 +547,9 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                   <tr key={i}>
                     <td className="p-1">
                       <select
-                        className=" border border-gray-200  border border-gray-200
+                        className=" border border-gray-300
                             focus:outline-none
-                            focus:border-purple-400
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.medicine_category_id}
                         onChange={(e) => handleCategoryChange(i, e.target.value)}
@@ -544,8 +565,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
 
                     <td className="p-1">
                       <select
-                        className="border border-gray-200   focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300   focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  
                              w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.medicine_id}
@@ -568,8 +589,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
 
                     <td className="p-1">
                       <select
-                        className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.stock_id || ""}
                         onChange={(e) => handleBatchChange(i, e.target.value)}
@@ -587,8 +608,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                     <td className="p-1">
                       <input
                         type="month"
-                        className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.expiry_date}
                         readOnly
@@ -600,8 +621,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                         type="number"
                         min="1"
                         max={row.available_qty}
-                        className="border border-gray-200    focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300    focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.quantity}
                         onChange={(e) => updateRow(i, "quantity", e.target.value)}
@@ -612,8 +633,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                     <td className="p-1">
                       <input
                         type="number"
-                        className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
                         value={row.available_qty}
                         readOnly
@@ -624,8 +645,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
                         value={row.sale_price}
                         readOnly
@@ -636,8 +657,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50"
                         value={row.tax_percentage}
                         readOnly
@@ -647,8 +668,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                     <td className="p-1">
                       <input
                         type="text"
-                        className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded"
                         value={row.discount_percentage}
                         onChange={(e) => updateRow(i, "discount_percentage", e.target.value)}
@@ -660,8 +681,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                       <input
                         type="number"
                         step="0.01"
-                        className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                        className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-1 py-1 text-xs sm:text-sm rounded bg-gray-50 font-semibold"
                         value={row.amount}
                         readOnly
@@ -691,8 +712,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
               <select
                 value={doctorId}
                 onChange={(e) => setDoctorId(e.target.value)}
-                className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded  w-full p-2 rounded text-sm sm:text-base"
               >
                 <option value="">Select Doctor</option>
@@ -707,8 +728,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                 Note
               </label>
               <textarea
-                className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full p-2 h-24 rounded text-sm sm:text-base"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
@@ -718,21 +739,21 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
 
             {/* RIGHT */}
             <div className="space-y-3 text-xs sm:text-sm">
-              <InputRow label="Subtotal ($)" value={baseTotal.toFixed(2)} readOnly />
+              <InputRow label="Subtotal" value={baseTotal.toFixed(2)} readOnly />
               <InputRow
-                label="Discount Amount ($)"
+                label="Discount Amount"
                 value={discountAmount.toFixed(2)}
                 readOnly
               />
-              <InputRow label="Tax Amount ($)" value={taxAmount.toFixed(2)} readOnly />
+              <InputRow label="Tax Amount" value={taxAmount.toFixed(2)} readOnly />
               <InputRow
-                label="Net Amount ($)"
+                label="Net Amount"
                 value={totalAmount.toFixed(2)}
                 readOnly
                 bold
               />
               <InputRow
-                label="Payment Amount ($)"
+                label="Payment Amount"
                 value={paymentAmount}
                 onChange={setPaymentAmount}
               />
@@ -742,8 +763,8 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
                   Payment Mode
                 </label>
                 <select
-                  className="border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+                  className="border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded w-full px-2 py-1 rounded text-sm sm:text-base"
                   value={paymentMode}
                   onChange={(e) => setPaymentMode(e.target.value)}
@@ -768,7 +789,7 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
         </div>
 
         {/* ================= FOOTER ================= */}
-        <div className="px-3 sm:px-4 py-3 border-t border-gray-200 flex justify-end bg-gray-50">
+        <div className="px-3 sm:px-4 py-3 border-t border-gray-300 flex justify-end bg-gray-50">
           <button
             onClick={handleSave}
             disabled={loading}
@@ -789,8 +810,8 @@ const InputRow = ({ label, value, onChange, readOnly, bold }) => (
     <input
       type="number"
       step="0.01"
-      className={`border border-gray-200  focus:outline-none
-                            focus:border-purple-400
+      className={`border border-gray-300  focus:outline-none
+                            focus:border-[#6046B5]
                              transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""
         } ${readOnly ? "bg-gray-50" : ""}`}
       value={value}

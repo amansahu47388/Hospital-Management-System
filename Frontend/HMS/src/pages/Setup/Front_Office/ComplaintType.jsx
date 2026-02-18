@@ -156,7 +156,7 @@ export default function ComplaintType() {
                   </tr>
                 ) : (
                   data.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
+                    <tr key={item.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                       <td className="px-3 py-2 text-left">
                         {item.complaint_type}
                       </td>
@@ -164,12 +164,12 @@ export default function ComplaintType() {
                       <td className="px-3 py-2 text-left">
                         <div className="flex gap-3">
                           <button onClick={() => openEditModal(item)}
-                            className="text-purple-600 hover:text-purple-800">
+                            className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition">
                             <Pencil size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(item)}
-                            className="text-red-600 hover:text-red-800">
+                            className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition">
                             <Trash2 size={16} />
                           </button>
                         </div>
@@ -195,23 +195,26 @@ export default function ComplaintType() {
                 }}>✕</button>
               </div>
               <div className="p-4 space-y-3">
+                <label className="block text-sm font-medium text-gray-700">Complaint Type <span className="text-red-500">*</span></label>
                 <input
                   value={complaintTypeName}
                   onChange={(e) => setComplaintTypeName(e.target.value)}
-                  className="w-full border px-3 py-2 rounded"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   placeholder="Complaint Type"
                 />
+
+                <label className="block text-sm font-medium text-gray-700">Description</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full border px-3 py-2 rounded"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   placeholder="Description"
                   rows={3}
                 />
-                <div className="text-right">
+                <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
                   <button
                     onClick={handleAdd}
-                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded">
+                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded shadow-md hover:opacity-90">
                     Save
                   </button>
                 </div>
@@ -234,21 +237,23 @@ export default function ComplaintType() {
                 }}>✕</button>
               </div>
               <div className="p-4 space-y-3">
+                <label className="block text-sm font-medium text-gray-700">Complaint Type <span className="text-red-500">*</span></label>
                 <input
                   value={complaintTypeName}
                   onChange={(e) => setComplaintTypeName(e.target.value)}
-                  className="w-full border px-3 py-2 rounded"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 />
+                <label className="block text-sm font-medium text-gray-700">Description</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full border px-3 py-2 rounded"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   rows={3}
                 />
-                <div className="text-right">
+                <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
                   <button
                     onClick={handleEdit}
-                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded">
+                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded shadow-md hover:opacity-90">
                     Save
                   </button>
                 </div>

@@ -3,10 +3,12 @@ import { useState } from "react";
 import { updateAdminProfile } from "../../api/adminApi";
 
 /* ---------- Reusable Field Wrapper ---------- */
-const Field = ({ label, children }) => {
+const Field = ({ label, required, children }) => {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs font-medium text-gray-600">{label}</label>
+      <label className="text-sm font-medium text-gray-700">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
       {children}
     </div>
   );
@@ -85,6 +87,8 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
     }
   };
 
+  const fieldClass = "bg-white border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm w-full";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!profile || !profile.id) {
@@ -123,7 +127,7 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
     if (formData.dateOfLeaving) form.append("date_of_leaving", formData.dateOfLeaving);
 
     form.append("casual_leave", parseInt(formData.casualLeave) || 0);
-    form.append("privilege_leave", parseInt(formData.privilegeLeave) || 0);
+    form.append("privilege_leave", parseInt(formData.privilege_leave) || 0);
     form.append("sick_leave", parseInt(formData.sickLeave) || 0);
     form.append("maternity_leave", parseInt(formData.maternityLeave) || 0);
     form.append("paternity_leave", parseInt(formData.paternityLeave) || 0);
@@ -158,324 +162,339 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-      <div className="bg-white w-[95%] max-w-6xl rounded shadow-lg">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+      <div className="bg-white w-[98%] max-w-7xl rounded-lg shadow-xl overflow-hidden max-h-[95vh] flex flex-col">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center px-6 py-3 border-b">
-          <h3 className="font-semibold text-lg">Basic Information</h3>
-          <button onClick={onClose}><X /></button>
+        <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white">
+          <h3 className="font-bold text-xl">Edit Profile</h3>
+          <button onClick={onClose}><X size={24} /></button>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="p-6 space-y-6 max-h-[75vh] overflow-y-auto"
+          className="p-6 overflow-y-auto space-y-8"
         >
+          {/* Basic Information Section */}
+          <div className="space-y-6">
+            <h4 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2">Basic Information</h4>
 
-          {/* Row 1 */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <Field label="Staff ID">
-              <input name="staffId" value={formData.staffId} onChange={handleChange} className="input" />
-            </Field>
+            {/* Grid Row 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+              <Field label="Staff ID" required>
+                <input name="staffId" value={formData.staffId} onChange={handleChange} className={fieldClass} required />
+              </Field>
 
-            <Field label="Role">
-              <select name="role" value={formData.role} onChange={handleChange} className="input">
-                <option>Admin</option>
-                <option>Doctor</option>
-                <option>Nurse</option>
-                <option>Pharmacist</option>
-                <option>Pathologist</option>
-                <option>Radiologist</option>
-                <option>Accountant</option>
-                <option>Receptionist</option>
-              </select>
-            </Field>
+              <Field label="Role" required>
+                <select name="role" value={formData.role} onChange={handleChange} className={fieldClass} required>
+                  <option>Admin</option>
+                  <option>Doctor</option>
+                  <option>Nurse</option>
+                  <option>Pharmacist</option>
+                  <option>Pathologist</option>
+                  <option>Radiologist</option>
+                  <option>Accountant</option>
+                  <option>Receptionist</option>
+                </select>
+              </Field>
 
-            <Field label="Designation">
-              <select name="designation" value={formData.designation} onChange={handleChange} className="input">
-                <option>Admin</option>
-                <option>Doctor</option>
-                <option>IT Admin</option>
-                <option>Nurse</option>
-                <option>Pharmacist</option>
-                <option>Pathologist</option>
-                <option>Radiologist</option>
-                <option>Accountant</option>
-                <option>Receptionist</option>
-                <option>Driver</option>
-              </select>
-            </Field>
+              <Field label="Designation">
+                <select name="designation" value={formData.designation} onChange={handleChange} className={fieldClass}>
+                  <option value="">Select</option>
+                  <option>Admin</option>
+                  <option>Doctor</option>
+                  <option>IT Admin</option>
+                  <option>Nurse</option>
+                  <option>Pharmacist</option>
+                  <option>Pathologist</option>
+                  <option>Radiologist</option>
+                  <option>Accountant</option>
+                  <option>Receptionist</option>
+                  <option>Driver</option>
+                </select>
+              </Field>
 
-            <Field label="Department">
-              <select
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className="input"
-              >
-                <option value="">Select</option>
-                <option value="OT">OT</option>
-                <option value="Doctor Department">Doctor Department</option>
-                <option value="Admin">Admin</option>
-                <option value="IPD Department">IPD Department</option>
-                <option value="OPD Department">OPD Department</option>
-                <option value="ICU">ICU</option>
-                <option value="Blood Bank Department">Blood Bank Department</option>
-                <option value="Pathology">Pathology</option>
-                <option value="Radiology">Radiology</option>
-                <option value="Pharmacy Department">Pharmacy Department</option>
-                <option value="Reception">Reception</option>
-                <option value="Human Resource">Human Resource</option>
-                <option value="Gynecology">Gynecology</option>
-                <option value="Finance">Finance</option>
-                <option value="Emergency Department">Emergency Department</option>
-                <option value="Cardiology">Cardiology</option>
-                <option value="BURN CARE">BURN CARE</option>
-                <option value="NICU">NICU</option>
-                <option value="Nursing Department">Nursing Department</option>
-              </select>
-            </Field>
+              <Field label="Department">
+                <select name="department" value={formData.department} onChange={handleChange} className={fieldClass}>
+                  <option value="">Select</option>
+                  <option value="OT">OT</option>
+                  <option value="Doctor Department">Doctor Department</option>
+                  <option value="Admin">Admin</option>
+                  <option value="IPD Department">IPD Department</option>
+                  <option value="OPD Department">OPD Department</option>
+                  <option value="ICU">ICU</option>
+                  <option value="Blood Bank Department">Blood Bank Department</option>
+                  <option value="Pathology">Pathology</option>
+                  <option value="Radiology">Radiology</option>
+                  <option value="Pharmacy Department">Pharmacy Department</option>
+                  <option value="Reception">Reception</option>
+                  <option value="Human Resource">Human Resource</option>
+                  <option value="Gynecology">Gynecology</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Emergency Department">Emergency Department</option>
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="BURN CARE">BURN CARE</option>
+                  <option value="NICU">NICU</option>
+                  <option value="Nursing Department">Nursing Department</option>
+                </select>
+              </Field>
 
-            <Field label="Specialist">
-              <select name="specialist" value={formData.specialist} onChange={handleChange} className="input">
-                <option value="">Select Specialist</option>
-                <option>Cardiology</option>
-                <option>Neurology</option>
-                <option>Urology</option>
-                <option>Gynecology</option>
-                <option>Orthopedics</option>
-                <option>Pathology</option>
-                <option>Radiology</option>
-                <option>General Surgery</option>
-              </select>
-            </Field>
+              <Field label="Specialist">
+                <select name="specialist" value={formData.specialist} onChange={handleChange} className={fieldClass}>
+                  <option value="">Select Specialist</option>
+                  <option>Cardiology</option>
+                  <option>Neurology</option>
+                  <option>Urology</option>
+                  <option>Gynecology</option>
+                  <option>Orthopedics</option>
+                  <option>Pathology</option>
+                  <option>Radiology</option>
+                  <option>General Surgery</option>
+                </select>
+              </Field>
+            </div>
+
+            {/* Grid Row 2 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              <Field label="First Name" required>
+                <input name="firstName" value={formData.firstName} onChange={handleChange} className={fieldClass} required />
+              </Field>
+
+              <Field label="Last Name">
+                <input name="lastName" value={formData.lastName} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Father Name">
+                <input name="fatherName" value={formData.fatherName} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Mother Name">
+                <input name="motherName" value={formData.motherName} onChange={handleChange} className={fieldClass} />
+              </Field>
+            </div>
+
+            {/* Grid Row 3 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              <Field label="Gender" required>
+                <select name="gender" value={formData.gender} onChange={handleChange} className={fieldClass} required>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </Field>
+
+              <Field label="Marital Status">
+                <select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange} className={fieldClass}>
+                  <option>Single</option>
+                  <option>Married</option>
+                  <option>Divorced</option>
+                  <option>Widowed</option>
+                  <option>Separated</option>
+                </select>
+              </Field>
+
+              <Field label="Blood Group">
+                <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} className={fieldClass}>
+                  <option value="">Select</option>
+                  <option>O+</option>
+                  <option>A+</option>
+                  <option>B+</option>
+                  <option>AB+</option>
+                  <option>O-</option>
+                  <option>A-</option>
+                  <option>B-</option>
+                  <option>AB-</option>
+                </select>
+              </Field>
+
+              <Field label="Date Of Birth" required>
+                <input type="date" name="dob" value={formData.dob || ''} onChange={handleChange} className={fieldClass} required />
+              </Field>
+            </div>
+
+            {/* Grid Row 4 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+              <Field label="Date Of Joining">
+                <input type="date" name="doj" value={formData.doj || ''} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Phone">
+                <input name="phone" value={formData.phone} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Emergency Contact">
+                <input name="emergencyContact" value={formData.emergencyContact} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Email" required>
+                <input name="email" type="email" value={formData.email} onChange={handleChange} className={fieldClass} required />
+              </Field>
+
+              <Field label="Photo">
+                <input type="file" onChange={handleImageChange} className={fieldClass} />
+              </Field>
+            </div>
+
+            {/* Grid Row 5: Addresses */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Field label="Current Address">
+                <textarea name="currentAddress" value={formData.currentAddress} onChange={handleChange} className={`${fieldClass} py-3`} rows="1" />
+              </Field>
+
+              <Field label="Permanent Address">
+                <textarea name="permanentAddress" value={formData.permanentAddress} onChange={handleChange} className={`${fieldClass} py-3`} rows="1" />
+              </Field>
+            </div>
+
+            {/* Grid Row 6: Professional */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              <Field label="Qualification">
+                <input name="qualification" value={formData.qualification} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Work Experience">
+                <input name="experience" value={formData.experience} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Specialization">
+                <input name="specialization" value={formData.specialization} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Note">
+                <input name="note" value={formData.note} onChange={handleChange} className={fieldClass} />
+              </Field>
+            </div>
+
+            {/* Grid Row 7: Identity */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <Field label="Pan Number">
+                <input name="pan" value={formData.pan} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="National Identification Number">
+                <input name="nationalId" value={formData.nationalId} onChange={handleChange} className={fieldClass} />
+              </Field>
+
+              <Field label="Local Identification Number">
+                <input name="localId" value={formData.localId} onChange={handleChange} className={fieldClass} />
+              </Field>
+            </div>
+
+            {/* Grid Row 8: Reference */}
+            <div className="w-full">
+              <Field label="Reference Contact">
+                <input name="referenceContact" value={formData.referenceContact} onChange={handleChange} className={fieldClass} />
+              </Field>
+            </div>
           </div>
-
-          {/* Names */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Field label="First Name">
-              <input name="firstName" value={formData.firstName} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Last Name">
-              <input name="lastName" value={formData.lastName} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Father Name">
-              <input name="fatherName" value={formData.fatherName} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Mother Name">
-              <input name="motherName" value={formData.motherName} onChange={handleChange} className="input" />
-            </Field>
-          </div>
-
-          {/* Personal */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Field label="Gender">
-              <select name="gender" value={formData.gender} onChange={handleChange} className="input">
-                <option>Male</option>
-                <option>Female</option>
-              </select>
-            </Field>
-
-            <Field label="Marital Status">
-              <select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange} className="input">
-                <option>Single</option>
-                <option>Married</option>
-                <option>Divorced</option>
-                <option>Widowed</option>
-                <option>Seprated</option>
-                <option>No Seprated</option>
-              </select>
-            </Field>
-
-            <Field label="Blood Group">
-              <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} className="input">
-                <option>O+</option>
-                <option>A+</option>
-                <option>B+</option>
-                <option>AB+</option>
-                <option>O-</option>
-              </select>
-            </Field>
-
-            <Field label="Date of Birth">
-              <input type="date" name="dob" value={formData.dob || ''} onChange={handleChange} className="input" />
-            </Field>
-          </div>
-
-          {/* Dates & Contact */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <Field label="Date of Joining">
-              <input type="date" name="doj" value={formData.doj || ''} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Phone">
-              <input name="phone" value={formData.phone} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Emergency Contact">
-              <input name="emergencyContact" value={formData.emergencyContact} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Email">
-              <input name="email" value={formData.email} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Profile Photo">
-              <input type="file" onChange={handleImageChange} className="input" />
-            </Field>
-          </div>
-
-          {/* Address */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field label="Current Address">
-              <input name="currentAddress" value={formData.currentAddress} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Permanent Address">
-              <input name="permanentAddress" value={formData.permanentAddress} onChange={handleChange} className="input" />
-            </Field>
-          </div>
-
-          {/* Qualification */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Field label="Qualification">
-              <input name="qualification" value={formData.qualification} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Work Experience">
-              <input name="experience" value={formData.experience} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Specialization">
-              <input name="specialization" value={formData.specialization} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Note">
-              <input name="note" value={formData.note} onChange={handleChange} className="input" />
-            </Field>
-          </div>
-
-          {/* IDs */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Field label="PAN Number">
-              <input name="pan" value={formData.pan} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="National ID">
-              <input name="nationalId" value={formData.nationalId} onChange={handleChange} className="input" />
-            </Field>
-
-            <Field label="Local ID">
-              <input name="localId" value={formData.localId} onChange={handleChange} className="input" />
-            </Field>
-          </div>
-
-          {/* Reference */}
-          <Field label="Reference Contact">
-            <input name="referenceContact" value={formData.referenceContact} onChange={handleChange} className="input" />
-          </Field>
 
           {/* ================= ADD MORE DETAILS TOGGLE ================= */}
           <div
             onClick={() => setShowMoreDetails(!showMoreDetails)}
-            className="border rounded px-4 py-3 flex justify-between items-center text-sm text-gray-700 cursor-pointer bg-gray-50"
+            className="border rounded-lg px-4 py-4 flex justify-between items-center text-sm text-[#6046B5] cursor-pointer bg-purple-50 hover:bg-purple-100 transition-colors border-purple-200"
           >
-            <span className="font-medium">Add More Details</span>
-            {showMoreDetails ? <Minus size={16} /> : <Plus size={16} />}
+            <span className="font-bold flex items-center gap-2">
+              <Plus size={18} className={showMoreDetails ? "rotate-45 transition-transform" : "transition-transform"} />
+              {showMoreDetails ? "Hide Additional Information" : "Add More Details (Payroll, Bank, Social Media)"}
+            </span>
           </div>
 
           {/* ================= ADD MORE DETAILS SECTION ================= */}
           {showMoreDetails && (
-            <div className="space-y-8 border rounded p-4">
+            <div className="space-y-10 animate-in fade-in slide-in-from-top-4 duration-300">
 
               {/* PAYROLL */}
-              <div>
-                <h4 className="font-semibold text-sm mb-3">Payroll</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-4">
+                <h4 className="font-bold text-gray-800 flex items-center gap-2">
+                  <div className="w-2 h-4 bg-[#6046B5] rounded"></div>
+                  Payroll Details
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 bg-gray-50 rounded-lg">
                   <Field label="EPF No">
-                    <input name="epfNo" value={formData.epfNo} onChange={handleChange} className="input" />
+                    <input name="epfNo" value={formData.epfNo} onChange={handleChange} className={fieldClass} />
                   </Field>
                   <Field label="Contract Type">
-                    <select name="contractType" value={formData.contractType} onChange={handleChange} className="input">
+                    <select name="contractType" value={formData.contractType} onChange={handleChange} className={fieldClass}>
                       <option>Permanent</option>
                       <option>Contract</option>
                     </select>
                   </Field>
                   <Field label="Basic Salary">
-                    <input name="basicSalary" value={formData.basicSalary} onChange={handleChange} className="input" />
+                    <input name="basicSalary" value={formData.basicSalary} onChange={handleChange} className={fieldClass} />
                   </Field>
                   <Field label="Work Shift">
-                    <input name="workShift" value={formData.workShift} onChange={handleChange} className="input" />
+                    <input name="workShift" value={formData.workShift} onChange={handleChange} className={fieldClass} />
                   </Field>
                   <Field label="Work Location">
-                    <input name="workLocation" value={formData.workLocation} onChange={handleChange} className="input" />
+                    <input name="workLocation" value={formData.workLocation} onChange={handleChange} className={fieldClass} />
                   </Field>
                   <Field label="Date Of Leaving">
-                    <input type="date" name="dateOfLeaving" value={formData.dateOfLeaving || ''} onChange={handleChange} className="input" />
+                    <input type="date" name="dateOfLeaving" value={formData.dateOfLeaving || ''} onChange={handleChange} className={fieldClass} />
                   </Field>
                 </div>
               </div>
 
               {/* LEAVE */}
-              <div>
-                <h4 className="font-semibold text-sm mb-3">Leave</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Field label="Casual Leave"><input name="casualLeave" value={formData.casualLeave} onChange={handleChange} className="input" /></Field>
-                  <Field label="Privilege Leave"><input name="privilegeLeave" value={formData.privilegeLeave} onChange={handleChange} className="input" /></Field>
-                  <Field label="Sick Leave"><input name="sickLeave" value={formData.sickLeave} onChange={handleChange} className="input" /></Field>
-                  <Field label="Maternity Leave"><input name="maternityLeave" value={formData.maternityLeave} onChange={handleChange} className="input" /></Field>
-                  <Field label="Paternity Leave"><input name="paternityLeave" value={formData.paternityLeave} onChange={handleChange} className="input" /></Field>
-                  <Field label="Fever Leave"><input name="feverLeave" value={formData.feverLeave} onChange={handleChange} className="input" /></Field>
+              <div className="space-y-4">
+                <h4 className="font-bold text-gray-800 flex items-center gap-2">
+                  <div className="w-2 h-4 bg-[#6046B5] rounded"></div>
+                  Leave Entitlement
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 p-4 bg-gray-50 rounded-lg">
+                  <Field label="Casual Leave"><input name="casualLeave" value={formData.casualLeave} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Privilege Leave"><input name="privilegeLeave" value={formData.privilegeLeave} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Sick Leave"><input name="sickLeave" value={formData.sickLeave} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Maternity Leave"><input name="maternityLeave" value={formData.maternityLeave} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Paternity Leave"><input name="paternityLeave" value={formData.paternityLeave} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Fever Leave"><input name="feverLeave" value={formData.feverLeave} onChange={handleChange} className={fieldClass} /></Field>
                 </div>
               </div>
 
               {/* BANK */}
-              <div>
-                <h4 className="font-semibold text-sm mb-3">Bank Account Details</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Field label="Account Title"><input name="accountTitle" value={formData.accountTitle} onChange={handleChange} className="input" /></Field>
-                  <Field label="Bank Account Number"><input name="bankAccountNumber" value={formData.bankAccountNumber} onChange={handleChange} className="input" /></Field>
-                  <Field label="Bank Name"><input name="bankName" value={formData.bankName} onChange={handleChange} className="input" /></Field>
-                  <Field label="IFSC Code"><input name="ifscCode" value={formData.ifscCode} onChange={handleChange} className="input" /></Field>
-                  <Field label="Bank Branch Name"><input name="bankBranchName" value={formData.bankBranchName} onChange={handleChange} className="input" /></Field>
+              <div className="space-y-4">
+                <h4 className="font-bold text-gray-800 flex items-center gap-2">
+                  <div className="w-2 h-4 bg-[#6046B5] rounded"></div>
+                  Bank Account Details
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 bg-gray-50 rounded-lg">
+                  <Field label="Account Title"><input name="accountTitle" value={formData.accountTitle} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Bank Account Number"><input name="bankAccountNumber" value={formData.bankAccountNumber} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Bank Name"><input name="bankName" value={formData.bankName} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="IFSC Code"><input name="ifscCode" value={formData.ifscCode} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Bank Branch Name"><input name="bankBranchName" value={formData.bankBranchName} onChange={handleChange} className={fieldClass} /></Field>
                 </div>
               </div>
 
               {/* SOCIAL MEDIA */}
-              <div>
-                <h4 className="font-semibold text-sm mb-3">Social Media Links</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="Facebook URL"><input name="facebook" value={formData.facebook} onChange={handleChange} className="input" /></Field>
-                  <Field label="Twitter URL"><input name="twitter" value={formData.twitter} onChange={handleChange} className="input" /></Field>
-                  <Field label="LinkedIn URL"><input name="linkedin" value={formData.linkedin} onChange={handleChange} className="input" /></Field>
-                  <Field label="Instagram URL"><input name="instagram" value={formData.instagram} onChange={handleChange} className="input" /></Field>
+              <div className="space-y-4">
+                <h4 className="font-bold text-gray-800 flex items-center gap-2">
+                  <div className="w-2 h-4 bg-[#6046B5] rounded"></div>
+                  Social Media Links
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 bg-gray-50 rounded-lg">
+                  <Field label="Facebook URL"><input name="facebook" value={formData.facebook} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Twitter URL"><input name="twitter" value={formData.twitter} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="LinkedIn URL"><input name="linkedin" value={formData.linkedin} onChange={handleChange} className={fieldClass} /></Field>
+                  <Field label="Instagram URL"><input name="instagram" value={formData.instagram} onChange={handleChange} className={fieldClass} /></Field>
                 </div>
               </div>
-
-              {/* DOCUMENTS */}
-              <div>
-                <h4 className="font-semibold text-sm mb-3">Upload Documents</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="Resume"><input type="file" className="input" /></Field>
-                  <Field label="Joining Letter"><input type="file" className="input" /></Field>
-                  <Field label="Resignation Letter"><input type="file" className="input" /></Field>
-                  <Field label="Other Documents"><input type="file" className="input" /></Field>
-                </div>
-              </div>
-
             </div>
           )}
 
           {/* FOOTER */}
-          <div className="flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded">
+          <div className="flex justify-end gap-4 pt-6 border-t border-gray-300 mt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-8 py-2.5 rounded text-gray-700 font-semibold border-2 border-gray-200 hover:bg-gray-50 transition-all shadow-sm"
+            >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
-              Save
+            <button
+              type="submit"
+              className="px-10 py-2.5 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white font-bold rounded shadow-lg hover:opacity-90 transition-all active:scale-95"
+            >
+              Update Profile
             </button>
           </div>
 
@@ -486,3 +505,6 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
 };
 
 export default EditProfileModal;
+
+
+

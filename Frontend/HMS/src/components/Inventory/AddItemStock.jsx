@@ -48,8 +48,33 @@ export default function AddItemStock({ open, onClose, refresh }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.item || !form.supplier || !form.store || !form.quantity || !form.purchase_price || !form.stock_date) {
-      notify("error", "Please fill all required fields");
+    if (!form.item) {
+      notify("error", "Please select an item");
+      return;
+    }
+
+    if (!form.supplier) {
+      notify("error", "Please select a supplier");
+      return;
+    }
+
+    if (!form.store) {
+      notify("error", "Please select a store");
+      return;
+    }
+
+    if (!form.quantity) {
+      notify("error", "Please enter a quantity");
+      return;
+    }
+
+    if (!form.purchase_price) {
+      notify("error", "Please enter a purchase price");
+      return;
+    }
+
+    if (!form.stock_date) {
+      notify("error", "Please select a stock date");
       return;
     }
 
@@ -90,7 +115,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
                 Item Category <span className="text-red-500">*</span>
               </label>
               <select
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 value={form.category}
                 onChange={(e) => {
                   const categoryId = e.target.value;
@@ -120,7 +145,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
                 Item <span className="text-red-500">*</span>
               </label>
               <select
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 value={form.item}
                 onChange={(e) => setForm({ ...form, item: e.target.value })}
               >
@@ -141,7 +166,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
                 Supplier <span className="text-red-500">*</span>
               </label>
               <select
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 onChange={(e) => setForm({ ...form, supplier: e.target.value })}
               >
                 <option value="">Select</option>
@@ -154,7 +179,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
             <div>
               <label className="text-sm font-medium">Store</label>
               <select
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 onChange={(e) => setForm({ ...form, store: e.target.value })}
               >
                 <option value="">Select</option>
@@ -176,7 +201,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
                 min="1"
                 value={form.quantity}
                 onChange={(e) => setForm({ ...form, quantity: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               />
             </div>
 
@@ -187,7 +212,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
               <input
                 type="number"
                 step="0.01"
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 onChange={(e) => setForm({ ...form, purchase_price: e.target.value })}
               />
             </div>
@@ -197,7 +222,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
                 Date <span className="text-red-500">*</span></label>
               <input
                 type="date"
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                 onChange={(e) => setForm({ ...form, stock_date: e.target.value })}
               />
             </div>
@@ -208,7 +233,7 @@ export default function AddItemStock({ open, onClose, refresh }) {
             <label className="text-sm font-medium">Description</label>
             <textarea
               rows="3"
-              className="w-full border rounded px-3 py-2 mt-1"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
           </div>

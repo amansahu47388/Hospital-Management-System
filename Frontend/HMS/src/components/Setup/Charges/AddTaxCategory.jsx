@@ -56,30 +56,30 @@ export default function AddTaxCategory({ open, onClose, refresh }) {
         {/* BODY */}
         <div className="p-4 space-y-4">
           <div>
-            <label className="text-sm font-medium">Name *</label>
+            <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Percentage *</label>
+            <label className="text-sm font-medium">Percentage <span className="text-red-500">*</span></label>
             <div className="flex">
               <input
                 type="number"
                 value={percentage}
                 onChange={(e) => setPercentage(e.target.value)}
-                className="w-full border rounded-l px-3 py-2"
+                className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded-l px-3 py-2"
               />
-              <span className="border rounded-r px-3 py-2 bg-gray-100">%</span>
+              <span className="border border-gray-300 rounded-r px-3 py-2 bg-gray-100">%</span>
             </div>
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 border-t">
+        <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

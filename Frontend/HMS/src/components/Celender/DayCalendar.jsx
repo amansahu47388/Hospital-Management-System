@@ -37,17 +37,17 @@ export default function DayCalendar({ tasks, date, onEventClick, onDateClick }) 
 
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-[700px] grid grid-cols-[80px_1fr] border rounded bg-white">
+      <div className="min-w-[700px] grid grid-cols-[80px_1fr] border border-gray-300 rounded bg-white">
 
         {/* TIME COLUMN */}
-        <div className="border-r bg-gray-50">
-          <div className="h-10 border-b text-xs font-semibold text-center">
+        <div className="border-r border-gray-300 bg-gray-50">
+          <div className="h-10 border-b border-gray-300 text-xs font-semibold text-center">
             Time
           </div>
           {Array.from({ length: 24 }).map((_, h) => (
             <div
               key={h}
-              className="h-16 border-b text-xs text-gray-500 text-center flex items-start justify-center pt-1"
+              className="h-16 border-b border-gray-300 text-xs text-gray-500 text-center flex items-start justify-center pt-1"
             >
               {h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h === 12 ? "12 PM" : `${h - 12} PM`}
             </div>
@@ -58,7 +58,7 @@ export default function DayCalendar({ tasks, date, onEventClick, onDateClick }) 
         <div className="relative">
 
           {/* HEADER */}
-          <div className="h-10 border-b text-sm font-semibold text-center bg-gray-50">
+          <div className="h-10 border-b border-gray-300 text-sm font-semibold text-center bg-gray-50">
             {date.toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -69,7 +69,7 @@ export default function DayCalendar({ tasks, date, onEventClick, onDateClick }) 
           {/* GRID */}
           <div className="relative h-[1536px] overflow-hidden cursor-pointer" onClick={handleGridClick}>
             {Array.from({ length: 24 }).map((_, h) => (
-              <div key={h} className="h-16 border-b hover:bg-gray-50 transition-colors" />
+              <div key={h} className="h-16 border-b border-gray-300 hover:bg-gray-50 transition-colors" />
             ))}
 
             {/* EVENTS */}

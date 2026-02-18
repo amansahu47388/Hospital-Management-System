@@ -270,7 +270,7 @@ export default function IPDVitals() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-100 text-gray-900 font-semibold">
+                  <tr className="bg-gray-100 text-gray-800 font-semibold">
                     <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Height<br />(1 - 200 Centimeters)</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Weight<br />(0 - 150 Kilograms)</th>
@@ -315,13 +315,13 @@ export default function IPDVitals() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleEdit(vital)}
-                              className="bg-green-100 p-2 rounded text-green-600"
+                              className="hover:bg-green-100 p-1 rounded text-green-600 rounded"
                             >
                               <Pencil size={16} />
                             </button>
                             <button
                               onClick={() => handleDeleteVitals(vital.id)}
-                              className="bg-red-100 p-2 rounded text-red-600"
+                              className="hover:bg-red-100 p-1 rounded text-red-600 rounded"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -369,7 +369,7 @@ export default function IPDVitals() {
                     onChange={(e) =>
                       setNewVitalForm({ ...newVitalForm, vitalDate: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                   />
                 </div>
 
@@ -381,7 +381,7 @@ export default function IPDVitals() {
                         <select
                           value={row.vitalName}
                           onChange={(e) => handleRowChange(index, "vitalName", e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                         >
                           <option value="">Select</option>
                           {vitalOptions.map((option) => (
@@ -396,13 +396,13 @@ export default function IPDVitals() {
                           value={row.vitalValue}
                           onChange={(e) => handleRowChange(index, "vitalValue", e.target.value)}
                           placeholder="Value"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                         />
                       </div>
                       {newVitalForm.rows.length > 1 && (
                         <button
                           onClick={() => handleRemoveRow(index)}
-                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                          className="p-2 text-red-500 hover:bg-red-50 rounded transition"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -423,14 +423,14 @@ export default function IPDVitals() {
               <div className="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3 border-t border-gray-200">
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition font-medium text-gray-700 text-sm"
+                  className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 transition font-medium text-gray-700 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddVital}
                   disabled={loading}
-                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin" size={16} />
@@ -474,7 +474,7 @@ export default function IPDVitals() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, vitalDate: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                   />
                 </div>
 
@@ -486,7 +486,7 @@ export default function IPDVitals() {
                         <select
                           value={row.vitalName}
                           onChange={(e) => handleEditRowChange(index, "vitalName", e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                         >
                           <option value="">Select</option>
                           {vitalOptions.map((option) => (
@@ -501,7 +501,7 @@ export default function IPDVitals() {
                           value={row.vitalValue}
                           onChange={(e) => handleEditRowChange(index, "vitalValue", e.target.value)}
                           placeholder="Value"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                         />
                       </div>
                       {editFormData.rows.length > 1 && (
@@ -527,18 +527,9 @@ export default function IPDVitals() {
               {/* Footer Buttons */}
               <div className="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3 border-t border-gray-200">
                 <button
-                  onClick={() => {
-                    setEditingId(null);
-                    setEditFormData(null);
-                  }}
-                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition font-medium text-gray-700 text-sm"
-                >
-                  Cancel
-                </button>
-                <button
                   onClick={handleSaveEdit}
                   disabled={loading}
-                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+                  className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin" size={16} />

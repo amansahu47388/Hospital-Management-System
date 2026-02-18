@@ -7,7 +7,7 @@ function StatusBadge({ status }) {
     rejected: "bg-red-100 text-red-700",
   }[status] || "bg-gray-100 text-gray-700";
 
-  return <span className={`px-3 py-1 rounded-full text-xs ${cls}`}>{status}</span>;
+  return <span className={`px-3 py-1 rounded text-xs ${cls}`}>{status}</span>;
 }
 
 export default function AppointmentList({ items }) {

@@ -82,8 +82,20 @@ export default function UpdateBirthRecord({ open, onClose, record, onSave }) {
     e.preventDefault();
 
     // Validation
-    if (!form.childName || !form.gender || !form.birthDate || !form.motherName) {
-      notify("error", "Please fill in all required fields");
+    if (!form.childName) {
+      notify("error", "Child name is required");
+      return;
+    }
+    if (!form.gender) {
+      notify("error", "Gender is required");
+      return;
+    }
+    if (!form.birthDate) {
+      notify("error", "Birth date is required");
+      return;
+    }
+    if (!form.motherName) {
+      notify("error", "Mother name is required");
       return;
     }
 
@@ -136,8 +148,8 @@ export default function UpdateBirthRecord({ open, onClose, record, onSave }) {
 
           {/* GRID */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input label="Child Name *" name="childName" value={form.childName} onChange={handleChange} />
-            <Select label="Gender *" name="gender" value={form.gender} onChange={handleChange} />
+            <Input label="Child Name" name="childName" value={form.childName} onChange={handleChange} required />
+            <Select label="Gender" name="gender" value={form.gender} onChange={handleChange} required />
             <Input label="Weight" name="weight" value={form.weight} onChange={handleChange} />
             <File label="Child Photo" name="childPhoto" onChange={handleFileChange} />
           </div>
@@ -150,7 +162,7 @@ export default function UpdateBirthRecord({ open, onClose, record, onSave }) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input label="Case ID" name="caseId" value={form.caseId} onChange={handleChange} />
-            <Input label="Mother Name *" name="motherName" value={form.motherName} onChange={handleChange} />
+            <Input label="Mother Name" name="motherName" value={form.motherName} onChange={handleChange} required />
             <File label="Mother Photo" name="motherPhoto" onChange={handleFileChange} />
           </div>
 
@@ -165,7 +177,7 @@ export default function UpdateBirthRecord({ open, onClose, record, onSave }) {
             value={form.report}
             onChange={handleChange}
             placeholder="Report"
-            className="border rounded-md p-3 w-full resize-none h-24"
+            className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
           />
 
           {/* ACTION */}
@@ -192,7 +204,7 @@ function Input({ label, ...props }) {
       <label className="text-sm">{label}</label>
       <input
         {...props}
-        className="w-full border rounded-md px-3 py-2 mt-1"
+        className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
       />
     </div>
   );
@@ -204,7 +216,7 @@ function Select({ label, ...props }) {
       <label className="text-sm">{label}</label>
       <select
         {...props}
-        className="w-full border rounded-md px-3 py-2 mt-1"
+        className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
       >
         <option value="">Select</option>
         <option value="Male">Male</option>
@@ -219,7 +231,7 @@ function File({ label, name, onChange }) {
   return (
     <div>
       <label className="text-sm">{label}</label>
-      <label className="mt-1 border rounded-md px-3 py-2 flex items-center gap-2 cursor-pointer text-gray-500">
+      <label className="border border-gray-300 hover:border-[#6046B5] hover:ring-0.5 hover:ring-[#8A63D2] outline-none transition rounded-md px-3 py-2 flex items-center gap-2 cursor-pointer text-gray-500">
         <UploadCloud size={16} /> Drop a file here or click
         <input type="file" name={name} hidden onChange={onChange} />
       </label>

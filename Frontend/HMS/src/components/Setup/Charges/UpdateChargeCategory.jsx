@@ -70,12 +70,12 @@ export default function UpdateChargeCategory({ open, onClose, data, refresh }) {
         {/* BODY */}
         <div className="p-4 space-y-4">
           <div>
-            <label className="text-sm font-medium">Charge Type *</label>
+            <label className="text-sm font-medium">Charge Type <span className="text-red-500">*</span></label>
             <select
               name="charge_type"
               value={form.charge_type}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option value="">Select</option>
               {chargeTypes.map((t) => (
@@ -87,12 +87,12 @@ export default function UpdateChargeCategory({ open, onClose, data, refresh }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Name *</label>
+            <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
             <input
               name="category_name"
               value={form.category_name}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
@@ -102,13 +102,13 @@ export default function UpdateChargeCategory({ open, onClose, data, refresh }) {
               name="description"
               value={form.description}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 border-t">
+        <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleUpdate}

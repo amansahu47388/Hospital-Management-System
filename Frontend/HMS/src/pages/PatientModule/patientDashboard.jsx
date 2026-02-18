@@ -175,8 +175,7 @@ function PatientDashboard() {
             <div className="px-6 py-4">
   <div
     className="flex items-center gap-2
-               bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-               p-[2px] rounded-lg
+              border border-gray-300 focus:ring-1 focus:ring-[#6046B5] rounded
                w-full md:w-72"
   >
     <input
@@ -185,12 +184,12 @@ function PatientDashboard() {
       value={searchTerm}
       onChange={handleSearch}
       className="w-full px-4 py-2 text-sm
-                 rounded-md
+                 rounded
                  bg-white
                  text-gray-800
                  placeholder-gray-400
                  outline-none
-                 focus:ring-2 focus:ring-white
+                 focus:ring-1 focus:ring-[#6046B5]
                  transition"
     />
   </div>
@@ -221,15 +220,15 @@ function PatientDashboard() {
                         className="accent-[#6046B5]"
                       />
                     </th>
-                    <th className="px-6 py-4">ID</th>
-                    <th className="px-6 py-4">Name</th>
-                    <th className="px-6 py-4">Email</th>
-                    <th className="px-6 py-4">Gender</th>
-                    <th className="px-6 py-4">Phone</th>
-                    <th className="px-6 py-4">DOB</th>
-                    <th className="px-6 py-4">Age(Years)</th>
-                    <th className="px-6 py-4">Blood Group</th>
-                    <th className="px-6 py-4">Actions</th>
+                    <th className="px-3 py-2">ID</th>
+                    <th className="px-3 py-2">Name</th>
+                    <th className="px-3 py-2">Email</th>
+                    <th className="px-3 py-2">Gender</th>
+                    <th className="px-3 py-2">Phone</th>
+                    <th className="px-3 py-2">DOB</th>
+                    <th className="px-3 py-2">Age(Years)</th>
+                    <th className="px-3 py-2">Blood Group</th>
+                    <th className="px-3 py-2">Actions</th>
                   </tr>
                 </thead>
 
@@ -244,30 +243,30 @@ function PatientDashboard() {
                           className="accent-[#6046B5]"
                         />
                       </td>
-                      <td className="px-6 py-4">{patient.id}</td>
+                      <td className="px-3 py-2">{patient.id}</td>
                       <td
-                        className="px-6 py-4 text-blue-600 cursor-pointer hover:underline"
+                        className="px-3 py-2 text-blue-600 cursor-pointer hover:underline"
                         onClick={() => navigate(`/admin/patients/${patient.id}`)}
                       >
                         {patient.full_name}
                       </td>
-                      <td className="px-6 py-4">{patient.email}</td>
-                      <td className="px-6 py-4">{patient.gender}</td>
-                      <td className="px-6 py-4">{patient.phone}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 py-2">{patient.email}</td>
+                      <td className="px-3 py-2">{patient.gender}</td>
+                      <td className="px-3 py-2">{patient.phone}</td>
+                      <td className="px-3 py-2">
                         {new Date(
                           patient.date_of_birth
                         ).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 font-semibold">
+                      <td className="px-3 py-2 font-semibold">
                         {patient.age || "N/A"}
                       </td>
-                      <td className="px-6 py-4 font-semibold">
+                      <td className="px-3 py-2 font-semibold">
                         {patient.blood_group}
                       </td>
 
                       {/* ACTIONS → DIRECT NAVIGATION */}
-                      <td className="px-6 py-4 flex gap-2">
+                      <td className="px-3 py-2 flex gap-2">
                         <button
                           onClick={() =>
                             navigate(`/admin/patients/${patient.id}`)

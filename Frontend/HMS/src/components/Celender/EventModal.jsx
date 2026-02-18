@@ -48,9 +48,9 @@ export default function EventModal({ open, event, onClose, onSave, onDelete }) {
 
           {/* TITLE */}
           <div>
-            <label className="font-medium">Event Title *</label>
+            <label className="font-medium">Event Title <span className="text-red-500">*</span></label>
             <input
-              className="w-full border px-3 py-2 rounded mt-1"
+              className="w-full border border-gray-300 px-3 py-2 rounded mt-1 focus:ring-1 focus:ring-[#8A63D2] outline-none"
               value={form.title || ""}
               onChange={(e) =>
                 setForm({ ...form, title: e.target.value })
@@ -62,7 +62,7 @@ export default function EventModal({ open, event, onClose, onSave, onDelete }) {
           <div>
             <label className="font-medium">Event Description</label>
             <textarea
-              className="w-full border px-3 py-2 rounded mt-1"
+              className="w-full border border-gray-300 px-3 py-2 rounded mt-1 focus:ring-1 focus:ring-[#8A63D2] outline-none"
               rows="3"
               value={form.description || ""}
               onChange={(e) =>
@@ -74,10 +74,10 @@ export default function EventModal({ open, event, onClose, onSave, onDelete }) {
           {/* DATE RANGE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="font-medium">Start Date *</label>
+              <label className="font-medium">Start Date <span className="text-red-500">*</span></label>
               <input
                 type="date"
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1 focus:ring-1 focus:ring-[#8A63D2] outline-none"
                 value={form.date || ""}
                 onChange={(e) =>
                   setForm({ ...form, date: e.target.value })
@@ -88,7 +88,7 @@ export default function EventModal({ open, event, onClose, onSave, onDelete }) {
               <label className="font-medium">End Date</label>
               <input
                 type="date"
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1 focus:ring-1 focus:ring-[#8A63D2] outline-none"
                 value={form.endDate || ""}
                 onChange={(e) =>
                   setForm({ ...form, endDate: e.target.value })
@@ -100,10 +100,10 @@ export default function EventModal({ open, event, onClose, onSave, onDelete }) {
           {/* TIME RANGE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="font-medium">Start Time *</label>
+              <label className="font-medium">Start Time <span className="text-red-500">*</span></label>
               <input
                 type="time"
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1 focus:ring-1 focus:ring-[#8A63D2] outline-none"
                 value={form.start ? new Date(form.start).toTimeString().slice(0,5) : ""}
                 onChange={(e) => {
                   const time = e.target.value;
@@ -113,10 +113,10 @@ export default function EventModal({ open, event, onClose, onSave, onDelete }) {
               />
             </div>
             <div>
-              <label className="font-medium">End Time *</label>
+              <label className="font-medium">End Time <span className="text-red-500">*</span></label>
               <input
                 type="time"
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1 focus:ring-1 focus:ring-[#8A63D2] outline-none"
                 value={form.end ? new Date(form.end).toTimeString().slice(0,5) : ""}
                 onChange={(e) => {
                   const time = e.target.value;
@@ -135,7 +135,7 @@ export default function EventModal({ open, event, onClose, onSave, onDelete }) {
                 <span
                   key={c}
                   onClick={() => setForm({ ...form, color: c })}
-                  className={`w-6 h-6 rounded-full cursor-pointer border-2
+                  className={`w-6 h-6 rounded-full cursor-pointer
                     ${form.color === c ? "border-black" : "border-gray-300"}`}
                   style={{ backgroundColor: c }}
                 />

@@ -1,7 +1,7 @@
-import React from 'react';
 import { X, Printer } from 'lucide-react';
+import { printReport } from '../../../utils/printUtils';
 
-export default function AppointmentDetailModal({ open, onClose, appointment }) {
+export default function AppointmentDetailModal({ open, onClose, appointment, headerData }) {
     if (!open || !appointment) return null;
 
     // Format date for display
@@ -39,6 +39,58 @@ export default function AppointmentDetailModal({ open, onClose, appointment }) {
         { label: "Reason", value: appointment.reason || "No reason provided", isFullWidth: true },
     ];
 
+    const handlePrint = () => {
+        if (!appointment) return;
+
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">APPOINTMENT DETAILS</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>App No: APPNO${appointment.id}</div>
+                    <div>Date: ${formatDate(appointment.appointment_date)}</div>
+                </div>
+            </div>
+
+            <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+                ${details.map(item => `
+                    <div class="data-item">
+                        <span class="data-label">${item.label}</span>
+                        <span class="data-value">: ${item.value || "—"}</span>
+                    </div>
+                `).join("")}
+            </div>
+
+            <div class="report-section-title">Status Summary</div>
+            <div style="padding:15px; background:white; border:1px solid #eee; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span style="font-weight:bold; color:#666;">Current Status:</span>
+                    <span style="font-weight:bold; color:#6046B5;">${appointment.status}</span>
+                </div>
+                <div style="font-size:12px; color:#555;">
+                    Reason for appointment: ${appointment.reason || "No specific reason provided."}
+                </div>
+            </div>
+
+            <div class="signature-section">
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Patient Signature</div>
+                </div>
+                <div class="sig-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Authorized Signatory</div>
+                </div>
+            </div>
+        `;
+
+        printReport({
+            title: `Appointment - APPNO${appointment.id}`,
+            headerImg: headerData?.appointment_header,
+            footerText: headerData?.appointment_footer,
+            content: content
+        });
+    };
+
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 ">
             <div className="bg-white w-full max-w-4xl rounded-lg shadow-xl overflow-hidden animate-in zoom-in duration-200">
@@ -46,7 +98,7 @@ export default function AppointmentDetailModal({ open, onClose, appointment }) {
                 <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] px-4 py-3 text-white flex justify-between items-center">
                     <h2 className="text-sm font-bold uppercase tracking-wide">Appointment Details</h2>
                     <div className="flex items-center gap-4">
-                        <button className="hover:opacity-75"><Printer size={18} /></button>
+                        <button onClick={handlePrint} className="hover:opacity-75" title="Print Appointment"><Printer size={18} /></button>
                         <button onClick={onClose} className="hover:opacity-75"><X size={18} /></button>
                     </div>
                 </div>

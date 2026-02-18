@@ -163,7 +163,7 @@ export default function AddStaffModal({ onClose, onSuccess }) {
                         onClick={onClose}
                         className="text-white hover:text-white transition-colors"
                     >
-                        <X size={24} />
+                        <X size={20} />
                     </button>
                 </div>
 
@@ -179,7 +179,7 @@ export default function AddStaffModal({ onClose, onSuccess }) {
                             name="full_name"
                             value={formData.full_name}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.full_name ? "border-red-500" : "border-gray-300"
+                            className={`w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${errors.full_name ? "border-red-500" : "border-gray-300"
                                 }`}
                             placeholder="Enter full name"
                         />
@@ -198,7 +198,7 @@ export default function AddStaffModal({ onClose, onSuccess }) {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.email ? "border-red-500" : "border-gray-300"
+                            className={`w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${errors.email ? "border-red-500" : "border-gray-300"
                                 }`}
                             placeholder="staff@example.com"
                         />
@@ -217,7 +217,7 @@ export default function AddStaffModal({ onClose, onSuccess }) {
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.phone ? "border-red-500" : "border-gray-300"
+                            className={`w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${errors.phone ? "border-red-500" : "border-gray-300"
                                 }`}
                             placeholder="1234567890"
                         />
@@ -235,7 +235,7 @@ export default function AddStaffModal({ onClose, onSuccess }) {
                             name="role"
                             value={formData.role}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.role ? "border-red-500" : "border-gray-300"
+                            className={`w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${errors.role ? "border-red-500" : "border-gray-300"
                                 }`}
                         >
                             {roles.map(role => (
@@ -259,7 +259,7 @@ export default function AddStaffModal({ onClose, onSuccess }) {
                             name="department"
                             value={formData.department}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                             placeholder="e.g., Cardiology, Emergency"
                         />
                     </div>
@@ -272,7 +272,7 @@ export default function AddStaffModal({ onClose, onSuccess }) {
                             name="send_invitation"
                             checked={formData.send_invitation}
                             onChange={handleChange}
-                            className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                            className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-[#6046B5] outline-none"
                         />
                         <label htmlFor="send_invitation" className="text-sm text-gray-700">
                             Send invitation email with temporary password

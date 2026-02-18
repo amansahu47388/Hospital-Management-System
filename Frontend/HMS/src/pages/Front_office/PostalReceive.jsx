@@ -77,7 +77,7 @@ export default function PostalReceive() {
                 searchRef.current = e.target.value;
                 force((x) => x + 1);
               }}
-              className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+              className="border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
           </div>
 
@@ -102,7 +102,7 @@ export default function PostalReceive() {
 
             <tbody>
               {filtered.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
+                <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-200">
                   <td className="px-3 py-2">{row.from_title}</td>
                   <td className="px-3 py-2">{row.reference_no}</td>
                   <td className="px-3 py-2">{row.to_title}</td>
@@ -118,7 +118,7 @@ export default function PostalReceive() {
                         setSelectedRow(row);
                         setShowModal(true);
                       }}
-                      className="bg-blue-100 p-2 rounded text-blue-600"
+                      className="p-1 rounded text-purple-600 hover:bg-purple-100"
                     >
                       <Eye size={16} />
                     </button>
@@ -128,14 +128,14 @@ export default function PostalReceive() {
                         setSelectedRow(row);
                         setEditModal(true);
                       }}
-                      className="bg-green-100 p-2 rounded text-green-600"
+                      className="p-1 rounded text-green-600 hover:bg-green-100"
                     >
                       <Pencil size={16} />
                     </button>
 
                     <button
                       onClick={() => handleDelete(row.id)}
-                      className="bg-red-100 p-2 rounded text-red-600"
+                      className="p-1 rounded text-red-600 hover:bg-red-100"
                     >
                       <Trash2 size={16} />
                     </button>

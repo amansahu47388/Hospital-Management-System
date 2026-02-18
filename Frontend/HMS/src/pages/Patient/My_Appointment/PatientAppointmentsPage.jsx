@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Plus, Printer, Menu, Copy, FileSpreadsheet, FileText, FileDown } from "lucide-react";
 import PatientLayout from "../../../layout/PatientLayout";
 import { getAppointmentList } from "../../../api/appointmentApi";
+import { getHeaders } from "../../../api/setupApi";
 import { useNotify } from "../../../context/NotificationContext";
 import { useAuth } from "../../../context/AuthContext";
 import PatientProfileHeader from "../../../components/Patient_module/My_Appointment/PatientProfileHeader";
@@ -14,6 +15,7 @@ export default function PatientAppointmentsPage() {
     const [openAdd, setOpenAdd] = useState(false);
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [headerData, setHeaderData] = useState(null);
 
     const notify = useNotify();
     const { user } = useAuth();
@@ -36,10 +38,18 @@ export default function PatientAppointmentsPage() {
                 return;
             }
 
-            // Fetch appointments filtered by patient ID
-            const response = await getAppointmentList({ patient: patientId });
-            const appointmentsData = Array.isArray(response?.data) ? response.data : [];
+            // Fetch appointments and headers
+            const [appointmentRes, headerRes] = await Promise.all([
+                getAppointmentList({ patient: patientId }),
+                getHeaders()
+            ]);
+
+            const appointmentsData = Array.isArray(appointmentRes?.data) ? appointmentRes.data : [];
             setAppointments(appointmentsData);
+
+            if (headerRes.data && headerRes.data.length > 0) {
+                setHeaderData(headerRes.data[0]);
+            }
         } catch (error) {
             console.error('Failed to fetch appointments:', error);
             notify("error", "Failed to fetch appointments");
@@ -203,6 +213,7 @@ export default function PatientAppointmentsPage() {
             <AppointmentDetailModal
                 open={openDetail}
                 appointment={selectedAppointment}
+                headerData={headerData}
                 onClose={() => {
                     setOpenDetail(false);
                     setSelectedAppointment(null);

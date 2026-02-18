@@ -78,11 +78,11 @@ const ChangePasswordModal = ({ onClose }) => {
                                 name="currentPassword"
                                 value={formData.currentPassword}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-[#8A63D2] outline-none transition pr-10"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-1 focus:ring-[#8A63D2] outline-none transition pr-10"
                                 required
                             />
                             <button
-                                type="button"
+                                type="button"   
                                 onClick={() => togglePasswordVisibility("current")}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
@@ -101,7 +101,7 @@ const ChangePasswordModal = ({ onClose }) => {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-[#8A63D2] outline-none transition pr-10"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-1 focus:ring-[#8A63D2] outline-none transition pr-10"
                                 required
                             />
                             <button
@@ -124,7 +124,7 @@ const ChangePasswordModal = ({ onClose }) => {
                                 name="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-[#8A63D2] outline-none transition pr-10"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-1 focus:ring-[#8A63D2] outline-none transition pr-10"
                                 required
                             />
                             <button

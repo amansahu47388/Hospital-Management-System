@@ -31,7 +31,7 @@ export default function ProfileDropdown({ user, onLogout }) {
             rounded-full cursor-pointer
             border border-white/60
             object-cover
-            hover:ring-2 hover:ring-white/50
+            hover:ring-1 hover:ring-white/50
             active:scale-95
             transition
           "
@@ -61,12 +61,12 @@ export default function ProfileDropdown({ user, onLogout }) {
           className="
             absolute right-0 mt-3
             w-64 max-w-[90vw]
-            bg-white rounded-lg shadow-lg border
+            bg-white rounded-lg shadow-lg border border-gray-300
             z-50
           "
         >
           {/* HEADER */}
-          <div className="flex items-center gap-3 p-4">
+          <div className="flex items-center gap-3 p-4 border-b border-gray-300">
             {user.profile_picture || user.avatar ? (
               <img
                 src={user.profile_picture || user.avatar}
@@ -88,7 +88,6 @@ export default function ProfileDropdown({ user, onLogout }) {
             </div>
           </div>
 
-          <hr />
 
           {/* MENU */}
           <ul className="py-2 text-sm">

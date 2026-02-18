@@ -20,24 +20,24 @@ export default function ShowEventModal({ open, event, onClose, onEdit, readOnly 
           {/* TITLE */}
           <div>
             <label className="font-medium">Event Title</label>
-            <p className="mt-1 p-2 border rounded bg-gray-50">{event.title || "N/A"}</p>
+            <p className="mt-1 p-2 border border-gray-300 rounded bg-gray-50">{event.title || "N/A"}</p>
           </div>
 
           {/* DESCRIPTION */}
           <div>
             <label className="font-medium">Event Description</label>
-            <p className="mt-1 p-2 border rounded bg-gray-50">{event.description || "N/A"}</p>
+            <p className="mt-1 p-2 border border-gray-300 rounded bg-gray-50">{event.description || "N/A"}</p>
           </div>
 
           {/* DATE RANGE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="font-medium">Start Date</label>
-              <p className="mt-1 p-2 border rounded bg-gray-50">{event.date ? new Date(event.date).toLocaleDateString() : "N/A"}</p>
+              <p className="mt-1 p-2 border border-gray-300 rounded bg-gray-50">{event.date ? new Date(event.date).toLocaleDateString() : "N/A"}</p>
             </div>
             <div>
               <label className="font-medium">End Date</label>
-              <p className="mt-1 p-2 border rounded bg-gray-50">{event.endDate ? new Date(event.endDate).toLocaleDateString() : "N/A"}</p>
+              <p className="mt-1 p-2 border border-gray-300 rounded bg-gray-50">{event.endDate ? new Date(event.endDate).toLocaleDateString() : "N/A"}</p>
             </div>
           </div>
 
@@ -45,11 +45,11 @@ export default function ShowEventModal({ open, event, onClose, onEdit, readOnly 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="font-medium">Start Time</label>
-              <p className="mt-1 p-2 border rounded bg-gray-50">{event.start ? new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "N/A"}</p>
+              <p className="mt-1 p-2 border border-gray-300 rounded bg-gray-50">{event.start ? new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "N/A"}</p>
             </div>
             <div>
               <label className="font-medium">End Time</label>
-              <p className="mt-1 p-2 border rounded bg-gray-50">{event.end ? new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "N/A"}</p>
+              <p className="mt-1 p-2 border border-gray-300 rounded bg-gray-50">{event.end ? new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "N/A"}</p>
             </div>
           </div>
 
@@ -58,7 +58,7 @@ export default function ShowEventModal({ open, event, onClose, onEdit, readOnly 
             <label className="font-medium">Event Color</label>
             <div className="mt-1 flex items-center gap-2">
               <div
-                className="w-6 h-6 rounded-full border"
+                className="w-6 h-6 rounded-full border border-gray-300"
                 style={{ backgroundColor: event.color || "#2563EB" }}
               ></div>
               <span>{event.color || "#2563EB"}</span>
@@ -68,7 +68,7 @@ export default function ShowEventModal({ open, event, onClose, onEdit, readOnly 
 
         {/* FOOTER */}
         {!readOnly && (
-          <div className="flex justify-end gap-3 p-4 border-t">
+          <div className="flex justify-end gap-3 p-4 border-t border-gray-300">
             <button
               onClick={onEdit}
               className="px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded"
