@@ -21,17 +21,18 @@ export default function CalendarGrid({ tasks, date, onEventClick, onDateClick })
   const multiDayEvents = tasks.filter(t => t.endDate && new Date(t.endDate) > new Date(t.date));
 
   return (
-    <div className="relative border rounded overflow-hidden bg-white">
+    <div className="relative border border-gray-300 rounded overflow-hidden bg-white">
       <div className="grid grid-cols-7">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <div key={d} className="p-2 text-center font-semibold bg-gray-100 border">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d, i) => (
+          <div key={d} className={`p-2 text-center font-semibold bg-gray-100 border-b border-gray-300 ${i !== 6 ? 'border-r' : ''}`}>
             {d}
           </div>
         ))}
 
         {days.map((day, index) => {
           if (day === null) {
-            return <div key={index} className="h-24 border p-1 text-xs bg-gray-50"></div>;
+            const colIndex = index % 7;
+            return <div key={index} className={`h-24 border-b border-gray-300 p-1 text-md bg-gray-50 ${colIndex !== 6 ? 'border-r' : ''}`}></div>;
           }
           const dayTasks = tasks.filter(
             (t) => {
@@ -44,11 +45,13 @@ export default function CalendarGrid({ tasks, date, onEventClick, onDateClick })
           );
 
           const formattedDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const colIndex = index % 7;
+          const borderClasses = `border-b border-gray-300 ${colIndex !== 6 ? 'border-r' : ''}`;
 
           return (
             <div
               key={index}
-              className="h-24 border p-1 text-xs cursor-pointer hover:bg-gray-50 transition-colors"
+              className={`h-24 p-1 text-md cursor-pointer hover:bg-gray-200 transition-colors ${borderClasses}`}
               onClick={() => onDateClick?.(formattedDate)}
             >
               <div className="text-right font-semibold">{day}</div>
@@ -66,8 +69,6 @@ export default function CalendarGrid({ tasks, date, onEventClick, onDateClick })
                 </div>
               ))}
             </div>
-
-
           );
         })}
 

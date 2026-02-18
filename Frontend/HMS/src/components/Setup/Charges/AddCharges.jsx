@@ -137,7 +137,7 @@ export default function AddCharges({ open, onClose, refresh }) {
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <label className="font-medium">Charge Type</label>
-            <select name="charge_type" onChange={handleChange} className="border p-2 rounded">
+            <select name="charge_type" onChange={handleChange} className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2">
             <option value="">Select</option>
             {lists.types.map((t) => (
               <option key={t.id} value={t.charge_type}>
@@ -149,7 +149,7 @@ export default function AddCharges({ open, onClose, refresh }) {
 
           <div className="flex flex-col gap-1">
             <label className="font-medium">Charge Category</label>
-            <select name="charge_category" onChange={handleChange} className="border p-2 rounded">
+            <select name="charge_category" onChange={handleChange} className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2">
               <option value="">Select</option>
               {lists.categories.map((c) => (
                 <option key={c.id} value={c.category_name}>
@@ -160,18 +160,18 @@ export default function AddCharges({ open, onClose, refresh }) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="font-medium">Charge Name</label>
+            <label className="font-medium">Charge Name <span className="text-red-500">*</span></label>
             <input
               name="charge_name"
               placeholder="Charge Name *"
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
           />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="font-medium">Unit</label>
-            <select name="unit" onChange={handleChange} className="border p-2 rounded">
+            <label className="font-medium">Unit <span className="text-red-500">*</span></label>
+            <select name="unit" onChange={handleChange} className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2">
               <option value="">Select</option>
               {lists.units.map((u) => (
                 <option key={u.id} value={u.unit_type}>
@@ -187,7 +187,7 @@ export default function AddCharges({ open, onClose, refresh }) {
               name="tax_id"
               value={form.tax_id}
               onChange={handleTaxChange}
-              className="border p-2 rounded"
+              className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option value="">Select Tax</option>
               {lists.taxes.map((t) => (
@@ -205,17 +205,17 @@ export default function AddCharges({ open, onClose, refresh }) {
           type="number"
           value={form.tax_percentage}
           readOnly
-          className="border p-2 rounded bg-gray-100"
+          className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="font-medium">Amount</label>
+        <label className="font-medium">Amount <span className="text-red-500">*</span></label>
           <input
         name="charge_amount"
         placeholder="Amount *"
         onChange={handleChange}
-        className="border p-2 rounded"
+        className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
       />
       </div>
          
@@ -224,14 +224,14 @@ export default function AddCharges({ open, onClose, refresh }) {
         <textarea
             name="charge_description"
             onChange={handleChange}
-            className="border p-2 rounded md:col-span-2"
+            className="border p-2 rounded border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             placeholder="Description"
           />
       </div>
       </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end p-4 border-t">
+        <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

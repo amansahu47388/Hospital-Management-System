@@ -77,6 +77,15 @@ export default function AdminLogin() {
         const adminRoles = ["admin", "doctor", "pharmacist", "pathologist", "radiologist", "accountant", "receptionist", "nurse"];
         const isAdmin = adminRoles.includes(role);
 
+        // Check if first login - redirect to password change
+        if (res.data.is_first_login) {
+          notify("info", "Please change your temporary password to continue.");
+          setTimeout(() => {
+            navigate("/first-login-password-change", { replace: true });
+          }, 1000);
+          return;
+        }
+
         const roleName = role.charAt(0).toUpperCase() + role.slice(1);
         notify("success", `Welcome back, ${user?.full_name || roleName}! Login successful.`);
 
@@ -126,7 +135,6 @@ export default function AdminLogin() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -149,7 +157,6 @@ export default function AdminLogin() {
                   className="
                     w-full px-3 py-2 rounded-md
                     border border-gray-300
-                    focus:border-[#6046B5]
                     focus:ring-1 focus:ring-[#8A63D2]
                     outline-none
                     transition
@@ -194,10 +201,8 @@ export default function AdminLogin() {
             </button>
 
             <p className="text-sm text-center text-gray-600">
-              Don’t have an account?{" "}
-              <Link to="/admin/signup" className="text-[#6046B5] hover:underline">
-                Sign up
-              </Link>
+              {/* Staff accounts are created by administrators */}
+              Contact your administrator for account access
             </p>
           </form>
 

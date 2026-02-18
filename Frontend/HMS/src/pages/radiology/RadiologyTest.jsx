@@ -103,14 +103,14 @@ export default function RadiologyTest() {
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 pr-3 py-2 w-full border rounded-md focus:ring-2 focus:ring-indigo-400 outline-none"
+              className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-1 focus:ring-[#6046B5] outline-none"
             />
           </div>
 
           <select
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
-            className="border rounded-md px-3 py-2 w-24"
+            className="border border-gray-300 px-2 py-2 rounded text-sm focus:border-[#6046B5] focus:ring-[#6046B5] outline-none"
           >
             <option value={10}>10</option>
             <option value={25}>25</option>
@@ -119,21 +119,21 @@ export default function RadiologyTest() {
         </div>
 
         {/* TABLE */}
-        <div className="bg-white rounded-lg shadow overflow-x-auto thin-scrollbar">
-          <table className="min-w-[1200px] w-full text-sm text-gray-600 ">
+        <div className="bg-white rounded-lg shadow overflow-x-auto thin-scrollbar ">
+          <table className="w-full text-sm text-gray-600 ">
             <thead className="bg-gray-100 text-gray-700">
               <tr>
-                <th className="px-3 py-2 text-left">Test Name</th>
-                <th className="px-3 py-2">Short Name</th>
-                <th className="px-3 py-2">Test Type</th>
-                <th className="px-3 py-2">Category</th>
-                <th className="px-3 py-2">Sub Category</th>
-                <th className="px-3 py-2">Method</th>
-                <th className="px-3 py-2">Report Days</th>
-                <th className="px-3 py-2">Tax (%)</th>
-                <th className="px-3 py-2">Charge ($)</th>
-                <th className="px-3 py-2">Amount ($)</th>
-                <th className="px-3 py-2 text-center">Action</th>
+                <th className="px-2 py-3 text-left">Test Name</th>
+                <th className="px-2 py-3">Short Name</th>
+                <th className="px-2 py-3">Test Type</th>
+                <th className="px-2 py-3">Category</th>
+                <th className="px-2 py-3">Sub Category</th>
+                <th className="px-2 py-3">Method</th>
+                <th className="px-2 py-3">Report Days</th>
+                <th className="px-2 py-3">Tax (%)</th>
+                <th className="px-2 py-3">Charge ($)</th>
+                <th className="px-2 py-3">Amount ($)</th>
+                <th className="px-2 py-3 text-left">Action</th>
               </tr>
             </thead>
 
@@ -143,42 +143,43 @@ export default function RadiologyTest() {
                   key={test.id}
                   className="border-t border-gray-200 hover:bg-gray-100"
                 >
-                  <td className="px-3 py-2 font-medium text-indigo-600">
+                  <td className="px-2 py-3 font-medium text-indigo-600">
                     {test.test_name}
                   </td>
-                  <td className="px-3 py-2 text-center">{test.short_name}</td>
-                  <td className="px-3 py-2 text-center">{test.test_type}</td>
-                  <td className="px-3 py-2 text-center">{test.category_name || "-"}</td>
-                  <td className="px-3 py-2 text-center">{test.sub_category || "-"}</td>
-                  <td className="px-3 py-2 text-center">{test.method || "-"}</td>
-                  <td className="px-3 py-2 text-center">{test.report_days}</td>
-                  <td className="px-3 py-2 text-center">{test.tax}</td>
-                  <td className="px-3 py-2 text-center">{test.standard_charge}</td>
-                  <td className="px-3 py-2 text-center font-semibold">
+                  <td className="px-2 py-3">{test.short_name}</td>
+                  <td className="px-2 py-3">{test.test_type}</td>
+                  <td className="px-2 py-3">{test.category_name || "-"}</td>
+                  <td className="px-2 py-3">{test.sub_category || "-"}</td>
+                  <td className="px-2 py-3">{test.method || "-"}</td>
+                  <td className="px-2 py-3">{test.report_days}</td>
+                  <td className="px-2 py-3">{test.tax}</td>
+                  <td className="px-2 py-3">{test.standard_charge}</td>
+                  <td className="px-2 py-3 font-semibold">
                     {test.total_amount}
                   </td>
-                  <td className="px-3 py-2">
-                    <div className="flex justify-center gap-2">
+                  <td className="px-2 py-3">
+                    <div className="flex justify-center gap-1">
                       <button
                         title="View"
                         onClick={() => {
                           setSelectedTest(test);
                           setShowDetail(true);
                         }}
+                        className="p-1 text-purple-600 hover:bg-purple-100 rounded"
                       >
                         <Eye size={16} />
                       </button>
 
                       <button
                         onClick={() => handleEdit(test)}
-                        className="p-1 hover:bg-gray-200 rounded"
+                        className="p-1 text-green-600 hover:bg-green-100 rounded"
                       >
                         <Pencil size={16} />
                       </button>
 
                       <button
                         onClick={() => handleDelete(test.id)}
-                        className="p-1 rounded hover:bg-red-100 text-red-600"
+                        className="p-1 text-red-600 hover:bg-red-100 rounded"
                       >
                         <Trash2 size={16} />
                       </button>

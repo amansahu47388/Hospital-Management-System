@@ -121,7 +121,7 @@ export default function IPDCombinedPage() {
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* VITALS LEFT */}
             <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
-              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b border-gray-200 pb-2">
                 <Heart size={20} className="text-rose-500" />
                 Current Vitals
               </h3>
@@ -169,7 +169,7 @@ export default function IPDCombinedPage() {
 
             {/* PRESCRIPTION RIGHT */}
             <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300 flex flex-col">
-              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b border-gray-200 pb-2">
                 <FileText size={20} className="text-blue-600" />
                 Prescription
               </h3>
@@ -208,7 +208,7 @@ export default function IPDCombinedPage() {
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Nurse Notes */}
             <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
-              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b border-gray-200 pb-2">
                 <Activity size={20} className="text-indigo-500" />
                 Nurse Notes
               </h3>
@@ -240,7 +240,7 @@ export default function IPDCombinedPage() {
 
             {/* Lab Investigations */}
             <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
-              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b border-gray-200 pb-2">
                 <Beaker size={20} className="text-green-600" />
                 Lab Investigations
               </h3>
@@ -279,7 +279,7 @@ export default function IPDCombinedPage() {
 
           {/* OPERATIONS */}
           <section className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b pb-2">
+            <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg border-b border-gray-200 pb-2">
               <Scissors size={20} className="text-rose-600" />
               Operation
             </h3>

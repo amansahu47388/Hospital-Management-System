@@ -103,8 +103,8 @@ export default function AppointmentPriority() {
               <tbody>
                 {rows.length > 0 ? (
                   rows.map(r => (
-                    <tr key={r.id} className="hover:bg-gray-50 border-b border-gray-200">
-                      <td className="px-3 py-2 text-left text-purple-600 font-medium">{r.priority}</td>
+                    <tr key={r.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
+                      <td className="px-3 py-2 text-left">{r.priority}</td>
                       <td className="px-3 py-2 text-left">
                         <div className="flex gap-3">
                           <button
@@ -112,13 +112,13 @@ export default function AppointmentPriority() {
                               setForm(r);
                               setOpen(true);
                             }}
-                            className="text-purple-600 hover:text-purple-800"
+                            className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                           >
                             <Pencil size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(r)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -148,16 +148,16 @@ export default function AppointmentPriority() {
               </div>
 
               <div className="p-4">
-                <label className="text-xs font-medium text-gray-500 uppercase">Priority Name *</label>
+                <label className="text-sm font-medium text-gray-700 mb-1">Priority Name <span className="text-red-500">*</span></label>
                 <input
-                  className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition"
+                  className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   placeholder="Enter priority name"
                   value={form.priority}
                   onChange={e => setForm({ ...form, priority: e.target.value })}
                 />
               </div>
 
-              <div className="flex justify-end p-4 border-t bg-gray-50">
+              <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
                 <button
                   onClick={save}
                   className="px-8 py-2 text-white rounded bg-gradient-to-b from-[#6046B5] to-[#8A63D2] transition hover:opacity-90 shadow-md"

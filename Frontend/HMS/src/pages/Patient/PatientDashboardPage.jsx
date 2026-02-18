@@ -87,7 +87,7 @@ export default function PatientDashboardPage() {
                     {dashboardData.stats.map(({ label, count }) => {
                         const Icon = iconMap[label] || Stethoscope;
                         return (
-                            <div key={label} className="bg-white border text-gray-800 rounded-lg shadow-sm flex overflow-hidden hover:shadow-md transition-shadow">
+                            <div key={label} className="bg-white text-gray-800 rounded-lg shadow-sm flex overflow-hidden hover:shadow-md transition-shadow">
                                 <div
                                     className="w-14 h-full flex items-center justify-center text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]"
                                 >
@@ -103,7 +103,7 @@ export default function PatientDashboardPage() {
                 </div>
 
                 {/* MEDICAL HISTORY CHART */}
-                <div className="bg-white rounded-lg border shadow-sm p-6">
+                <div className="bg-white rounded-lg shadow-lg p-6">
                     <h3 className="text-center text-gray-600 font-semibold mb-6">Medical History</h3>
                     <div className="h-[350px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -128,7 +128,7 @@ export default function PatientDashboardPage() {
                 {/* BOTTOM ANALYSIS ROW */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* FINDINGS BAR CHART */}
-                    <div className="bg-white rounded-lg border shadow-sm p-6">
+                    <div className="bg-white rounded-lg  shadow-lg p-6">
                         <h3 className="text-center text-gray-600 font-semibold mb-6">Top 10 Findings</h3>
                         <div className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
@@ -148,7 +148,7 @@ export default function PatientDashboardPage() {
                     </div>
 
                     {/* SYMPTOMS PIE CHART */}
-                    <div className="bg-white rounded-lg border shadow-sm p-6">
+                    <div className="bg-white rounded-lg  shadow-lg p-6">
                         <h3 className="text-center text-gray-600 font-semibold mb-6">Top 10 Symptoms</h3>
                         <div className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">

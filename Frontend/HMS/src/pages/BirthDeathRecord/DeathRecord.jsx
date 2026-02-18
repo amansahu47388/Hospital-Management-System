@@ -88,7 +88,7 @@ export default function DeathRecordPage() {
 
               <tbody>
                 {data.map((item) => (
-                  <tr key={item.id} className="border-b border-gray-200 group hover:bg-gray-50 transition">
+                  <tr key={item.id} className="border-b border-gray-200 group hover:bg-gray-50 transition ">
                     <td className="px-3 py-2">{item.id}</td>
                     <td className="px-3 py-2 text-center">{item.caseId}</td>
                     <td className="px-3 py-2">{item.generatedBy}</td>
@@ -103,21 +103,21 @@ export default function DeathRecordPage() {
                       <div className="flex  gap-2">
                         <button
                           onClick={() => handleView(item)}
-                          className="p-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200"
+                          className="p-1 text-purple-600 rounded hover:bg-purple-100"
                         >
                           <Eye size={16} />
                         </button>
 
                         <button
                           onClick={() => handleEdit(item)}
-                          className="p-1 bg-green-100 text-green-600 rounded hover:bg-green-200"
+                          className="p-1 text-green-600 rounded hover:bg-green-100"
                         >
                           <Pencil size={16} />
                         </button>
 
                         <button
                           onClick={() => handleDelete(item)}
-                          className="p-1 bg-red-100 text-red-600 rounded hover:bg-red-200"
+                          className="p-1 text-red-600 rounded hover:bg-red-100"
                         >
                           <Trash2 size={16} />
                         </button>

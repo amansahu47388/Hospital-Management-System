@@ -24,8 +24,8 @@ export default function AddReceive({ open, onClose, refresh }) {
 
   const handleSubmit = async () => {
     try {
-      if (!form.from_title || !form.reference_no || !form.date) {
-        notify("warning","Please fill required fields");
+      if (!form.from_title  ) {
+        notify("warning","From title is required");
         return;
       }
 
@@ -57,12 +57,12 @@ export default function AddReceive({ open, onClose, refresh }) {
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div>
-            <label className="text-sm font-medium">From Title *</label>
+            <label className="text-sm font-medium">From Title <span className="text-red-500">*</span></label>
             <input
               name="from_title"
               value={form.from_title}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -72,7 +72,7 @@ export default function AddReceive({ open, onClose, refresh }) {
               name="to_title"
               value={form.to_title}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -82,18 +82,18 @@ export default function AddReceive({ open, onClose, refresh }) {
               name="reference_no"
               value={form.reference_no}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Date *</label>
+            <label className="text-sm font-medium">Date <span className="text-red-500">*</span></label>
             <input
               type="date"
               name="date"
               value={form.date}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2 bg-gray-100"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -103,7 +103,7 @@ export default function AddReceive({ open, onClose, refresh }) {
               name="address"
               value={form.address}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -113,7 +113,7 @@ export default function AddReceive({ open, onClose, refresh }) {
               name="note"
               value={form.note}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 

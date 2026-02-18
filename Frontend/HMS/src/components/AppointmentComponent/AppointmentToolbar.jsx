@@ -22,14 +22,14 @@ export default function AppointmentToolbar({
     px-3 py-2
     rounded-md
     bg-white
-    border border-gray-200
+    border border-gray-300
     text-gray-800
     placeholder-gray-400
     focus:outline-none
-    focus:border-purple-400
-    focus:ring-2
-    focus:ring-purple-400/30
-    hover:border-purple-300
+    focus:border-[#6046B5]
+    focus:ring-1
+    focus:ring-[#6046B5]/30
+    hover:border-[#6046B5]
     transition
   "
 />
@@ -40,7 +40,7 @@ export default function AppointmentToolbar({
         <select
           value={limit}
           onChange={(e) => setLimit(e.target.value)}
-          className="border px-2 py-2 rounded"
+          className="border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#6046B5] px-2 py-2 rounded"
         >
           <option>25</option>
           <option>50</option>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Printer, Trash2 } from "lucide-react";
-import { 
-  getAmbulanceBillDetail, 
+import {
+  getAmbulanceBillDetail,
   getAmbulanceBillTransactions,
   createAmbulanceBillTransaction,
   deleteAmbulanceBillTransaction
@@ -9,10 +9,10 @@ import {
 import { useNotify } from "../../context/NotificationContext";
 
 const formatAmount = (value) => {
-    const num = Number.parseFloat(value);
-    return Number.isNaN(num) ? "0.00" : num.toFixed(2);
-  };
-  
+  const num = Number.parseFloat(value);
+  return Number.isNaN(num) ? "0.00" : num.toFixed(2);
+};
+
 
 /* ---------- Reusable Row ---------- */
 const InfoRow = ({ label, value }) => (
@@ -23,7 +23,7 @@ const InfoRow = ({ label, value }) => (
   </div>
 );
 
-export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
+export default function UpdateAmbulanceBill({ open, onClose, billId, onSuccess }) {
   const notify = useNotify();
   const [loading, setLoading] = useState(false);
   const [bill, setBill] = useState(null);
@@ -52,7 +52,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
       const res = await getAmbulanceBillDetail(billId);
       const billData = res.data;
       setBill(billData);
-      
+
       // Pre-fill form with current date and balance
       setForm({
         date: new Date().toISOString().split('T')[0],
@@ -92,7 +92,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
 
     try {
       setLoading(true);
-      
+
       // Create transaction
       const transactionData = {
         date: new Date(`${form.date}T${new Date().toTimeString().split(' ')[0]}`).toISOString(),
@@ -102,7 +102,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
       };
 
       const res = await createAmbulanceBillTransaction(billId, transactionData);
-      
+
       // Update bill amounts from response
       if (res.data.bill) {
         setBill(prev => ({
@@ -111,11 +111,11 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
           balance: res.data.bill.balance
         }));
       }
-      
+
       // Reload transactions and bill
       await loadTransactions();
       await loadBill();
-      
+
       // Reset form
       setForm({
         date: new Date().toISOString().split('T')[0],
@@ -123,7 +123,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
         mode: "cash",
         note: "",
       });
-      
+
       notify("success", "Transaction added successfully");
     } catch (error) {
       notify("error", error?.response?.data?.message || error?.response?.data?.error || "Failed to add transaction");
@@ -140,7 +140,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
     try {
       setLoading(true);
       const res = await deleteAmbulanceBillTransaction(billId, transactionId);
-      
+
       // Update bill amounts from response
       if (res.data.bill) {
         setBill(prev => ({
@@ -149,7 +149,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
           balance: res.data.bill.balance
         }));
       }
-      
+
       // Reload transactions
       await loadTransactions();
       notify("success", "Transaction deleted successfully");
@@ -189,7 +189,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
   if (!bill) return null;
 
   return (
-        <div className="fixed inset-0 bg-black/40 z-50">
+    <div className="fixed inset-0 bg-black/40 z-50">
       <div className="bg-white w-full h-full flex flex-col">
 
         {/* Header */}
@@ -226,24 +226,24 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
           {/* Payment Form */}
           <div className="col-span-1 space-y-3">
             <div>
-              <label className="text-xs text-gray-600">Date *</label>
+              <label className="text-xs text-gray-600">Date <span className="text-red-500">*</span></label>
               <input
                 type="date"
                 name="date"
                 value={form.date}
                 onChange={handleChange}
-                className="w-full border rounded px-2 py-1 text-sm"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
               />
             </div>
 
             <div>
-              <label className="text-xs text-gray-600">Amount ($) *</label>
+              <label className="text-xs text-gray-600">Amount ($) <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 name="amount"
                 value={form.amount}
                 onChange={handleChange}
-                className="w-full border rounded px-2 py-1 text-sm"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
               />
             </div>
 
@@ -253,7 +253,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
                 name="mode"
                 value={form.mode}
                 onChange={handleChange}
-                className="w-full border rounded px-2 py-1 text-sm"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
               >
                 <option value="cash">Cash</option>
                 <option value="upi">UPI</option>
@@ -269,7 +269,7 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
                 value={form.note}
                 onChange={handleChange}
                 rows="3"
-                className="w-full border rounded px-2 py-1 text-sm"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-[#6046B5]"
               />
             </div>
 
@@ -296,52 +296,45 @@ export default function UpdateAmbulance({ open, onClose, billId, onSuccess }) {
         <div className="px-4 pb-4 flex-1 overflow-auto">
           <h3 className="text-sm font-semibold mb-2">Transaction History</h3>
 
-          <table className="w-full text-sm border">
+          <table className="w-full text-sm ">
             <thead className="bg-gray-100">
               <tr>
-                <th className="border px-2 py-1 text-left">Transaction ID</th>
-                <th className="border px-2 py-1 text-center">Date</th>
-                <th className="border px-2 py-1 text-center">Mode</th>
-                <th className="border px-2 py-1 text-center">Amount ($)</th>
-                <th className="border px-2 py-1 text-center">Note</th>
-                <th className="border px-2 py-1 text-center">Action</th>
+                <th className="px-2 py-1 text-left">Transaction ID</th>
+                <th className="px-2 py-1 text-left">Date</th>
+                <th className="px-2 py-1 text-left">Mode</th>
+                <th className="px-2 py-1 text-left">Amount ($)</th>
+                <th className="px-2 py-1 text-left">Note</th>
+                <th className="px-2 py-1 text-left">Action</th>
               </tr>
             </thead>
             <tbody>
               {transactions.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="border px-2 py-4 text-center text-gray-500">
+                  <td colSpan="6" className="px-2 py-4 text-center text-gray-500">
                     No transactions found
                   </td>
                 </tr>
               ) : (
                 transactions.map((transaction) => (
                   <tr key={transaction.id} className="hover:bg-gray-50">
-                    <td className="border px-2 py-1">{transaction.transaction_id || `#${transaction.id}`}</td>
-                    <td className="border px-2 py-1 text-center">
+                    <td className="px-2 py-1">{transaction.transaction_id || `#${transaction.id}`}</td>
+                    <td className="px-2 py-1 text-left">
                       {formatDateTime(transaction.date)}
                     </td>
-                    <td className="border px-2 py-1 text-center">
+                    <td className="px-2 py-1 text-left">
                       {transaction.payment_mode_display || transaction.payment_mode || "-"}
                     </td>
-                    <td className="border px-2 py-1 text-center">
+                    <td className="px-2 py-1 text-left">
                       ${formatAmount(transaction.amount)}
                     </td>
-                    <td className="border px-2 py-1 text-center">
+                    <td className="px-2 py-1 text-left">
                       {transaction.note || "—"}
                     </td>
-                    <td className="border px-2 py-1 text-center">
+                    <td className="px-2 py-1 text-left">
                       <div className="flex items-center justify-center gap-2">
                         <button
-                          onClick={() => handlePrint(transaction)}
-                          className="text-purple-600 hover:text-purple-800 p-1"
-                          title="Print"
-                        >
-                          <Printer size={16} />
-                        </button>
-                        <button
                           onClick={() => handleDeleteTransaction(transaction.id)}
-                          className="text-red-600 hover:text-red-800 p-1"
+                          className="text-red-600 hover:bg-red-100 hover:text-red-600 rounded p-1"
                           title="Delete"
                           disabled={loading}
                         >

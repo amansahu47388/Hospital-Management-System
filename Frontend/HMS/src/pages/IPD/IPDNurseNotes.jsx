@@ -56,8 +56,11 @@ export default function IPDNurseNotes() {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!formData.nurse || !formData.note) {
-      return notify("error", "Please fill required fields (*)");
+    if (!formData.nurse) {
+      return notify("error", "nurse is required");
+    }
+    if (!formData.note) {
+      return notify("error", "note is required");
     }
 
     try {
@@ -222,13 +225,13 @@ export default function IPDNurseNotes() {
         {/* ADD MODAL */}
         {showAdd && (
           <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-gray-200 animate-in zoom-in-95 duration-200">
-              <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] border-b border-white/10 shrink-0">
-                <div className="flex justify-between items-center px-6 py-5 text-white">
+            <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+              <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] shrink-0">
+                <div className="flex justify-between items-center px-6 py-2 text-white">
                   <h3 className="text-lg font-bold tracking-tight">Add Nurse Note</h3>
                   <button
                     onClick={() => setShowAdd(false)}
-                    className="hover:bg-white/20 p-2 rounded-full transition-colors"
+                    className="hover:bg-white/20 p-2 rounded transition-colors"
                   >
                     ✕
                   </button>
@@ -241,15 +244,15 @@ export default function IPDNurseNotes() {
                     <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Date</label>
                     <input
                       type="text"
-                      className="w-full border border-gray-200 p-2.5 rounded-xl text-sm bg-gray-50 text-gray-400 outline-none cursor-not-allowed"
+                      className="w-full border border-gray-300 p-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none"
                       value={new Date().toLocaleString()}
                       disabled
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Select Nurse *</label>
+                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Select Nurse <span className="text-red-500">*</span></label>
                     <select
-                      className="w-full border border-gray-200 p-2.5 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 outline-none transition-all"
+                      className="w-full border border-gray-300 p-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none transition-all"
                       value={formData.nurse}
                       onChange={(e) => setFormData({ ...formData, nurse: e.target.value })}
                     >
@@ -262,9 +265,9 @@ export default function IPDNurseNotes() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Note *</label>
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Note <span className="text-red-500">*</span></label>
                   <textarea
-                    className="w-full border border-gray-200 p-3 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 outline-none transition-all h-24"
+                    className="w-full border border-gray-300 p-3 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none transition-all h-24"
                     placeholder="Enter observation note..."
                     value={formData.note}
                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
@@ -274,7 +277,7 @@ export default function IPDNurseNotes() {
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Comment</label>
                   <textarea
-                    className="w-full border border-gray-200 p-3 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 outline-none transition-all h-20"
+                    className="w-full border border-gray-300 p-3 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none transition-all h-20"
                     placeholder="Enter additional comment..."
                     value={formData.comment}
                     onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
@@ -282,13 +285,6 @@ export default function IPDNurseNotes() {
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                  <button
-                    type="button"
-                    onClick={() => setShowAdd(false)}
-                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-400 hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
                   <button
                     disabled={isSubmitting}
                     className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-purple-100 transition-all flex items-center gap-2 disabled:opacity-50"
@@ -304,13 +300,13 @@ export default function IPDNurseNotes() {
         {/* EDIT MODAL */}
         {showEdit && (
           <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-gray-200 animate-in zoom-in-95 duration-200">
+            <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
               <div className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] border-b border-white/10 shrink-0">
-                <div className="flex justify-between items-center px-6 py-5 text-white">
+                <div className="flex justify-between items-center px-6 py-2 text-white">
                   <h3 className="text-lg font-bold tracking-tight">Edit Nurse Note</h3>
                   <button
                     onClick={() => setShowEdit(false)}
-                    className="hover:bg-white/20 p-2 rounded-full transition-colors"
+                    className="hover:bg-white/20 p-2 rounded transition-colors"
                   >
                     ✕
                   </button>
@@ -323,15 +319,15 @@ export default function IPDNurseNotes() {
                     <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Date</label>
                     <input
                       type="text"
-                      className="w-full border border-gray-200 p-2.5 rounded-xl text-sm bg-gray-50 text-gray-400 outline-none cursor-not-allowed"
+                      className="w-full border border-gray-300 p-2 rounded text-s outline-none focus:ring-1 focus:ring-[#6046B5] "
                       value={selectedNote?.formatted_date || ""}
                       readOnly
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Nurse</label>
+                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Nurse <span className="text-red-500"> *</span></label>
                     <select
-                      className="w-full border border-gray-200 p-2.5 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 outline-none transition-all"
+                      className="w-full border border-gray-300 p-2 rounded text-s outline-none focus:ring-1 focus:ring-[#6046B5] "
                       value={formData.nurse}
                       onChange={(e) => setFormData({ ...formData, nurse: e.target.value })}
                     >
@@ -344,9 +340,9 @@ export default function IPDNurseNotes() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Note *</label>
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Note <span className="text-red-500">*</span></label>
                   <textarea
-                    className="w-full border border-gray-200 p-3 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 outline-none transition-all h-24"
+                    className="w-full border border-gray-300 p-2 rounded text-s outline-none focus:ring-1 focus:ring-[#6046B5] "
                     value={formData.note}
                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                   />
@@ -355,7 +351,7 @@ export default function IPDNurseNotes() {
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest px-1">Comment</label>
                   <textarea
-                    className="w-full border border-gray-200 p-3 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 outline-none transition-all h-20"
+                    className="w-full border border-gray-300 p-2 rounded text-s outline-none focus:ring-1 focus:ring-[#6046B5] "
                     value={formData.comment}
                     onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                   />
@@ -363,16 +359,9 @@ export default function IPDNurseNotes() {
 
                 <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                   <button
-                    type="button"
-                    onClick={() => setShowEdit(false)}
-                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-400 hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
                     onClick={handleSave}
                     disabled={isSubmitting}
-                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-purple-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                    className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-8 py-2 rounded-xl font-bold text-sm shadow-lg hover:shadow-purple-100 transition-all flex items-center gap-2 disabled:opacity-50"
                   >
                     {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : "Update Note"}
                   </button>

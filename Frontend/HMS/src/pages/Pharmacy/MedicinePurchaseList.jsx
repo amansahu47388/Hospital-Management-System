@@ -121,7 +121,7 @@ const openPurchaseDetails = async (id) => {
               }}
 
               placeholder="Search..."
-              className="border rounded px-3 py-2 w-full md:w-72"
+              className="border border-gray-300 rounded px-3 py-2 w-full md:w-72 focus:ring-1 focus:ring-[#6046B5] outline-none"
             />
           </div>
 
@@ -156,7 +156,7 @@ const openPurchaseDetails = async (id) => {
                   purchases.map((item) => (
                     <tr
                       key={item.id}
-                      className=" text-sm hover:bg-gray-100"
+                      className=" text-sm hover:bg-gray-100 border-b border-gray-200"
                     >
                       <td className="p-2">
                         PCHNO{item.id}
@@ -180,19 +180,19 @@ const openPurchaseDetails = async (id) => {
                         <div className="flex justify-center gap-2">
                       <button
                       title="View"
-                      className="text-blue-600"
+                      className="text-purple-600 hover:bg-purple-100 p-1 rounded"
                       onClick={() => openPurchaseDetails(item.id)}
                     >
-                      <Eye size={18} />
+                      <Eye size={16} />
                     </button>
 
 
                         <button
                           title="Delete"
-                          className="text-red-600"
+                          className="text-red-600 hover:bg-red-100 p-1 rounded"
                           onClick={() => handleDelete(item.id)}
                         >
-                          <Trash2 size={18}/>
+                          <Trash2 size={16}/>
                         </button>
                       </div>
                       </td>

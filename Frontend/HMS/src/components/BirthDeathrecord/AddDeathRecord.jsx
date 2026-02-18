@@ -31,8 +31,16 @@ export default function AddDeathRecord({ open, onClose, onSuccess }) {
     e.preventDefault();
 
     // Validation
-    if (!form.patientName || !form.deathDate) {
-      notify("error", "Please fill in all required fields (Patient Name and Death Date)");
+    if (!form.patientName) {
+      notify("error", "Patient name is required");
+      return;
+    }
+    if (!form.deathDate) {
+      notify("error", "Death date is required");
+      return;
+    }
+    if (!form.guardianName) {
+      notify("error", "Guardian name is required");
       return;
     }
 
@@ -89,10 +97,10 @@ export default function AddDeathRecord({ open, onClose, onSuccess }) {
 
           {/* GRID */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input label="Case ID *" name="caseId" value={form.caseId} onChange={handleChange} />
-            <Input label="Patient Name *" name="patientName" value={form.patientName} onChange={handleChange} />
-            <Input label="Death Date *" type="date" name="deathDate" value={form.deathDate} onChange={handleChange} />
-            <Input label="Guardian Name *" name="guardianName" value={form.guardianName} onChange={handleChange} />
+            <Input label="Case ID " name="caseId" value={form.caseId} onChange={handleChange} required/>
+            <Input label="Patient Name" name="patientName" value={form.patientName} onChange={handleChange} required/>
+            <Input label="Death Date" type="date" name="deathDate" value={form.deathDate} onChange={handleChange} required/>
+            <Input label="Guardian Name" name="guardianName" value={form.guardianName} onChange={handleChange} required/>
           </div>
 
           {/* ATTACHMENT + REPORT */}
@@ -113,7 +121,7 @@ export default function AddDeathRecord({ open, onClose, onSuccess }) {
               value={form.report}
               onChange={handleChange}
               placeholder="Report"
-              className="border rounded-md p-3 w-full resize-none h-24 focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
           </div>
 
@@ -143,7 +151,7 @@ function Input({ label, type = "text", ...props }) {
       <input
         type={type}
         {...props}
-        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+        className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
       />
     </div>
   );

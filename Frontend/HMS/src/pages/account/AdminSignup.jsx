@@ -177,7 +177,6 @@ export default function AdminSignup() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -198,7 +197,6 @@ export default function AdminSignup() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -218,7 +216,6 @@ export default function AdminSignup() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -237,7 +234,6 @@ export default function AdminSignup() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -263,7 +259,6 @@ export default function AdminSignup() {
                   className="
                     w-full px-3 py-2 rounded-md
                     border border-gray-300
-                    focus:border-[#6046B5]
                     focus:ring-1 focus:ring-[#8A63D2]
                     outline-none
                     transition

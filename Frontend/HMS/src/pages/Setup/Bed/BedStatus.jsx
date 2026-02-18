@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import AdminLayout from "../../../layout/AdminLayout";
 import { getBeds } from "../../../api/setupApi";
+import BedSidebarMenu from "../../../components/Setup/Bed/BedSidebarMenu";
 import { useNotify } from "../../../context/NotificationContext";
 
 export default function BedStatus() {
@@ -42,29 +43,7 @@ export default function BedStatus() {
 
           {/* LEFT MENU */}
           <div className="w-full md:w-64 bg-white rounded-md p-3 shadow">
-            <ul className="space-y-1 text-sm">
-              {[
-                { label: "Bed Status", path: "/admin/setup/bed-status" },
-                { label: "Bed", path: "/admin/setup/bed" },
-                { label: "Bed Type", path: "/admin/setup/bed-type" },
-                { label: "Bed Group", path: "/admin/setup/bed-group" },
-                { label: "Floor", path: "/admin/setup/floor" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      `block px-3 py-2 rounded
-                      ${isActive
-                        ? "bg-purple-200 text-purple-600 font-bold"
-                        : "hover:bg-purple-100"}`
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+            <BedSidebarMenu />
           </div>
 
           {/* TABLE */}
@@ -84,11 +63,10 @@ export default function BedStatus() {
                 {beds.map((bed) => (
                   <tr
                     key={bed.id}
-                    className={`
-                      ${
-                        bed.status === "available"
-                          ? "bg-green-50 hover:bg-green-100"
-                          : "bg-red-50 hover:bg-red-100"
+                    className={`hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all
+                      ${bed.status === "available"
+                        ? "bg-green-50"
+                        : "bg-red-50"
                       }`}
                   >
                     <td className="px-3 py-2 font-medium">

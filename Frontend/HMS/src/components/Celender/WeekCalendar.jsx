@@ -9,11 +9,11 @@ export default function WeekCalendar({ tasks, date, onEventClick, onDateClick })
   });
 
   return (
-    <div className="grid grid-cols-7 border rounded overflow-hidden">
-      {days.map((d) => (
+    <div className="grid grid-cols-7 border border-gray-300 rounded overflow-hidden bg-white">
+      {days.map((d, index) => (
         <div
           key={d}
-          className="border p-2 text-sm cursor-pointer hover:bg-gray-50 transition-colors"
+          className={`p-2 text-sm cursor-pointer hover:bg-gray-200 transition-colors border-b border-gray-300 ${index !== 6 ? 'border-r' : ''}`}
           onClick={() => {
             const formattedDate = d.toISOString().split("T")[0];
             onDateClick?.(formattedDate);

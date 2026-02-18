@@ -138,7 +138,7 @@ export default function ItemSupplier() {
               </thead>
               <tbody>
                 {suppliers.map((s) => (
-                  <tr key={s.id} className="border-b border-gray-200">
+                  <tr key={s.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                     <td className="px-3 py-2">{s.supplier_name}</td>
                     <td className="px-3 py-2">{s.phone}</td>
                     <td className="px-3 py-2">{s.contact_person}</td>
@@ -149,13 +149,13 @@ export default function ItemSupplier() {
                             setForm(s);
                             setOpen(true);
                           }}
-                          className="text-purple-600"
+                          className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                         >
                           <Pencil size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(s.id)}
-                          className="text-red-600"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -168,138 +168,138 @@ export default function ItemSupplier() {
           </div>
         </div>
 
-       {/* MODAL */}
-{open && (
-  <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto">
-    <div className="bg-white w-full max-w-2xl mt-10 rounded-sm shadow-lg">
-      
-      {/* HEADER */}
-      <div className="flex justify-between items-center px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
-        <h2 className="text-sm font-semibold">
-          {form.id ? "Edit Item Supplier" : "Add Item Supplier"}
-        </h2>
-        <X
-          size={18}
-          onClick={() => setOpen(false)}
-          className="cursor-pointer"
-        />
-      </div>
+        {/* MODAL */}
+        {open && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto">
+            <div className="bg-white w-full max-w-2xl mt-10 rounded-sm shadow-lg">
 
-      {/* BODY */}
-      <div className="p-4 space-y-4 text-sm">
-        {/* ROW 1 */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1">
-              Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              className="w-full border px-2 py-1.5"
-              value={form.supplier_name}
-              onChange={(e) =>
-                setForm({ ...form, supplier_name: e.target.value })
-              }
-            />
+              {/* HEADER */}
+              <div className="flex justify-between items-center px-4 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white">
+                <h2 className="text-sm font-semibold">
+                  {form.id ? "Edit Item Supplier" : "Add Item Supplier"}
+                </h2>
+                <X
+                  size={18}
+                  onClick={() => setOpen(false)}
+                  className="cursor-pointer"
+                />
+              </div>
+
+              {/* BODY */}
+              <div className="p-4 space-y-4 text-sm">
+                {/* ROW 1 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-1">
+                      Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+                      value={form.supplier_name}
+                      onChange={(e) =>
+                        setForm({ ...form, supplier_name: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1">Phone</label>
+                    <input
+                      className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+                      value={form.phone}
+                      onChange={(e) =>
+                        setForm({ ...form, phone: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* ROW 2 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-1">Email</label>
+                    <input
+                      className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+                      value={form.email}
+                      onChange={(e) =>
+                        setForm({ ...form, email: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1">Contact Person Name</label>
+                    <input
+                      className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+                      value={form.contact_person}
+                      onChange={(e) =>
+                        setForm({ ...form, contact_person: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* ADDRESS */}
+                <div>
+                  <label className="block mb-1">Address</label>
+                  <textarea
+                    className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 min-h-[60px]"
+                    value={form.address}
+                    onChange={(e) =>
+                      setForm({ ...form, address: e.target.value })
+                    }
+                  />
+                </div>
+
+                {/* CONTACT PERSON PHONE */}
+                <div>
+                  <label className="block mb-1">Contact Person Phone</label>
+                  <input
+                    className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+                    value={form.contact_person_phone}
+                    onChange={(e) =>
+                      setForm({ ...form, contact_person_phone: e.target.value })
+                    }
+                  />
+                </div>
+
+                {/* CONTACT PERSON EMAIL */}
+                <div>
+                  <label className="block mb-1">Contact Person Email</label>
+                  <input
+                    className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+                    value={form.contact_person_email}
+                    onChange={(e) =>
+                      setForm({ ...form, contact_person_email: e.target.value })
+                    }
+                  />
+                </div>
+
+                {/* DESCRIPTION */}
+                <div>
+                  <label className="block mb-1">Description</label>
+                  <textarea
+                    className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 min-h-[70px]"
+                    value={form.description}
+                    onChange={(e) =>
+                      setForm({ ...form, description: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* FOOTER */}
+              <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
+                <button
+                  onClick={save}
+                  className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm px-4 py-1.5 rounded"
+                >
+                  ✓ Save
+                </button>
+              </div>
+            </div>
           </div>
-
-          <div>
-            <label className="block mb-1">Phone</label>
-            <input
-              className="w-full border px-2 py-1.5"
-              value={form.phone}
-              onChange={(e) =>
-                setForm({ ...form, phone: e.target.value })
-              }
-            />
-          </div>
-        </div>
-
-        {/* ROW 2 */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1">Email</label>
-            <input
-              className="w-full border px-2 py-1.5"
-              value={form.email}
-              onChange={(e) =>
-                setForm({ ...form, email: e.target.value })
-              }
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1">Contact Person Name</label>
-            <input
-              className="w-full border px-2 py-1.5"
-              value={form.contact_person}
-              onChange={(e) =>
-                setForm({ ...form, contact_person: e.target.value })
-              }
-            />
-          </div>
-        </div>
-
-        {/* ADDRESS */}
-        <div>
-          <label className="block mb-1">Address</label>
-          <textarea
-            className="w-full border px-2 py-1.5 min-h-[60px]"
-            value={form.address}
-            onChange={(e) =>
-              setForm({ ...form, address: e.target.value })
-            }
-          />
-        </div>
-
-        {/* CONTACT PERSON PHONE */}
-        <div>
-          <label className="block mb-1">Contact Person Phone</label>
-          <input
-            className="w-full border px-2 py-1.5"
-            value={form.contact_person_phone}
-            onChange={(e) =>
-              setForm({ ...form, contact_person_phone: e.target.value })
-            }
-          />
-        </div>
-
-        {/* CONTACT PERSON EMAIL */}
-        <div>
-          <label className="block mb-1">Contact Person Email</label>
-          <input
-            className="w-full border px-2 py-1.5"
-            value={form.contact_person_email}
-            onChange={(e) =>
-              setForm({ ...form, contact_person_email: e.target.value })
-            }
-          />
-        </div>
-
-        {/* DESCRIPTION */}
-        <div>
-          <label className="block mb-1">Description</label>
-          <textarea
-            className="w-full border px-2 py-1.5 min-h-[70px]"
-            value={form.description}
-            onChange={(e) =>
-              setForm({ ...form, description: e.target.value })
-            }
-          />
-        </div>
-      </div>
-
-      {/* FOOTER */}
-      <div className="flex justify-end px-4 py-3 border-t">
-        <button
-          onClick={save}
-          className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white text-sm px-4 py-1.5 rounded"
-        >
-          ✓ Save
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+        )}
 
       </div>
     </AdminLayout>

@@ -21,7 +21,7 @@ const PatientLayout = ({ children }) => {
     return (
         <div className="flex h-screen bg-gray-100 overflow-hidden">
             {/* Sidebar for Patient */}
-            <Sidebar role="patient" />
+            <Sidebar role="patient" user={user} />
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">

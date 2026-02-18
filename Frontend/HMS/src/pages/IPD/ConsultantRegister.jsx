@@ -172,19 +172,19 @@ export default function ConsultantRegister() {
                       <td className="p-2 text-left">{row.doctor_name}</td>
                       <td className="p-2 text-left">{row.instruction}</td>
                       <td className="p-2 text-left">{row.consultant_date}</td>
-                      <td className="p-2 text-left flex gap-2">
+                      <td className="p-2 text-left flex gap-1">
                         <button
                           onClick={() => {
                             setSelected(row);
                             setShowEdit(true);
                           }}
-                          className="text-purple-600 hover:bg-purple-50 p-1 rounded"
+                          className="text-purple-600 hover:bg-purple-100 p-1 rounded"
                         >
                           <Pencil size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(row.id)}
-                          className="text-red-600 hover:bg-red-50 p-1 rounded"
+                          className="text-red-600 hover:bg-red-100 p-1 rounded"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -209,8 +209,8 @@ export default function ConsultantRegister() {
           <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center">
             <div className="w-full max-w-xl rounded bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
 
-              <div className="flex justify-between p-4 text-white">
-                <h3>Add Consultant Register</h3>
+              <div className="flex justify-between p-4 text-white font-bold">
+                <h2>Add Consultant Register</h2>
                 <button onClick={() => setShowAdd(false)}>✕</button>
               </div>
 
@@ -219,7 +219,7 @@ export default function ConsultantRegister() {
                   <label className="block text-sm font-bold mb-1">Consultant Date <span className="text-red-500">*</span></label>
                   <input
                     type="date"
-                    className="border p-2 w-full rounded focus:ring-1 focus:ring-purple-500 outline-none"
+                    className="border border-gray-300 p-2 w-full rounded focus:ring-1 focus:ring-[#6046B5]  outline-none"
                     value={formData.consultant_date}
                     onChange={(e) => setFormData({ ...formData, consultant_date: e.target.value })}
                   />
@@ -227,7 +227,7 @@ export default function ConsultantRegister() {
                 <div>
                   <label className="block text-sm font-bold mb-1">Select Consultant <span className="text-red-500">*</span></label>
                   <select
-                    className="border p-2 w-full rounded focus:ring-1 focus:ring-purple-500 outline-none"
+                    className="border border-gray-300 p-2 w-full rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     value={formData.doctor}
                     onChange={(e) => setFormData({ ...formData, doctor: e.target.value })}
                   >
@@ -240,7 +240,7 @@ export default function ConsultantRegister() {
                 <div>
                   <label className="block text-sm font-bold mb-1">Instruction <span className="text-red-500">*</span></label>
                   <textarea
-                    className="border p-2 w-full rounded focus:ring-1 focus:ring-purple-500 outline-none min-h-[100px]"
+                    className="border border-gray-300 p-2 w-full rounded focus:ring-1 focus:ring-[#6046B5] outline-none min-h-[100px]"
                     placeholder="Enter instructions"
                     value={formData.instruction}
                     onChange={(e) => setFormData({ ...formData, instruction: e.target.value })}
@@ -267,8 +267,8 @@ export default function ConsultantRegister() {
           <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center">
             <div className="w-full max-w-xl rounded bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
 
-              <div className="flex justify-between p-4 text-white">
-                <h3>Edit Consultant Register</h3>
+              <div className="flex justify-between p-4 font-bold text-white">
+                <h2>Edit Consultant Register</h2>
                 <button onClick={() => setShowEdit(false)}>✕</button>
               </div>
 
@@ -277,7 +277,7 @@ export default function ConsultantRegister() {
                   <label className="block text-sm font-bold mb-1">Consultant Date <span className="text-red-500">*</span></label>
                   <input
                     type="date"
-                    className="border p-2 w-full rounded focus:ring-1 focus:ring-purple-500 outline-none"
+                    className="border border-gray-300 p-2 w-full rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     value={selected?.consultant_date}
                     onChange={(e) => setSelected({ ...selected, consultant_date: e.target.value })}
                   />
@@ -285,7 +285,7 @@ export default function ConsultantRegister() {
                 <div>
                   <label className="block text-sm font-bold mb-1">Select Consultant <span className="text-red-500">*</span></label>
                   <select
-                    className="border p-2 w-full rounded focus:ring-1 focus:ring-purple-500 outline-none"
+                    className="border border-gray-300 p-2 w-full rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     value={selected?.doctor}
                     onChange={(e) => setSelected({ ...selected, doctor: e.target.value })}
                   >
@@ -298,7 +298,7 @@ export default function ConsultantRegister() {
                 <div>
                   <label className="block text-sm font-bold mb-1">Instruction <span className="text-red-500">*</span></label>
                   <textarea
-                    className="border p-2 w-full rounded focus:ring-1 focus:ring-purple-500 outline-none min-h-[100px]"
+                    className="border border-gray-300 p-2 w-full rounded focus:ring-1 focus:ring-[#6046B5] outline-none min-h-[100px]"
                     value={selected?.instruction}
                     onChange={(e) => setSelected({ ...selected, instruction: e.target.value })}
                   />

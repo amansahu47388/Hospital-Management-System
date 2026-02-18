@@ -78,7 +78,7 @@ export default function DoctorWiseAppointment() {
                 <select
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
-                  className="w-full mt-1 border rounded px-3 py-2 text-sm form-field"
+                  className="w-full mt-1 border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-1 focus:ring-[#6046B5] outline-none"
                 >
                   <option value="">Select Doctor</option>
                   {doctors.map((d) => (
@@ -97,7 +97,7 @@ export default function DoctorWiseAppointment() {
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full mt-1 border rounded px-3 py-2 text-sm pr-10 form-field"
+                    className="w-full mt-1 border border-gray-300 px-3 py-2 rounded focus:ring-1 focus:ring-1 focus:ring-[#6046B5] outline-none"
                   />
                   <Calendar className="absolute right-3 top-3 text-gray-400 " size={18} />
                 </div>

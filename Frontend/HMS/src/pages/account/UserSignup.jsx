@@ -195,7 +195,6 @@ export default function UserSignup() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -217,7 +216,6 @@ export default function UserSignup() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -238,7 +236,6 @@ export default function UserSignup() {
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
                   border border-gray-300
-                  focus:border-[#6046B5]
                   focus:ring-1 focus:ring-[#8A63D2]
                   outline-none
                   transition
@@ -261,7 +258,6 @@ export default function UserSignup() {
                   className="
                     w-full px-3 py-2 rounded-md
                     border border-gray-300
-                    focus:border-[#6046B5]
                     focus:ring-1 focus:ring-[#8A63D2]
                     outline-none
                     transition
@@ -303,12 +299,6 @@ export default function UserSignup() {
               </Link>
             </p>
           </form>
-          {/* Switch to Admin signup */}
-          <div className="mt-6 text-center">
-            <Link to="/admin/signup" className="text-sm text-gray-500 hover:underline">
-              Admin Signup
-            </Link>
-          </div>
         </div>
       </main>
     </div>

@@ -190,7 +190,7 @@ export default function PathologyBillDetails({ open, billId, onClose }) {
         </div>
 
         {/* FINANCIAL SUMMARY */}
-        <div className="grid md:grid-cols-3 gap-6 border-t pt-4">
+        <div className="grid md:grid-cols-3 gap-6 border-t border-gray-200 pt-4">
           <div />
           <div />
           <div>
@@ -209,8 +209,8 @@ export default function PathologyBillDetails({ open, billId, onClose }) {
         </div>
 
         {/* TEST TABLE */}
-        <div className="overflow-x-auto">
-          <table className="w-full border text-sm">
+        <div className="overflow-x-auto"> 
+          <table className="w-full border border-gray-200 text-sm">
             <thead className="bg-gray-100">
               <tr>
                 <Th>#</Th>
@@ -274,13 +274,13 @@ const Detail = ({ label, value, bold, className = "" }) => (
 );
 
 const Th = ({ children }) => (
-  <th className="border px-2 py-1 text-left font-semibold">
+  <th className="border border-gray-200 px-2 py-1 text-left font-semibold">
     {children}
   </th>
 );
 
 const Td = ({ children, className = "" }) => (
-  <td className={`border px-2 py-2 align-top ${className}`}>
+  <td className={`border border-gray-200 px-2 py-2 align-top ${className}`}>
     {children}
   </td>
 );

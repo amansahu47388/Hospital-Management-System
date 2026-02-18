@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PatientLayout from "../../../layout/PatientLayout";
 import {
-    Search, Printer, Eye, X, AlignJustify,} from "lucide-react";
+    Search, Printer, Eye, X, AlignJustify,
+} from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 import { getPharmacyBills } from "../../../api/pharmacyApi";
 import { getPatientPayments, createPatientPayment } from "../../../api/patientApi";
+import { getHeaders } from "../../../api/setupApi";
+import { printReport } from "../../../utils/printUtils";
 import { useNotify } from "../../../context/NotificationContext";
 
 export default function Pharmacy() {
@@ -20,13 +23,20 @@ export default function Pharmacy() {
     const [selectedBill, setSelectedBill] = useState(null);
     const [paymentHistory, setPaymentHistory] = useState([]);
     const [paymentAmount, setPaymentAmount] = useState("");
+    const [headerData, setHeaderData] = useState(null);
 
     const fetchBills = useCallback(async () => {
         if (!user?.patient_id) return;
         setLoading(true);
         try {
-            const res = await getPharmacyBills({ patient_id: user.patient_id });
-            setBills(res.data || []);
+            const [billsRes, headersRes] = await Promise.all([
+                getPharmacyBills({ patient_id: user.patient_id }),
+                getHeaders()
+            ]);
+            setBills(billsRes.data || []);
+            if (headersRes.data && headersRes.data.length > 0) {
+                setHeaderData(headersRes.data[0]);
+            }
         } catch (error) {
             console.error("Error fetching bills:", error);
             notify("error", "Failed to load pharmacy bills");
@@ -88,6 +98,96 @@ export default function Pharmacy() {
         }
     };
 
+    const handlePrint = () => {
+        if (!selectedBill) return;
+
+        const content = `
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #6046B5; padding-bottom: 5px; margin-bottom: 20px;">
+                <h2 style="margin:0; color:#6046B5; font-size:20px;">PHARMACY BILL</h2>
+                <div style="text-align:right; font-size:12px; font-weight:bold;">
+                    <div>Bill No: PHARMAB${selectedBill.id}</div>
+                    <div>Date: ${new Date(selectedBill.bill_date).toLocaleDateString()}</div>
+                </div>
+            </div>
+
+            <div class="data-grid" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee;">
+                <div class="data-item"><span class="data-label">Patient Name</span><span class="data-value">: ${selectedBill.patient_name || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Phone</span><span class="data-value">: ${selectedBill.patient_phone || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Case ID</span><span class="data-value">: ${selectedBill.case_id || "—"}</span></div>
+                <div class="data-item"><span class="data-label">Doctor</span><span class="data-value">: ${selectedBill.doctor_name || "Self"}</span></div>
+            </div>
+
+            <div class="report-section-title">Medicine Details</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Medicine</th>
+                        <th>Batch</th>
+                        <th>Unit</th>
+                        <th>Expiry</th>
+                        <th style="text-align:center">Qty</th>
+                        <th style="text-align:right">Tax (%)</th>
+                        <th style="text-align:right">Price (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${selectedBill.items?.map((item, idx) => `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td>
+                                <b>${item.medicine_name}</b><br/>
+                                <small>${item.medicine_category}</small>
+                            </td>
+                            <td>${item.batch_no}</td>
+                            <td>${item.medicine_unit}</td>
+                            <td>${item.expiry_date ? new Date(item.expiry_date).toLocaleDateString() : "-"}</td>
+                            <td style="text-align:center">${item.quantity}</td>
+                            <td style="text-align:right">${item.tax_percentage}%</td>
+                            <td style="text-align:right">${parseFloat(item.amount).toFixed(2)}</td>
+                        </tr>
+                    `).join("") || '<tr><td colspan="8" style="text-align: center;">No items found.</td></tr>'}
+                </tbody>
+            </table>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                <div style="width: 250px; font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Total:</span>
+                        <span>₹${parseFloat(selectedBill.total_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Discount:</span>
+                        <span>₹${parseFloat(selectedBill.discount_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Tax:</span>
+                        <span>₹${parseFloat(selectedBill.tax_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid #eee; font-weight: bold; font-size: 15px; color: #6046B5;">
+                        <span>Net Amount:</span>
+                        <span>₹${parseFloat(selectedBill.net_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                        <span>Paid:</span>
+                        <span>₹${parseFloat(selectedBill.paid_amount).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 0; font-weight: bold; color: #dc2626;">
+                        <span>Due:</span>
+                        <span>₹${parseFloat(selectedBill.balance_amount).toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        printReport({
+            title: `Pharmacy Bill - PHARMAB${selectedBill.id}`,
+            headerImg: headerData?.pharmacy_bill_header,
+            footerText: headerData?.pharmacy_bill_footer,
+            content: content
+        });
+    };
+
     const filteredBills = bills.filter(bill =>
         String(bill.id).toLowerCase().includes(searchTerm.toLowerCase()) ||
         bill.doctor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,14 +199,14 @@ export default function Pharmacy() {
             <div className="min-h-screen transition-all duration-300">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-fade-in-up">
                     {/* Header */}
-                    <div className="p-5 border-b flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
+                    <div className="px-3 py-2 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50">
                         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                             Pharmacy Bill
                         </h2>
                     </div>
 
                     {/* Search Bar */}
-                    <div className="p-4 border-b border-gray-100 bg-white">
+                    <div className="px-3 py-2 bg-white">
                         <div className="relative max-w-sm">
                             <Search
                                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -117,16 +217,16 @@ export default function Pharmacy() {
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 focus:bg-white transition-colors"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-gray-50 focus:bg-white transition-colors"
                             />
                         </div>
                     </div>
 
                     {/* Table */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left border-collapse">
+                        <table className="w-full text-sm text-left">
                             <thead className="bg-gray-100 text-gray-600 uppercase text-xs font-semibold">
-                                <tr className="border-b border-gray-200">
+                                <tr>
                                     <th className="px-2 py-3 text-left">Bill No</th>
                                     <th className="px-2 py-3 text-left">Case ID</th>
                                     <th className="px-2 py-3 text-left">Date</th>
@@ -144,42 +244,42 @@ export default function Pharmacy() {
                                 {filteredBills.map((bill, index) => (
                                     <tr
                                         key={index}
-                                        className="hover:bg-indigo-50/30 transition-colors group"
+                                        className="hover:bg-indigo-50/30 transition-colors group border-b border-gray-200"
                                     >
-                                        <td className="p-4 font-medium text-indigo-600 whitespace-nowrap">
+                                        <td className="px-2 py-3 font-medium text-indigo-600 whitespace-nowrap">
                                             PHARMAB{bill.id}
                                         </td>
-                                        <td className="p-4 text-gray-600 whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 whitespace-nowrap">
                                             {bill.case_id || "-"}
                                         </td>
-                                        <td className="p-4 text-gray-600 whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 whitespace-nowrap">
                                             <div>{new Date(bill.bill_date).toLocaleDateString()}</div>
                                             <div className="text-xs text-gray-400">
                                                 {new Date(bill.bill_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </div>
                                         </td>
-                                        <td className="p-4 text-gray-600 whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 whitespace-nowrap">
                                             {bill.doctor_name || "Self"}
                                         </td>
-                                        <td className="p-4 text-gray-600 whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 whitespace-nowrap">
                                             {bill.note || "-"}
                                         </td>
-                                        <td className="p-4 text-gray-600 text-right whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 text-right whitespace-nowrap">
                                             {parseFloat(bill.discount_amount).toFixed(2)}
                                         </td>
-                                        <td className="p-4 text-gray-600 text-right font-medium whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 text-right font-medium whitespace-nowrap">
                                             {parseFloat(bill.net_amount).toFixed(2)}
                                         </td>
-                                        <td className="p-4 text-gray-600 text-right whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 text-right whitespace-nowrap">
                                             {parseFloat(bill.paid_amount).toFixed(2)}
                                         </td>
-                                        <td className="p-4 text-gray-600 text-right whitespace-nowrap">
+                                        <td className="px-2 py-3 text-gray-600 text-right whitespace-nowrap">
                                             {parseFloat(bill.refund_amount).toFixed(2)}
                                         </td>
-                                        <td className="p-4 text-right font-bold text-gray-800 whitespace-nowrap">
+                                        <td className="px-2 py-3 text-right font-bold text-gray-800 whitespace-nowrap">
                                             {parseFloat(bill.balance_amount).toFixed(2)}
                                         </td>
-                                        <td className="p-4 text-center whitespace-nowrap">
+                                        <td className="px-2 py-3 text-center whitespace-nowrap">
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleShowDetails(bill)}
@@ -208,7 +308,7 @@ export default function Pharmacy() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="p-4 border-t text-xs text-gray-500 bg-gray-50">
+                    <div className="p-4 border-t border-gray-200 text-xs text-gray-500 bg-gray-50">
                         Records: 1 to {filteredBills.length} of {filteredBills.length}
                     </div>
                 </div>
@@ -224,7 +324,7 @@ export default function Pharmacy() {
                                 Bill Details - PHARMAB{selectedBill.id}
                             </h3>
                             <div className="flex items-center gap-3">
-                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={() => window.print()}>
+                                <button className="text-white/80 hover:text-white transition-colors" title="Print" onClick={handlePrint}>
                                     <Printer size={20} />
                                 </button>
                                 <button

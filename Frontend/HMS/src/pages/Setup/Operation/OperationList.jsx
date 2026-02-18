@@ -52,6 +52,10 @@ export default function OperationList() {
       notify("error", "Operation name is required");
       return;
     }
+    if (!form.operation_type.trim()) {
+      notify("error", "Operation type is required");
+      return;
+    }
 
     setActionLoading(true);
     try {
@@ -72,6 +76,10 @@ export default function OperationList() {
   const handleEdit = async () => {
     if (!form.name.trim()) {
       notify("error", "Operation name is required");
+      return;
+    }
+    if (!form.operation_type.trim()) {
+      notify("error", "Operation type is required");
       return;
     }
 
@@ -170,7 +178,7 @@ export default function OperationList() {
                     operations.map((row) => (
                       <tr
                         key={row.id}
-                        className="border-b border-gray-200 hover:bg-gray-50"
+                        className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all"
                       >
                         <td className="px-3 py-2">{row.name}</td>
                         <td className="px-3 py-2">
@@ -180,13 +188,13 @@ export default function OperationList() {
                           <div className="flex gap-3">
                             <button
                               onClick={() => openEditModal(row)}
-                              className="text-purple-600 hover:text-purple-800"
+                              className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                             >
                               <Pencil size={16} />
                             </button>
                             <button
                               onClick={() => handleDelete(row.id)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -253,9 +261,9 @@ function Modal({ title, onClose, form, setForm, loading, onSubmit, buttonText })
 
         <div className="p-4 space-y-4">
           <div>
-            <label className="text-sm font-medium">Operation Name *</label>
+            <label className="text-sm font-medium">Operation Name <span className="text-red-500">*</span></label>
             <input
-              className="w-full border px-3 py-2 rounded-md"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               value={form.name}
               onChange={(e) =>
                 setForm({ ...form, name: e.target.value })
@@ -264,9 +272,9 @@ function Modal({ title, onClose, form, setForm, loading, onSubmit, buttonText })
           </div>
 
           <div>
-            <label className="text-sm font-medium">Operation Type</label>
+            <label className="text-sm font-medium">Operation Type <span className="text-red-500">*</span></label>
             <input
-              className="w-full border px-3 py-2 rounded-md"
+              className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               value={form.operation_type}
               onChange={(e) =>
                 setForm({ ...form, operation_type: e.target.value })
@@ -274,12 +282,12 @@ function Modal({ title, onClose, form, setForm, loading, onSubmit, buttonText })
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
             <button
               onClick={onSubmit}
               disabled={loading}
               className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-              text-white px-6 py-2 rounded-md flex items-center gap-2"
+              text-white px-6 py-2 rounded shadow-md hover:opacity-90 flex items-center gap-2"
             >
               {loading && <Loader2 className="animate-spin" size={16} />}
               {buttonText}

@@ -11,11 +11,12 @@ export default function SlotsSidebarMenu() {
           <li key={item.path}>
             <NavLink
               to={item.path}
-              className={({ isActive }) =>
-                `block px-4 py-3 transition ${
+             className={({ isActive }) =>
+                `block px-3 py-2 rounded border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2
+                ${
                   isActive
-                    ? "text-[#6046B5] font-semibold bg-purple-50"
-                    : "hover:bg-gray-100"
+                    ? "bg-[#6046B5] text-white font-bold"
+                    : "hover:bg-[#6046B5] hover:text-white"
                 }`
               }
             >

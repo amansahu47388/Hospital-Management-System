@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
-import {Plus,FileText,FileSpreadsheet,Printer,File, Eye, Pencil, Trash, ClipboardPenLine} from "lucide-react";
+import {Plus,FileText,FileSpreadsheet,Printer,File, Eye, Pencil, Trash2, ClipboardPenLine} from "lucide-react";
 import { getIpdPatientList } from "../../api/ipdApi";
 import IPDVisitDetail from "../../components/ipd/IPDVisitDetails";
 import { deleteIpdPatient } from "../../api/ipdApi";
@@ -128,80 +128,81 @@ const handleDelete = async (id) => {
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="border px-3 py-2 rounded w-full lg:w-64"
+                className="px-3 py-1 border border-gray-300 rounded  focus:ring-1 focus:ring-[#6046B5] outline-none"
               />
 
               <div className="flex flex-wrap gap-3 items-center justify-between lg:justify-end">
                 <select
                   value={limit}
                   onChange={(e) => setLimit(e.target.value)}
-                  className="border px-2 py-2 rounded text-sm"
+                  className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                 >
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
 
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                   <FileText size={18} className="cursor-pointer text-gray-600" />
                   <FileSpreadsheet size={18} className="cursor-pointer text-gray-600" />
                   <File size={18} className="cursor-pointer text-gray-600" />
                   <Printer size={18} className="cursor-pointer text-gray-600" />
-                </div>
+                </div> */}
               </div>
             </div>
 
             {/* TABLE */}
             <div className="overflow-x-auto thin-scrollbar">
-              <table className="min-w-full text-sm">
+              <table className="min-w-full text-sm border-collapse">
                 <thead className="bg-gray-200 ">
                   <tr>
-                    <th className="px-2 py-3 text-center">IPD No</th>
-                    <th className="px-2 py-3 text-center">Name</th>
-                    <th className="px-2 py-3 text-center">Case ID</th>
-                    <th className="px-2 py-3 text-center">Gender</th>
-                    <th className="px-2 py-3 text-center">phone</th>
-                    <th className="px-2 py-3 text-center">Created By</th>
-                    <th className="px-2 py-3 text-center">Doctor </th>
-                    <th className="px-2 py-3 text-center">Bed</th>
-                    <th className="px-2 py-3 text-center">Admision Date</th>
-                    <th className="px-2 py-3 text-center">Previous Medical Issue</th>
-                    <th className="px-2 py-3 text-center">Action</th>
+                    <th className="px-3 py-2 text-left">IPD No</th>
+                    <th className="px-3 py-2 text-left">Name</th>
+                    <th className="px-3 py-2 text-left">Case ID</th>
+                    <th className="px-3 py-2 text-left">Gender</th>
+                    <th className="px-3 py-2 text-left">phone</th>
+                    <th className="px-3 py-2 text-left">Created By</th>
+                    <th className="px-3 py-2 text-left">Doctor </th>
+                    <th className="px-3 py-2 text-left">Bed</th>
+                    <th className="px-3 py-2 text-left">Admision Date</th>
+                    <th className="px-3 py-2 text-left">Previous Medical Issue</th>
+                    <th className="px-3 py-2 text-left">Action</th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
                   {filteredIpdList.slice(0, limit).map((ipd) => (
-                  <tr key={ipd.ipd_id} className="border-t">
-                    <td className="p-2 text-center">IPDN{ipd.ipd_id}</td>
+                  <tr key={ipd.ipd_id} className="border-t border-gray-200">
+                    <td className="px-3 py-2 text-left">IPDN{ipd.ipd_id}</td>
                     <td
-                      className="p-2 text-center text-blue-600 cursor-pointer"
+                      className="px-3 py-2 text-left text-blue-600 cursor-pointer"
                       onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/profile`)}
                     >
                       {ipd.patient_detail
                           ? `${ipd.patient_detail.first_name} ${ipd.patient_detail.last_name}`
                           : "-"}
                     </td>
-                    <td className="p-2 py-4 text-center">{ipd.case_id}</td>
-                    <td className="p-2 py-4 text-center">{ipd.patient_detail.gender}</td>
-                    <td className="p-2 py-4 text-center">{ipd.patient_detail.phone}</td>
-                    <td className="p-2 py-4 text-center">{ipd.created_by?.full_name || "-"}</td>
-                    <td className="p-2 py-4 text-center">{ipd.doctor_detail?.full_name || "-"}</td>
-                    <td className="p-2 py-4 text-center">{ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"}</td>
-                    <td className="p-2 py-4 text-center">{new Date(ipd.created_at).toLocaleString("en-IN")}</td>
-                    <td className="p-2 py-4 text-center">{ipd.previous_medical_issue || "-"}</td>
-                    <td className="p-2 py-4 text-center flex gap-2">
+                    <td className="px-3 py-2 text-left">{ipd.case_id}</td>
+                    <td className="px-3 py-2 text-left">{ipd.patient_detail.gender}</td>
+                    <td className="px-3 py-2 text-left">{ipd.patient_detail.phone}</td>
+                    <td className="px-3 py-2 text-left">{ipd.created_by?.full_name || "-"}</td>
+                    <td className="px-3 py-2 text-left">{ipd.doctor_detail?.full_name || "-"}</td>
+                    <td className="px-3 py-2 text-left">{ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"}</td>
+                    <td className="px-3 py-2 text-left">{new Date(ipd.created_at).toLocaleString("en-IN")}</td>
+                    <td className="px-3 py-2 text-left">{ipd.previous_medical_issue || "-"}</td>
+                    <td className="px-3 py-2 text-left flex gap-1">
                     <button
                     title="view"
                       onClick={(e) => {
                         setSelectedIpd(ipd);
                         setShowDetail(true);
                       }} 
+                      className="p-1 text-purple-600 hover:bg-purple-100 rounded"
                     >
                     <Eye size={16} />
                   </button>
 
-                  <button className="cursor-pointer hover:opacity-80"  
+                  <button className="cursor-pointer hover:opacity-80 p-1 text-green-600 hover:bg-green-100 rounded"  
                     title="Edit"
                     onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/update`)}>
                     <Pencil size={18} />
@@ -209,15 +210,15 @@ const handleDelete = async (id) => {
 
                   <button
                     title="Delete IPD"
-                    className={`cursor-pointer hover:opacity-80 ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    className={`cursor-pointer hover:opacity-80 p-1 text-red-600 hover:bg-red-100 rounded ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
                     onClick={() => handleDelete(ipd.ipd_id)}
                     disabled={deleting}
                   >
-                    <Trash size={18} />
+                    <Trash2 size={18} />
                   </button>
 
                   <button
-                    className="cursor-pointer hover:opacity-80"  
+                    className="cursor-pointer hover:opacity-80 p-1 text-blue-600 hover:bg-blue-100 rounded"  
                     title="Discharge Patient"
                     onClick={(e) => {
                       setSelectedIpd(ipd);

@@ -107,8 +107,8 @@ export default function PharmacyBillDetail({ bill, onClose }) {
         <div className="flex justify-between items-center px-4 py-2 text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]">
           <h2 className="font-semibold text-lg">Pharmacy Bill</h2>
           <div className="flex gap-3">
-            <Printer className="cursor-pointer" onClick={printBill} />
-            <X onClick={onClose} className="cursor-pointer" />
+            <Printer size={20} className="cursor-pointer" onClick={printBill} />
+            <X size={20} onClick={onClose} className="cursor-pointer" />
           </div>
         </div>
 
@@ -116,7 +116,7 @@ export default function PharmacyBillDetail({ bill, onClose }) {
         <div className="p-4 text-sm print:p-0">
 
           {/* BILL INFO */}
-          <div className="flex justify-between border-b pb-2 mb-3">
+          <div className="flex justify-between border-b border-gray-300 pb-2 mb-3">
             <div>
               <div><b>Bill No:</b> {bill.id}</div>
             </div>
@@ -126,7 +126,7 @@ export default function PharmacyBillDetail({ bill, onClose }) {
           </div>
 
           {/* PATIENT / DOCTOR INFO */}
-          <div className="grid grid-cols-2 gap-4 border-b pb-3 mb-4">
+          <div className="grid grid-cols-2 gap-4 border-b border-gray-300 pb-3 mb-4">
             <div className="space-y-1">
               <div><b>Name:</b> {bill.patient_name}</div>
               <div><b>Doctor:</b> {bill.doctor_name}</div>
@@ -139,9 +139,9 @@ export default function PharmacyBillDetail({ bill, onClose }) {
           </div>
 
           {/* ================= MEDICINE TABLE ================= */}
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full text-sm ">
             <thead>
-              <tr className="border-b">
+              <tr className="border-b border-gray-300">
                 <th className="text-left py-1">Medicine Name</th>
                 <th className="text-left py-1">Batch No</th>
                 <th className="text-left py-1">Expiry Date</th>
@@ -153,7 +153,7 @@ export default function PharmacyBillDetail({ bill, onClose }) {
             </thead>
             <tbody>
               {bill.items?.map((i, idx) => (
-                <tr key={idx} className="">
+                <tr key={idx} className="border-b border-gray-300">
                   <td className="py-1">{i.medicine_name}</td>
                   <td>{i.batch_no}</td>
                   <td>{i.expiry_date || "-"}</td>

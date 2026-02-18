@@ -38,8 +38,8 @@ export default function UpdateDispatch({ data, open, onClose, refresh }) {
 
   const handleSubmit = async () => {
     try {
-      if (!form.reference_no || !form.to_title || !form.from_title) {
-        notify("warning","Please fill all required fields");
+      if (!form.to_title  ) {
+        notify("warning","To title is required");
         return;
       }
 
@@ -74,9 +74,9 @@ export default function UpdateDispatch({ data, open, onClose, refresh }) {
         {/* Form (UI unchanged) */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
 
-          <Input label="To Title *" name="to_title" value={form.to_title} onChange={handleChange} />
-          <Input label="From Title *" name="from_title" value={form.from_title} onChange={handleChange} />
-          <Input label="Reference No *" name="reference_no" value={form.reference_no} onChange={handleChange} />
+          <Input label="To Title " name="to_title" value={form.to_title} onChange={handleChange} required />
+          <Input label="From Title " name="from_title" value={form.from_title} onChange={handleChange} />
+          <Input label="Reference No " name="reference_no" value={form.reference_no} onChange={handleChange} />
           <Input label="Date" type="date" name="date" value={form.date} onChange={handleChange} />
 
           <div>
@@ -85,7 +85,7 @@ export default function UpdateDispatch({ data, open, onClose, refresh }) {
               name="address"
               value={form.address}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -95,7 +95,7 @@ export default function UpdateDispatch({ data, open, onClose, refresh }) {
               name="note"
               value={form.note}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -105,7 +105,7 @@ export default function UpdateDispatch({ data, open, onClose, refresh }) {
         <div className="px-6 py-4 flex justify-end">
           <button
             onClick={handleSubmit}
-            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded"
+            className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
           >
             Save
           </button>
@@ -118,7 +118,9 @@ export default function UpdateDispatch({ data, open, onClose, refresh }) {
 
 const Input = ({ label, ...props }) => (
   <div>
-    <label className="text-gray-500">{label}</label>
-    <input {...props} className="w-full border rounded px-3 py-2" />
+    <label className="text-gray-500">{label}
+      {props.required && <span className="text-red-500"> *</span>}
+    </label>
+    <input {...props} className="w-full border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
   </div>
 );

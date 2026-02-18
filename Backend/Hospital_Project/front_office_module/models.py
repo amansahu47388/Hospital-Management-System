@@ -44,11 +44,11 @@ class Visitor(models.Model):
     purpose = models.ForeignKey(Purpose,on_delete=models.PROTECT,related_name="visitors")
     phone = models.CharField(max_length=15, blank=True, null=True)
     id_card = models.CharField( max_length=100, blank=True, null=True)
-    visit_to = models.CharField(max_length=150)
-    opd_ipd_staff = models.CharField(max_length=50)
+    visit_to = models.CharField(max_length=150, blank=True, null=True)
+    opd_ipd_staff = models.CharField(max_length=50, null=True, blank=True)
     number_of_person = models.PositiveIntegerField(default=1)
-    date = models.DateField(default=timezone.now)
-    in_time = models.TimeField()
+    date = models.DateField(default=timezone.now, null=True, blank=True)
+    in_time = models.TimeField(null=True, blank=True)
     out_time = models.TimeField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
 
@@ -67,8 +67,8 @@ class Complain(models.Model):
     complain_type = models.ForeignKey(ComplaintType,on_delete=models.PROTECT,related_name="complaints")
     source = models.ForeignKey(Source,on_delete=models.PROTECT,related_name="complaints")
     complain_by = models.CharField(max_length=150)
-    phone = models.CharField(max_length=15)
-    date = models.DateField(default=timezone.now)
+    phone = models.CharField(max_length=15, null=True, blank=True)
+    date = models.DateField(default=timezone.now, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     action_taken = models.TextField(blank=True, null=True)
     assigned = models.CharField(max_length=150, null=True,blank=True)
@@ -89,9 +89,9 @@ class Complain(models.Model):
 
 
 class PostalDispatch(models.Model):
-    reference_no = models.CharField(max_length=100,unique=True,)
-    from_title = models.CharField(max_length=150,)
-    to_title = models.CharField(max_length=150,)
+    reference_no = models.CharField(max_length=100, null=True, blank=True, unique=True)
+    from_title = models.CharField(max_length=150, null=True, blank=True)
+    to_title = models.CharField(max_length=150)
     address = models.TextField(null=True, blank=True)
     note = models.TextField(blank=True,null=True)
     date = models.DateField(default=timezone.now, null=True, blank=True)
@@ -108,9 +108,9 @@ class PostalDispatch(models.Model):
 
 
 class PostalReceive(models.Model):
-    reference_no = models.CharField(max_length=100,unique=True,)
-    from_title = models.CharField(max_length=150,)
-    to_title = models.CharField(max_length=150,)
+    reference_no = models.CharField(max_length=100,null=True, blank=True, unique=True)
+    from_title = models.CharField(max_length=150)
+    to_title = models.CharField(max_length=150, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     note = models.TextField(blank=True,null=True)
     date = models.DateField(default=timezone.now, null=True, blank=True)

@@ -86,7 +86,7 @@ export default function ExpenseList() {
                 searchRef.current = e.target.value;
                 setExpenses((prev) => [...prev]);
               }}
-              className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+             className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
@@ -135,7 +135,7 @@ export default function ExpenseList() {
               )}
 
               {filteredExpenses.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
+                <tr key={item.id} className="hover:bg-gray-50 border-b border-gray-200">
                   <td className="px-3 py-2 text-blue-600">{item.name}</td>
                   <td className="px-3 py-2">{item.invoice_no || "-"}</td>
                   <td className="px-3 py-2">{item.date}</td>
@@ -149,13 +149,13 @@ export default function ExpenseList() {
                         setEditId(item.id);
                         setEditOpen(true);
                       }}
-                      className="bg-green-100 p-2 rounded text-green-600 hover:bg-green-200"
+                      className="p-1 rounded text-green-600 hover:bg-green-100"
                     >
                       <Pencil size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="bg-red-100 p-2 rounded text-red-600 hover:bg-red-200"
+                      className="p-1 rounded text-red-600 hover:bg-red-100"
                     >
                       <Trash2 size={16} />
                     </button>

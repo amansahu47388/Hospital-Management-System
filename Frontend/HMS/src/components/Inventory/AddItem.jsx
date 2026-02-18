@@ -33,8 +33,18 @@ export default function AddItem({ open, onClose, refresh }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.item_name || !form.category || !form.unit) {
-      notify("warning","All required fields must be filled");
+    if (!form.item_name) {
+      notify("warning","Item name is required");
+      return;
+    }
+
+    if (!form.category) {
+      notify("warning","Category is required");
+      return;
+    }
+
+    if (!form.unit) {
+      notify("warning","Unit is required");
       return;
     }
 
@@ -84,23 +94,22 @@ export default function AddItem({ open, onClose, refresh }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
           <div>
-            <label className="text-sm font-medium">Item Name *</label>
+            <label className="text-sm font-medium">Item Name <span className="text-red-500">*</span></label>
             <input
               name="item_name"
               value={form.item_name}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2 mt-1"
-              required
+            className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"              required
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Category *</label>
+            <label className="text-sm font-medium">Category <span className="text-red-500">*</span></label>
             <select
               name="category"
               value={form.category}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2 mt-1"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               required
             >
               <option value="">Select</option>
@@ -111,14 +120,14 @@ export default function AddItem({ open, onClose, refresh }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Unit *</label>
+            <label className="text-sm font-medium">Unit <span className="text-red-500">*</span></label>
             <input
               type="number"
               name="unit"
               value={form.unit}
               onChange={handleChange}
               min="1"
-              className="w-full border rounded px-3 py-2 mt-1"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               required
             />
           </div>
@@ -130,7 +139,7 @@ export default function AddItem({ open, onClose, refresh }) {
               value={form.description}
               onChange={handleChange}
               rows={3}
-              className="w-full border rounded px-3 py-2 mt-1"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 

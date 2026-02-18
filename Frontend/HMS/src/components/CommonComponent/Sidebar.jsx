@@ -7,6 +7,7 @@ import {
   Calendar,
   Users,
   UserCheck,
+  UserCog,
   Hospital,
   Stethoscope,
   FlaskConical,
@@ -90,7 +91,7 @@ const patientNavItems = [
   { to: "/patient-portal/ambulance", label: "Ambulance", Icon: Ambulance },
 ];
 
-function Sidebar({ role = "admin" }) {
+function Sidebar({ role = "admin", user = null }) {
   // Helper function to check if user has permission
   const hasPermission = (permission) => {
     if (role === "patient") return true;
@@ -188,6 +189,25 @@ function Sidebar({ role = "admin" }) {
 
           {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-semibold pb-10">
+            {/* STAFF MANAGEMENT - Only for Super Admin */}
+            {role !== "patient" && user?.is_superuser && (
+              <NavLink
+                to="/admin/staff-management"
+                end
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-4 py-2 px-2 transition-all duration-500 no-underline
+                  ${isActive
+                    ? "!text-white bg-white/10 rounded-md"
+                    : "!text-white hover:!text-gray-200"
+                  }`
+                }
+              >
+                <UserCog size={20} className="flex-shrink-0" />
+                <span className={`${collapsed ? "hidden" : "block"}`}>
+                  Staff Management
+                </span>
+              </NavLink>
+            )}
             {navItems.map(({ to, label, Icon }) => {
               /* FRONT OFFICE + BIRTH & DEATH */
               if (to === "/admin/front-office/visitor-list" && role !== "patient") {

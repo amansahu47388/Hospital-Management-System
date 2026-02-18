@@ -63,7 +63,7 @@ export default function OPDVitals() {
 
             <div className="min-h-screen p-4 md:p-6 ">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div className="px-5 py-4 border-b flex justify-between items-center">
+                    <div className="px-5 py-4 flex justify-between items-center">
                         <h2 className="text-lg font-semibold text-gray-800">Vitals History</h2>
                     </div>
 
@@ -74,25 +74,25 @@ export default function OPDVitals() {
                             </div>
                         ) : (
                             <table className="w-full text-sm">
-                                <thead className="bg-gray-100 text-gray-600">
+                                <thead className="bg-gray-200 text-gray-600">
                                     <tr>
-                                        <th className="p-4 text-left">Date</th>
-                                        <th className="p-4 text-left">Weight</th>
-                                        <th className="p-4 text-left">BP</th>
-                                        <th className="p-4 text-left">Pulse</th>
-                                        <th className="p-4 text-left">Temperature</th>
-                                        <th className="p-4 text-center">Action</th>
+                                        <th className="px-3 py-2 text-left">Date</th>
+                                        <th className="px-3 py-2 text-left">Weight</th>
+                                        <th className="px-3 py-2 text-left">BP</th>
+                                        <th className="px-3 py-2 text-left">Pulse</th>
+                                        <th className="px-3 py-2 text-left">Temperature</th>
+                                        <th className="px-3 py-2 text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {vitals.length > 0 ? vitals.map((d, i) => (
-                                        <tr key={i} className="border-t hover:bg-indigo-50/40 transition">
-                                            <td className="p-4 font-medium text-[#6046B5]">{formatDate(d.vital_date)}</td>
-                                            <td className="p-4 font-semibold">{d.weight ? `${d.weight} kg` : "N/A"}</td>
-                                            <td className="p-4">{d.bp || "N/A"}</td>
-                                            <td className="p-4">{d.pulse || "N/A"}</td>
-                                            <td className="p-4">{d.temperature ? `${d.temperature}°F` : "N/A"}</td>
-                                            <td className="p-4 text-center">
+                                        <tr key={i} className="border-b border-gray-200 hover:bg-indigo-50/40 transition">
+                                            <td className="px-3 py-2 font-medium text-[#6046B5]">{formatDate(d.vital_date)}</td>
+                                            <td className="px-3 py-2 font-semibold">{d.weight ? `${d.weight} kg` : "N/A"}</td>
+                                            <td className="px-3 py-2">{d.bp || "N/A"}</td>
+                                            <td className="px-3 py-2">{d.pulse || "N/A"}</td>
+                                            <td className="px-3 py-2">{d.temperature ? `${d.temperature}°F` : "N/A"}</td>
+                                            <td className="px-3 py-2 text-center">
                                                 <button
                                                     onClick={() => handleOpenModal(d)}
                                                     className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-full transition"
@@ -204,14 +204,14 @@ export default function OPDVitals() {
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="p-5 border-t bg-white flex justify-between items-center px-8">
+                        <div className="p-5 border-t border-gray-200 bg-white flex justify-between items-center px-8">
                             <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
                                 <Clock size={12} />
                                 Comprehensive Health Check
                             </div>
                             <button
                                 onClick={handleCloseModal}
-                                className="px-8 py-2.5 bg-[#6046B5] text-white rounded-xl font-bold hover:bg-[#4d3794] transition shadow-lg shadow-indigo-100"
+                                className="px-8 py-2 bg-[#6046B5] text-white rounded hover:bg-[#4d3794] transition shadow-lg shadow-indigo-100"
                             >
                                 Close
                             </button>

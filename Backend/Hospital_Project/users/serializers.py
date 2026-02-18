@@ -156,3 +156,121 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
         
         print(f"✅ Admin user created: {user.email}, Role: {role}, Staff: {is_staff}, Superuser: {is_superuser}")
         return user
+
+# ==================== STAFF MANAGEMENT SERIALIZERS ====================
+
+class StaffCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating staff members by admin"""
+    email = serializers.EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all(), message="A user with this email already exists")]
+    )
+    role = serializers.ChoiceField(
+        choices=['doctor', 'accountant', 'pharmacist', 'receptionist', 'pathologist', 'radiologist', 'nurse'],
+        required=True
+    )
+    department = serializers.CharField(required=False, allow_blank=True)
+    send_invitation = serializers.BooleanField(default=True, write_only=True)
+    
+    class Meta:
+        model = User
+        fields = ['full_name', 'email', 'phone', 'role', 'department', 'send_invitation']
+    
+    def validate_phone(self, value):
+        """Validate phone number"""
+        if value:
+            value = value.strip()
+            if len(value) < 10:
+                raise serializers.ValidationError("Phone must have at least 10 digits")
+        return value or None
+    
+    def create(self, validated_data):
+        """Create staff user with temporary password"""
+        import secrets
+        import string
+        
+        # Remove non-model fields
+        send_invitation = validated_data.pop('send_invitation', True)
+        department = validated_data.pop('department', '')
+        
+        # Generate temporary password
+        alphabet = string.ascii_letters + string.digits + "!@#$%"
+        temp_password = ''.join(secrets.choice(alphabet) for i in range(12))
+        
+        # Get the admin who is creating this user
+        request = self.context.get('request')
+        created_by = request.user if request and request.user.is_authenticated else None
+        
+        # Create user
+        user = User.objects.create_user(
+            email=validated_data['email'],
+            password=temp_password,
+            full_name=validated_data['full_name'],
+            phone=validated_data.get('phone'),
+            role=validated_data['role'],
+            is_staff=True,
+            is_superuser=False,
+            is_first_login=True,
+            created_by=created_by
+        )
+        
+        # Store temp password for email (attach to user object temporarily)
+        user._temp_password = temp_password
+        user._send_invitation = send_invitation
+        user._department = department
+        
+        print(f"✅ Staff user created: {user.email}, Role: {user.role}, Temp Password: {temp_password}")
+        return user
+
+class StaffListSerializer(serializers.ModelSerializer):
+    """Serializer for listing staff members"""
+    created_by_name = serializers.SerializerMethodField()
+    department = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = [
+            'id', 'email', 'full_name', 'phone', 'role', 
+            'is_active', 'is_first_login', 'created_at', 
+            'password_changed_at', 'created_by_name', 'department'
+        ]
+    
+    def get_created_by_name(self, obj):
+        return obj.created_by.full_name if obj.created_by else "System"
+    
+    def get_department(self, obj):
+        """Get department from AdminProfile if exists"""
+        if hasattr(obj, 'admin_profile') and obj.admin_profile:
+            return obj.admin_profile.department
+        return ""
+
+class StaffUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating staff details"""
+    
+    class Meta:
+        model = User
+        fields = ['full_name', 'phone', 'role', 'is_active']
+    
+    def validate_phone(self, value):
+        if value:
+            value = value.strip()
+            if len(value) < 10:
+                raise serializers.ValidationError("Phone must have at least 10 digits")
+        return value or None
+
+class FirstLoginPasswordChangeSerializer(serializers.Serializer):
+    """Serializer for first-time password change"""
+    temporary_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True, min_length=8)
+    confirm_password = serializers.CharField(write_only=True, required=True)
+    
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match"})
+        
+        # Validate password strength
+        try:
+            validate_password(data['new_password'])
+        except DjangoValidationError as e:
+            raise serializers.ValidationError({"new_password": list(e.messages)})
+        
+        return data

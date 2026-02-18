@@ -271,14 +271,14 @@ export default function IPDOperations() {
                     {/* Table */}
                     <div className="overflow-x-auto mt-6 bg-white rounded shadow overflow-hidden">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-100 text-gray-800">
+                            <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="px-6 py-4 text-sm font-bold">Reference No</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Operation Date</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Operation Name</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Operation Type</th>
-                                    <th className="px-6 py-4 text-sm font-bold">OT Technician</th>
-                                    <th className="px-6 py-4 text-sm font-bold">Action</th>
+                                    <th className="px-6 py-4 text-sm">Reference No</th>
+                                    <th className="px-6 py-4 text-sm">Operation Date</th>
+                                    <th className="px-6 py-4 text-sm">Operation Name</th>
+                                    <th className="px-6 py-4 text-sm">Operation Type</th>
+                                    <th className="px-6 py-4 text-sm">OT Technician</th>
+                                    <th className="px-6 py-4 text-sm">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white border-b border-gray-200 divide-y divide-gray-100">
@@ -293,7 +293,7 @@ export default function IPDOperations() {
                                     </tr>
                                 ) : operations.length > 0 ? (
                                     operations.map((row, i) => (
-                                        <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600">
+                                        <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-600 border border-gray-200">
                                             <td className="px-6 py-4 text-sm font-medium text-gray-900">OTREF{row.id}</td>
                                             <td className="px-6 py-4 text-sm ">{row.operation_date}</td>
                                             <td className="px-6 py-4 text-sm  font-semibold">{row.operation_name}</td>
@@ -304,24 +304,24 @@ export default function IPDOperations() {
                                             </td>
                                             <td className="px-6 py-4 text-sm ">{row.ot_technician || "N/A"}</td>
                                             <td className="px-6 py-4 text-sm ">
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-1">
                                                     <button
                                                         onClick={() => handleOpenDetail(row)}
-                                                        className="hover:bg-blue-100 text-blue-500 px-2 py-0.5 rounded transition"
+                                                        className="hover:bg-purple-100 text-purple-500 p-1 rounded"
                                                         title="View Detail"
                                                     >
                                                         <Eye size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleOpenEdit(row)}
-                                                        className="hover:bg-purple-100 text-purple-500 px-2 py-0.5 rounded transition"
+                                                        className="hover:bg-green-100 text-green-500 p-1 rounded"
                                                         title="Edit"
                                                     >
                                                         <Edit2 size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(row.id)}
-                                                        className="hover:bg-red-100 text-red-500 px-2 py-0.5 rounded transition"
+                                                        className="hover:bg-red-100 text-red-500 p-1 rounded"
                                                         title="Delete"
                                                     >
                                                         <Trash2 size={16} />
@@ -372,7 +372,7 @@ export default function IPDOperations() {
                                     Operation Type<span className="text-red-500 ml-1">*</span>
                                 </label>
                                 <select
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm transition-shadow shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm transition-shadow shadow-sm"
                                     value={showAddModal ? formData.operation_type : selectedOperation?.operation_type}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -392,7 +392,7 @@ export default function IPDOperations() {
                                     Operation Name <span className="text-red-500 ml-1">*</span>
                                 </label>
                                 <select
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm transition-shadow shadow-sm disabled:bg-gray-50 disabled:text-gray-400"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm transition-shadow shadow-sm disabled:bg-gray-50 disabled:text-gray-400"
                                     value={showAddModal ? formData.operation : selectedOperation?.operation}
                                     disabled={showAddModal ? !formData.operation_type : !selectedOperation?.operation_type}
                                     onChange={(e) => {
@@ -417,7 +417,7 @@ export default function IPDOperations() {
                                 </label>
                                 <input
                                     type="date"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.operation_date : selectedOperation?.operation_date}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -432,7 +432,7 @@ export default function IPDOperations() {
                                     Consultant Doctor <span className="text-red-500 ml-1">*</span>
                                 </label>
                                 <select
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.doctor : selectedOperation?.doctor}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -452,7 +452,7 @@ export default function IPDOperations() {
                                 <input
                                     type="text"
                                     placeholder="Enter assistant consultant name"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.assistant_consultant_1 : selectedOperation?.assistant_consultant_1}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -467,7 +467,7 @@ export default function IPDOperations() {
                                 <input
                                     type="text"
                                     placeholder="Enter assistant consultant name"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.assistant_consultant_2 : selectedOperation?.assistant_consultant_2}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -482,7 +482,7 @@ export default function IPDOperations() {
                                 <input
                                     type="text"
                                     placeholder="Enter anesthetist name"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.anesthetist : selectedOperation?.anesthetist}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -497,7 +497,7 @@ export default function IPDOperations() {
                                 <input
                                     type="text"
                                     placeholder="Enter anesthesia type"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.anesthesia_type : selectedOperation?.anesthesia_type}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -512,7 +512,7 @@ export default function IPDOperations() {
                                 <input
                                     type="text"
                                     placeholder="Enter technician name"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.ot_technician : selectedOperation?.ot_technician}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -527,7 +527,7 @@ export default function IPDOperations() {
                                 <input
                                     type="text"
                                     placeholder="Enter assistant name"
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm"
                                     value={showAddModal ? formData.ot_assistant : selectedOperation?.ot_assistant}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -542,7 +542,7 @@ export default function IPDOperations() {
                                 <textarea
                                     placeholder="Enter additional remarks..."
                                     rows={2}
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm resize-none"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm resize-none"
                                     value={showAddModal ? formData.remark : selectedOperation?.remark}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -557,7 +557,7 @@ export default function IPDOperations() {
                                 <textarea
                                     placeholder="Enter operation results..."
                                     rows={2}
-                                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm shadow-sm resize-none"
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none text-sm shadow-sm resize-none"
                                     value={showAddModal ? formData.result : selectedOperation?.result}
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -571,15 +571,9 @@ export default function IPDOperations() {
                         {/* Modal Footer */}
                         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
                             <button
-                                onClick={() => { setShowAddModal(false); setShowEditModal(false); }}
-                                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-100 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
                                 onClick={showAddModal ? handleSave : handleUpdate}
                                 disabled={loading}
-                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-10 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md font-bold text-xs disabled:opacity-50"
+                                className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2]  text-white px-10 py-2 rounded flex items-center gap-2 transition-all shadow-md font-bold text-xs disabled:opacity-50"
                             >
                                 {loading ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                 {showAddModal ? "CREATE RECORD" : "UPDATE RECORD"}

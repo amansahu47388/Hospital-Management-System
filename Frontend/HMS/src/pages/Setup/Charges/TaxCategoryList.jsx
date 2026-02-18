@@ -99,7 +99,7 @@ export default function TaxCategoryList() {
                 )}
 
                 {taxCategories.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 group">
+                  <tr key={item.id} className="hover:bg-gray-50 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2">
                     <td className="px-3 py-2 font-medium">
                       {item.tax_name}
                     </td>
@@ -116,7 +116,7 @@ export default function TaxCategoryList() {
                             setSelected(item);
                             setOpenEdit(true);
                           }}
-                          className="text-purple-600 hover:text-purple-800"
+                          className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded"
                         >
                           <Pencil size={16} />
                         </button>
@@ -124,7 +124,7 @@ export default function TaxCategoryList() {
                         <button
                         title="delete"
                           onClick={() => handleDelete(item)}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded"
                         >
                           <Trash2 size={16} />
                         </button>

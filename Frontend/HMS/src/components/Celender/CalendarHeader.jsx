@@ -1,3 +1,4 @@
+import {ChevronLeft,ChevronRight } from "lucide-react"
 export default function CalendarHeader({
   view,
   date,
@@ -25,8 +26,8 @@ export default function CalendarHeader({
     >
       {/* LEFT CONTROLS */}
       <div className="flex items-center gap-2 justify-center sm:justify-start">
-        <HeaderButton onClick={onPrev}>‹</HeaderButton>
-        <HeaderButton onClick={onNext}>›</HeaderButton>
+        <HeaderButton onClick={onPrev}><ChevronLeft size={16}/></HeaderButton>
+        <HeaderButton onClick={onNext}><ChevronRight size={16}/></HeaderButton>
         <HeaderButton onClick={onToday} primary>
           Today
         </HeaderButton>

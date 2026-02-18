@@ -88,11 +88,19 @@ export default function UpdateVisitor({ open, onClose, refresh, data }) {
 
   const handleSubmit = async () => {
   try {
-    if (!form.name || !form.purpose || !form.opd_ipd_staff || !form.visit_to) {
-      notify("warning","Please fill all required fields");
+    if (!form.name) {
+      notify("warning","Name is required");
       return;
     }
-
+    if (!form.purpose) {
+      notify("warning","Purpose is required");
+      return;
+    }
+    if (!form.date) {
+      notify("warning","Date is required");
+      return;
+    }
+  
     const payload = {
       name: form.name,
       purpose: form.purpose,
@@ -136,9 +144,9 @@ export default function UpdateVisitor({ open, onClose, refresh, data }) {
 
             {/* Purpose */}
             <div>
-              <label className="text-sm font-medium">Purpose *</label>
+              <label className="text-sm font-medium">Purpose <span className="text-red-500">*</span></label>
               <select name="purpose" value={form.purpose} onChange={handleChange}
-                className="w-full mt-1 border rounded px-3 py-2">
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]">
                 <option value="">Select</option>
                 {purposes.map((p) => (
                   <option key={p.id} value={p.id}>{p.purpose_name}</option>
@@ -146,7 +154,7 @@ export default function UpdateVisitor({ open, onClose, refresh, data }) {
               </select>
             </div>
 
-            <Input label="Name" name="name" value={form.name} onChange={handleChange} />
+            <Input label="Name" name="name" value={form.name} onChange={handleChange} required/>
             <Input label="Phone" name="phone" value={form.phone} onChange={handleChange} />
             <Input label="ID Card" name="id_card" value={form.id_card} onChange={handleChange} />
 
@@ -157,7 +165,7 @@ export default function UpdateVisitor({ open, onClose, refresh, data }) {
                 name="opd_ipd_staff"
                 value={form.opd_ipd_staff}
                 onChange={handleTypeChange}
-                className="w-full mt-1 border rounded px-3 py-2"
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
               >
                 <option value="">Select</option>
                 <option value="STAFF">Staff</option>
@@ -173,7 +181,7 @@ export default function UpdateVisitor({ open, onClose, refresh, data }) {
                 name="visit_to"
                 value={form.visit_to}
                 onChange={handleChange}
-                className="w-full mt-1 border rounded px-3 py-2"
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
               >
                 <option value="">{form.visit_to || "Select"}</option>
                 {visitToList.map((v) => (
@@ -185,15 +193,15 @@ export default function UpdateVisitor({ open, onClose, refresh, data }) {
             </div>
 
             <Input label="Number Of Person" name="number_of_person" value={form.number_of_person} onChange={handleChange} />
-            <Input label="Date" type="date" name="date" value={form.date} onChange={handleChange} />
-            <Input label="In Time" type="time" name="in_time" value={form.in_time} onChange={handleChange} />
+            <Input label="Date" type="date" name="date" value={form.date} onChange={handleChange} required/>
+            <Input label="In Time" type="time" name="in_time" value={form.in_time} onChange={handleChange} required/>
             <Input label="Out Time" type="time" name="out_time" value={form.out_time} onChange={handleChange} />
 
             <div className="md:col-span-2">
               <label className="text-sm font-medium">Note</label>
               <textarea rows="3" name="note" value={form.note}
                 onChange={handleChange}
-                className="w-full mt-1 border rounded px-3 py-2" />
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
           </div>
@@ -218,6 +226,6 @@ export default function UpdateVisitor({ open, onClose, refresh, data }) {
 const Input = ({ label, ...props }) => (
   <div>
     <label className="text-sm font-medium">{label}</label>
-    <input {...props} className="w-full mt-1 border rounded px-3 py-2" />
+    <input {...props} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
   </div>
 );

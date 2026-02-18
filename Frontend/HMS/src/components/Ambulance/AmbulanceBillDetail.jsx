@@ -192,7 +192,7 @@ export default function AmbulanceBillDetail({ open, billId, onClose }) {
 
             {/* AMBULANCE DETAILS */}
             {bill.ambulance_details && (
-              <div className="border-t pt-4">
+              <div className="border-t border-gray-200 pt-4">
                 <h3 className="font-semibold text-gray-800 mb-3">Ambulance Details</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   <Detail label="Vehicle Number" value={bill.ambulance_details.vehicle_number} />
@@ -205,7 +205,7 @@ export default function AmbulanceBillDetail({ open, billId, onClose }) {
 
             {/* CHARGE DETAILS */}
             {bill.charge_details && (
-              <div className="border-t pt-4">
+              <div className="border-t border-gray-200 pt-4">
                 <h3 className="font-semibold text-gray-800 mb-3">Charge Details</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   <Detail label="Category" value={bill.charge_details.category} />
@@ -220,13 +220,13 @@ export default function AmbulanceBillDetail({ open, billId, onClose }) {
 
             {/* NOTE */}
             {bill.note && (
-              <div className="border-t pt-4">
+              <div className="border-t border-gray-200 pt-4">
                 <Detail label="Note" value={bill.note} />
               </div>
             )}
 
             {/* FINANCIAL SUMMARY */}
-            <div className="border-t pt-4">
+            <div className="border-t border-gray-200 pt-4">
               <h3 className="font-semibold text-gray-800 mb-3">Financial Summary</h3>
               <div className="grid md:grid-cols-2 gap-4 max-w-md">
                 <Detail label="Total Amount ($)" value={bill.total_amount ? `$${Number(bill.total_amount).toFixed(2)}` : "-"} />
@@ -245,7 +245,7 @@ export default function AmbulanceBillDetail({ open, billId, onClose }) {
         </div>
 
         {/* FOOTER */}
-        <div className="border-t px-6 py-4 flex justify-end">
+        <div className="border-t border-gray-200 px-6 py-4 flex justify-end">
           <button
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"

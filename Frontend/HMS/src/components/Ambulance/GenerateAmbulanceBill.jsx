@@ -204,7 +204,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                 <input
                   type="text"
                   placeholder="Search Patient..."
-                  className="w-full text-sm sm:text-base outline-none"
+                  className="w-full text-sm sm:text-base outline-none "
                   value={patientSearch}
                   onChange={(e) => {
                     setPatientSearch(e.target.value);
@@ -264,11 +264,11 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ambulance</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ambulance <span className="text-red-500">*</span></label>
               <select
                 value={selectedAmbulance}
                 onChange={(e) => setSelectedAmbulance(e.target.value)}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
               >
                 <option value="">Select Ambulance</option>
                 {ambulances.map((a) => (
@@ -288,30 +288,30 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                     (a) => a.id === parseInt(selectedAmbulance)
                   )?.driver_name || ""
                 }
-                className="w-full border px-3 py-2 rounded bg-gray-100"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5] bg-gray-100"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date <span className="text-red-500">*</span></label>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
               />
             </div>
 
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Charge Category</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Charge Category <span className="text-red-500">*</span></label>
               <select
                 value={selectedChargeCategory}
                 onChange={(e) => {
                   setSelectedChargeCategory(e.target.value);
                   setSelectedCharge("");
                 }}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
               >
                 <option value="">Select Category</option>
                 {getChargeCategoriesFromCharges().map((category) => (
@@ -325,7 +325,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
 
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Charge Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Charge Name <span className="text-red-500">*</span></label>
               <select
                 value={selectedCharge}
                 onChange={(e) => {
@@ -340,7 +340,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                     setTaxPercent("");
                   }
                 }}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
               >
                 <option value="">Select Charge</option>
                 {getFilteredCharges().map((c) => (
@@ -352,13 +352,13 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Standard Charge ($)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Standard Charge ($) <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 placeholder="Enter amount"
                 value={totalAmount}
                 onChange={(e) => setTotalAmount(e.target.value)}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
               />
             </div>
           </div>
@@ -372,7 +372,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Add any additional notes here..."
-                className="w-full border rounded p-3"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
               />
             </div>
 
@@ -380,14 +380,14 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Bill Summary</label>
               <div className="space-y-3">
-                <div className="flex justify-between border-b pb-1">
+                <div className="flex justify-between border-b border-gray-300 pb-1">
                   <span>Total ($)</span>
                   <span className="font-semibold">
                     {total.toFixed(2)}
                   </span>
                 </div>
 
-                <div className="flex justify-between border-b pb-1">
+                <div className="flex justify-between border-b border-gray-300 pb-1">
                   <span>Discount ($)</span>
                   <div className="flex items-center gap-2">
                     <input
@@ -395,7 +395,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                       placeholder="%"
                       value={discountPercent}
                       onChange={(e) => setDiscountPercent(e.target.value)}
-                      className="w-14 border-b outline-none text-right"
+                      className="w-14 border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5] outline-none text-right"
                     />
                     <span className="font-semibold w-20 text-right">
                       {discountValue.toFixed(2)}
@@ -403,7 +403,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                   </div>
                 </div>
 
-                <div className="flex justify-between border-b pb-1">
+                <div className="flex justify-between border-b border-gray-300 pb-1">
                   <span>Tax ($)</span>
                   <div className="flex items-center gap-2">
                     <input
@@ -411,7 +411,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                       placeholder="Tax %"
                       value={taxPercent}
                       onChange={(e) => setTaxPercent(e.target.value)}
-                      className="w-14 border-b outline-none text-right"
+                      className="w-30 border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5] outline-none text-right"
                     />
                     <span className="font-semibold w-20 text-right">
                       {taxValue.toFixed(2)}
@@ -419,8 +419,8 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                   </div>
                 </div>
 
-                <div className="flex justify-between border-b pb-1">
-                  <span>Net Amount ($)</span>
+                <div className="flex justify-between border-b border-gray-300 pb-1">
+                  <span>Net Amount ($) <span className="text-red-500">*</span></span>
                   <span className="font-semibold">
                     {netAmount.toFixed(2)}
                   </span>
@@ -430,7 +430,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                   <select
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
-                    className="border px-3 py-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                   >
                     <option value="cash">Cash</option>
                     <option value="card">Card</option>
@@ -443,7 +443,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
                     placeholder="Payment Amount ($)"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="border px-3 py-2 rounded"
+                    className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
                   />
                 </div>
               </div>
@@ -452,7 +452,7 @@ export default function GenerateAmbulanceBill({ open, onClose, onSuccess }) {
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end gap-3 px-6 py-3 bg-gray-100 border-t">
+        <div className="flex justify-end gap-3 px-6 py-3 bg-gray-100 border-t border-gray-300">
           <button
             onClick={handleSave}
             disabled={loading}

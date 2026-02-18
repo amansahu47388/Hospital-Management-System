@@ -124,19 +124,19 @@ export default function BirthRecordDetails({ open, onClose, record }) {
           <h2 className="text-lg font-semibold">Birth Record Details</h2>
 
           <div className="flex items-center gap-3">
-            <Printer
+            <Printer size={16}
               className="cursor-pointer hover:opacity-80"
               onClick={handlePrint}
             />
-            <Pencil
+            <Pencil size={16}
               className="cursor-pointer hover:opacity-80"
               onClick={handleEdit}
             />
-            <Trash2
+            <Trash2 size={16}
               className="cursor-pointer hover:opacity-80"
               onClick={handleDelete}
             />
-            <X
+            <X size={16}
               className="cursor-pointer hover:opacity-80"
               onClick={onClose}
             />

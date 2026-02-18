@@ -73,8 +73,20 @@ const handleChange = (e) => {
 
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.category || !formData.unit || !formData.box_packing) {
-      notify("error", "Please fill all required fields");
+    if (!formData.name) {
+      notify("error", "Medicine name is required");
+      return;
+    }
+    if (!formData.category) {
+      notify("error", "Category is required");
+      return;
+    }
+    if (!formData.unit) {
+      notify("error", "Unit is required");
+      return;
+    }
+    if (!formData.box_packing) {
+      notify("error", "Box packing is required");
       return;
     }
 
@@ -227,10 +239,7 @@ const handleChange = (e) => {
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end gap-3 px-6 py-4 border-t">
-          <button onClick={onClose} className="border px-4 py-2 rounded">
-            Cancel
-          </button>
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-300">
           <button onClick={handleSubmit} disabled={loading}
             className="bg-[#6046B5] text-white px-5 py-2 rounded">
             {loading ? "Saving..." : "Save"}
@@ -248,7 +257,7 @@ const Input = ({required, label, ...props }) => (
     <label className="text-sm font-medium">{label}
       {required && <span className="text-red-500 ml-1">*</span>}
     </label>
-    <input {...props} className="w-full mt-1 border rounded px-3 py-2" />
+    <input {...props} className="w-full  border border-gray-300 rounded px-3 py-1 focus:outline-none focus:border-[#6046B5]" />
   </div>
 );
 
@@ -258,7 +267,7 @@ const Select = ({ label, required, options, labelKey, ...props }) => (
       {label}
       {required && <span className="text-red-500 ml-1">*</span>}
     </label>
-    <select {...props} className="w-full mt-1 border rounded px-3 py-2">
+    <select {...props} className="w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:border-[#6046B5]">
       <option value="">Select</option>
       {options.map((o) => (
         <option key={o.id} value={o.id}>

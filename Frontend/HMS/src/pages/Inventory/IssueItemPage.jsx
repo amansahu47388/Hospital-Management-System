@@ -130,7 +130,7 @@ const filteredItems = useMemo(() => {
                 searchRef.current = e.target.value;
                 forceRender(n => n + 1);
               }}
-              className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
 
           </div>
@@ -146,7 +146,7 @@ const filteredItems = useMemo(() => {
         {/* TABLE */}
         <div className="bg-white rounded-lg shadow overflow-x-auto thin-scrollbar">
           <table className="min-w-full text-sm">
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-100 border-b border-gray-200">
               <tr>
                 <th className="p-3 text-left">Item</th>
                 <th className="p-3 text-left">Category</th>
@@ -182,7 +182,7 @@ const filteredItems = useMemo(() => {
                 filteredItems.map((row) => (
                   <tr
                     key={row.id}
-                    className="group border-t hover:bg-gray-50 transition"
+                    className="group border-t hover:bg-gray-50 transition border-b border-gray-200"
                   >
                     <td className="p-3 text-blue-600 font-medium text-left">
                       {row.item}
@@ -209,7 +209,7 @@ const filteredItems = useMemo(() => {
                       )}
                     </td>
                     <td className="p-3 text-left">
-                    <button onClick={() => handleDelete(row.id)} className="bg-red-100 p-2 rounded text-red-600">
+                    <button onClick={() => handleDelete(row.id)} className="p-1 rounded text-red-600 hover:bg-red-100">
                       <Trash2 size={16} />
                     </button>
                     </td>

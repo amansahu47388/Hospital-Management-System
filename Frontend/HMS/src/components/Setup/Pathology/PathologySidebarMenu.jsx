@@ -20,14 +20,12 @@ export default function PathologySidebarMenu() {
             <NavLink
               to={menu.path}
               className={({ isActive }) =>
-                `
-                block px-5 py-3 transition-all duration-200
+                `block px-3 py-2 rounded border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2
                 ${
                   isActive
-                    ? "bg-purple-200 text-purple-600 font-bold"
-                    : "hover:bg-purple-100 hover:text-purple-500"
-                }
-              `
+                    ? "bg-[#6046B5] text-white font-bold"
+                    : "hover:bg-[#6046B5] hover:text-white"
+                }`
               }
             >
               {menu.label}

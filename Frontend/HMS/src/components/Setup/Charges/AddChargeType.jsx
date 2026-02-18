@@ -50,17 +50,17 @@ export default function AddChargeType({ open, onClose, refresh }) {
         {/* BODY */}
         <div className="p-4 space-y-4">
           <div>
-            <label className="text-sm font-medium">Charge Type *</label>
+            <label className="text-sm font-medium">Charge Type <span className="text-red-500">*</span></label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end p-3 border-t">
+        <div className="flex justify-end p-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

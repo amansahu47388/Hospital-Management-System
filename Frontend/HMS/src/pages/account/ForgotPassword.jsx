@@ -40,7 +40,7 @@ export default function ForgotPassword() {
             <div className="fixed inset-0 backdrop-blur-sm" />
 
             <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10">
+                <div className="w-full max-w-md bg-white rounded px-8 py-10">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
                         Forgot Password
                     </h2>
@@ -60,13 +60,12 @@ export default function ForgotPassword() {
                                     placeholder="you@example.com"
                                     required
                                     className="
-                    mt-2 w-full px-3 py-2 rounded-md
-                    border border-gray-300
-                    focus:border-[#6046B5]
-                    focus:ring-2 focus:ring-[#8A63D2]
-                    outline-none
-                    transition
-                  "
+                                    mt-2 w-full px-3 py-2 rounded-md
+                                    border border-gray-300
+                                    focus:ring-1 focus:ring-[#6046B5]
+                                    outline-none
+                                    transition
+                                "
                                 />
                             </label>
 
@@ -74,12 +73,13 @@ export default function ForgotPassword() {
                                 type="submit"
                                 disabled={loading}
                                 className="
-                  w-full py-2 rounded-md text-white font-medium
-                  bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
-                  hover:opacity-90
-                  focus:ring-2 focus:ring-[#8A63D2]
-                  transition
-                "
+                                w-full py-2 rounded-md text-white font-medium
+                                bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
+                                hover:opacity-90
+                                focus:ring-1 focus:ring-[#6046B5]
+                                outline-none
+                                transition
+                                "
                             >
                                 {loading ? "Sending..." : "Send Reset Link"}
                             </button>

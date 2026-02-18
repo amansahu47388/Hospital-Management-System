@@ -10,10 +10,13 @@ export default function VitalSidebarMenu() {
           <li key={item.label}>
             <NavLink
               to={item.path}
-              className={({ isActive }) =>
-                isActive
-                  ? "block px-3 py-2 rounded bg-purple-200 text-purple-600 font-bold"
-                  : "block px-3 py-2 rounded hover:bg-purple-100 transition hover:text-purple-500"
+             className={({ isActive }) =>
+                `block px-3 py-2 rounded border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2
+                ${
+                  isActive
+                    ? "bg-[#6046B5] text-white font-bold"
+                    : "hover:bg-[#6046B5] hover:text-white"
+                }`
               }
             >
               {item.label}

@@ -40,8 +40,8 @@ export default function UpdateReceive({ open, data, onClose, refresh }) {
   /* Submit */
   const handleSubmit = async () => {
     try {
-      if (!form.from_title || !form.reference_no) {
-        notify("warning","From Title and Reference No are required");
+      if (!form.from_title) {
+        notify("warning","From Title is required");
         return;
       }
 
@@ -66,7 +66,7 @@ export default function UpdateReceive({ open, data, onClose, refresh }) {
 
         {/* Form */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <Input label="From Title *" name="from_title" value={form.from_title} onChange={handleChange} />
+          <Input label="From Title " name="from_title" value={form.from_title} onChange={handleChange} required/>
           <Input label="To Title" name="to_title" value={form.to_title} onChange={handleChange} />
           <Input label="Reference No" name="reference_no" value={form.reference_no} onChange={handleChange} />
           <Input type="date" label="Date" name="date" value={form.date} onChange={handleChange} />
@@ -77,7 +77,7 @@ export default function UpdateReceive({ open, data, onClose, refresh }) {
               name="address"
               value={form.address}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
 
@@ -87,7 +87,7 @@ export default function UpdateReceive({ open, data, onClose, refresh }) {
               name="note"
               value={form.note}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
             />
           </div>
         </div>
@@ -109,7 +109,9 @@ export default function UpdateReceive({ open, data, onClose, refresh }) {
 
 const Input = ({ label, ...props }) => (
   <div>
-    <label className="text-gray-600">{label}</label>
-    <input {...props} className="w-full border rounded px-3 py-2" />
+    <label className="text-gray-600">{label}
+      {props.required && <span className="text-red-500"> *</span>}
+    </label>
+    <input {...props} className="w-full border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
   </div>
 );

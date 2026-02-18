@@ -305,7 +305,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
               <input
                 type="text"
                 placeholder="Search Patient..."
-                className="w-full text-sm sm:text-base outline-none"
+                className="w-full text-sm sm:text-base outline-none "
                 value={patientSearch}
                 onChange={(e) => {
                   setPatientSearch(e.target.value);
@@ -405,7 +405,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
               return (
                 <div key={row.id} className="grid grid-cols-6 gap-3 items-center">
                   <select
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded"
                     value={row.testId}
                     onChange={(e) => updateRow(row.id, e.target.value)}
                   >
@@ -417,9 +417,9 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
                     ))}
                   </select>
 
-                  <input className="border p-2 rounded" disabled value={test?.report_days || ""} />
+                  <input className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded" disabled value={test?.report_days || ""} />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded"
                     value={
                       test && test.report_days
                         ? new Date(Date.now() + test.report_days * 24 * 60 * 60 * 1000).toLocaleDateString()
@@ -427,8 +427,8 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
                     }
                     disabled
                   />
-                  <input className="border p-2 rounded" disabled value={test?.tax || ""} />
-                  <input className="border p-2 rounded" disabled value={test?.standard_charge || ""} />
+                  <input className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded" disabled value={test?.tax || ""} />
+                  <input className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded" disabled value={test?.standard_charge || ""} />
 
                   <button onClick={() => removeRow(row.id)}>
                     <Trash2 className="text-red-500" size={18} />
@@ -451,7 +451,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
               <div>
                 <label>Referral Doctor</label>
                 <select
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded"
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
                 >
@@ -467,7 +467,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
               <div>
                 <label>Note</label>
                 <textarea
-                  className="w-full border p-2 rounded h-24"
+                  className="w-full border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded h-24"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Enter any additional notes..."
@@ -504,7 +504,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded w-20"
                     placeholder="%"
                     value={discountPercent}
                     onChange={(e) => {
@@ -515,7 +515,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
                   <span>or</span>
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded w-20"
                     placeholder="$"
                     value={discount}
                     onChange={(e) => {
@@ -542,7 +542,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
                 <div>
                   <label>Payment Mode</label>
                   <select
-                    className="border p-2 w-full"
+                    className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded w-full"
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
                   >
@@ -559,7 +559,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
                   <label>Paid Amount ($)</label>
                   <input
                     type="number"
-                    className="border p-2 w-full"
+                    className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded w-full"
                     value={paidAmount}
                     onChange={(e) => setPaidAmount(e.target.value)}
                     placeholder="0.00"
@@ -582,7 +582,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
 
 
           {/* FOOTER */}
-          <div className="flex justify-end px-4 py-4 border-t bg-gray-100">
+          <div className="flex justify-end px-4 py-4 border-t border-gray-300">
             <button
               onClick={handleUpdate}
               disabled={loading}

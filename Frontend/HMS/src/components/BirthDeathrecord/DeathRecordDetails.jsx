@@ -90,16 +90,22 @@ export default function DeathRecordDetails({
           <h2 className="text-lg font-semibold">Death Record Details</h2>
 
           <div className="flex items-center gap-4">
-            <Printer className="cursor-pointer" onClick={handlePrint} />
-            <Pencil
+            <Printer size={16}
+              className="cursor-pointer"
+              onClick={handlePrint}
+            />
+            <Pencil size={16}
               className="cursor-pointer"
               onClick={() => onEdit(record)}
             />
-            <Trash2
+            <Trash2 size={16}
               className="cursor-pointer"
               onClick={() => onDelete(record)}
             />
-            <X className="cursor-pointer" onClick={onClose} />
+            <X size={16}
+              className="cursor-pointer"
+              onClick={onClose}
+            />
           </div>
         </div>
 

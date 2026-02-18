@@ -28,9 +28,8 @@ export default function PatientProfileDropDown({ user, onLogout }) {
                 className="
           w-7 h-7 sm:w-8 sm:h-8 md:w-7 md:h-7
           rounded-full cursor-pointer
-          border border-white/60
           object-cover
-          hover:ring-2 hover:ring-white/50
+          hover:ring-1 hover:ring-white/50
           active:scale-95
           transition
         "
@@ -43,7 +42,7 @@ export default function PatientProfileDropDown({ user, onLogout }) {
                     className="
             absolute right-0 mt-3
             w-64 max-w-[90vw]
-            bg-white rounded-lg shadow-lg border
+            bg-white rounded-lg shadow-lg 
             z-50
           "
                 >
@@ -64,10 +63,8 @@ export default function PatientProfileDropDown({ user, onLogout }) {
                         </div>
                     </div>
 
-                    <hr />
-
                     {/* MENU */}
-                    <ul className="py-2 text-sm">
+                    <ul className="py-2 text-sm border-t border-gray-200">
                         <li
                             className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
                             onClick={() => {

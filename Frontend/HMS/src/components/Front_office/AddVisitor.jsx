@@ -74,8 +74,16 @@ if (value === "IPD") {
 
   const handleSubmit = async () => {
   try {
-    if (!form.name || !form.purpose || !form.opd_ipd_staff || !form.visit_to || !form.date) {
-      notify("warning","Please fill all required fields");
+    if (!form.name ) {
+      notify("warning","Name is required");
+      return;
+    }
+    if (!form.purpose ) {
+      notify("warning","Purpose is required");
+      return;
+    }
+    if (!form.date ) {
+      notify("warning","Date is required");
       return;
     }
 
@@ -87,7 +95,7 @@ if (value === "IPD") {
     onClose();
   } catch (err) {
     console.error(err);
-    notfy("error","Failed to add visitor");
+    notify("error","Failed to add visitor");
   }
 };
 
@@ -111,11 +119,11 @@ if (value === "IPD") {
 
             {/* Purpose */}
             <div>
-              <label className="text-sm font-medium">Purpose *</label>
+              <label className="text-sm font-medium">Purpose <span className="text-red-500">*</span></label>
               <select
                 name="purpose"
                 onChange={handleChange}
-                className="w-full mt-1 border rounded px-3 py-2"
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
               >
                 <option value="">Select</option>
                 {purposes.map((p) => (
@@ -126,20 +134,20 @@ if (value === "IPD") {
 
             {/* Name */}
             <div>
-              <label className="text-sm font-medium">Name *</label>
-              <input name="name" onChange={handleChange} className="w-full mt-1 border rounded px-3 py-2" />
+              <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
+              <input name="name" onChange={handleChange} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
             {/* Phone */}
             <div>
               <label className="text-sm font-medium">Phone</label>
-              <input name="phone" onChange={handleChange} className="w-full mt-1 border rounded px-3 py-2" />
+              <input name="phone" onChange={handleChange} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
             {/* ID Card */}
             <div>
               <label className="text-sm font-medium">ID Card</label>
-              <input name="id_card" onChange={handleChange} className="w-full mt-1 border rounded px-3 py-2" />
+              <input name="id_card" onChange={handleChange} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
             {/* IPD/OPD/Staff */}
@@ -148,7 +156,7 @@ if (value === "IPD") {
               <select
                 name="opd_ipd_staff"
                 onChange={handleTypeChange}
-                className="w-full mt-1 border rounded px-3 py-2"
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
               >
                 <option value="">Select</option>
                 <option value="STAFF">Staff</option>
@@ -163,7 +171,7 @@ if (value === "IPD") {
               <select
                 name="visit_to"
                 onChange={handleChange}
-                className="w-full mt-1 border rounded px-3 py-2"
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
               >
                 <option value="">Select</option>
                {visitToList.map((v) => (
@@ -178,25 +186,25 @@ if (value === "IPD") {
             {/* Number */}
             <div>
               <label className="text-sm font-medium">Number Of Person</label>
-              <input name="number_of_person" onChange={handleChange} className="w-full mt-1 border rounded px-3 py-2" />
+              <input name="number_of_person" onChange={handleChange} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
             {/* Date */}
             <div>
-              <label className="text-sm font-medium">Date *</label>
-              <input type="date" name="date" onChange={handleChange} className="w-full mt-1 border rounded px-3 py-2" />
+              <label className="text-sm font-medium">Date <span className="text-red-500">*</span></label>
+              <input type="date" name="date" onChange={handleChange} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
             {/* In Time */}
             <div>
               <label className="text-sm font-medium">In Time</label>
-              <input type="time" name="in_time" onChange={handleChange} className="w-full mt-1 border rounded px-3 py-2" />
+              <input type="time" name="in_time" onChange={handleChange} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
             {/* Out Time */}
             <div>
               <label className="text-sm font-medium">Out Time</label>
-              <input type="time" name="out_time" onChange={handleChange} className="w-full mt-1 border rounded px-3 py-2" />
+              <input type="time" name="out_time" onChange={handleChange} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
             </div>
 
             {/* Note */}
@@ -206,7 +214,7 @@ if (value === "IPD") {
                 rows="3"
                 name="note"
                 onChange={handleChange}
-                className="w-full mt-1 border rounded px-3 py-2"
+                className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]"
               />
             </div>
 

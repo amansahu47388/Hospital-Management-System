@@ -20,13 +20,12 @@ const DataTable = ({ columns, data, onEdit, onDelete, actions = true }) => {
 
         <tbody>
           {data.map((item, index) => (
-            <tr key={item.id || index} className="border-b hover:bg-gray-50 group">
+            <tr key={item.id || index} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={`px-3 py-2 ${col.align === 'center' ? 'text-center' : ''} ${
-                    col.primary ? 'text-blue-600 font-medium' : ''
-                  }`}
+                  className={`px-3 py-2 ${col.align === 'center' ? 'text-center' : ''} ${col.primary ? 'text-blue-600 font-medium' : ''
+                    }`}
                 >
                   {col.render ? col.render(item[col.key], item) : item[col.key]}
                 </td>
@@ -37,8 +36,7 @@ const DataTable = ({ columns, data, onEdit, onDelete, actions = true }) => {
                   <div className="flex justify-center gap-3">
                     <button
                       onClick={() => onEdit(item)}
-                      className="text-blue-600 hover:text-blue-800
-                      opacity-0 group-hover:opacity-100 transition"
+                      className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                       title="Edit"
                     >
                       <Pencil size={16} />
@@ -46,8 +44,7 @@ const DataTable = ({ columns, data, onEdit, onDelete, actions = true }) => {
 
                     <button
                       onClick={() => onDelete(item)}
-                      className="text-red-600 hover:text-red-800
-                      opacity-0 group-hover:opacity-100 transition"
+                      className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                       title="Delete"
                     >
                       <Trash2 size={16} />

@@ -127,10 +127,36 @@ export const printReport = ({
 
                 <script>
                     window.onload = function() {
-                        setTimeout(() => {
-                            window.print();
-                            window.close();
-                        }, 500);
+                        const images = document.getElementsByTagName('img');
+                        let loadedCount = 0;
+                        const totalImages = images.length;
+
+                        const doPrint = () => {
+                            setTimeout(() => {
+                                window.print();
+                                window.close();
+                            }, 500);
+                        };
+
+                        if (totalImages === 0) {
+                            doPrint();
+                        } else {
+                            for (let i = 0; i < totalImages; i++) {
+                                if (images[i].complete) {
+                                    loadedCount++;
+                                    if (loadedCount === totalImages) doPrint();
+                                } else {
+                                    images[i].onload = () => {
+                                        loadedCount++;
+                                        if (loadedCount === totalImages) doPrint();
+                                    };
+                                    images[i].onerror = () => {
+                                        loadedCount++;
+                                        if (loadedCount === totalImages) doPrint();
+                                    };
+                                }
+                            }
+                        }
                     };
                 </script>
             </body>

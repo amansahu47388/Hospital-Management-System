@@ -36,7 +36,7 @@ export default function Charges() {
 
       <div className="min-h-screen p-4 md:p-6">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="px-5 py-4 border-b flex justify-between items-center">
+          <div className="px-5 py-4 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-800">Charges</h2>
             <span className="text-xs px-3 py-1 rounded-full bg-indigo-100 text-indigo-700">
               Total Records: {data.length}
@@ -67,7 +67,7 @@ export default function Charges() {
                 </thead>
                 <tbody>
                   {data.map((c) => (
-                    <tr key={c.id} className="border-t hover:bg-indigo-50/40 transition">
+                    <tr key={c.id} className="border-b border-gray-200 hover:bg-indigo-50/40 transition">
                       <td className="p-4 font-medium text-gray-800">{c.charge_name}</td>
                       <td className="px-2 py-3 text-left">{c.charge_category}</td>
                       <td className="px-2 py-3 text-left">{c.charge_type}</td>

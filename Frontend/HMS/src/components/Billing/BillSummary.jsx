@@ -119,8 +119,8 @@ const BillSummary = ({ isOpen, onClose, charges, payments }) => {
                 <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
                     <h3 className="text-lg font-semibold">Bill Summary</h3>
                     <div className="flex items-center gap-3">
-                        <Printer className="cursor-pointer hover:opacity-80" onClick={handlePrint} />
-                        <X className="cursor-pointer hover:opacity-80 text-xl" onClick={onClose} />
+                        <Printer size={20} className="cursor-pointer hover:opacity-80" onClick={handlePrint} />
+                        <X size={20} className="cursor-pointer hover:opacity-80 text-xl" onClick={onClose} />
                     </div>
                 </div>
 

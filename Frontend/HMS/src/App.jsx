@@ -12,8 +12,10 @@ import PatientDashboard from "./pages/PatientModule/patientDashboard";
 import PatientDetail from "./pages/PatientModule/patientDetail";
 import UserLogin from "./pages/account/UserLogin";
 import UserSignup from "./pages/account/UserSignup";
-import AdminSignup from "./pages/account/AdminSignup";
+// import AdminSignup from "./pages/account/AdminSignup"; // DISABLED - Use Staff Management instead
 import AdminLogin from "./pages/account/AdminLogin";
+import FirstLoginPasswordChange from "./pages/account/FirstLoginPasswordChange";
+import StaffManagement from "./pages/AdminModule/StaffManagement";
 import ForgotPassword from "./pages/account/ForgotPassword";
 import ResetPassword from "./pages/account/ResetPassword";
 import Appointment from "./pages/AppointmentModule/Appointment";
@@ -174,11 +176,17 @@ function App() {
               <Route path="/admin/profile" element={<AdminProfile />} />
             </Route>
 
+            {/* Staff Management Routes (Admin Only) */}
+            <Route element={<ProtectedRoute allowedRoles={ADMIN_ONLY} />}>
+              <Route path="/admin/staff-management" element={<StaffManagement />} />
+            </Route>
+
             {/* Auth Routes */}
             <Route path="/login" element={<UserLogin />} />
             <Route path="/signup" element={<UserSignup />} />
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/signup" element={<AdminSignup />} />
+            {/* <Route path="/admin/signup" element={<AdminSignup />} /> */} {/* DISABLED - Use Staff Management */}
+            <Route path="/first-login-password-change" element={<FirstLoginPasswordChange />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
 

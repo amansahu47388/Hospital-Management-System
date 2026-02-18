@@ -157,7 +157,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                 <div className="lg:col-span-2 space-y-5">
                                     {/* PATIENT INFORMATION CARD */}
                                     {patientDetail && (
-                                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 shadow-sm transition-all hover:shadow-md">
+                                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-300 shadow-sm transition-all hover:shadow-md">
                                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                                 {/* LEFT SIDE DETAILS */}
                                                 <div className="space-y-3">
@@ -190,7 +190,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                                         </p>
                                                     </div>
 
-                                                    <div className="mt-4 pt-4 border-t border-gray-200">
+                                                    <div className="mt-4 pt-4 border-t border-gray-300">
                                                         <p className="flex items-center gap-2 text-gray-700 text-sm">
                                                             <Mail size={16} className="text-[#8A63D2]" />
                                                             <strong>Email:</strong> {patientDetail?.email || "N/A"}
@@ -231,7 +231,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <div>
                                             <label className="block text-sm font-bold text-gray-700 mb-1">Symptoms Type</label>
                                             <select
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
                                                 value={formData.symptom_type}
                                                 onChange={(e) => {
                                                     setFormData(prev => ({
@@ -251,7 +251,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <div>
                                             <label className="block text-sm font-bold text-gray-700 mb-1">Symptoms Title</label>
                                             <select
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
                                                 value={formData.symptom}
                                                 onChange={(e) => {
                                                     const sym = symptoms.find(s => s.id === Number(e.target.value));
@@ -276,7 +276,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <div className="col-span-full">
                                             <label className="block text-sm font-bold text-gray-700 mb-1">Symptoms Description</label>
                                             <textarea
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm bg-gray-50 focus:ring-2 focus:ring-[#8A63D2] outline-none min-h-[80px]"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm bg-gray-50 focus:ring-1 focus:ring-[#8A63D2] outline-none min-h-[80px]"
                                                 value={formData.symptom_description}
                                                 readOnly
                                                 placeholder="Description will appear here..."
@@ -289,7 +289,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <div>
                                             <label className="block text-sm font-bold text-gray-700 mb-1">Any Known Allergies</label>
                                             <textarea
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none min-h-[80px]"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none min-h-[80px]"
                                                 placeholder="List any known allergies..."
                                                 value={formData.allergies}
                                                 onChange={(e) => update("allergies", e.target.value)}
@@ -298,7 +298,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <div>
                                             <label className="block text-sm font-bold text-gray-700 mb-1">Previous Medical Issue</label>
                                             <textarea
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none min-h-[80px]"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none min-h-[80px]"
                                                 placeholder="Previous medical issues..."
                                                 value={formData.previous_medical_issue}
                                                 onChange={(e) => update("previous_medical_issue", e.target.value)}
@@ -315,7 +315,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <label className="block text-xs font-bold text-gray-700 mb-1 uppercase">Admission Date <span className="text-red-500">*</span></label>
                                         <input
                                             type="datetime-local"
-                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none"
+                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
                                             value={formData.admission_date}
                                             onChange={(e) => update("admission_date", e.target.value)}
                                         />
@@ -327,7 +327,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                             name="doctor"
                                             value={formData.doctor}
                                             onChange={handleInputChange}
-                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none bg-white"
+                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none bg-white"
                                             required
                                         >
                                             <option value="">Select Doctor</option>
@@ -343,7 +343,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <div>
                                             <label className="block text-xs font-bold text-gray-700 mb-1 uppercase">Casualty</label>
                                             <select
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none bg-white"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none bg-white"
                                                 value={formData.casualty}
                                                 onChange={(e) => update("casualty", e.target.value === "true")}
                                             >
@@ -354,7 +354,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                         <div>
                                             <label className="block text-xs font-bold text-gray-700 mb-1 uppercase">Old Patient</label>
                                             <select
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none bg-white"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none bg-white"
                                                 value={formData.old_patient}
                                                 onChange={(e) => update("old_patient", e.target.value === "true")}
                                             >
@@ -369,7 +369,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                             <label className="block text-xs font-bold text-gray-700 mb-1 uppercase">Reference</label>
                                             <input
                                                 placeholder="Reference"
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
                                                 value={formData.reference}
                                                 onChange={(e) => update("reference", e.target.value)}
                                             />
@@ -379,7 +379,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                             <input
                                                 type="number"
                                                 placeholder="Limit"
-                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none"
+                                                className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
                                                 value={formData.credit_limit}
                                                 onChange={(e) => update("credit_limit", e.target.value)}
                                             />
@@ -389,7 +389,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1 uppercase text-xs">Bed Type & Floor</label>
                                         <select
-                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none bg-white font-medium"
+                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none bg-white font-medium"
                                             value={formData.bed_type}
                                             onChange={(e) => {
                                                 setFormData(prev => ({
@@ -415,7 +415,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                                             value={formData.bed}
                                             onChange={handleInputChange}
                                             disabled={!formData.bed_type}
-                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-2 focus:ring-[#8A63D2] outline-none bg-white font-medium"
+                                            className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none bg-white font-medium"
                                         >
                                             <option value="">Select</option>
                                             {beds
@@ -432,7 +432,7 @@ export default function MovePatientModal({ open, patient, onClose }) {
                         </div>
 
                         {/* ================= FOOTER ================= */}
-                        <div className="bg-gray-100 px-6 py-4 flex justify-end gap-3 border-t">
+                        <div className="bg-gray-100 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
                             <button
                                 type="button"
                                 onClick={onClose}

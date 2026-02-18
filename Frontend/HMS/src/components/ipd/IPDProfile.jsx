@@ -88,7 +88,7 @@ export default function IPDProfile({ patient, onClose, onSave }) {
           <div className="flex justify-end mb-6">
             <button
               onClick={() => setEditMode(!editMode)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#6046B5] text-white rounded-lg hover:bg-purple-700 transition-all font-semibold shadow-md active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 bg-[#6046B5] text-white rounded-lg hover:bg-[#6046B5] transition-all font-semibold shadow-md active:scale-95"
             >
               {editMode ? <Eye size={18} /> : <EyeOff size={18} />}
               {editMode ? "Switch to View Mode" : "Switch to Edit Mode"}
@@ -105,17 +105,17 @@ export default function IPDProfile({ patient, onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* First Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">First Name</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">First Name</label>
                   {editMode ? (
                     <input
                       type="text"
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.firstName || "N/A"}
                     </div>
                   )}
@@ -123,17 +123,17 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Last Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Last Name</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Last Name</label>
                   {editMode ? (
                     <input
                       type="text"
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.lastName || "N/A"}
                     </div>
                   )}
@@ -141,20 +141,20 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Gender */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Gender</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Gender</label>
                   {editMode ? (
                     <select
                       name="gender"
                       value={formData.gender}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     >
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value="Other">Other</option>
                     </select>
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.gender}
                     </div>
                   )}
@@ -162,7 +162,7 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Age */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Age</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Age</label>
                   <div className="px-4 py-2.5 bg-gray-100 rounded-xl text-gray-500 font-medium italic">
                     {formData.age} (Read-only)
                   </div>
@@ -170,13 +170,13 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Blood Group */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Blood Group</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Blood Group</label>
                   {editMode ? (
                     <select
                       name="bloodGroup"
                       value={formData.bloodGroup}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     >
                       <option value="A+">A+</option>
                       <option value="A-">A-</option>
@@ -188,7 +188,7 @@ export default function IPDProfile({ patient, onClose, onSave }) {
                       <option value="O-">O-</option>
                     </select>
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.bloodGroup}
                     </div>
                   )}
@@ -196,13 +196,13 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Marital Status */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Marital Status</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Marital Status</label>
                   {editMode ? (
                     <select
                       name="maritalStatus"
                       value={formData.maritalStatus}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     >
                       <option value="Single">Single</option>
                       <option value="Married">Married</option>
@@ -210,7 +210,7 @@ export default function IPDProfile({ patient, onClose, onSave }) {
                       <option value="Widowed">Widowed</option>
                     </select>
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.maritalStatus}
                     </div>
                   )}
@@ -226,17 +226,17 @@ export default function IPDProfile({ patient, onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Phone */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Phone Number</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Phone Number</label>
                   {editMode ? (
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.phone}
                     </div>
                   )}
@@ -244,17 +244,17 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Email */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Email Address</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Email Address</label>
                   {editMode ? (
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.email}
                     </div>
                   )}
@@ -262,17 +262,17 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Address */}
                 <div className="md:col-span-2 space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Residential Address</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Residential Address</label>
                   {editMode ? (
                     <textarea
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
                       rows="2"
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-gray-50/30 resize-none"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.address}
                     </div>
                   )}
@@ -288,17 +288,17 @@ export default function IPDProfile({ patient, onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Guardian Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Guardian Name</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Guardian Name</label>
                   {editMode ? (
                     <input
                       type="text"
                       name="guardianName"
                       value={formData.guardianName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.guardianName}
                     </div>
                   )}
@@ -306,7 +306,7 @@ export default function IPDProfile({ patient, onClose, onSave }) {
 
                 {/* Known Allergies */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Known Allergies</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Known Allergies</label>
                   {editMode ? (
                     <input
                       type="text"
@@ -314,10 +314,10 @@ export default function IPDProfile({ patient, onClose, onSave }) {
                       value={formData.knownAllergies}
                       onChange={handleInputChange}
                       placeholder="e.g. Dust, Peanuts, Penicillin"
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.knownAllergies || "None reported"}
                     </div>
                   )}
@@ -330,34 +330,34 @@ export default function IPDProfile({ patient, onClose, onSave }) {
               <h3 className="text-lg font-bold text-gray-900 mb-6">Symptoms & Observations</h3>
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Current Symptoms</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Current Symptoms</label>
                   {editMode ? (
                     <textarea
                       name="symptoms"
                       value={formData.symptoms}
                       onChange={handleInputChange}
                       rows="3"
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 leading-relaxed font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.symptoms || "No symptoms recorded."}
                     </div>
                   )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Medical Remarks</label>
+                  <label className="text-sm font-bold text-gray-600 px-1">Medical Remarks</label>
                   {editMode ? (
                     <textarea
                       name="remarks"
                       value={formData.remarks}
                       onChange={handleInputChange}
                       rows="3"
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-100 outline-none transition-all bg-gray-50/30"
+                      className="w-full px-4 py-2 border border-gray-200 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   ) : (
-                    <div className="px-4 py-2.5 bg-gray-50 rounded-xl text-gray-700 leading-relaxed font-medium">
+                    <div className="px-4 py-2 bg-gray-50 rounded text-gray-300 font-medium">
                       {formData.remarks || "No additional remarks."}
                     </div>
                   )}
@@ -379,7 +379,7 @@ export default function IPDProfile({ patient, onClose, onSave }) {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white rounded-xl hover:shadow-lg hover:shadow-purple-100 transition-all font-bold shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-8 py-2 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white rounded-xl hover:shadow-lg hover:shadow-purple-100 transition-all font-bold shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? (
                 <>

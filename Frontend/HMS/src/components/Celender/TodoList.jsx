@@ -17,9 +17,9 @@ export default function TodoList({ tasks, onAddClick, onDelete, readOnly }) {
 
       <ul className="space-y-2 text-sm">
         {tasks.map((t) => (
-          <li key={t.id} className="flex justify-between items-center">
+          <li key={t.id} className="flex justify-between items-center border-b border-gray-300">
             <div>
-              <p className="text-orange-600">{t.title}</p>
+              <p className="text-purple-600">{t.title}</p>
               <span className="text-xs text-gray-500">{t.date}</span>
             </div>
             {!readOnly && (

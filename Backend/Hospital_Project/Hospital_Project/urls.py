@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('users.urls')),
+    path('api/auth/', include('users.urls')),  # Added /api/ prefix
     path('api/admin/', include('patient_module.urls')),
     path('api/admin/', include('admin_module.urls')),
     path('api/admin/appointments/', include('appointment_module.urls')),

@@ -40,8 +40,23 @@ export default function AddBirthRecord({ open, onClose, onSuccess }) {
 
   const handleSubmit = async () => {
     // Validation
-    if (!form.childName || !form.gender || !form.birthDate || !form.motherName) {
-      notify("error", "Please fill in all required fields");
+    if (!form.childName) {
+      notify("error", "Child name is required");
+      return;
+    }
+
+    if (!form.gender) {
+      notify("error", "Gender is required");
+      return;
+    }
+
+    if (!form.birthDate) {
+      notify("error", "Birth date is required");
+      return;
+    }
+
+    if (!form.motherName) {
+      notify("error", "Mother name is required");
       return;
     }
 
@@ -113,24 +128,27 @@ export default function AddBirthRecord({ open, onClose, onSuccess }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
             <Input
-              label="Child Name *"
+              label="Child Name"
               name="childName"
               value={form.childName}
               onChange={handleChange}
+              required
             />
 
             <Select
-              label="Gender *"
+              label="Gender"
               name="gender"
               value={form.gender}
               onChange={handleChange}
+              required
             />
 
             <Input
-              label="Weight *"
+              label="Weight"
               name="weight"
               value={form.weight}
               onChange={handleChange}
+              required
             />
 
             <Upload
@@ -140,11 +158,12 @@ export default function AddBirthRecord({ open, onClose, onSuccess }) {
             />
 
             <Input
-              label="Birth Date *"
+              label="Birth Date "
               type="datetime-local"
               name="birthDate"
               value={form.birthDate}
               onChange={handleChange}
+              required
             />
 
             <Input
@@ -170,10 +189,11 @@ export default function AddBirthRecord({ open, onClose, onSuccess }) {
             />
 
             <Input
-              label="Mother Name *"
+              label="Mother Name"
               name="motherName"
               value={form.motherName}
               onChange={handleChange}
+              required
             />
 
             <Upload
@@ -211,12 +231,12 @@ export default function AddBirthRecord({ open, onClose, onSuccess }) {
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-6 py-4 border-t">
+        <div className="flex justify-end px-6 py-4 border-t border-gray-300">
           <button
             onClick={handleSubmit}
             className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded flex items-center gap-2"
           >
-            ✓ Save
+          Save
           </button>
         </div>
       </div>
@@ -226,16 +246,18 @@ export default function AddBirthRecord({ open, onClose, onSuccess }) {
 
 /* ---------------- FIELD COMPONENTS ---------------- */
 
-function Input({ label, name, value, onChange, type = "text", className = "" }) {
+function Input({ label, name, value, onChange, type = "text", className = "", required }) {
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
-      <label className="text-sm font-medium">{label}</label>
+      <label className="text-sm font-medium">{label} 
+        {required && <span className="text-red-500">*</span>}
+      </label>
       <input
         type={type}
         name={name}
         value={value}
         onChange={onChange}
-        className="border rounded px-3 py-2 text-sm"
+        className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
       />
     </div>
   );
@@ -249,7 +271,7 @@ function Select({ label, name, value, onChange }) {
         name={name}
         value={value}
         onChange={onChange}
-        className="border rounded px-3 py-2 text-sm"
+        className="w-full border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
       >
         <option value="">Select</option>
         <option value="Male">Male</option>
@@ -263,7 +285,7 @@ function Upload({ label, name, onChange }) {
   return (
     <div className="flex flex-col gap-1">
       <label className="text-sm font-medium">{label}</label>
-      <label className="border rounded px-3 py-2 flex items-center gap-2 text-gray-500 text-sm cursor-pointer">
+      <label className="border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 flex items-center gap-2 text-gray-500 text-sm cursor-pointer">
         <UploadCloud size={16} />
         Drop a file here or click
         <input

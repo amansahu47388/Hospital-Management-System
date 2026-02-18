@@ -143,10 +143,16 @@ export default function AddRadiologyTest({ open, onClose }) {
     setErrors({});
 
     const validationErrors = {};
-    if (!formData.test_name) validationErrors.test_name = "Required";
-    if (!formData.short_name) validationErrors.short_name = "Required";
+    if (!formData.test_name) validationErrors.test_name = "Test name is required";
+    if (!formData.short_name) validationErrors.short_name = "Short name is required";
+    if (!formData.category) validationErrors.category = "Category is required";
+    if (!formData.report_days) validationErrors.report_days = "Report days is required";
+    if (!formData.charges) validationErrors.charges = "Charges is required";
     if (!formData.standard_charge || Number(formData.standard_charge) <= 0)
       validationErrors.standard_charge = "Charge must be greater than 0";
+    if (!formData.amount || Number(formData.amount) <= 0)
+      validationErrors.amount = "Amount must be greater than 0";
+    if (!formData.parameters.length) validationErrors.parameters = "Parameters are required";
 
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
@@ -346,6 +352,7 @@ export default function AddRadiologyTest({ open, onClose }) {
                 value={formData.tax}
                 onChange={handleChange}
                 error={errors.tax}
+                required
               />
               <FormField
                 label="standard Charge($)"
@@ -354,6 +361,7 @@ export default function AddRadiologyTest({ open, onClose }) {
                 value={formData.standard_charge}
                 onChange={handleChange}
                 error={errors.standard_charge}
+                required
               />
               <FormField
                 label="Amount($)"
@@ -363,6 +371,7 @@ export default function AddRadiologyTest({ open, onClose }) {
                 onChange={handleChange}
                 error={errors.amount}
                 disabled
+                required
               />
             </div>
 
@@ -403,7 +412,7 @@ export default function AddRadiologyTest({ open, onClose }) {
                       onChange={(e) =>
                         handleParameterChange(index, "reference_range", e.target.value)
                       }
-                      className="w-full border border-gray-300 px-3 py-2 rounded"
+                      className="w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
                     />
                   </div>
 
@@ -416,7 +425,7 @@ export default function AddRadiologyTest({ open, onClose }) {
                       onChange={(e) =>
                         handleParameterChange(index, "unit", e.target.value)
                       }
-                      className="w-full border border-gray-300 px-3 py-2 rounded"
+                      className="border border-gray-300 px-3 py-1 rounded focus:ring-0.5 focus:ring-[#6046B5] outline-none w-full"
                     />
                   </div>
 
@@ -426,7 +435,7 @@ export default function AddRadiologyTest({ open, onClose }) {
                       <button
                         type="button"
                         onClick={() => removeParameterRow(index)}
-                        className="text-red-600 hover:bg-red-100 p-2 rounded"
+                        className="text-red-600 hover:bg-red-100 p-2 rounded "
                       >
                         <X size={16} />
                       </button>
@@ -482,7 +491,7 @@ function FormField({ label, name, type = "text", value, onChange, error, require
         name={name}
         value={value}
         onChange={onChange}
-        className={`${className} w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none ${error ? "border-red-500" : "border-gray-400"
+        className={`${className} w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${error ? "border-red-500" : "border-gray-400"
           }`}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
@@ -490,15 +499,17 @@ function FormField({ label, name, type = "text", value, onChange, error, require
   );
 }
 
-function SelectField({ label, name, value, onChange, options, children }) {
+function SelectField({ label, name, value, onChange, options, children, required = false }) {
   return (
     <div>
-      <label className="block font-medium text-gray-700 mb-2">{label}</label>
+      <label className="block font-medium text-gray-700 mb-2">{label}
+        {required && <span className="text-red-500"> *</span>}
+      </label>
       <select
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-400 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
       >
         {options && options.length > 0 ? (
           options.map((opt) => (
@@ -523,7 +534,7 @@ function TextAreaField({ label, name, value, onChange, rows = "3" }) {
         value={value}
         onChange={onChange}
         rows={rows}
-        className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
       />
     </div>
   );

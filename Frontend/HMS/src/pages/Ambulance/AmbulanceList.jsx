@@ -95,16 +95,8 @@ export default function AmbulanceList() {
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2 text-sm w-full md:w-64"
+              className="border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-1"
             />
-
-            <div className="flex items-center gap-3 text-gray-600">
-              <span className="text-sm">100</span>
-              <Copy size={16} className="cursor-pointer" />
-              <FileText size={16} className="cursor-pointer" />
-              <FileSpreadsheet size={16} className="cursor-pointer" />
-              <Printer size={16} className="cursor-pointer" />
-            </div>
           </div>
 
           {/* TABLE */}
@@ -141,7 +133,7 @@ export default function AmbulanceList() {
                   filteredData.map((ambulance) => (
                     <tr
                       key={ambulance.id}
-                      className="border-b border-gray-200 hover:bg-gray-50"
+                      className="border-b border-gray-200 hover:bg-gray-100"
                     >
                       <td className="px-3 py-2 text-blue-600 cursor-pointer">
                         {ambulance.vehicle_number}
@@ -160,14 +152,14 @@ export default function AmbulanceList() {
                               setSelectedId(ambulance.id);
                               setEditOpen(true);
                             }}
-                            className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                            className="p-1 text-purple-600 hover:bg-purple-100 rounded"
                           >
                             <Pencil size={16} />
                           </button>
 
                           <button
                             onClick={() => handleDelete(ambulance.id)}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded"
+                            className="p-1 text-red-600 hover:bg-red-100 rounded"
                             title="Delete"
                           >
                             <Trash2 size={16} />

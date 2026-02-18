@@ -33,7 +33,7 @@ export default function AddBedGroup({ open, onClose, editData, refresh }) {
         setFloors(floorRes.data);
         setBedTypes(bedTypeRes.data);
       } catch {
-        notify( "error", "Failed to load floor or bed type data");
+        notify("error", "Failed to load floor or bed type data");
       }
     };
 
@@ -62,7 +62,7 @@ export default function AddBedGroup({ open, onClose, editData, refresh }) {
   /* ---------- SUBMIT ---------- */
   const handleSubmit = async () => {
     if (!name || !floor || !bedType) {
-      notify( "warning", "Name, Floor and Bed Type are required");
+      notify("warning", "Name, Floor and Bed Type are required");
       return;
     }
 
@@ -78,7 +78,7 @@ export default function AddBedGroup({ open, onClose, editData, refresh }) {
 
       if (editData?.id) {
         await updateBedGroup(editData.id, payload);
-        notify( "success", "Bed group updated successfully");
+        notify("success", "Bed group updated successfully");
       } else {
         await createBedGroup(payload);
         notify("success", "Bed group created successfully");
@@ -112,20 +112,20 @@ export default function AddBedGroup({ open, onClose, editData, refresh }) {
         <div className="p-4 space-y-3">
 
           <div>
-            <label className="text-sm font-medium">Name *</label>
+            <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Floor *</label>
+            <label className="text-sm font-medium">Floor <span className="text-red-500">*</span></label>
             <select
               value={floor}
               onChange={(e) => setFloor(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option value="">Select</option>
               {floors.map((f) => (
@@ -137,11 +137,11 @@ export default function AddBedGroup({ open, onClose, editData, refresh }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Bed Type *</label>
+            <label className="text-sm font-medium">Bed Type <span className="text-red-500">*</span></label>
             <select
               value={bedType}
               onChange={(e) => setBedType(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option value="">Select</option>
               {bedTypes.map((bt) => (
@@ -157,14 +157,14 @@ export default function AddBedGroup({ open, onClose, editData, refresh }) {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 border-t bg-gray-50">
+        <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

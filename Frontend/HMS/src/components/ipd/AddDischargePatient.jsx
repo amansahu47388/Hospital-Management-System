@@ -242,7 +242,7 @@ function AddDischargePatient({ open, onClose, ipd, onDischarged }) {
                 <div className="grid md:grid-cols-1">
                 <label className="block font-semibold text-gray-700 ">Attachment</label>
                 <input type="file" name="attachment" accept="image/*" onChange={handleChange}
-                className="w-full border-2 border-gray-600 px-3 py-2 rounded focus:border-purple-500 outline-none transition" />
+                className="w-full border-2 border-gray-300 px-3 py-2 rounded focus:border-[#6046B5] outline-none transition" />
                 {attachmentPreview && <img src={attachmentPreview} alt="preview" className="w-16 h-16 border" />}
                 </div>
                 <FormField label="Report" name="report" value={formData.report} onChange={handleChange} error={errors.report} />
@@ -263,9 +263,6 @@ function AddDischargePatient({ open, onClose, ipd, onDischarged }) {
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="border px-4 py-2 rounded">
-              Cancel
-            </button>
             <button type="submit" disabled={loading} className="bg-[#6046B5] text-white px-6 py-2 rounded">
               {loading ? "Discharging..." : "Discharge Patient"}
             </button>
@@ -283,7 +280,7 @@ const FormField = ({ label, error, required, ...props }) => (
     <label className="font-medium">
       {label} {required && <span className="text-red-500 ">*</span>}
     </label>
-    <input {...props} className="w-full border px-3 py-2 rounded  border-gray-200" />
+    <input {...props} className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none" />
     {error && <p className="text-red-500 text-xs">{error}</p>}
   </div>
 );
@@ -293,7 +290,7 @@ const SelectField = ({ label, options, error, required, ...props }) => (
     <label className="font-medium">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
-    <select {...props} className="w-full border-gray-200 px-3 py-2 rounded">
+    <select {...props} className="w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#6046B5] outline-none">
       {options.map(o => (
         <option key={o.value} value={o.value}>{o.label}</option>
       ))}

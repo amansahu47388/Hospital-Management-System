@@ -104,11 +104,11 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
           {/* ROW 1 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">Item Category *</label>
+              <label className="text-sm font-medium">Item Category <span className="text-red-500">*</span></label>
               <select
                 value={form.category}
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               >
                 <option value="">Select</option>
                 {categories.map((c) => (
@@ -118,11 +118,11 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium">Item *</label>
+              <label className="text-sm font-medium">Item <span className="text-red-500">*</span></label>
               <select
                 value={form.item}
                 onChange={(e) => setForm({ ...form, item: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               >
                 <option value="">Select</option>
                 {filteredItems.map((i) => (
@@ -135,11 +135,11 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
           {/* ROW 2 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">Supplier *</label>
+              <label className="text-sm font-medium">Supplier <span className="text-red-500">*</span></label>
               <select
                 value={form.supplier}
                 onChange={(e) => setForm({ ...form, supplier: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               >
                 <option value="">Select</option>
                 {suppliers.map((s) => (
@@ -149,11 +149,11 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium">Store *</label>
+              <label className="text-sm font-medium">Store <span className="text-red-500">*</span></label>
               <select
                 value={form.store}
                 onChange={(e) => setForm({ ...form, store: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               >
                 <option value="">Select</option>
                 {stores.map((s) => (
@@ -166,32 +166,32 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
           {/* ROW 3 */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="text-sm font-medium">Quantity * {form.available_quantity}</label>
+              <label className="text-sm font-medium">Quantity <span className="text-red-500">*</span> {form.available_quantity}</label>
               <input
                 type="number"
                 value={form.quantity}
                 onChange={(e) => setForm({ ...form, quantity: e.target.value })}
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium">Purchase Price *</label>
+              <label className="text-sm font-medium">Purchase Price <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 value={form.purchase_price}
                 onChange={(e) => setForm({ ...form, purchase_price: e.target.value })}
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium">Stock Date *</label>
+              <label className="text-sm font-medium">Stock Date <span className="text-red-500">*</span></label>
               <input
                 type="date"
                 value={form.stock_date}
                 onChange={(e) => setForm({ ...form, stock_date: e.target.value })}
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
               />
             </div>
           </div>
@@ -201,7 +201,7 @@ export default function UpdateItemStock({ open, stock, onClose, refresh }) {
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full border px-3 py-2 rounded mt-1"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 

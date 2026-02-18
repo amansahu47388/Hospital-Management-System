@@ -93,7 +93,7 @@ export default function OPDLabInvestigation() {
 
             <div className="min-h-screen p-4 md:p-6 ">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div className="px-5 py-4 border-b flex justify-between items-center">
+                    <div className="px-5 py-4 flex justify-between items-center">
                         <h2 className="text-lg font-semibold text-gray-800">Lab Investigation</h2>
                     </div>
 
@@ -104,25 +104,25 @@ export default function OPDLabInvestigation() {
                             </div>
                         ) : (
                             <table className="w-full text-sm">
-                                <thead className="bg-gray-100 text-gray-600">
+                                <thead className="bg-gray-200 text-gray-600">
                                     <tr>
-                                        <th className="p-4 text-left">Test</th>
-                                        <th className="p-4 text-left">Type</th>
-                                        <th className="p-4 text-left">Sample Collection Date</th>
-                                        <th className="p-4 text-left">Report Date</th>
-                                        <th className="p-4 text-left">Payment Status</th>
-                                        <th className="p-4 text-center">Action</th>
+                                        <th className="px-3 py-2 text-left">Test</th>
+                                        <th className="px-3 py-2 text-left">Type</th>
+                                        <th className="px-3 py-2 text-left">Sample Collection Date</th>
+                                        <th className="px-3 py-2 text-left">Report Date</th>
+                                        <th className="px-3 py-2 text-left">Payment Status</th>
+                                        <th className="px-3 py-2 text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {labData.length > 0 ? labData.map((d, i) => (
-                                        <tr key={i} className="border-t hover:bg-indigo-50/40 transition">
-                                            <td className="p-4 font-medium text-[#6046B5]">{d.test}</td>
-                                            <td className="p-4">{d.type}</td>
-                                            <td className="p-4">{formatDate(d.sampleCollectionDate)}</td>
-                                            <td className="p-4">{d.reportDate !== "N/A" ? new Date(d.reportDate).toLocaleDateString('en-GB') : "N/A"}</td>
-                                            <td className="p-4 capitalize">{d.status}</td>
-                                            <td className="p-4 text-center">
+                                        <tr key={i} className="border-b border-gray-200 hover:bg-indigo-50/40 transition">
+                                            <td className="px-3 py-2 font-medium text-[#6046B5]">{d.test}</td>
+                                            <td className="px-3 py-2">{d.type}</td>
+                                            <td className="px-3 py-2">{formatDate(d.sampleCollectionDate)}</td>
+                                            <td className="px-3 py-2">{d.reportDate !== "N/A" ? new Date(d.reportDate).toLocaleDateString('en-GB') : "N/A"}</td>
+                                            <td className="px-3 py-2 capitalize">{d.status}</td>
+                                            <td className="px-3 py-2 text-center">
                                                 <button
                                                     onClick={() => handleOpenModal(d)}
                                                     className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-full transition"
@@ -148,7 +148,7 @@ export default function OPDLabInvestigation() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
                         {/* Modal Header */}
-                        <div className="bg-[#6046B5] p-5 flex justify-between items-center text-white shrink-0">
+                        <div className="bg-[#6046B5] px-3 py-2 flex justify-between items-center text-white shrink-0">
                             <div className="flex items-center gap-3">
                                 {selectedLab.type === "Pathology" ? (
                                     <FlaskConical className="p-2 bg-white/20 rounded-lg" size={40} />
@@ -274,14 +274,14 @@ export default function OPDLabInvestigation() {
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="p-4 border-t bg-gray-50 flex justify-between items-center shrink-0 px-6">
+                        <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center shrink-0 px-6">
                             <div className="flex items-center gap-2 text-gray-500 text-xs">
                                 <Clock size={14} />
                                 Last Updated: {formatDate(selectedLab.updated_at, true)}
                             </div>
                             <button
                                 onClick={handleCloseModal}
-                                className="px-8 py-2.5 bg-[#6046B5] text-white rounded-xl font-bold hover:bg-[#4d3794] transition shadow-lg"
+                                className="px-3 py-2 bg-[#6046B5] text-white rounded hover:bg-[#4d3794] transition shadow-lg"
                             >
                                 Close Report
                             </button>

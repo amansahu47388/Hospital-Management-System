@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import OPDNavbar from "../../components/OPDComponent/OPDNavbar";
-import { Plus, Trash2, Pencil, Loader2, X } from "lucide-react";
+import { Plus, Trash2, Pencil, Loader2, X, CheckCircle } from "lucide-react";
 import {
     getPatientVitals,
     createPatientVital,
@@ -41,7 +41,7 @@ export default function OPDVitals() {
             if (opdId) {
                 setLoading(true);
                 try {
-                    // 1. Fetch IPD Record to get the real Patient ID
+                    // 1. Fetch OPD Record to get the real Patient ID
                     const opdRes = await getOpdPatientDetail(opdId);
                     console.log("📍 Resolved Patient ID:", opdRes.data.patient);
                     setPatientId(opdRes.data.patient);
@@ -245,11 +245,8 @@ export default function OPDVitals() {
 
     return (
         <AdminLayout>
-            <div className="min-h-screen bg-gray-50 pt-1 md:pt-6 pb-6">
-                {/* Navbar */}
-                <div className="mx-4 md:mx-6">
-                    <OPDNavbar activeTab={activeTab} onTabChange={setActiveTab} />
-                </div>
+            <div className="min-h-screen bg-gray-50 pb-6">
+                <OPDNavbar />
 
                 {/* Main Content */}
                 <div className="mx-4 md:mx-6 mt-6">
@@ -259,7 +256,7 @@ export default function OPDVitals() {
                             <h2 className="text-2xl font-bold text-gray-900">Vitals</h2>
                             <button
                                 onClick={() => setShowAddModal(true)}
-                                className=" bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-blue-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg transition font-medium flex items-center gap-2"
+                                className=" bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all shadow-md font-bold flex items-center gap-2"
                             >
                                 <Plus size={20} />
                                 Add Vital
@@ -270,60 +267,62 @@ export default function OPDVitals() {
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
-                                    <tr className="bg-gray-100 text-gray-900 font-semibold">
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">Height<br />(1 - 200 Centimeters)</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">Weight<br />(0 - 150 Kilograms)</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">Pulse<br />(70 - 100 Beats per)</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">Temperature<br />(95.8 - 99.3 Fahrenheit)</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">BP<br />(90/60 - 140/90 mmHg)</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                                    <tr className="bg-gray-100 text-gray-800 font-semibold font-outfit">
+                                        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider bg-gray-200">Date</th>
+                                        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider bg-gray-200">Height (cm)</th>
+                                        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider bg-gray-200">Weight (kg)</th>
+                                        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider bg-gray-200">Pulse (bpm)</th>
+                                        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider bg-gray-200">Temp (°F)</th>
+                                        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider bg-gray-200">BP (mmHg)</th>
+                                        <th className="px-6 py-4 text-center text-sm font-bold uppercase tracking-wider bg-gray-200">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="divide-y divide-gray-100 font-outfit font-medium">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="7" className="px-4 py-8 text-center">
-                                                <div className="flex items-center justify-center gap-2 text-gray-500">
-                                                    <Loader2 className="animate-spin" size={20} />
-                                                    <span>Loading vitals...</span>
+                                            <td colSpan="7" className="px-6 py-12 text-center text-purple-600">
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <Loader2 className="animate-spin" size={24} />
+                                                    <span>Fetching vitals...</span>
                                                 </div>
                                             </td>
                                         </tr>
                                     ) : vitals.length > 0 ? (
                                         vitals.map((vital) => (
-                                            <tr key={vital.id} className="border-b border-gray-200 hover:bg-gray-50">
-                                                <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                                            <tr key={vital.id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="px-6 py-4 text-sm font-bold text-gray-900 border-collapse ">
                                                     {vital.date}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                    {vital.height && `${vital.height} (${vital.time})`}
+                                                <td className="px-6 py-4 text-sm text-gray-600">
+                                                    {vital.height ? `${vital.height}` : "-"} <span className="text-[10px] text-gray-400">({vital.time})</span>
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                    {vital.weight && `${vital.weight}`}
+                                                <td className="px-6 py-4 text-sm text-gray-600">
+                                                    {vital.weight ? `${vital.weight}` : "-"}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                    {vital.pulse && `${vital.pulse} (${vital.time})`}
+                                                <td className="px-6 py-4 text-sm text-gray-600">
+                                                    {vital.pulse ? `${vital.pulse}` : "-"} <span className="text-[10px] text-gray-400">({vital.time})</span>
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                    {vital.temperature && `${vital.temperature}`}
+                                                <td className="px-6 py-4 text-sm text-gray-600">
+                                                    {vital.temperature ? `${vital.temperature}` : "-"}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                    {vital.bp && `${vital.bp}`}
+                                                <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                                    {vital.bp ? `${vital.bp}` : "-"}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                    <div className="flex items-center gap-2">
+                                                <td className="px-6 py-4 text-sm">
+                                                    <div className="flex items-center justify-center gap-2">
                                                         <button
                                                             onClick={() => handleEdit(vital)}
-                                                            className="bg-green-100 p-2 rounded text-green-600"
+                                                            className="hover:bg-purple-100 text-[#6046B5] p-1.5 rounded-md transition shadow-sm"
+                                                            title="Edit"
                                                         >
-                                                            <Pencil size={16} />
+                                                            <Pencil size={18} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteVitals(vital.id)}
-                                                            className="bg-red-100 p-2 rounded text-red-600"
+                                                            className="hover:bg-red-100 text-red-600 p-1.5 rounded-md transition shadow-sm"
+                                                            title="Delete"
                                                         >
-                                                            <Trash2 size={16} />
+                                                            <Trash2 size={18} />
                                                         </button>
                                                     </div>
                                                 </td>
@@ -331,8 +330,8 @@ export default function OPDVitals() {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
-                                                {patientId ? "No vitals recorded yet" : "Resolving Patient..."}
+                                            <td colSpan="7" className="px-6 py-12 text-center text-gray-500 italic">
+                                                {patientId ? "No clinical vitals recorded yet." : "Resolving Patient..."}
                                             </td>
                                         </tr>
                                     )}
@@ -344,24 +343,27 @@ export default function OPDVitals() {
 
                 {/* Add Vital Modal */}
                 {showAddModal && (
-                    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full">
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all animate-in zoom-in duration-200">
                             {/* Header */}
-                            <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 rounded-t-lg flex items-center justify-between">
-                                <h2 className="text-xl font-bold">Add Vital</h2>
+                            <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 flex items-center justify-between">
+                                <h2 className="text-xl font-bold flex items-center gap-2">
+                                    <Plus size={24} />
+                                    Add New Vital
+                                </h2>
                                 <button
                                     onClick={() => setShowAddModal(false)}
-                                    className="text-white hover:bg-white hover:bg-opacity-20 p-1 rounded transition"
+                                    className="text-white hover:bg-white/20 p-1 rounded-full transition-colors"
                                 >
-                                    ✕
+                                    <X size={24} />
                                 </button>
                             </div>
 
                             {/* Form Content */}
-                            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
-                                <div className="mb-4">
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                        Date <span className="text-red-500">*</span>
+                            <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto font-outfit font-medium">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+                                        Assessment Date & Time <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="datetime-local"
@@ -369,42 +371,43 @@ export default function OPDVitals() {
                                         onChange={(e) =>
                                             setNewVitalForm({ ...newVitalForm, vitalDate: e.target.value })
                                         }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none shadow-sm transition-all"
                                     />
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-4">
+                                    <label className="text-sm font-bold text-gray-700 uppercase tracking-wide">Vitals Entry</label>
                                     {newVitalForm.rows.map((row, index) => (
-                                        <div key={index} className="flex gap-3 items-end bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                            <div className="flex-1">
-                                                <label className="block text-xs font-bold text-gray-600 mb-1">Vital Name</label>
+                                        <div key={index} className="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-inner group">
+                                            <div className="flex-1 space-y-1.5">
+                                                <label className="text-[10px] font-bold text-gray-500 uppercase">Metric</label>
                                                 <select
                                                     value={row.vitalName}
                                                     onChange={(e) => handleRowChange(index, "vitalName", e.target.value)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-[#6046B5] outline-none shadow-sm bg-white font-bold"
                                                 >
-                                                    <option value="">Select</option>
+                                                    <option value="">Choose Vital</option>
                                                     {vitalOptions.map((option) => (
                                                         <option key={option} value={option}>{option}</option>
                                                     ))}
                                                 </select>
                                             </div>
-                                            <div className="flex-1">
-                                                <label className="block text-xs font-bold text-gray-600 mb-1">Value</label>
+                                            <div className="flex-1 space-y-1.5 ">
+                                                <label className="text-[10px] font-bold text-gray-500 uppercase">Value</label>
                                                 <input
                                                     type="text"
                                                     value={row.vitalValue}
                                                     onChange={(e) => handleRowChange(index, "vitalValue", e.target.value)}
-                                                    placeholder="Value"
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                                                    placeholder="Measured Result"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-[#6046B5] outline-none shadow-sm font-bold text-[#6046B5]"
                                                 />
                                             </div>
                                             {newVitalForm.rows.length > 1 && (
                                                 <button
                                                     onClick={() => handleRemoveRow(index)}
-                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                    className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-all mb-1 opacity-0 group-hover:opacity-100"
                                                 >
-                                                    <Trash2 size={18} />
+                                                    <Trash2 size={20} />
                                                 </button>
                                             )}
                                         </div>
@@ -412,32 +415,35 @@ export default function OPDVitals() {
 
                                     <button
                                         onClick={handleAddRow}
-                                        className="mt-2 text-[#6046B5] hover:text-[#8A63D2] text-sm font-bold flex items-center gap-1"
+                                        className="mt-2 text-[#6046B5] hover:text-[#8A63D2] text-sm font-bold flex items-center gap-2 group transition-all"
                                     >
-                                        <Plus size={16} /> Add More
+                                        <div className="bg-purple-100 p-1 rounded-md group-hover:bg-[#6046B5] group-hover:text-white transition-colors">
+                                            <Plus size={16} />
+                                        </div>
+                                        Add Another Vital Row
                                     </button>
                                 </div>
                             </div>
 
                             {/* Footer Buttons */}
-                            <div className="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3 border-t border-gray-200">
+                            <div className="bg-gray-50 px-6 py-6 rounded-b-lg flex justify-end gap-3 border-t border-gray-200">
                                 <button
                                     onClick={() => setShowAddModal(false)}
-                                    className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition font-medium text-gray-700 text-sm"
+                                    className="px-8 py-2.5 border border-gray-300 rounded-xl hover:bg-white active:bg-gray-100 transition-all font-bold text-gray-600 text-sm shadow-sm"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleAddVital}
                                     disabled={loading}
-                                    className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+                                    className="px-10 py-2.5 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-xl transition-all font-bold flex items-center gap-2 text-sm shadow-xl active:scale-95 disabled:opacity-50"
                                 >
                                     {loading ? (
-                                        <Loader2 className="animate-spin" size={16} />
+                                        <Loader2 className="animate-spin" size={18} />
                                     ) : (
-                                        <span>✓</span>
+                                        <CheckCircle size={18} />
                                     )}
-                                    Save
+                                    Save Clinical Vitals
                                 </button>
                             </div>
                         </div>
@@ -446,27 +452,30 @@ export default function OPDVitals() {
 
                 {/* Edit Vital Modal */}
                 {editingId !== null && editFormData && (
-                    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full">
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all animate-in zoom-in duration-200">
                             {/* Header */}
-                            <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 rounded-t-lg flex items-center justify-between">
-                                <h2 className="text-xl font-bold">Edit Vital</h2>
+                            <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 flex items-center justify-between">
+                                <h2 className="text-xl font-bold flex items-center gap-2">
+                                    <Pencil size={24} />
+                                    Update Vital Record
+                                </h2>
                                 <button
                                     onClick={() => {
                                         setEditingId(null);
                                         setEditFormData(null);
                                     }}
-                                    className="text-white hover:bg-white hover:bg-opacity-20 p-1 rounded transition"
+                                    className="text-white hover:bg-white/20 p-1 rounded-full transition-colors"
                                 >
-                                    ✕
+                                    <X size={24} />
                                 </button>
                             </div>
 
                             {/* Form Content */}
-                            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
-                                <div className="mb-4">
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                        Date <span className="text-red-500">*</span>
+                            <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto font-medium font-outfit">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+                                        Assessment Date & Time <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="datetime-local"
@@ -474,42 +483,43 @@ export default function OPDVitals() {
                                         onChange={(e) =>
                                             setEditFormData({ ...editFormData, vitalDate: e.target.value })
                                         }
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6046B5]"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#6046B5] outline-none shadow-sm transition-all shadow-sm"
                                     />
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-4">
+                                    <label className="text-sm font-bold text-gray-700 uppercase tracking-wide">Vitals Entry</label>
                                     {editFormData.rows.map((row, index) => (
-                                        <div key={index} className="flex gap-3 items-end bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                            <div className="flex-1">
-                                                <label className="block text-xs font-bold text-gray-600 mb-1">Vital Name</label>
+                                        <div key={index} className="flex gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-inner group">
+                                            <div className="flex-1 space-y-1.5">
+                                                <label className="text-[10px] font-bold text-gray-500 uppercase">Metric</label>
                                                 <select
                                                     value={row.vitalName}
                                                     onChange={(e) => handleEditRowChange(index, "vitalName", e.target.value)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-[#6046B5] outline-none bg-white shadow-sm font-bold"
                                                 >
-                                                    <option value="">Select</option>
+                                                    <option value="">Choose Vital</option>
                                                     {vitalOptions.map((option) => (
                                                         <option key={option} value={option}>{option}</option>
                                                     ))}
                                                 </select>
                                             </div>
-                                            <div className="flex-1">
-                                                <label className="block text-xs font-bold text-gray-600 mb-1">Value</label>
+                                            <div className="flex-1 space-y-1.5 font-bold">
+                                                <label className="text-[10px] font-bold text-gray-500 uppercase font-bold">Value</label>
                                                 <input
                                                     type="text"
                                                     value={row.vitalValue}
                                                     onChange={(e) => handleEditRowChange(index, "vitalValue", e.target.value)}
-                                                    placeholder="Value"
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                                                    placeholder="Measured Result"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-[#6046B5] outline-none shadow-sm font-bold text-[#6046B5]"
                                                 />
                                             </div>
                                             {editFormData.rows.length > 1 && (
                                                 <button
                                                     onClick={() => handleEditRowRemove(index)}
-                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                    className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-all mb-1 opacity-0 group-hover:opacity-100"
                                                 >
-                                                    <Trash2 size={18} />
+                                                    <Trash2 size={20} />
                                                 </button>
                                             )}
                                         </div>
@@ -517,35 +527,38 @@ export default function OPDVitals() {
 
                                     <button
                                         onClick={handleEditRowAdd}
-                                        className="mt-2 text-[#6046B5] hover:text-[#8A63D2] text-sm font-bold flex items-center gap-1"
+                                        className="mt-2 text-[#6046B5] hover:text-[#8A63D2] text-sm font-bold flex items-center gap-2 group transition-all"
                                     >
-                                        <Plus size={16} /> Add More
+                                        <div className="bg-purple-100 p-1 rounded-md group-hover:bg-[#6046B5] group-hover:text-white transition-colors">
+                                            <Plus size={16} />
+                                        </div>
+                                        Add Another Vital Row
                                     </button>
                                 </div>
                             </div>
 
                             {/* Footer Buttons */}
-                            <div className="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3 border-t border-gray-200">
+                            <div className="bg-gray-50 px-6 py-6 rounded-b-lg flex justify-end gap-3 border-t border-gray-200">
                                 <button
                                     onClick={() => {
                                         setEditingId(null);
                                         setEditFormData(null);
                                     }}
-                                    className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition font-medium text-gray-700 text-sm"
+                                    className="px-8 py-2.5 border border-gray-300 rounded-xl hover:bg-white active:bg-gray-100 transition-all font-bold text-gray-600 text-sm shadow-sm"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleSaveEdit}
                                     disabled={loading}
-                                    className="px-6 py-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-lg transition font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+                                    className="px-10 py-2.5 bg-gradient-to-r from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white rounded-xl transition-all font-bold flex items-center gap-2 text-sm shadow-xl active:scale-95 disabled:opacity-50 font-bold"
                                 >
                                     {loading ? (
-                                        <Loader2 className="animate-spin" size={16} />
+                                        <Loader2 className="animate-spin" size={18} />
                                     ) : (
-                                        <span>✓</span>
+                                        <CheckCircle size={18} />
                                     )}
-                                    Save
+                                    Apply Changes
                                 </button>
                             </div>
                         </div>

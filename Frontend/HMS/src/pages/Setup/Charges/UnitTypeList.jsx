@@ -99,7 +99,7 @@ export default function UnitTypeList() {
                 )}
 
                 {units.map((unit) => (
-                  <tr key={unit.id} className=" hover:bg-gray-100 group">
+                  <tr key={unit.id} className=" hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2">
                     <td className="px-3 py-2 font-medium">
                       {unit.unit_type}
                     </td>
@@ -112,7 +112,7 @@ export default function UnitTypeList() {
                             setSelectedUnit(unit);
                             setOpenEdit(true);
                           }}
-                          className="text-purple-500 hover:text-purple-600"
+                          className="text-purple-500 hover:text-purple-600 hover:bg-purple-200 p-1 rounded"
                         >
                           <Pencil size={16} />
                         </button>
@@ -120,7 +120,7 @@ export default function UnitTypeList() {
                         <button
                           title="Delete"
                           onClick={() => handleDelete(unit)}
-                          className="text-red-500 hover:text-red-600"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-200 p-1 rounded"
                         >
                           <Trash2 size={16} />
                         </button>

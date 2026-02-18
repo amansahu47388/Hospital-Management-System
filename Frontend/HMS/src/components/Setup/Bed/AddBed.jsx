@@ -58,7 +58,7 @@ export default function AddBed({ open, onClose, editData, refresh }) {
   /* ---------- SUBMIT ---------- */
   const handleSubmit = async () => {
     if (!bedName || !bedType || !bedGroup) {
-      notify( "warning", "All fields are required");
+      notify("warning", "All fields are required");
       return;
     }
 
@@ -82,7 +82,7 @@ export default function AddBed({ open, onClose, editData, refresh }) {
       refresh();
       onClose();
     } catch {
-      notify( "error", "Save failed");
+      notify("error", "Save failed");
     } finally {
       setLoading(false);
     }
@@ -105,20 +105,20 @@ export default function AddBed({ open, onClose, editData, refresh }) {
         <div className="p-4 space-y-4">
 
           <div>
-            <label className="text-sm font-medium">Name *</label>
+            <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
             <input
               value={bedName}
               onChange={(e) => setBedName(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Bed Type *</label>
+            <label className="text-sm font-medium">Bed Type <span className="text-red-500">*</span></label>
             <select
               value={bedType}
               onChange={(e) => setBedType(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option value="">Select</option>
               {bedTypes.map((bt) => (
@@ -130,11 +130,11 @@ export default function AddBed({ open, onClose, editData, refresh }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Bed Group *</label>
+            <label className="text-sm font-medium">Bed Group <span className="text-red-500">*</span></label>
             <select
               value={bedGroup}
               onChange={(e) => setBedGroup(e.target.value)}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             >
               <option value="">Select</option>
               {bedGroups.map((bg) => (
@@ -148,7 +148,7 @@ export default function AddBed({ open, onClose, editData, refresh }) {
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end px-4 py-3 bg-gray-50">
+        <div className="flex justify-end px-4 py-3 border-t border-gray-300 bg-gray-50">
           <button
             disabled={loading}
             onClick={handleSubmit}

@@ -71,8 +71,8 @@ function Billing() {
             <div className="p-6 relative">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left Side: Single Module Billing */}
-                    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-                        <h2 className="text-xl font-semibold text-gray-700 mb-6 border-b pb-2">
+                    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-300">
+                        <h2 className="text-xl font-semibold text-gray-700 mb-6 border-b border-gray-300 pb-2">
                             Single Module Billing
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -93,7 +93,7 @@ function Billing() {
 
                     {/* Right Side: OPD/IPD Billing Through Case Id */}
                     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 h-fit relative">
-                        <div className="flex justify-between items-center mb-6 border-b pb-2">
+                        <div className="flex justify-between items-center mb-6 border-b border-gray-300 pb-2">
                             <h2 className="text-xl font-semibold text-gray-700">
                                 OPD/IPD Billing Through Case Id
                             </h2>

@@ -66,6 +66,14 @@ export default function RadiologyParameter() {
       notify("error", "Parameter name is required");
       return;
     }
+    if (!form.reference_range.trim()) {
+      notify("error", "Reference range is required");
+      return;
+    }
+    if (!form.unit.trim()) {
+      notify("error", "Unit is required");
+      return;
+    }
 
     setActionLoading(true);
     try {
@@ -151,8 +159,8 @@ export default function RadiologyParameter() {
                 <tbody>
                   {list.length > 0 ? (
                     list.map((p) => (
-                      <tr key={p.id} className="hover:bg-gray-100 border-b border-gray-200">
-                        <td className="px-3 py-2 text-left text-purple-600 font-medium">{p.parameter_name}</td>
+                      <tr key={p.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
+                        <td className="px-3 py-2 text-left">{p.parameter_name}</td>
                         <td className="px-3 py-2 text-left">{p.reference_range}</td>
                         <td className="px-3 py-2 text-left">{p.unit}</td>
                         <td className="px-3 py-2 text-left">{p.description}</td>
@@ -160,13 +168,13 @@ export default function RadiologyParameter() {
                           <div className="flex gap-3">
                             <button
                               onClick={() => openEdit(p)}
-                              className="text-purple-600 hover:text-purple-800"
+                              className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded transition"
                             >
                               <Pencil size={16} />
                             </button>
                             <button
                               onClick={() => handleDelete(p.id)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded transition"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -206,27 +214,27 @@ export default function RadiologyParameter() {
                 </label>
                 <input
                   placeholder="Parameter Name"
-                  className="w-full mt-1 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   value={form.parameter_name}
                   onChange={(e) => setForm({ ...form, parameter_name: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700">Unit</label>
+                <label className="text-sm font-medium text-gray-700">Unit <span className="text-red-500">*</span></label>
                 <input
                   placeholder="Unit"
-                  className="w-full mt-1 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   value={form.unit}
                   onChange={(e) => setForm({ ...form, unit: e.target.value })}
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-sm font-medium text-gray-700">Reference Range</label>
+                <label className="text-sm font-medium text-gray-700">Reference Range <span className="text-red-500">*</span></label>
                 <input
                   placeholder="e.g., 4.1 to 5.1"
-                  className="w-full mt-1 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   value={form.reference_range}
                   onChange={(e) => setForm({ ...form, reference_range: e.target.value })}
                 />
@@ -236,7 +244,7 @@ export default function RadiologyParameter() {
                 <label className="text-sm font-medium text-gray-700">Description</label>
                 <textarea
                   placeholder="Description"
-                  className="w-full mt-1 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition"
+                  className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
                   rows="3"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -245,7 +253,7 @@ export default function RadiologyParameter() {
             </div>
 
             {/* MODAL FOOTER */}
-            <div className="flex justify-end p-4 border-t bg-gray-50">
+            <div className="flex justify-end p-4 border-t border-gray-300 bg-gray-50">
               <button
                 onClick={save}
                 disabled={actionLoading}

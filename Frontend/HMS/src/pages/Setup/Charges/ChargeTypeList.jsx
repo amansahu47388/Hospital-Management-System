@@ -101,7 +101,7 @@ export default function ChargeTypeList() {
                 )}
 
                 {rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50 group">
+                  <tr key={row.id} className="hover:bg-gray-50 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2">
                     <td className="px-3 py-2 font-medium">
                       {row.charge_type}
                     </td>
@@ -113,7 +113,7 @@ export default function ChargeTypeList() {
                             setSelectedRow(row);
                             setOpenEdit(true);
                           }}
-                          className="text-purple-600 hover:text-purple-800"
+                          className="text-purple-600 hover:text-purple-800 hover:bg-purple-200 p-1 rounded"
                         >
                           <Pencil size={16} />
                         </button>
@@ -121,7 +121,7 @@ export default function ChargeTypeList() {
                         <button
                           title="Delete"
                           onClick={() => handleDelete(row)}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-200 p-1 rounded"
                         >
                           <Trash2 size={16} />
                         </button>

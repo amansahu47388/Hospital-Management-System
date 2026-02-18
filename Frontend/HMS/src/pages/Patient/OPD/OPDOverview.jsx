@@ -208,7 +208,7 @@ export default function OPDOverview() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-[12px] border-collapse">
                                         <thead>
-                                            <tr className="text-left bg-gray-50/50 text-gray-600 border-b font-bold">
+                                            <tr className="text-left bg-gray-50/50 text-gray-600 border-b border-gray-200 font-bold">
                                                 <th className="px-3 py-3">OPD No</th>
                                                 <th className="px-3 py-3">Checkup ID</th>
                                                 <th className="px-3 py-3">Appointment Date</th>
@@ -241,7 +241,7 @@ export default function OPDOverview() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-[12px] border-collapse">
                                         <thead>
-                                            <tr className="text-left bg-gray-50/50 text-gray-600 border-b font-bold">
+                                            <tr className="text-left bg-gray-50/50 text-gray-600 border-b border-gray-200 font-bold">
                                                 <th className="px-3 py-3">Test Name</th>
                                                 <th className="px-3 py-3 text-center">Case ID</th>
                                                 <th className="px-3 py-3">Lab</th>
@@ -278,7 +278,7 @@ export default function OPDOverview() {
                                     <div className="overflow-x-auto border-l border-gray-100 pl-4">
                                         <table className="w-full text-[11px] border-collapse">
                                             <thead>
-                                                <tr className="text-left bg-gray-50/50 text-gray-600 border-b font-bold uppercase">
+                                                <tr className="text-left bg-gray-50/50 text-gray-600 border-b border-gray-200 font-bold uppercase">
                                                     <th className="px-2 py-2">OPD No</th>
                                                     <th className="px-2 py-2">Case ID</th>
                                                     <th className="px-2 py-2">Date</th>

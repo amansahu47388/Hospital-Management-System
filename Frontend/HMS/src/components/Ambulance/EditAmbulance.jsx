@@ -87,8 +87,8 @@ export default function EditAmbulance({ open, onClose, ambulanceId, onSuccess })
 
         {/* BODY */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input label="Vehicle Number *" name="vehicleNumber" value={form.vehicleNumber} onChange={handleChange} />
-          <Input label="Vehicle Model *" name="vehicleModel" value={form.vehicleModel} onChange={handleChange} />
+          <Input label="Vehicle Number" name="vehicleNumber" value={form.vehicleNumber} onChange={handleChange} required/>
+          <Input label="Vehicle Model" name="vehicleModel" value={form.vehicleModel} onChange={handleChange} required/>
           <Input label="Year Made" name="yearMade" value={form.yearMade} onChange={handleChange} />
 
           <Input label="Driver Name" name="driverName" value={form.driverName} onChange={handleChange} />
@@ -96,12 +96,12 @@ export default function EditAmbulance({ open, onClose, ambulanceId, onSuccess })
           <Input label="Driver Contact" name="driverContact" value={form.driverContact} onChange={handleChange} />
 
           <div>
-            <label className="text-sm font-medium">Vehicle Type *</label>
+            <label className="text-sm font-medium">Vehicle Type <span className="text-red-500">*</span></label>
             <select
               name="vehicleType"
               value={form.vehicleType}
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
             >
               <option value="">Select</option>
               <option value="Owned">Owned</option>
@@ -116,7 +116,7 @@ export default function EditAmbulance({ open, onClose, ambulanceId, onSuccess })
               value={form.note}
               rows="3"
               onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
             />
           </div>
         </div>
@@ -139,8 +139,10 @@ export default function EditAmbulance({ open, onClose, ambulanceId, onSuccess })
 function Input({ label, ...props }) {
   return (
     <div>
-      <label className="text-sm font-medium">{label}</label>
-      <input {...props} className="w-full mt-1 border rounded px-3 py-2" />
+      <label className="text-sm font-medium">{label}
+        {props.required && <span className="text-red-500"> *</span>}
+      </label>
+      <input {...props} className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#6046B5]" />
     </div>
   );
 }

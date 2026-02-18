@@ -32,8 +32,8 @@ export default function UpdateComplain({ open, onClose, refresh, complainId }) {
   };
 
   const handleSubmit = async () => {
-    if (!form.complain_by || !form.complain_type || !form.source) {
-        notify("warning","Please fill all required fields");
+    if (!form.complain_by ) {
+        notify("warning","Complain by is required");
       return;
     }
 
@@ -64,7 +64,7 @@ export default function UpdateComplain({ open, onClose, refresh, complainId }) {
 
           <Input label="Complain Type" name="complain_type" value={form.complain_type} onChange={handleChange} />
           <Input label="Source" name="source" value={form.source} onChange={handleChange} />
-          <Input label="Complain By" name="complain_by" value={form.complain_by} onChange={handleChange} />
+          <Input label="Complain By" name="complain_by" value={form.complain_by} onChange={handleChange} required />
           <Input label="Phone" name="phone" value={form.phone} onChange={handleChange} />
           <Input label="Date" type="date" name="date" value={form.date} onChange={handleChange} />
           <Input label="Action Taken" name="action_taken" value={form.action_taken} onChange={handleChange} />
@@ -73,13 +73,13 @@ export default function UpdateComplain({ open, onClose, refresh, complainId }) {
           <div className="sm:col-span-2">
             <label className="text-sm font-medium">Description</label>
             <textarea name="description" value={form.description} onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2" rows="3" />
+              className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" rows="3" />
           </div>
 
           <div className="sm:col-span-2">
             <label className="text-sm font-medium">Note</label>
             <textarea name="note" value={form.note} onChange={handleChange}
-              className="w-full mt-1 border rounded px-3 py-2" rows="3" />
+              className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" rows="3" />
           </div>
 
         </div>
@@ -99,9 +99,13 @@ export default function UpdateComplain({ open, onClose, refresh, complainId }) {
   );
 }
 
-const Input = ({ label, ...props }) => (
+const Input = ({ label, ...props }) => {
+  return (
   <div>
-    <label className="text-sm font-medium">{label}</label>
-    <input {...props} className="w-full mt-1 border rounded px-3 py-2" />
+    <label className="text-sm font-medium">{label}
+      {props.required && <span className="text-red-500"> *</span>}
+    </label>
+    <input {...props} className="w-full mt-1 border rounded px-3 py-2 border-gray-300 focus:border-[#6046B5] focus:outline-none focus:ring-0.5 focus:ring-[#8A63D2]" />
   </div>
 );
+};
