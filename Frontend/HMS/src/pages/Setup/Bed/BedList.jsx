@@ -20,7 +20,11 @@ export default function BedList() {
   const fetchBeds = async () => {
     try {
       const res = await getBeds();
-      setBeds(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setBeds(data);
     } catch {
       notify("error", "Failed to load beds");
     }
@@ -88,7 +92,7 @@ export default function BedList() {
                 </tr>
               </thead>
               <tbody>
-                {beds.map(bed => (
+                {Array.isArray(beds) && beds.map(bed => (
                   <tr key={bed.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                     <td className="px-3 py-2 text-left">
                       {bed.bed_name}
@@ -112,7 +116,7 @@ export default function BedList() {
               </tbody>
             </table>
 
-            {beds.length === 0 && (
+            {(Array.isArray(beds) && beds.length === 0) && (
               <p className="text-center text-gray-500 py-4">
                 No beds found
               </p>

@@ -4,24 +4,22 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('auth/', include('users.urls')),  # Added /api/ prefix
+    path('admin/', include('patient_module.urls')),
+    path('admin/', include('admin_module.urls')),
+    path('admin/appointments/', include('appointment_module.urls')),
+    path("admin/", include("opd_ipd_module.urls")),
+    path("admin/", include('pathology_module.urls')),
+    path("admin/", include('pharmacy_module.urls')),
+    path("admin/", include("ambulance_module.urls")),
+    path("admin/setup/", include("setup_module.urls")),
+    path("admin/radiology/", include("radiology_module.urls")), 
+    path("admin/", include("inventory_module.urls")),
+    path('admin/',include('front_office_module.urls')),
+    path('admin/',include('finance_module.urls')),
+    path('admin/',include('birth_death_module.urls')),
+    path('admin/',include('calendar_module.urls')),
     path('admin/', admin.site.urls),
-    path('api/auth/', include('users.urls')),  # Added /api/ prefix
-    path('api/admin/', include('patient_module.urls')),
-    path('api/admin/', include('admin_module.urls')),
-    path('api/admin/appointments/', include('appointment_module.urls')),
-    path("api/admin/", include("opd_ipd_module.urls")),
-    path("api/admin/", include('pathology_module.urls')),
-    path("api/admin/", include('pharmacy_module.urls')),
-    path("api/admin/", include("ambulance_module.urls")),
-    path("api/admin/setup/", include("setup_module.urls")),
-    path("api/admin/radiology/", include("radiology_module.urls")),
-    path("api/admin/", include("ambulance_module.urls")),   
-    path("api/admin/", include("inventory_module.urls")),
-    path('api/admin/',include('front_office_module.urls')),
-    path('api/admin/',include('finance_module.urls')),
-    path('api/admin/',include('birth_death_module.urls')),
-    path('api/admin/',include('calendar_module.urls')),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
 ]
 

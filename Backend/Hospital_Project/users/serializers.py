@@ -44,8 +44,6 @@ class UserSerializer(serializers.ModelSerializer):
                 image_url = patient_profile.photo.url
         
         if image_url:
-            if request:
-                return request.build_absolute_uri(image_url)
             return image_url
         return None
 

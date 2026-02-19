@@ -3,7 +3,7 @@ import os
 from rest_framework import serializers
 from .models import *
 from datetime import date
-BACKEND_URL = os.environ.get("BACKEND_URL")
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,16 +69,9 @@ class PatientSerializer(serializers.ModelSerializer):
             return 0
 
     def get_photo(self, obj):
-        """Return full URL for photo"""
+        """Return relative URL for photo"""
         if obj.photo:
-            request = self.context.get('request')
-            if request:
-                photo_url = request.build_absolute_uri(obj.photo.url)
-                print(f"✅ Photo URL built: {photo_url}")
-                return photo_url
-            else:
-                # Fallback if no request context
-                  return f"{BACKEND_URL}{obj.photo.url}"
+            return obj.photo.url
         return None
 
     def get_is_admitted(self, obj):

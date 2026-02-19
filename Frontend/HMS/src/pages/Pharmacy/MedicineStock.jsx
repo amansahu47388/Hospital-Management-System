@@ -3,7 +3,7 @@ import { Plus, ShoppingCart, Pencil, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../layout/AdminLayout";
 import AddMedicineModal from "../../components/Pharmacy/Medicine/AddMedicine";
-import { getMedicines, deleteMedicine,getMedicineDetail, getMedicineStock } from "../../api/pharmacyApi";
+import { getMedicines, deleteMedicine, getMedicineDetail, getMedicineStock } from "../../api/pharmacyApi";
 import { useNotify } from "../../context/NotificationContext";
 import MedicineDetails from "../../components/Pharmacy/Medicine/MedicineDetails";
 import UpdateMedicine from "../../components/Pharmacy/Medicine/UpdateMedicine";
@@ -29,12 +29,12 @@ export default function MedicineStock() {
 
 
   /* ---------------- FETCH MEDICINES ---------------- */
-useEffect(() => {
-  if (hasFetched.current) return;
+  useEffect(() => {
+    if (hasFetched.current) return;
 
-  hasFetched.current = true;
-  fetchMedicines();
-}, []);
+    hasFetched.current = true;
+    fetchMedicines();
+  }, []);
 
 
 
@@ -42,12 +42,15 @@ useEffect(() => {
     try {
       setLoading(true);
       const res = await getMedicines({ search: search || undefined });
-      console.debug("getMedicines response:", res.data);
-      setMedicines(Array.isArray(res.data) ? res.data : []);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setMedicines(data);
     } catch (err) {
       console.error("Failed to load medicines", err);
       const msg = err?.response?.data?.detail || err?.message || "Failed to load medicines";
-      notify("error",msg);
+      notify("error", msg);
       setMedicines([]);
     } finally {
       setLoading(false);
@@ -57,20 +60,20 @@ useEffect(() => {
 
 
   /* ---------------- DELETE SELECTED ---------------- */
-const handleDelete = async (id) => {
-  if (!window.confirm("Delete this medicine?")) return;
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this medicine?")) return;
 
-  try {
-    setLoading(true);
-    await deleteMedicine(id);
-    notify("success","Medicine deleted");
-    fetchMedicines();
-  } catch (err) {
-    notify("error",err.response?.data?.detail||"Delete failed");
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+      await deleteMedicine(id);
+      notify("success", "Medicine deleted");
+      fetchMedicines();
+    } catch (err) {
+      notify("error", err.response?.data?.detail || "Delete failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return (
@@ -81,7 +84,7 @@ const handleDelete = async (id) => {
             Loading...
           </div>
         </div>
-        )}
+      )}
       <div className="min-h-screen p-1">
         <div className="bg-white rounded-lg p-4 shadow">
 
@@ -109,7 +112,7 @@ const handleDelete = async (id) => {
           <div className="w-full md:w-72 mb-4">
             <input
               value={search}
-                onChange={(e) => {
+              onChange={(e) => {
                 hasFetched.current = false;
                 setSearch(e.target.value);
                 fetchMedicines();
@@ -120,9 +123,9 @@ const handleDelete = async (id) => {
             />
           </div>
 
-            {/* TABLE */}
-            <div className="w-full overflow-x-auto thin-scrollbar">
-              <table className="min-w-[1100px] w-full ">
+          {/* TABLE */}
+          <div className="w-full overflow-x-auto thin-scrollbar">
+            <table className="min-w-[1100px] w-full ">
               <thead className="bg-gray-100 text-sm">
                 <tr>
                   <th className="p-2 text-left">Medicine Name</th>
@@ -137,8 +140,8 @@ const handleDelete = async (id) => {
               </thead>
 
               <tbody>
-                {medicines.map((item) => {
-                  const isOut = item.available_qty  === 0;
+                {Array.isArray(medicines) && medicines.map((item) => {
+                  const isOut = item.available_qty === 0;
 
                   return (
                     <tr
@@ -150,45 +153,50 @@ const handleDelete = async (id) => {
                       <td className="p-2">{item.category_name}</td>
                       <td className="p-2">{item.group_name}</td>
                       <td className="p-2">{item.unit_name}</td>
- 
+
                       <td className="p-2 font-semibold">
                         {isOut ? (
                           <span className="text-red-600">
                             0 (Out of Stock)
                           </span>
                         ) : (
-                          item.available_qty 
+                          item.available_qty
                         )}
-                      </td> 
+                      </td>
 
                       <td>
-                      <div className="flex flex-wrap justify-center gap-1">
+                        <div className="flex flex-wrap justify-center gap-1">
                           <button
-                          title="View"
-                          className="text-purple-600 hover:bg-purple-100 p-1 rounded" 
-                          onClick={async () => {
-                            const res = await getMedicineDetail(item.id);
-                            const stockRes = await getMedicineStock(item.id);
-                            setViewMedicine(res.data);
-                            setStockList(stockRes.data);
-                            setShowDetails(true);
-                          }}
+                            title="View"
+                            className="text-purple-600 hover:bg-purple-100 p-1 rounded"
+                            onClick={async () => {
+                              const res = await getMedicineDetail(item.id);
+                              const stockRes = await getMedicineStock(item.id);
+                              setViewMedicine(res?.data ?? res);
 
-                        >
-                          <Eye size={16} />
-                        </button>
-                        <button onClick={() => setEditMedicine(item)} 
-                        className="text-green-600 hover:bg-green-100 p-1 rounded">
+                              const sPayload = stockRes?.data ?? stockRes;
+                              const sData = Array.isArray(sPayload)
+                                ? sPayload
+                                : sPayload?.results || sPayload?.data || [];
+                              setStockList(sData);
+                              setShowDetails(true);
+                            }}
+
+                          >
+                            <Eye size={16} />
+                          </button>
+                          <button onClick={() => setEditMedicine(item)}
+                            className="text-green-600 hover:bg-green-100 p-1 rounded">
                             <Pencil size={16} />
                           </button>
 
                           <button
-                          title="Delete"
-                          className="text-red-600 hover:bg-red-100 p-1 rounded"
-                          onClick={() => handleDelete(item.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                            title="Delete"
+                            className="text-red-600 hover:bg-red-100 p-1 rounded"
+                            onClick={() => handleDelete(item.id)}
+                          >
+                            <Trash2 size={16} />
+                          </button>
 
                         </div>
                       </td>
@@ -213,7 +221,7 @@ const handleDelete = async (id) => {
                 )}
               </tbody>
             </table>
-            </div>
+          </div>
         </div>
       </div>
 

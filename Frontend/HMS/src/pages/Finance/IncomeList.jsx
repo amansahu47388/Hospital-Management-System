@@ -27,7 +27,11 @@ export default function IncomeList() {
     setLoading(true);
     try {
       const res = await getIncomes();
-      setIncomes(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setIncomes(data);
     } catch {
       notify("error", "Failed to load incomes");
     } finally {
@@ -44,6 +48,7 @@ export default function IncomeList() {
   // 🔹 Search filter
   const filteredIncomes = useMemo(() => {
     const q = searchRef.current.toLowerCase();
+    if (!Array.isArray(incomes)) return [];
     if (!q) return incomes;
 
     return incomes.filter((item) =>
@@ -86,7 +91,7 @@ export default function IncomeList() {
                 searchRef.current = e.target.value;
                 setIncomes((prev) => [...prev]); // trigger memo
               }}
-             className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
@@ -138,7 +143,7 @@ export default function IncomeList() {
                 </tr>
               )}
 
-              {filteredIncomes.map((item) => (
+              {Array.isArray(filteredIncomes) && filteredIncomes.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50 border-b border-gray-200">
                   <td className="px-3 py-2 text-blue-600">{item.name}</td>
                   <td className="px-3 py-2">{item.id}</td>

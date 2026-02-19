@@ -20,7 +20,11 @@ export default function BedGroupList() {
   const fetchGroups = async () => {
     try {
       const res = await getBedGroups();
-      setBedGroups(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setBedGroups(data);
     } catch {
       notify("error", "Failed to load bed groups");
     }
@@ -83,7 +87,7 @@ export default function BedGroupList() {
                 </tr>
               </thead>
               <tbody>
-                {bedGroups.map(group => (
+                {Array.isArray(bedGroups) && bedGroups.map(group => (
                   <tr key={group.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                     <td className="px-3 py-2 font-medium">{group.name}</td>
                     <td className="px-3 py-2 font-medium">{group.floor_name}</td>

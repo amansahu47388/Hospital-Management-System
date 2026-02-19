@@ -20,7 +20,11 @@ export default function FloorList() {
     try {
       setLoading(true);
       const res = await getFloors();
-      setFloors(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setFloors(data);
     } catch (error) {
       notify("error", "Failed to load floors",);
     } finally {
@@ -94,7 +98,7 @@ export default function FloorList() {
               </thead>
 
               <tbody>
-                {floors.map((floor) => (
+                {Array.isArray(floors) && floors.map((floor) => (
                   <tr key={floor.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                     <td className="px-3 py-2 font-medium">
                       {floor.floor_name}
@@ -121,7 +125,7 @@ export default function FloorList() {
               </tbody>
             </table>
 
-            {!loading && floors.length === 0 && (
+            {!loading && (Array.isArray(floors) && floors.length === 0) && (
               <p className="text-center text-gray-500 py-4">
                 No floors found
               </p>

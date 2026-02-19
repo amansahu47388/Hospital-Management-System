@@ -26,7 +26,11 @@ export default function RadiologyCategory() {
     setTableLoading(true);
     try {
       const res = await getRadiologyCategory();
-      setCategories(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setCategories(data);
     } catch {
       notify("error", "Failed to fetch categories");
     } finally {
@@ -134,7 +138,7 @@ export default function RadiologyCategory() {
                   </tr>
                 </thead>
                 <tbody>
-                  {categories.length > 0 ? (
+                  {(Array.isArray(categories) && categories.length > 0) ? (
                     categories.map((row) => (
                       <tr key={row.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                         <td className="px-3 py-2 text-left">{row.category_name}</td>
