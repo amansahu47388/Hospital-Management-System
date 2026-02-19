@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'birth_death_module',
     'setup_module',
     'calendar_module',
+    'dashboard_module',
 ]
 
 MIDDLEWARE = [

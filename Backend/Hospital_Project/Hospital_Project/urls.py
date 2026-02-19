@@ -19,6 +19,7 @@ urlpatterns = [
     path('admin/',include('finance_module.urls')),
     path('admin/',include('birth_death_module.urls')),
     path('admin/',include('calendar_module.urls')),
+    path('admin/dashboard/', include('dashboard_module.urls')),
     path('admin/', admin.site.urls),
 
 ]

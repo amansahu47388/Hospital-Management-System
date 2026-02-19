@@ -133,12 +133,6 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Phone must have at least 10 digits.")
         return value
 
-    def validate_address(self, value):
-        if not value:
-            return None
-        if len(value.strip()) < 5:
-            raise serializers.ValidationError("Address must be at least 5 characters.")
-        return value.strip()
 
     def validate_date_of_birth(self, value):
         if not value:
