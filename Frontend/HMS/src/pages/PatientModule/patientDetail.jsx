@@ -625,8 +625,9 @@ function getImageUrl(photoPath) {
     return photoPath;
   }
 
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const baseUrl = apiUrl.replace('/api', '');
+  // const apiUrl = import.meta.env.VITE_API_URL;
+  // const baseUrl = apiUrl.replace('/api', '');
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   // Ensure path starts with /
   const path = photoPath.startsWith('/') ? photoPath : '/' + photoPath;

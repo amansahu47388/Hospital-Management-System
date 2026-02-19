@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
-import {Plus,FileText,FileSpreadsheet,Printer,File, Eye, Pencil, Trash2, ClipboardPenLine} from "lucide-react";
+import { Plus, FileText, FileSpreadsheet, Printer, File, Eye, Pencil, Trash2, ClipboardPenLine } from "lucide-react";
 import { getIpdPatientList } from "../../api/ipdApi";
 import IPDVisitDetail from "../../components/ipd/IPDVisitDetails";
 import { deleteIpdPatient } from "../../api/ipdApi";
@@ -24,9 +24,9 @@ export default function IpdPatient() {
   const [dischargePatient, setDischargePatient] = useState(false);
 
 
-  
-useEffect(() => {
-  if (hasFetchedRef.current) return;
+
+  useEffect(() => {
+    if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
     fetchIpd();
   }, []);
@@ -35,7 +35,11 @@ useEffect(() => {
     try {
       setLoading(true);
       const res = await getIpdPatientList();
-      setIpdList(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setIpdList(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -44,29 +48,30 @@ useEffect(() => {
   };
 
   const filteredIpdList = React.useMemo(() => {
-  const query = search.toLowerCase().trim();
+    const query = search.toLowerCase().trim();
 
-  if (!query) return ipdList;
+    if (!Array.isArray(ipdList)) return [];
+    if (!query) return ipdList;
 
-  return ipdList.filter((ipd) => {
-    const patientName = ipd.patient_detail
-      ? `${ipd.patient_detail.first_name} ${ipd.patient_detail.last_name}`
-      : "";
+    return ipdList.filter((ipd) => {
+      const patientName = ipd.patient_detail
+        ? `${ipd.patient_detail.first_name} ${ipd.patient_detail.last_name}`
+        : "";
 
-    return (
-      String(ipd.ipd_id).includes(query) ||
-      patientName.toLowerCase().includes(query) ||
-      String(ipd.case_id || "").toLowerCase().includes(query) ||
-      String(ipd.patient_detail?.gender || "").toLowerCase().includes(query) ||
-      String(ipd.patient_detail?.phone || "").includes(query) ||
-      String(ipd.doctor_detail?.full_name || "").toLowerCase().includes(query) ||
-      String(ipd.bed?.bed_name || "").toLowerCase().includes(query)
-    );
-  });
-}, [search, ipdList]);
+      return (
+        String(ipd.ipd_id).includes(query) ||
+        patientName.toLowerCase().includes(query) ||
+        String(ipd.case_id || "").toLowerCase().includes(query) ||
+        String(ipd.patient_detail?.gender || "").toLowerCase().includes(query) ||
+        String(ipd.patient_detail?.phone || "").includes(query) ||
+        String(ipd.doctor_detail?.full_name || "").toLowerCase().includes(query) ||
+        String(ipd.bed?.bed_name || "").toLowerCase().includes(query)
+      );
+    });
+  }, [search, ipdList]);
 
 
-const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this IPD?")) return;
 
     try {
@@ -105,13 +110,13 @@ const handleDelete = async (id) => {
                 <button
                   className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                              text-white px-4 py-2 rounded flex items-center gap-2 justify-center"
-                              onClick={() => navigate('/admin/ipd-patients/add-ipd')}
+                  onClick={() => navigate('/admin/ipd-patients/add-ipd')}
                 >
                   <Plus size={16} /> Add Patient
-                   
+
                 </button>
 
-                <button   
+                <button
                   onClick={() => navigate('/admin/ipd-patients/discharge-patients')}
                   className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
                              text-white px-4 py-2 rounded flex items-center gap-2 justify-center"
@@ -172,83 +177,83 @@ const handleDelete = async (id) => {
 
                 <tbody className="divide-y divide-gray-200">
                   {filteredIpdList.slice(0, limit).map((ipd) => (
-                  <tr key={ipd.ipd_id} className="border-t border-gray-200">
-                    <td className="px-3 py-2 text-left">IPDN{ipd.ipd_id}</td>
-                    <td
-                      className="px-3 py-2 text-left text-blue-600 cursor-pointer"
-                      onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/profile`)}
-                    >
-                      {ipd.patient_detail
+                    <tr key={ipd.ipd_id} className="border-t border-gray-200">
+                      <td className="px-3 py-2 text-left">IPDN{ipd.ipd_id}</td>
+                      <td
+                        className="px-3 py-2 text-left text-blue-600 cursor-pointer"
+                        onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/profile`)}
+                      >
+                        {ipd.patient_detail
                           ? `${ipd.patient_detail.first_name} ${ipd.patient_detail.last_name}`
                           : "-"}
-                    </td>
-                    <td className="px-3 py-2 text-left">{ipd.case_id}</td>
-                    <td className="px-3 py-2 text-left">{ipd.patient_detail.gender}</td>
-                    <td className="px-3 py-2 text-left">{ipd.patient_detail.phone}</td>
-                    <td className="px-3 py-2 text-left">{ipd.created_by?.full_name || "-"}</td>
-                    <td className="px-3 py-2 text-left">{ipd.doctor_detail?.full_name || "-"}</td>
-                    <td className="px-3 py-2 text-left">{ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"}</td>
-                    <td className="px-3 py-2 text-left">{new Date(ipd.created_at).toLocaleString("en-IN")}</td>
-                    <td className="px-3 py-2 text-left">{ipd.previous_medical_issue || "-"}</td>
-                    <td className="px-3 py-2 text-left flex gap-1">
-                    <button
-                    title="view"
-                      onClick={(e) => {
-                        setSelectedIpd(ipd);
-                        setShowDetail(true);
-                      }} 
-                      className="p-1 text-purple-600 hover:bg-purple-100 rounded"
-                    >
-                    <Eye size={16} />
-                  </button>
+                      </td>
+                      <td className="px-3 py-2 text-left">{ipd.case_id}</td>
+                      <td className="px-3 py-2 text-left">{ipd.patient_detail.gender}</td>
+                      <td className="px-3 py-2 text-left">{ipd.patient_detail.phone}</td>
+                      <td className="px-3 py-2 text-left">{ipd.created_by?.full_name || "-"}</td>
+                      <td className="px-3 py-2 text-left">{ipd.doctor_detail?.full_name || "-"}</td>
+                      <td className="px-3 py-2 text-left">{ipd.bed ? `${ipd.bed.bed_name} - ${ipd.bed.bed_type} - ${ipd.bed.floor ?? ""}` : "-"}</td>
+                      <td className="px-3 py-2 text-left">{new Date(ipd.created_at).toLocaleString("en-IN")}</td>
+                      <td className="px-3 py-2 text-left">{ipd.previous_medical_issue || "-"}</td>
+                      <td className="px-3 py-2 text-left flex gap-1">
+                        <button
+                          title="view"
+                          onClick={(e) => {
+                            setSelectedIpd(ipd);
+                            setShowDetail(true);
+                          }}
+                          className="p-1 text-purple-600 hover:bg-purple-100 rounded"
+                        >
+                          <Eye size={16} />
+                        </button>
 
-                  <button className="cursor-pointer hover:opacity-80 p-1 text-green-600 hover:bg-green-100 rounded"  
-                    title="Edit"
-                    onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/update`)}>
-                    <Pencil size={18} />
-                  </button>
+                        <button className="cursor-pointer hover:opacity-80 p-1 text-green-600 hover:bg-green-100 rounded"
+                          title="Edit"
+                          onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}/update`)}>
+                          <Pencil size={18} />
+                        </button>
 
-                  <button
-                    title="Delete IPD"
-                    className={`cursor-pointer hover:opacity-80 p-1 text-red-600 hover:bg-red-100 rounded ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
-                    onClick={() => handleDelete(ipd.ipd_id)}
-                    disabled={deleting}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                        <button
+                          title="Delete IPD"
+                          className={`cursor-pointer hover:opacity-80 p-1 text-red-600 hover:bg-red-100 rounded ${deleting ? 'opacity-60 cursor-not-allowed' : ''}`}
+                          onClick={() => handleDelete(ipd.ipd_id)}
+                          disabled={deleting}
+                        >
+                          <Trash2 size={18} />
+                        </button>
 
-                  <button
-                    className="cursor-pointer hover:opacity-80 p-1 text-blue-600 hover:bg-blue-100 rounded"  
-                    title="Discharge Patient"
-                    onClick={(e) => {
-                      setSelectedIpd(ipd);
-                      setDischargePatient(true);
-                    }}>
-                    <ClipboardPenLine size={18} />
-                  </button>
-                  </td>
-                  </tr>
-                ))}
+                        <button
+                          className="cursor-pointer hover:opacity-80 p-1 text-blue-600 hover:bg-blue-100 rounded"
+                          title="Discharge Patient"
+                          onClick={(e) => {
+                            setSelectedIpd(ipd);
+                            setDischargePatient(true);
+                          }}>
+                          <ClipboardPenLine size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           </div>
         </main>
       </div>
-     <IPDVisitDetail
-      open={showDetail}
-      ipd={selectedIpd}
-      onClose={() => setShowDetail(false)}
-     />
+      <IPDVisitDetail
+        open={showDetail}
+        ipd={selectedIpd}
+        onClose={() => setShowDetail(false)}
+      />
       <AddDischargePatient
-          open={dischargePatient}
-          onClose={() => setDischargePatient(false)}
-          ipd={selectedIpd}
-          onDischarged={() => {
-            setDischargePatient(false);
-            fetchIpd();
-          }}
-        />
+        open={dischargePatient}
+        onClose={() => setDischargePatient(false)}
+        ipd={selectedIpd}
+        onDischarged={() => {
+          setDischargePatient(false);
+          fetchIpd();
+        }}
+      />
     </div>
   );
 }

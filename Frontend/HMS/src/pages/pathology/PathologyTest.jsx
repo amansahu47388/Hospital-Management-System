@@ -24,7 +24,11 @@ export default function PathologyTest() {
     try {
       setLoading(true);
       const res = await getPathologyTests();
-      setTests(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setTests(data);
     } catch {
       notify("error", "Failed to load pathology tests");
     } finally {
@@ -32,14 +36,15 @@ export default function PathologyTest() {
     }
   };
 
-useEffect(() => {
-  if (hasFetchedRef.current) return;
-  hasFetchedRef.current = true;
-  fetchTests();
-}, []);
+  useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+    fetchTests();
+  }, []);
 
 
   const filteredData = useMemo(() => {
+    if (!Array.isArray(tests)) return [];
     return tests.filter((item) =>
       Object.values(item)
         .join(" ")
@@ -55,18 +60,18 @@ useEffect(() => {
     setOpenUpdate(true);
   };
 
-const handleDelete = async (id) => {
-  if (!window.confirm("Are you sure you want to delete this pathology test?")) {
-    return;
-  }
-  try {
-    await deletePathologyTest(id);
-    notify("success", "Pathology test deleted");
-    fetchTests(); // reload list
-  } catch (err) {
-    notify("error", "Failed to delete pathology test");
-  }
-};
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this pathology test?")) {
+      return;
+    }
+    try {
+      await deletePathologyTest(id);
+      notify("success", "Pathology test deleted");
+      fetchTests(); // reload list
+    } catch (err) {
+      notify("error", "Failed to delete pathology test");
+    }
+  };
 
   return (
     <AdminLayout>
@@ -79,11 +84,11 @@ const handleDelete = async (id) => {
           </h1>
 
           <button
-           onClick={() => setOpenAdd(true)}
+            onClick={() => setOpenAdd(true)}
             className="flex items-center gap-2 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
-          <Plus size={18} />
-              Add Pathology Test
+            <Plus size={18} />
+            Add Pathology Test
           </button>
         </div>
 
@@ -149,28 +154,28 @@ const handleDelete = async (id) => {
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex justify-center gap-2">
-                     <button
-                      title="view"
+                      <button
+                        title="view"
                         onClick={(e) => {
                           setSelectedTest(test);
                           setShowDetail(true);
-                        }} 
+                        }}
                         className="p-1 hover:bg-purple-100 rounded text-purple-600"
                       >
                         <Eye size={16} />
                       </button>
-                     <button
+                      <button
                         onClick={() => handleEdit(test)}
                         className="p-1 hover:bg-green-100 rounded text-green-600"
                       >
                         <Pencil size={16} />
                       </button>
-                     <button
-                      onClick={() => handleDelete(test.id)}
-                      className="p-1 rounded hover:bg-red-100 text-red-600"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                      <button
+                        onClick={() => handleDelete(test.id)}
+                        className="p-1 rounded hover:bg-red-100 text-red-600"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -185,27 +190,27 @@ const handleDelete = async (id) => {
               )}
             </tbody>
           </table>
-              <AddPathologyTest
-             open={openAdd}
+          <AddPathologyTest
+            open={openAdd}
             onClose={() => setOpenAdd(false)}
-            />    
+          />
 
-            <PathologyTestDetails
-              open={showDetail}
-              test={selectedTest}
-              onClose={() => setShowDetail(false)}
-              onDelete={(id) => setTests(prev => prev.filter(test => test.id !== id))}
-              onDischarge={() => { setShowDetail(false); fetchIpd(); }}
-              /> 
-            <UpdatePathologyTest
-              open={openUpdate}
-              test={selectedTest}
-              onClose={() => {
-                setOpenUpdate(false);
-                setSelectedTest(null);
-                fetchTests();
-              }}
-            />  
+          <PathologyTestDetails
+            open={showDetail}
+            test={selectedTest}
+            onClose={() => setShowDetail(false)}
+            onDelete={(id) => setTests(prev => prev.filter(test => test.id !== id))}
+            onDischarge={() => { setShowDetail(false); fetchIpd(); }}
+          />
+          <UpdatePathologyTest
+            open={openUpdate}
+            test={selectedTest}
+            onClose={() => {
+              setOpenUpdate(false);
+              setSelectedTest(null);
+              fetchTests();
+            }}
+          />
         </div>
       </div>
     </AdminLayout>

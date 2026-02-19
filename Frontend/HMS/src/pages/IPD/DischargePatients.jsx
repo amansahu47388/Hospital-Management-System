@@ -3,8 +3,8 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/CommonComponent/Sidebar";
 import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
-import {Plus,FileText,FileSpreadsheet,Printer,File, Eye} from "lucide-react";
-import { getDischargedIpdPatients  } from "../../api/ipdApi";
+import { Plus, FileText, FileSpreadsheet, Printer, File, Eye } from "lucide-react";
+import { getDischargedIpdPatients } from "../../api/ipdApi";
 import DischargeVisitDetail from "../../components/ipd/DischargeVisitDetails";
 
 
@@ -18,18 +18,22 @@ export default function DischargedPatients() {
   const [patients, setPatients] = useState([]);
   const hasFetchedRef = useRef(false);
 
-  
-useEffect(() => {
-  if (hasFetchedRef.current) return;
+
+  useEffect(() => {
+    if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
     fetchPatients();
   }, []);
 
-   const fetchPatients = async () => {
+  const fetchPatients = async () => {
     try {
       setLoading(true);
       const res = await getDischargedIpdPatients();
-      setPatients(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setPatients(data);
     } catch (err) {
       console.error(err);
       alert("Failed to load discharged patients");
@@ -100,15 +104,15 @@ useEffect(() => {
                     <th className="px-3 py-2 text-left">Discharge Date</th>
                     <th className="px-3 py-2 text-left">Status</th>
                     <th className="px-3 py-2 text-left">Action</th>
-                   
+
                   </tr>
                 </thead>
 
                 <tbody className="divide-y">
-                  {patients.map((ipd) => (
+                  {Array.isArray(patients) && patients.map((ipd) => (
                     <tr key={ipd.ipd_id} className="border-b border-gray-300">
                       <td className="p-2 text-left text-blue-600 hover:text-blue-700 cursor-pointer"
-                      onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}`)}>
+                        onClick={() => navigate(`/admin/ipd-patients/${ipd.ipd_id}`)}>
                         {ipd.patient_detail.first_name}{" "}
                         {ipd.patient_detail.last_name}
                       </td>
@@ -119,7 +123,7 @@ useEffect(() => {
                       <td className="p-2 text-left">{ipd.created_by?.role}</td>
                       <td className="p-2 text-left">
                         {ipd.doctor_detail?.full_name}
-                      </td> 
+                      </td>
                       <td className="p-2 text-left">
                         {new Date(ipd.appointment_date).toLocaleString()}
                       </td>
@@ -130,11 +134,11 @@ useEffect(() => {
                       <td className="p-2 text-left">
                         <div className="relative inline-flex items-center group">
                           <button
-                          title="view"
+                            title="view"
                             onClick={(e) => {
                               setSelectedDischarge(ipd);
                               setShowDetail(true);
-                            }} 
+                            }}
                             className="p-1 text-purple-600 hover:bg-purple-100 rounded cursor-pointer"
                           >
                             <Eye size={16} />
@@ -157,15 +161,15 @@ useEffect(() => {
           </div>
         </main>
       </div>
-     <DischargeVisitDetail
-      open={showDetail}
-      ipd={selectedDischarge}
-      onClose={() => {
-        setShowDetail(false);
-        fetchPatients();
-    }}
-      
-     />
+      <DischargeVisitDetail
+        open={showDetail}
+        ipd={selectedDischarge}
+        onClose={() => {
+          setShowDetail(false);
+          fetchPatients();
+        }}
+
+      />
     </div>
   );
 }

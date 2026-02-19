@@ -32,7 +32,11 @@ export default function RadiologyParameter() {
     setTableLoading(true);
     try {
       const res = await getRadiologyParameters();
-      setList(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setList(data);
     } catch {
       notify("error", "Failed to fetch parameters");
     } finally {
@@ -157,7 +161,7 @@ export default function RadiologyParameter() {
                   </tr>
                 </thead>
                 <tbody>
-                  {list.length > 0 ? (
+                  {(Array.isArray(list) && list.length > 0) ? (
                     list.map((p) => (
                       <tr key={p.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                         <td className="px-3 py-2 text-left">{p.parameter_name}</td>

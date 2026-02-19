@@ -32,7 +32,11 @@ export default function VitalList() {
     try {
       setLoading(true);
       const res = await getVitals();
-      setVitals(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setVitals(data);
     } catch (err) {
       notify("error", "Failed to fetch vitals");
     } finally {
@@ -154,12 +158,12 @@ export default function VitalList() {
                   <tr>
                     <td colSpan="4" className="text-center py-4">Loading...</td>
                   </tr>
-                ) : vitals.length === 0 ? (
+                ) : (Array.isArray(vitals) && vitals.length === 0) ? (
                   <tr>
                     <td colSpan="4" className="text-center py-4 text-gray-400">No records found</td>
                   </tr>
                 ) : (
-                  vitals.map((row) => (
+                  Array.isArray(vitals) && vitals.map((row) => (
                     <tr key={row.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                       <td className="px-3 py-2">{row.vital_name}</td>
                       <td className="px-3 py-2">{row.reference_range}</td>

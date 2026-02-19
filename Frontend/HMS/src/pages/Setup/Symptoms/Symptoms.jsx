@@ -25,7 +25,11 @@ export default function Symptoms() {
     try {
       setLoading(true);
       const res = await getSymptoms();
-      setRows(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setRows(data);
     } catch (err) {
       notify("error", "Failed to fetch symptoms");
     } finally {
@@ -122,12 +126,12 @@ export default function Symptoms() {
                   <tr>
                     <td colSpan="4" className="text-center py-4">Loading...</td>
                   </tr>
-                ) : rows.length === 0 ? (
+                ) : (Array.isArray(rows) && rows.length === 0) ? (
                   <tr>
                     <td colSpan="4" className="text-center py-4 text-gray-400">No records found</td>
                   </tr>
                 ) : (
-                  rows.map((r) => (
+                  Array.isArray(rows) && rows.map((r) => (
                     <tr key={r.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                       <td className="px-3 py-2">{r.symptom_title}</td>
                       <td className="px-3 py-2">{r.symptom_type}</td>

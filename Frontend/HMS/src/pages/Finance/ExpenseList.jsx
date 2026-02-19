@@ -26,7 +26,11 @@ export default function ExpenseList() {
     setLoading(true);
     try {
       const res = await getExpenses();
-      setExpenses(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setExpenses(data);
     } catch {
       notify("error", "Failed to load expenses");
     } finally {
@@ -43,6 +47,7 @@ export default function ExpenseList() {
   // 🔹 Search
   const filteredExpenses = useMemo(() => {
     const q = searchRef.current.toLowerCase();
+    if (!Array.isArray(expenses)) return [];
     if (!q) return expenses;
 
     return expenses.filter((item) =>
@@ -86,7 +91,7 @@ export default function ExpenseList() {
                 searchRef.current = e.target.value;
                 setExpenses((prev) => [...prev]);
               }}
-             className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
+              className="w-full mt-1 border border-gray-300 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2"
             />
           </div>
 
@@ -134,7 +139,7 @@ export default function ExpenseList() {
                 </tr>
               )}
 
-              {filteredExpenses.map((item) => (
+              {Array.isArray(filteredExpenses) && filteredExpenses.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50 border-b border-gray-200">
                   <td className="px-3 py-2 text-blue-600">{item.name}</td>
                   <td className="px-3 py-2">{item.invoice_no || "-"}</td>

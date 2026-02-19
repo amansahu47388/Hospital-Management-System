@@ -55,8 +55,6 @@ class BirthRecordDetailAPIView(APIView):
         data = BirthRecordSerializer(record, context={'request': request}).data
 
         def build_absolute_url(url):
-            if url and request:
-                return request.build_absolute_uri(url)
             return url
 
         transformed = {
@@ -162,8 +160,6 @@ class DeathRecordDetailAPIView(APIView):
         data = DeathRecordSerializer(record, context={'request': request}).data
         
         def build_absolute_url(url):
-            if url and request:
-                return request.build_absolute_uri(url)
             return url
 
         transformed = {

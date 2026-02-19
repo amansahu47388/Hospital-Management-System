@@ -50,9 +50,10 @@ export default function GeneratePathologyBill({ open, onClose }) {
 
     getPathologyTests()
       .then((res) => {
-        const data = Array.isArray(res)
-          ? res
-          : res?.results || res?.data || [];
+        const payload = res?.data ?? res;
+        const data = Array.isArray(payload)
+          ? payload
+          : payload?.results || payload?.data || [];
         setTestsList(data);
       })
       .catch(() => setTestsList([]));
@@ -66,9 +67,10 @@ export default function GeneratePathologyBill({ open, onClose }) {
 
     getDoctors()
       .then((res) => {
-        const data = Array.isArray(res?.data)
-          ? res.data
-          : res?.data?.results || res?.results || [];
+        const payload = res?.data ?? res;
+        const data = Array.isArray(payload)
+          ? payload
+          : payload?.results || payload?.data || [];
         setDoctors(data);
       })
       .catch(() => setDoctors([]));
@@ -120,7 +122,11 @@ export default function GeneratePathologyBill({ open, onClose }) {
     if (selectedPatient) {
       getMedicalCases(selectedPatient.id)
         .then((res) => {
-          setCases(res.data || []);
+          const payload = res?.data ?? res;
+          const data = Array.isArray(payload)
+            ? payload
+            : payload?.results || payload?.data || [];
+          setCases(data);
           setSelectedCase("");
         })
         .catch(() => setCases([]));
@@ -388,7 +394,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
               disabled={!selectedPatient}
             >
               <option value="">Select Case</option>
-              {cases.map(c => (
+              {Array.isArray(cases) && cases.map(c => (
                 <option key={c.id} value={c.id}>
                   {c.case_id} {c.case_reference_no ? `(${c.case_reference_no})` : ""}
                 </option>
@@ -442,7 +448,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                     }
                   >
                     <option value="">Select</option>
-                    {testsList.map((t) => (
+                    {Array.isArray(testsList) && testsList.map((t) => (
                       <option key={t.id} value={t.id}>
                         {t.test_name}
                       </option>
@@ -502,7 +508,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                   onChange={(e) => setSelectedDoctor(e.target.value)}
                 >
                   <option value="">Select Doctor</option>
-                  {doctors.map((doctor) => (
+                  {Array.isArray(doctors) && doctors.map((doctor) => (
                     <option key={doctor.id} value={doctor.id}>
                       {doctor.full_name || doctor.email || `Doctor #${doctor.id}`}
                     </option>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Get API URL from environment variable or use default
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Create axios instance for auth endpoints (no /admin/ prefix)
 const authApi = axios.create({

@@ -23,7 +23,11 @@ export default function BedTypeList() {
     try {
       setLoading(true);
       const res = await getBedTypes();
-      setBedTypes(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setBedTypes(data);
     } catch {
       notify("error", "Failed to load bed types");
     } finally {
@@ -96,7 +100,7 @@ export default function BedTypeList() {
               </thead>
 
               <tbody>
-                {bedTypes.map((type) => (
+                {Array.isArray(bedTypes) && bedTypes.map((type) => (
                   <tr key={type.id} className="hover:bg-gray-100 group border border-gray-200 focus:border-[#6046B5] focus:ring-0.5 focus:ring-[#8A63D2] outline-none transition rounded px-3 py-2 transition-all">
                     <td className="px-3 py-2 font-medium">
                       {type.bad_type}
@@ -122,7 +126,7 @@ export default function BedTypeList() {
               </tbody>
             </table>
 
-            {!loading && bedTypes.length === 0 && (
+            {!loading && (Array.isArray(bedTypes) && bedTypes.length === 0) && (
               <p className="text-center text-gray-500 py-4">
                 No bed types found
               </p>

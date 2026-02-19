@@ -33,7 +33,11 @@ export default function RadiologyTest() {
     try {
       setLoading(true);
       const res = await getRadiologyTests();
-      setTests(res.data);
+      const payload = res?.data ?? res;
+      const data = Array.isArray(payload)
+        ? payload
+        : payload?.results || payload?.data || [];
+      setTests(data);
     } catch {
       notify("error", "Failed to load radiology tests");
     } finally {
@@ -47,6 +51,7 @@ export default function RadiologyTest() {
 
   /* ================= SEARCH FILTER ================= */
   const filteredData = useMemo(() => {
+    if (!Array.isArray(tests)) return [];
     return tests.filter((item) =>
       Object.values(item)
         .join(" ")
