@@ -10,6 +10,10 @@ from .models import PathologyCategory, PathologyParameter, PathologyTest, Pathol
 from .serializers import *
 from opd_ipd_module.models import Prescription
 from django.db import transaction
+import logging
+from utils.response import success_response, error_response, handle_exception
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -24,15 +28,15 @@ class PathologyCategoryAPI(APIView):
         return Response(data)
 
     def post(self, request):
-        serializer = PathologyCategorySerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = PathologyCategorySerializer(data=request.data)
+            if not serializer.is_valid():
+                return error_response("Validation failed", serializer.errors)
 
-        serializer.save(created_by=request.user)
-        return Response(
-            {"message": "Pathology category created successfully"},
-            status=status.HTTP_201_CREATED
-        )
+            serializer.save(created_by=request.user)
+            return success_response(message="Pathology category created successfully", status_code=status.HTTP_201_CREATED)
+        except Exception as e:
+            return handle_exception(e)
 
     def put(self, request, pk):
         category = get_object_or_404(PathologyCategory, pk=pk)
@@ -201,28 +205,24 @@ class GeneratePathologyBillAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = PathologyBillCreateSerializer(
-            data=request.data,
-            context={"request": request}
-        )
+        try:
+            serializer = PathologyBillCreateSerializer(
+                data=request.data,
+                context={"request": request}
+            )
 
-        if serializer.is_valid():
-            bill = serializer.save()
-            return Response(
-                {
-                    "success": True,
+            if serializer.is_valid():
+                bill = serializer.save()
+                return success_response({
                     "bill_id": bill.id,
                     "bill_no": bill.bill_no,
                     "total": bill.total_amount,
                     "balance": bill.balance,
-                },
-                status=status.HTTP_201_CREATED
-            )
+                }, message="Bill generated successfully", status_code=status.HTTP_201_CREATED)
 
-        return Response(
-            {"success": False, "errors": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            return error_response("Validation failed", serializer.errors)
+        except Exception as e:
+            return handle_exception(e)
 
 
 class PathologyBillListAPIView(APIView):

@@ -33,7 +33,7 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20, null=True, blank=True)
     photo = models.ImageField(upload_to='patient_photos/', blank=True, null=True)
     address = models.TextField(null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
@@ -67,7 +67,9 @@ class Patient(models.Model):
     @property
     def full_name(self):
         """Return full name of patient"""
-        return f"{self.first_name} {self.last_name}".strip()
+        if self.last_name:
+            return f"{self.first_name} {self.last_name}".strip()
+        return self.first_name.strip()
 
     @property
     def age(self):

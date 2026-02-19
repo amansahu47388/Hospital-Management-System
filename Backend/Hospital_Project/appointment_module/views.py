@@ -9,11 +9,13 @@ from .serializers import *
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from users.models import User
+from utils.mixins import StandardResponseMixin
+from utils.response import success_response, error_response, handle_exception
 
 
 
 # Appointment Priority
-class AppointmentPriorityAPIView(APIView):
+class AppointmentPriorityAPIView(StandardResponseMixin, APIView):
     def get(self, request):
         appointments = AppointmentPriority.objects.all()
         serializer = AppointmentPrioritySerializer(appointments, many=True)
@@ -40,7 +42,7 @@ class AppointmentPriorityAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Appointment Shift
-class AppointmentShiftAPIView(APIView):
+class AppointmentShiftAPIView(StandardResponseMixin, APIView):
     def get(self, request):
         appointments = AppointmentShift.objects.all()
         serializer = AppointmentShiftSerializer(appointments, many=True)
@@ -68,7 +70,7 @@ class AppointmentShiftAPIView(APIView):
 
 
 # Appointment
-class AppointmentViewSet(viewsets.ModelViewSet):
+class AppointmentViewSet(StandardResponseMixin, viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]

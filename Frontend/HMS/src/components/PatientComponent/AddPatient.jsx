@@ -87,20 +87,6 @@ function AddPatient({ open, onClose }) {
       newErrors.phone = "Phone must be at least 10 digits";
     }
 
-    if (!formData.address.trim()) {
-      newErrors.address = "Address is required";
-    }
-
-    if (!formData.date_of_birth) {
-      newErrors.date_of_birth = "Date of birth is required";
-    } else {
-      const dob = new Date(formData.date_of_birth);
-      const today = new Date();
-      if (dob > today) {
-        newErrors.date_of_birth = "Date cannot be in the future";
-      }
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -277,7 +263,6 @@ function AddPatient({ open, onClose }) {
                   value={formData.phone}
                   onChange={handleChange}
                   error={errors.phone}
-                  required
                 />
                 <FormField
                   label="Date of Birth"

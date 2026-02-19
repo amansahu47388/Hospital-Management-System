@@ -93,15 +93,16 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
             'zip_code', 'date_of_birth', 'gender', 'blood_group', 'medical_history', 'allergies',
               'emergency_contact_name', 'emergency_contact_phone', 'photo', 'send_invitation'
         ]
+        extra_kwargs = {
+            'last_name': {'required': False, 'allow_blank': True, 'allow_null': True},
+            'phone': {'required': False, 'allow_blank': True, 'allow_null': True},
+            'address': {'required': False, 'allow_blank': True, 'allow_null': True},
+            'date_of_birth': {'required': False, 'allow_null': True},
+        }
 
     def validate_first_name(self, value):
         if not value or len(value.strip()) < 2:
             raise serializers.ValidationError("First name must be at least 2 characters.")
-        return value.strip()
-
-    def validate_last_name(self, value):
-        if not value or len(value.strip()) < 2:
-            raise serializers.ValidationError("Last name must be at least 2 characters.")
         return value.strip()
 
     def validate_email(self, value):
@@ -113,6 +114,10 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         if self.instance is None:
             if Patient.objects.filter(email=value, is_active=True).exists():
                 raise serializers.ValidationError("Patient with this email already exists.")
+            # Also check User table to prevent silent failures in user creation
+            from users.models import User
+            if User.objects.filter(email=value).exists():
+                raise serializers.ValidationError("A user with this email already exists in the system.")
         else:
             if Patient.objects.filter(email=value, is_active=True).exclude(pk=self.instance.pk).exists():
                 raise serializers.ValidationError("Patient with this email already exists.")
@@ -121,7 +126,7 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate_phone(self, value):
         if not value:
-            raise serializers.ValidationError("Phone is required.")
+            return None
         
         digits = ''.join(filter(str.isdigit, value))
         if len(digits) < 10:
@@ -129,13 +134,15 @@ class PatientCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_address(self, value):
-        if not value or len(value.strip()) < 5:
+        if not value:
+            return None
+        if len(value.strip()) < 5:
             raise serializers.ValidationError("Address must be at least 5 characters.")
         return value.strip()
 
     def validate_date_of_birth(self, value):
         if not value:
-            raise serializers.ValidationError("Date of birth is required.")
+            return None
         
         today = date.today()
         

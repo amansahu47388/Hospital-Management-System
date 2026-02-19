@@ -205,4 +205,4 @@ if not DEFAULT_FROM_EMAIL and EMAIL_HOST_USER:
     DEFAULT_FROM_EMAIL = f'Smart Hospital <{EMAIL_HOST_USER}>'
 
 # Frontend URL for password reset links
-FRONTEND_URL = os.environ.get('FRONTEND_URL')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')

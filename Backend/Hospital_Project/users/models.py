@@ -18,7 +18,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, blank=True, unique=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
     full_name = models.CharField(max_length=255)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="patient")
     is_active = models.BooleanField(default=True)

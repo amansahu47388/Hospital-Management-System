@@ -8,6 +8,7 @@ import IPDVisitDetail from "../../components/ipd/IPDVisitDetails";
 import { deleteIpdPatient } from "../../api/ipdApi";
 import AddDischargePatient from "../../components/ipd/AddDischargePatient";
 import { useNotify } from "../../context/NotificationContext";
+import { getErrorMessage } from "../../utils/errorUtils";
 
 
 export default function IpdPatient() {
@@ -42,6 +43,7 @@ export default function IpdPatient() {
       setIpdList(data);
     } catch (err) {
       console.error(err);
+      notify("error", getErrorMessage(err, "Failed to fetch IPD list"));
     } finally {
       setLoading(false);
     }
@@ -84,8 +86,7 @@ export default function IpdPatient() {
         setSelectedIpd(null);
       }
     } catch (err) {
-      const msg = err.response?.data?.detail || "Delete failed";
-      notify("error", msg);
+      notify("error", getErrorMessage(err, "Delete failed"));
     } finally {
       setDeleting(false);
     }
