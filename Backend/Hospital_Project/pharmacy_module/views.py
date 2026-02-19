@@ -9,11 +9,13 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from .models import *
 from .serializers import *
+from utils.mixins import StandardResponseMixin
+from utils.response import success_response, error_response, handle_exception
 
 
 
 # ----------------- CATEGORY LIST -----------------
-class MedicineCategoryAPI(APIView):
+class MedicineCategoryAPI(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -218,7 +220,7 @@ class DosageAPIView(APIView):
 
 
 # ----------------- MEDICINES CRUD -----------------
-class MedicineListAPIView(APIView):
+class MedicineListAPIView(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -449,7 +451,7 @@ class PharmacyBillListAPIView(APIView):
 
 
 
-class PharmacyBillCreateAPIView(APIView):
+class PharmacyBillCreateAPIView(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

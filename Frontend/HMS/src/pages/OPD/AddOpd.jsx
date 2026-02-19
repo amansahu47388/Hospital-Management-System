@@ -422,7 +422,7 @@ export default function AddOpd() {
                 {/* RIGHT */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Appointment Date</label>
+                    <label className="block text-sm font-medium mb-1">Appointment Date <span className="text-red-500">*</span></label>
                     <input
                       type="datetime-local"
                       className=" form-field w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
@@ -437,7 +437,7 @@ export default function AddOpd() {
 
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Consultant Doctor</label>
+                    <label className="block text-sm font-medium mb-1">Consultant Doctor <span className="text-red-500">*</span></label>
                     <select
                       name="doctor"
                       value={formData.doctor}
@@ -496,7 +496,7 @@ export default function AddOpd() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Charge Category</label>
+                      <label className="block text-sm font-medium mb-1">Charge Category <span className="text-red-500">*</span></label>
                       <select
                         className="form-field w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
                         value={formData.charge_category}
@@ -519,7 +519,7 @@ export default function AddOpd() {
 
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Charge name</label>
+                      <label className="block text-sm font-medium mb-1">Charge name <span className="text-red-500">*</span></label>
                       <select
                         className=" form-field w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none"
                         value={formData.charge_id}
@@ -553,7 +553,7 @@ export default function AddOpd() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1"> Charge Amount($)</label>
+                      <label className="block text-sm font-medium mb-1"> Charge Amount($) <span className="text-red-500">*</span></label>
                       <input type="number" disabled className="form-field w-full border border-gray-300 px-3 py-2 rounded text-sm bg-gray-100"
                         value={formData.charge_amount}
                         onChange={(e) => update("charge_amount", e.target.value)}
@@ -622,7 +622,7 @@ export default function AddOpd() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Paid Amount ($)</label>
+                      <label className="block text-sm font-medium mb-1">Paid Amount ($) <span className="text-red-500">*</span></label>
                       <input type="number" className="form-field w-full border border-gray-300 px-3 py-2 rounded text-sm focus:ring-1 focus:ring-[#8A63D2] outline-none" placeholder="Paid Amount ($)"
                         value={formData.paid_amount}
                         onChange={handleInputChange}
@@ -630,7 +630,6 @@ export default function AddOpd() {
                       />
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -666,8 +665,7 @@ function getImageUrl(photoPath) {
     return photoPath;
   }
 
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const baseUrl = apiUrl.replace('/api', '');
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   // Ensure path starts with /
   const path = photoPath.startsWith('/') ? photoPath : '/' + photoPath;

@@ -5,13 +5,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import *
 from .serializers import *
+from utils.mixins import StandardResponseMixin
+from utils.response import success_response, error_response, handle_exception
 
 
 
 # **************************************************************** #
 #                       Hospital Charge Setup APIs                        #
 # **************************************************************** #   
-class ChargeUnitAPI(APIView):
+class ChargeUnitAPI(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=None):
@@ -213,7 +215,7 @@ class HospitalChargesAPIView(APIView):
 #                       BED Setup APIs                             #
 # **************************************************************** # 
 
-class FloorAPI(APIView):
+class FloorAPI(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -598,7 +600,7 @@ class VitalAPI(APIView):
 #                      HEADER SETUP APIVIEW                                     #
 #***********************************************************************************#
 
-class HeaderAPI(APIView):
+class HeaderAPI(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=None):

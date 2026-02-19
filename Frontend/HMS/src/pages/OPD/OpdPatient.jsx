@@ -35,7 +35,7 @@ export default function OpdPatient() {
 
   useEffect(() => {
     if (activeTab === "patient") {
-      featchPatientList();
+      fetchPatientList();
     } else {
       fetchOpd();
     }
@@ -50,18 +50,20 @@ export default function OpdPatient() {
       setOpdList(res.data);
     } catch (err) {
       console.error(err);
+      notify("error", "Failed to fetch OPD list");
     } finally {
       setLoading(false);
     }
   };
 
-  const featchPatientList = async () => {
+  const fetchPatientList = async () => {
     try {
       setLoading(true);
       const res = await getPatientList();
       setPatientList(res.data); // ✅ THIS WAS MISSING
     } catch (err) {
       console.error(err);
+      notify("error", "Failed to fetch patient list");
     } finally {
       setLoading(false);
     }
@@ -166,12 +168,12 @@ export default function OpdPatient() {
             {/* SEARCH + ACTIONS */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
               {/* Search */}
-                              <input
-                    type="text"
-                    placeholder="Search..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="
+              <input
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="
                       w-full lg:w-64
                       px-3 py-2
                       rounded-md
@@ -186,7 +188,7 @@ export default function OpdPatient() {
                       focus:ring-[#6046B5]/30
                       transition
                     "
-                  />
+              />
 
 
               {/* Actions */}
@@ -276,7 +278,7 @@ export default function OpdPatient() {
                               className=" hover:bg-purple-100 text-purple-600 p-1 rounded"
                               onClick={() => navigate(`/admin/patients/${patient.id}`)}
                             >
-                              <Eye size={16}/>
+                              <Eye size={16} />
                             </button>
                           </td>
                         </tr>

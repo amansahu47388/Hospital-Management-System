@@ -12,6 +12,8 @@ from pharmacy_module.models import PharmacyBill
 from pathology_module.models import PathologyBill
 from radiology_module.models import RadiologyBill
 from ambulance_module.models import AmbulanceBill
+from utils.mixins import StandardResponseMixin
+from utils.response import success_response, error_response, handle_exception
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +27,7 @@ class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_staff)
 
-class PatientListView(APIView):
+class PatientListView(StandardResponseMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -40,7 +42,7 @@ class PatientListView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-class PatientDetailView(APIView):
+class PatientDetailView(StandardResponseMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, patient_id):
@@ -62,7 +64,7 @@ class PatientDetailView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-class PatientCreateView(APIView):
+class PatientCreateView(StandardResponseMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -104,37 +106,40 @@ class PatientCreateView(APIView):
         from django.conf import settings
         from users.models import User
         
-        # Check if user already exists
-        if patient.user:
-            logger.info(f"Patient {patient.id} already has a user account")
-            return
-        
-        # Check if email is already used by another user
-        if User.objects.filter(email=patient.email).exists():
-            logger.warning(f"Email {patient.email} already exists in User table")
-            return
-        
-        # Create User account
-        user = User.objects.create(
-            email=patient.email,
-            full_name=patient.full_name,
-            role='patient',
-            is_staff=False,
-            is_superuser=False,
-            is_first_login=True,
-            is_active=True
-        )
-        user.set_password(temp_password)
-        user.save()
-        
-        # Link user to patient
-        patient.user = user
-        patient.save()
-        
-        logger.info(f"✅ User account created for patient {patient.id}")
-        
-        # Send invitation email
         try:
+            # Check if user already exists
+            if patient.user:
+                logger.info(f"Patient {patient.id} already has a user account linked")
+                return
+            
+            # Check if email is already used by another user
+            existing_user = User.objects.filter(email=patient.email).first()
+            if existing_user:
+                logger.warning(f"⚠️ Email {patient.email} already exists in User table. Linking to existing user.")
+                patient.user = existing_user
+                patient.save()
+                return
+            
+            # Create User account
+            logger.info(f"👤 Creating User account for: {patient.email}")
+            user = User.objects.create_user(
+                email=patient.email,
+                password=temp_password,
+                full_name=patient.full_name,
+                role='patient',
+                is_staff=False,
+                is_superuser=False,
+                is_first_login=True,
+                is_active=True
+            )
+            
+            # Link user to patient
+            patient.user = user
+            patient.save()
+            
+            logger.info(f"✅ User account created for patient {patient.id}")
+            
+            # Send invitation email
             subject = "Welcome to Hospital Management System - Patient Portal Access"
             login_url = f"{settings.FRONTEND_URL}/login"
             
@@ -184,10 +189,10 @@ This is an automated message. Please do not reply to this email.
                 [patient.email],
                 fail_silently=False,
             )
-            logger.info(f"✅ Invitation email sent to {patient.email}")
+            logger.info(f"✅ Invitation email sent successfully to {patient.email}")
             
         except Exception as e:
-            logger.error(f"❌ Failed to send invitation email to {patient.email}: {str(e)}")
+            logger.error(f"❌ Error in create_user_and_send_invitation for {patient.email}: {str(e)}", exc_info=True)
 
 
 class PatientUpdateView(APIView):

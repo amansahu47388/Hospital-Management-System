@@ -9,9 +9,11 @@ from .serializers import *
 from django.utils.timezone import now
 from .serializers import *
 from rest_framework.views import APIView
+from utils.mixins import StandardResponseMixin
+from utils.response import success_response, error_response
 
 
-class OpdPatientCreateAPIView(generics.CreateAPIView):
+class OpdPatientCreateAPIView(StandardResponseMixin, generics.CreateAPIView):
     queryset = OpdPatient.objects.all()
     serializer_class = OpdPatientCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -119,7 +121,7 @@ class IpdPatientCreateAPIView(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class ConvertOpdToIpdAPIView(APIView):
+class ConvertOpdToIpdAPIView(StandardResponseMixin, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     @transaction.atomic

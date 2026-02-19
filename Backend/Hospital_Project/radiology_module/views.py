@@ -10,8 +10,10 @@ from .models import *
 from .serializers import *
 from opd_ipd_module.models import Prescription
 from django.db import transaction
+from utils.mixins import StandardResponseMixin
+from utils.response import success_response, error_response, handle_exception
 
-class RadiologyCategoryAPIView(APIView):
+class RadiologyCategoryAPIView(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -114,7 +116,7 @@ from .serializers import RadiologyCategorySerializer, RadiologyParameterSerializ
 
 
 
-class GenerateRadiologyBillAPIView(APIView):
+class GenerateRadiologyBillAPIView(StandardResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
