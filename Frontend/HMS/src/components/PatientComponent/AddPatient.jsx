@@ -263,6 +263,7 @@ function AddPatient({ open, onClose }) {
                   value={formData.phone}
                   onChange={handleChange}
                   error={errors.phone}
+                  required
                 />
                 <FormField
                   label="Date of Birth"

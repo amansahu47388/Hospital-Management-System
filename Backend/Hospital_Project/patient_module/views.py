@@ -145,7 +145,15 @@ class PatientCreateView(StandardResponseMixin, APIView):
             
             message = f"""Dear {patient.full_name},
 
-Welcome to our Hospital Management System!
+ing information
+✓ Update your profile
+
+If you did not expect this account creation or have any questions, please contact our hospital reception.
+
+Best regards,
+Hospital Management Team
+
+━━━━━━━━━━━━Welcome to our Hospital Management System!
 
 Your patient portal account has been created successfully. You can now access your medical records, appointments, and other healthcare information online.
 
@@ -170,15 +178,7 @@ Through the patient portal, you can:
 ✓ View your medical records
 ✓ Check appointment history
 ✓ Access test results
-✓ View billing information
-✓ Update your profile
-
-If you did not expect this account creation or have any questions, please contact our hospital reception.
-
-Best regards,
-Hospital Management Team
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ View bill━━━━━━━━━━━━━━━━━━━━━━
 This is an automated message. Please do not reply to this email.
 """
             

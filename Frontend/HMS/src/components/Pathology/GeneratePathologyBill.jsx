@@ -425,14 +425,14 @@ export default function GeneratePathologyBill({ open, onClose }) {
       <div className="p-4 bg-[#f3f3f3] flex-1 overflow-y-auto">
         <div className="bg-white rounded shadow">
           <div className="grid grid-cols-6 gap-3 px-4 py-2  text-sm font-semibold">
-            <span className="font-bold">Test Name</span>
-            <span className="font-bold">Report Days</span>
-            <span className="font-bold">Report Date</span>
-            <span className="font-bold">Tax</span>
-            <span className="font-bold">Amount</span>
+            <span className="font-semibold">Test Name <span className="text-red-600"> *</span></span>
+            <span className="font-semibold">Report Days</span>
+            <span className="font-semibold">Report Date <span className="text-red-600"> *</span></span>
+            <span className="font-semibold">Tax</span>
+            <span className="font-semibold">Amount <span className="text-red-600"> *</span></span>
           </div>
 
-          <div className="px-4 py-3 space-y-3">
+          <div className="px-4  space-y-3">
             {tests.map((row) => {
               const test = findTestById(row.testId);
               return (
@@ -501,7 +501,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
             {/* LEFT */}
             <div className="space-y-4">
               <div>
-                <label>Referral Doctor</label>
+                <label className="font-semibold">Referral Doctor </label>
                 <select
                   className="w-full border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded"
                   value={selectedDoctor}
@@ -517,7 +517,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
               </div>
 
               <div>
-                <label>Note</label>
+                <label className="font-semibold">Note</label>
                 <textarea
                   className="w-full border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded h-24"
                   value={note}
@@ -542,17 +542,17 @@ export default function GeneratePathologyBill({ open, onClose }) {
             {/* RIGHT */}
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span>Subtotal ($)</span>
+                <span className="font-semibold">Subtotal </span>
                 <span>{subtotal.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between">
-                <span>Tax ($)</span>
+                <span className="font-semibold">Tax </span>
                 <span>{taxAmount.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between items-center gap-2">
-                <span>Discount</span>
+                <span className="font-semibold">Discount</span>
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
@@ -586,13 +586,13 @@ export default function GeneratePathologyBill({ open, onClose }) {
               )}
 
               <div className="flex justify-between font-bold text-lg pt-2">
-                <span>Net Amount ($)</span>
+                <span className="font-semibold">Net Amount </span>
                 <span>{netAmount.toFixed(2)}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label>Payment Mode</label>
+                  <label className="font-semibold">Payment Mode</label>
                   <select
                     className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded w-full"
                     value={paymentMode}
@@ -608,7 +608,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                 </div>
 
                 <div>
-                  <label>Paid Amount ($)</label>
+                  <label className="font-semibold">Paid Amount <span className="text-red-600"> *</span></label>
                   <input
                     type="number"
                     className="border border-gray-300 px-2 py-1 rounded focus:ring-1 focus:ring-[#6046B5] focus:outline-none p-2 rounded w-full"
