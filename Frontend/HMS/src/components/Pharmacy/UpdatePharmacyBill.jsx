@@ -43,6 +43,8 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
 
   const [patientId, setPatientId] = useState("");
   const [doctorId, setDoctorId] = useState("");
+  const [cases, setCases] = useState([]);
+  const [caseId, setCaseId] = useState("");
   const [note, setNote] = useState("");
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [paymentAmount, setPaymentAmount] = useState(0);
@@ -145,6 +147,26 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
     load();
   }, [bill]);
 
+  useEffect(() => {
+    if (patientId) {
+      getMedicalCases(patientId)
+        .then((res) => {
+          const data = Array.isArray(res?.data)
+            ? res.data
+            : res?.data?.results || res?.results || [];
+          setCases(data);
+          // If we just loaded the bill, set the initial caseId
+          if (bill && bill.patient === patientId) {
+            setCaseId(bill.case || "");
+          }
+        })
+        .catch(() => setCases([]));
+    } else {
+      setCases([]);
+      setCaseId("");
+    }
+  }, [patientId, bill]);
+
   /* ================= HELPERS ================= */
   const recalc = (row) => {
     const base = row.quantity * row.sale_price;
@@ -217,6 +239,7 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
       await updatePharmacyBill(bill.id, {
         patient: patientId,
         doctor: doctorId || null,
+        case: caseId || null,
         note,
         payment_mode: paymentMode,
         total_amount: baseTotal.toFixed(2),
@@ -291,6 +314,25 @@ export default function UpdatePharmacyBill({ bill, onClose, onUpdated }) {
           >
             <X size={22} />
           </button>
+        </div>
+
+        <div className="px-4 py-2 flex gap-4 bg-gray-50 items-center">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700">Case ID</label>
+            <select
+              className="border border-gray-200 px-3 py-1 rounded text-sm min-w-[150px] focus:outline-none focus:border-[#6046B5]"
+              value={caseId}
+              onChange={(e) => setCaseId(e.target.value)}
+              disabled={!patientId}
+            >
+              <option value="">Select Case</option>
+              {cases.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.case_id}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* ================= TABLE ================= */}
