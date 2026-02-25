@@ -56,11 +56,16 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
       getPathologyBillDetail(billId),
     ])
       .then(([testsRes, doctorsRes, billRes]) => {
-        const testData = testsRes?.data || testsRes || [];
+        const testsPayload = testsRes?.data ?? testsRes;
+        const testData = Array.isArray(testsPayload)
+          ? testsPayload
+          : testsPayload?.results || testsPayload?.data || [];
         setTestsList(testData);
 
-        const doctorData =
-          doctorsRes?.data?.results || doctorsRes?.data || [];
+        const doctorsPayload = doctorsRes?.data ?? doctorsRes;
+        const doctorData = Array.isArray(doctorsPayload)
+          ? doctorsPayload
+          : doctorsPayload?.results || doctorsPayload?.data || [];
         setDoctors(doctorData);
 
         const bill = billRes?.data || billRes;
@@ -104,7 +109,10 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
         // Fetch cases for the prefilled patient
         if (bill.patient) {
           getMedicalCases(bill.patient).then((res) => {
-            setCases(res.data || []);
+            const data = Array.isArray(res?.data)
+              ? res.data
+              : res?.data?.results || res?.results || [];
+            setCases(data);
           });
         }
       })
@@ -113,7 +121,7 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
 
   /* ================= SAFE FIND ================= */
   const findTestById = (id) =>
-    testsList.find((t) => t.id === Number(id));
+    Array.isArray(testsList) ? testsList.find((t) => t.id === Number(id)) : null;
 
   /* ================= PATIENT SEARCH ================= */
   useEffect(() => {
@@ -162,7 +170,10 @@ export default function UpdatePathologyBill({ open, onClose, billId }) {
     if (selectedPatient) {
       getMedicalCases(selectedPatient.id)
         .then((res) => {
-          setCases(res.data || []);
+          const data = Array.isArray(res?.data)
+            ? res.data
+            : res?.data?.results || res?.results || [];
+          setCases(data);
           // Only clear if the patient changed from what was initially loaded
           // or handle logic to preserve if it's the same patient
         })

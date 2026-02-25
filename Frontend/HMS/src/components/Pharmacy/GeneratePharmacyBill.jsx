@@ -128,7 +128,10 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
       (async () => {
         try {
           const res = await getMedicalCases(patientId);
-          setCases(res.data || []);
+          const data = Array.isArray(res?.data)
+            ? res.data
+            : res?.data?.results || res?.results || [];
+          setCases(data);
           setCaseId("");
         } catch (err) {
           console.error("Error fetching cases:", err);

@@ -120,7 +120,10 @@ export default function GenerateRadiologyBill({ open, onClose }) {
     if (selectedPatient) {
       getMedicalCases(selectedPatient.id)
         .then((res) => {
-          setCases(res.data || []);
+          const data = Array.isArray(res?.data)
+            ? res.data
+            : res?.data?.results || res?.results || [];
+          setCases(data);
           setSelectedCase("");
         })
         .catch(() => setCases([]));
