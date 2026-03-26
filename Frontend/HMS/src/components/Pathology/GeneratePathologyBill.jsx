@@ -420,7 +420,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                   className="grid grid-cols-6 gap-3 items-center"
                 >
                   <select
-                    className="border p-2 rounded"
+                    className="border border-gray-200 p-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     value={row.testId}
                     onChange={(e) =>
                       updateRow(row.id, e.target.value)
@@ -435,12 +435,12 @@ export default function GeneratePathologyBill({ open, onClose }) {
                   </select>
 
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-200 p-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     value={test ? `${test.report_days} days` : ""}
                     disabled
                   />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-200 p-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     value={
                       test && test.report_days
                         ? new Date(Date.now() + test.report_days * 24 * 60 * 60 * 1000).toLocaleDateString()
@@ -449,12 +449,12 @@ export default function GeneratePathologyBill({ open, onClose }) {
                     disabled
                   />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-200 p-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     value={test?.tax ?? ""}
                     disabled
                   />
                   <input
-                    className="border p-2 rounded"
+                    className="border border-gray-200 p-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     value={test?.standard_charge ?? ""}
                     disabled
                   />
@@ -482,7 +482,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
               <div>
                 <label>Referral Doctor</label>
                 <select
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-200 p-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                   value={selectedDoctor}
                   onChange={(e) => setSelectedDoctor(e.target.value)}
                 >
@@ -498,7 +498,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
               <div>
                 <label>Note</label>
                 <textarea
-                  className="w-full border p-2 rounded h-24"
+                  className="w-full border border-gray-200 p-2 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent h-24"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Enter any additional notes..."
@@ -511,7 +511,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                     type="checkbox"
                     checked={previousReportValue}
                     onChange={(e) => setPreviousReportValue(e.target.checked)}
-                    className="w-4 h-4"
+                    className="w-4 h-4 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                   />
                   Previous Report Value
                 </label>
@@ -535,7 +535,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-200 p-1 w-20 focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     placeholder="%"
                     value={discountPercent}
                     onChange={(e) => {
@@ -546,7 +546,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                   <span>or</span>
                   <input
                     type="number"
-                    className="border p-1 w-20"
+                    className="border border-gray-200 p-1 w-20 focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     placeholder="$"
                     value={discount}
                     onChange={(e) => {
@@ -573,7 +573,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                 <div>
                   <label>Payment Mode</label>
                   <select
-                    className="border p-2 w-full"
+                    className="border border-gray-200 p-2 w-full focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
                   >
@@ -590,7 +590,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
                   <label>Paid Amount ($)</label>
                   <input
                     type="number"
-                    className="border p-2 w-full"
+                    className="border border-gray-200 p-2 w-full focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-transparent"
                     value={paidAmount}
                     onChange={(e) => setPaidAmount(e.target.value)}
                     placeholder="0.00"

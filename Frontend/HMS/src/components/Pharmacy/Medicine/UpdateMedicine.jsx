@@ -237,7 +237,9 @@ const Input = ({required, label, ...props }) => (
     <label className="text-sm font-medium">{label}
       {required && <span className="text-red-500 ml-1">*</span>}
     </label>
-    <input {...props} className="w-full mt-1 border rounded px-3 py-2" />
+    <input {...props} className="w-full mt-1 border border-gray-200 rounded px-3 py-2   focus:outline-none
+    focus:border-purple-500
+    transition-all duration-200" />
   </div>
 );
 
@@ -247,7 +249,9 @@ const Select = ({ label, required, options, labelKey, ...props }) => (
       {label}
       {required && <span className="text-red-500 ml-1">*</span>}
     </label>
-    <select {...props} className="w-full mt-1 border rounded px-3 py-2">
+    <select {...props} className="w-full mt-1 border border-gray-200 rounded px-3 py-2 focus:outline-none
+    focus:border-purple-500
+    transition-all duration-200">
       <option value="">Select</option>
       {options.map((o) => (
         <option key={o.id} value={o.id}>

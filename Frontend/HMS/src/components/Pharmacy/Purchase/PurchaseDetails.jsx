@@ -27,7 +27,7 @@ export default function PurchaseDetails({ data, onClose }) {
         </div>
 
         {/* INFO BAR */}
-        <div className="border-b px-4 py-2 text-xs flex flex-col md:flex-row md:justify-between gap-2">
+        <div className="border-t border-gray-200 px-4 py-2 text-xs flex flex-col md:flex-row md:justify-between gap-2">
           <div>
             <span className="font-medium">Pharmacy Purchase No</span>{" "}
             <span className="ml-1">PCHN{data.id}</span>
@@ -42,7 +42,7 @@ export default function PurchaseDetails({ data, onClose }) {
         </div>
 
         {/* SUPPLIER INFO */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-2 gap-x-4 text-sm px-4 py-3 border-b">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-2 gap-x-4 text-sm px-4 py-3 border-b border-gray-200">
           <div><b>Supplier Name</b></div><div>{supplier_name}</div>
           <div><b>Supplier Contact</b></div><div>{data.supplier_contact}</div>
           <div><b>Contact Person</b></div><div>{data.contact_person_name}</div>
@@ -52,11 +52,11 @@ export default function PurchaseDetails({ data, onClose }) {
         </div>
 
         {/* TABLE */}
-        <div className="flex-1 overflow-auto">
-          <div className="w-full overflow-x-auto">
-            <table className="min-w-[1100px] w-full  text-xs">
+        <div className="flex-1 overflow-auto  ">
+          <div className="w-full overflow-x-auto "> 
+            <table className="min-w-[1100px] w-full  text-xs  thin-scrollbar">
               <thead className="bg-gray-100">
-                <tr className="border-b">
+                <tr className="border-b border-gray-200">
                   {[
                     "Medicine Category",
                     "Medicine Name",
@@ -80,7 +80,7 @@ export default function PurchaseDetails({ data, onClose }) {
 
               <tbody>
                 {items.map((row, i) => (
-                  <tr key={i} className="border-b">
+                  <tr key={i} className="border-b border-gray-200">
                     <td className="px-2 py-1">{row.category_name}</td>
                     <td className="px-2 py-1">{row.medicine_name}</td>
                     <td className="px-2 py-1">{row.batch_no}</td>
@@ -101,7 +101,7 @@ export default function PurchaseDetails({ data, onClose }) {
         </div>
 
         {/* TOTALS */}
-        <div className="border-t px-4 py-3 flex flex-col md:flex-row md:justify-between gap-4 text-sm">
+        <div className="border-t border-gray-200 px-4 py-3 flex flex-col md:flex-row md:justify-between gap-4 text-sm">
           <div>
             <b>Payment Mode :</b> {payment_mode}
           </div>
@@ -127,7 +127,7 @@ export default function PurchaseDetails({ data, onClose }) {
         </div>
 
         {/* FOOTER */}
-        <div className="border-t p-3 flex justify-center md:justify-end">
+        <div className="border-t border-gray-200 p-3 flex justify-center md:justify-end">
           <button className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded text-sm">
             Save
           </button>

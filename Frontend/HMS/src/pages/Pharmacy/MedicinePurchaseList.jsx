@@ -121,7 +121,18 @@ const openPurchaseDetails = async (id) => {
               }}
 
               placeholder="Search..."
-              className="border rounded px-3 py-2 w-full md:w-72"
+              className="border rounded px-3 py-2 w-full md:w-72  w-full
+        pl-10 pr-4 py-2.5
+        rounded-xl
+        border border-gray-300
+        bg-white
+        text-sm
+        shadow-sm
+        transition-all duration-300
+        focus:outline-none
+        focus:ring-2 focus:ring-purple-400
+        focus:border-purple-400
+        focus:shadow-md"
             />
           </div>
 
