@@ -5,7 +5,7 @@ import Navbar from "../../components/AdminComponent/Navbar";
 import { useNavigate } from "react-router-dom";
 import { Plus, FileText, FileSpreadsheet, Printer, File, Eye } from "lucide-react";
 import { getDischargedIpdPatients } from "../../api/ipdApi";
-import DischargeVisitDetail from "../../components/ipd/DischargeVisitDetails";
+import DischargeVisitDetail from "../../components/ipd/DischargevisitDetails";
 
 
 export default function DischargedPatients() {

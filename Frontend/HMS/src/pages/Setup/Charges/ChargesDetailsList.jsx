@@ -3,7 +3,7 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import AdminLayout from "../../../layout/AdminLayout";
 import ChargesSidebar from "../../../components/Setup/Charges/ChargesSidebar";
 import AddCharges from "../../../components/Setup/Charges/AddCharges";
-import UpdateCharges from "../../../components/Setup/Charges/Updatecharges";
+import UpdateCharges from "../../../components/Setup/Charges/UpdateCharges";
 import {
   getHospitalCharges,
   deleteHospitalCharge,

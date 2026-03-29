@@ -32,9 +32,13 @@ function PatientNavbar() {
     };
 
     const displayUser = {
-        full_name: patientInfo ? `${patientInfo.first_name} ${patientInfo.last_name}` : authUser?.full_name,
+        full_name:
+            patientInfo?.full_name ||
+            (patientInfo
+                ? `${patientInfo.first_name} ${patientInfo.last_name || ""}`.trim()
+                : authUser?.full_name),
         profile_picture: patientInfo?.photo || authUser?.profile_picture,
-        role: authUser?.role
+        role: authUser?.role,
     };
 
     return (
