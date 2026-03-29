@@ -8,7 +8,7 @@ import {
   User,
   Loader2,
 } from "lucide-react";
-import ProfileDropdown from "./AdminProfileDropDown";
+import ProfileDropdown from "./AdminProfileDropdown";
 import BedStatusModal from "./BedStatus";
 import { searchPatient } from "../../api/patientApi";
 import { getAdminProfiles } from "../../api/adminApi";

@@ -189,8 +189,8 @@ function Sidebar({ role = "admin", user = null }) {
 
           {/* NAVIGATION */}
           <nav className="space-y-3 text-md font-semibold pb-10">
-            {/* STAFF MANAGEMENT - Only for Super Admin */}
-            {role !== "patient" && user?.is_superuser && (
+            {/* STAFF MANAGEMENT - For Admin role or Super Admin */}
+            {role !== "patient" && (role === "admin" || user?.is_superuser) && (
               <NavLink
                 to="/admin/staff-management"
                 end

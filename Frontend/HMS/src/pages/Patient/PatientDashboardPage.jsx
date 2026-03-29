@@ -28,6 +28,7 @@ import {
 } from "recharts";
 import { useAuth } from "../../context/AuthContext";
 import { getPatientDashboard } from "../../api/patientApi";
+import { getCurrentUser } from "../../api/authApi";
 
 const iconMap = {
     "OPD": Stethoscope,
@@ -42,8 +43,9 @@ const iconMap = {
 const COLORS = ["#26648E", "#4FB0C6", "#E15D44", "#542437", "#53777A", "#C02942", "#D95B43", "#ECD078"];
 
 export default function PatientDashboardPage() {
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
     const [loading, setLoading] = useState(true);
+    const [missingPatientProfile, setMissingPatientProfile] = useState(false);
     const [dashboardData, setDashboardData] = useState({
         stats: [],
         history: [],
@@ -52,17 +54,50 @@ export default function PatientDashboardPage() {
     });
 
     const fetchDashboardData = useCallback(async () => {
-        if (!user?.patient_id) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
+        setMissingPatientProfile(false);
+
+        let patientId = user.patient_id;
+
+        if (!patientId && user.role === "patient") {
+            try {
+                const meRes = await getCurrentUser();
+                const refreshed = meRes.data;
+                if (refreshed?.patient_id) {
+                    patientId = refreshed.patient_id;
+                    setUser((prev) => (prev ? { ...prev, ...refreshed } : prev));
+                }
+            } catch (e) {
+                console.error("Error refreshing user profile:", e);
+            }
+        }
+
+        if (!patientId) {
+            setMissingPatientProfile(true);
+            setDashboardData({
+                stats: [],
+                history: [],
+                findings: [],
+                symptoms: []
+            });
+            setLoading(false);
+            return;
+        }
+
         try {
-            const res = await getPatientDashboard(user.patient_id);
+            const res = await getPatientDashboard(patientId);
             setDashboardData(res.data);
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, [user, setUser]);
 
     useEffect(() => {
         fetchDashboardData();
@@ -73,6 +108,20 @@ export default function PatientDashboardPage() {
             <PatientLayout>
                 <div className="min-h-[80vh] flex items-center justify-center">
                     <Loader size={40} className="animate-spin text-indigo-600" />
+                </div>
+            </PatientLayout>
+        );
+    }
+
+    if (missingPatientProfile) {
+        return (
+            <PatientLayout>
+                <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
+                    <p className="text-gray-700 max-w-md">
+                        Your account is not linked to a hospital patient record yet, so the dashboard cannot load.
+                        If you recently registered, try logging out and back in. Otherwise, please contact reception
+                        so they can link your profile.
+                    </p>
                 </div>
             </PatientLayout>
         );
