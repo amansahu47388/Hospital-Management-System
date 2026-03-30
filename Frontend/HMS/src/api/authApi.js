@@ -1,12 +1,14 @@
 import axios from "axios";
 
-const RAW_API_URL = import.meta.env.VITE_API_URL;
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+if (!import.meta.env.VITE_API_URL) {
+  console.warn("VITE_API_URL is missing. Using default http://localhost:8000");
+}
 // Auth endpoints now live at /api/auth/* (with /api prefix)
-const AUTH_BASE_URL = RAW_API_URL;
+const AUTH_BASE_URL = RAW_API_URL.endsWith('/') ? RAW_API_URL : RAW_API_URL + '/';
 
 const API = axios.create({
-  baseURL: `${AUTH_BASE_URL}`,
-  withCredentials: true,
+  baseURL: AUTH_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -36,9 +38,9 @@ API.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refresh_token");
         const response = await axios.post(
-          `${AUTH_BASE_URL}/auth/refresh/`,
-          { refresh: refreshToken },
-          { withCredentials: true }
+          `${AUTH_BASE_URL}auth/refresh/`,
+          { refresh: refreshToken }
+          // Removed withCredentials: true
         );
         const { access } = response.data;
         localStorage.setItem("access_token", access);

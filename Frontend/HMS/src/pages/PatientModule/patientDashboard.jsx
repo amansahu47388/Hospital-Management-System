@@ -254,9 +254,9 @@ function PatientDashboard() {
                       <td className="px-3 py-2">{patient.gender}</td>
                       <td className="px-3 py-2">{patient.phone}</td>
                       <td className="px-3 py-2">
-                        {new Date(
-                          patient.date_of_birth
-                        ).toLocaleDateString()}
+                        {patient.date_of_birth
+                          ? new Date(patient.date_of_birth).toLocaleDateString()
+                          : "N/A"}
                       </td>
                       <td className="px-3 py-2 font-semibold">
                         {patient.age || "N/A"}

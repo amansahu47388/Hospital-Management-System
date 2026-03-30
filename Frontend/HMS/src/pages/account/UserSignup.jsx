@@ -220,7 +220,7 @@ export default function UserSignup() {
                   outline-none
                   transition
                 "
-                placeholder="you@example.com"
+                placeholder="name@gmail.com"
               />
               {errors.email && (
                 <p className="text-xs text-red-600 mt-1">{errors.email}</p>

@@ -113,7 +113,7 @@ function InfoCards() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes slide-up {
           from {
             opacity: 0;

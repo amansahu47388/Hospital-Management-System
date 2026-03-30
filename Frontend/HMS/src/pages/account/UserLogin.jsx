@@ -123,7 +123,7 @@ export default function UserLogin() {
                 type="email"
                 value={form.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
+                placeholder="name@gmail.com"
                 required
                 className="
                   mt-2 w-full px-3 py-2 rounded-md
@@ -206,7 +206,7 @@ export default function UserLogin() {
           <div className="mt-6 text-center">
             <Link
               to="/admin/login"
-              className="text-sm text-gray-500 hover:underline"
+              className="text-sm text-[#6046B5] hover:underline"
             >
               Admin Login
             </Link>

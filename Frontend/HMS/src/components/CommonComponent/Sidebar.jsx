@@ -159,7 +159,7 @@ function Sidebar({ role = "admin", user = null }) {
       {/* FLOATING TOGGLE BUTTON (Right side like your image) */}
       <button
         onClick={handleToggle}
-        className="absolute  top-4 -right-10 z-50 p-1  cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
+        className="absolute top-4 -right-10 z-50 p-1 cursor-pointer bg-transparent border-0 outline-0 focus:outline-0 focus:ring-0"
       >
         <Menu />
       </button>
@@ -167,12 +167,12 @@ function Sidebar({ role = "admin", user = null }) {
       {/* SIDEBAR */}
       <aside
         className={`fixed md:relative top-0 left-0 z-40 ${collapsed ? "w-20" : "w-64"
-          } h-screen overflow-y-auto
+          }  h-screen overflow-y-auto
         text-white bg-gradient-to-b from-[#6046B5] to-[#8A63D2]
         transition-transform duration-1000 md:transition-all md:duration-1000
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        <div className="flex flex-col h-full p-5 justify-even">
+        <div className="flex flex-col h-full p-5 justify-start">
           {/* LOGO – hidden on mobile */}
           <div className="hidden md:flex mb-4 h-16 md:h-20 items-center justify-center">
             <img
@@ -188,7 +188,7 @@ function Sidebar({ role = "admin", user = null }) {
           </div>
 
           {/* NAVIGATION */}
-          <nav className="space-y-3 text-md font-semibold pb-10">
+          <nav className="space-y-3 text-md font-semibold pt-15 md:pt-0">
             {/* STAFF MANAGEMENT - For Admin role or Super Admin */}
             {role !== "patient" && (role === "admin" || user?.is_superuser) && (
               <NavLink

@@ -85,7 +85,7 @@ function Home() {
         </svg>
       </button>
 
-      <style jsx>{`
+      <style>{`
         /* Smooth scroll for the entire page */
         html {
           scroll-behavior: smooth;
