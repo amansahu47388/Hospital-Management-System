@@ -5,4 +5,8 @@ import svgr from "vite-plugin-svgr";
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), svgr()],
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+  },
 });

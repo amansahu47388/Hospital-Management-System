@@ -139,7 +139,7 @@ export default function AdminLogin() {
                   outline-none
                   transition
                 "
-                placeholder="admin@example.com"
+                placeholder="name@gmail.com"
               />
               {errors.email && (
                 <p className="text-xs text-red-600 mt-1">{errors.email}</p>
@@ -200,17 +200,13 @@ export default function AdminLogin() {
               {loading ? "Signing in..." : "Login"}
             </button>
 
-            <p className="text-sm text-center text-gray-600">
-              {/* Staff accounts are created by administrators */}
-              Contact your administrator for account access
-            </p>
           </form>
 
           {/* Switch to User Login */}
           <div className="mt-6 text-center">
             <Link
               to="/login"
-              className="text-sm text-gray-500 hover:underline"
+              className="text-sm text-[#6046B5] hover:underline"
             >
               User Login
             </Link>
