@@ -1,10 +1,11 @@
 import axios from "axios";
 
 // Get API URL from environment variable or use default
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = RAW_API_URL.endsWith('/') ? RAW_API_URL : RAW_API_URL + '/';
 
 const api = axios.create({
-  baseURL: `${API_BASE_URL}/admin/`,
+  baseURL: `${API_BASE_URL}admin/`,
   // Don't set Content-Type here - let axios handle it automatically
   // This allows FormData to set multipart/form-data automatically
 });
