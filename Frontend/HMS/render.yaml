@@ -1,9 +1,9 @@
 services:
   - type: web
     name: hms-frontend
-    env: static
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: ./dist
     routes:
       - type: rewrite
         source: /*
