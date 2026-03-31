@@ -54,7 +54,7 @@ export const createPathologyTest = (data) => {
 };
 
 export const getPathologyTests = () => {
-  return api.get("pathology/pathology-test");
+  return api.get("pathology/pathology-test/");
 };
 
 export const deletePathologyTest = (id) => {

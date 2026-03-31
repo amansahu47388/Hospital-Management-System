@@ -226,7 +226,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
       return;
     }
 
-    if (!paidAmount) {
+    if (paidAmount === "" || paidAmount === null) {
       notify("warning", "Paid amount is required");
       return;
     }
@@ -236,7 +236,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
       return;
     }
 
-    if (paidAmount > netAmount) {
+    if (Number(paidAmount) > netAmount) {
       notify("warning", "Paid amount cannot be greater than net amount");
       return;
     }
@@ -248,8 +248,8 @@ export default function GeneratePathologyBill({ open, onClose }) {
 
     const payload = {
       patient_id: selectedPatient.id,
-      doctor_id: selectedDoctor ? Number(selectedDoctor) : null,
-      case_id: selectedCase || null,
+      doctor_id: selectedDoctor && selectedDoctor !== "" ? Number(selectedDoctor) : null,
+      case_id: selectedCase && selectedCase !== "" ? selectedCase : null,
       prescription_id: selectedPrescription?.id || null,
       note: note || "",
       previous_report_value: previousReportValue,
@@ -262,7 +262,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
     };
 
     if (!payload.tests.length) {
-      notify("warning", "Please select at least one test");
+      notify("warning", "Please select at least one test from the list");
       return;
     }
 
@@ -270,7 +270,7 @@ export default function GeneratePathologyBill({ open, onClose }) {
       setLoading(true);
       const res = await createPathologyBill(payload);
       const data = res?.data || res;
-      notify("success", `Bill created successfully (Bill No: ${data.bill_no || data.bill_id})`);
+      notify("success", `Bill created successfully (Bill ID: ${data.id})`);
       // Reset form
       setSelectedPatient(null);
       setSelectedPrescription(null);
@@ -282,14 +282,16 @@ export default function GeneratePathologyBill({ open, onClose }) {
       setNote("");
       setPreviousReportValue(false);
       setPaymentMode("cash");
-      onClose();
+      if (onClose) onClose();
     } catch (err) {
+      console.error("CREATE BILL ERROR:", err.response?.data || err);
       const errorMsg =
         err?.response?.data?.errors
           ? Object.values(err.response.data.errors).flat().join(", ")
           : err?.response?.data?.error
-          || err?.message
-          || "Failed to create pathology bill";
+            || err?.response?.data?.message
+            || err?.message
+            || "Failed to create pathology bill";
 
       notify("error", errorMsg);
     }

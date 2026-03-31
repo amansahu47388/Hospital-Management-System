@@ -206,6 +206,7 @@ export default function UpdateRadiologyTest({ open, onClose, test }) {
 
               <Input label="Sub Category" name="sub_category" value={formData.sub_category} onChange={handleChange} />
               <Input label="Method" name="method" value={formData.method} onChange={handleChange} />
+              <Input label="Report Days" name="report_days" type="number" value={formData.report_days} onChange={handleChange} required />
             </div>
 
             {/* CHARGES */}

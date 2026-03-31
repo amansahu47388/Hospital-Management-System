@@ -75,8 +75,12 @@ export default function RadiologyTest() {
       await deleteRadiologyTest(id);
       notify("success", "Radiology test deleted");
       fetchTests();
-    } catch {
-      notify("error", "Failed to delete radiology test");
+    } catch (err) {
+      const errorMsg = 
+        err?.response?.data?.error || 
+        err?.response?.data?.message || 
+        "Failed to delete radiology test";
+      notify("error", errorMsg);
     }
   };
 

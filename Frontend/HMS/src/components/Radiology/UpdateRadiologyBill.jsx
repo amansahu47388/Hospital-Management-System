@@ -290,8 +290,8 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
 
     const payload = {
       patient_id: selectedPatient.id,
-      doctor_id: selectedDoctor ? Number(selectedDoctor) : null,
-      case_id: selectedCase || null,
+      doctor_id: selectedDoctor && selectedDoctor !== "" ? Number(selectedDoctor) : null,
+      case_id: selectedCase && selectedCase !== "" ? selectedCase : null,
       prescription_id: selectedPrescription?.id || null,
       note,
       previous_report_value: previousReportValue,
@@ -308,12 +308,14 @@ export default function UpdateRadiologyBill({ open, onClose, billId }) {
       notify("success", "Bill updated successfully");
       onClose();
     } catch (err) {
+      console.error("UPDATE RADIOLOGY BILL ERROR:", err.response?.data || err);
       const errorMsg =
         err?.response?.data?.errors
           ? Object.values(err.response.data.errors).flat().join(", ")
           : err?.response?.data?.error ||
+          err?.response?.data?.message ||
           err?.message ||
-          "Failed to update pathology bill";
+          "Failed to update radiology bill";
       notify("error", errorMsg);
     } finally {
       setLoading(false);

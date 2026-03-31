@@ -144,25 +144,37 @@ export default function AddPathologyTest({ open, onClose }) {
     setErrors({});
 
     const validationErrors = {};
-    if (!formData.test_name) validationErrors.test_name = "Test name is required";
-    if (!formData.short_name) validationErrors.short_name = "Short name is required";
+    if (!formData.test_name?.trim()) validationErrors.test_name = "Test name is required";
+    if (!formData.short_name?.trim()) validationErrors.short_name = "Short name is required";
     if (!formData.category) validationErrors.category = "Category is required";
-    if (!formData.report_days) validationErrors.report_days = "Report days is required";
-    if (!formData.tax) validationErrors.tax = "Tax is required";
-    if (!formData.standard_charge || Number(formData.standard_charge) <= 0)
+    if (formData.report_days === "" || formData.report_days === null)
+      validationErrors.report_days = "Report days is required";
+    if (formData.tax === "" || formData.tax === null)
+      validationErrors.tax = "Tax is required";
+    if (!formData.charge_category)
+      validationErrors.charge_category = "Charge category is required";
+    if (!formData.charges)
+      validationErrors.charges = "Charge name is required";
+    if (Number(formData.standard_charge) <= 0)
       validationErrors.standard_charge = "Charge must be greater than 0";
-    if (!formData.report_days || Number(formData.report_days) <= 0)
+    if (Number(formData.report_days) <= 0)
       validationErrors.report_days = "Report days must be greater than 0";
-    if (!formData.tax || Number(formData.tax) < 0)
-      validationErrors.tax = "Tax must be greater than or equal to 0";
-    if (!formData.amount || Number(formData.amount) <= 0)
-      validationErrors.amount = "Amount must be greater than 0";
-    if (!FormField.parameter_name)
-      validationErrors.parameter_name = "Parameter name is required";
-    if (!FormField.reference_range)
-      validationErrors.reference_range = "Reference range is required";
-    if (!FormField.unit)
-      validationErrors.unit = "Unit is required";
+    if (Number(formData.tax) < 0)
+      validationErrors.tax = "Tax cannot be negative";
+    if (Number(formData.amount) <= 0)
+      validationErrors.amount = "Total amount must be greater than 0";
+    // Check if parameters are filled correctly if any row exists
+    if (parameters.length > 0) {
+      // If there's only one row and it's empty, we can skip it, OR or we can require it
+      // Let's make it optional if the user hasn't filled anything in the row
+      const filledParams = parameters.filter(p => p.parameter_id || p.reference_range || p.unit);
+      if (filledParams.length > 0) {
+        const invalidParam = filledParams.some(p => !p.parameter_id);
+        if (invalidParam) {
+          validationErrors.parameters = "Please select a parameter for all filled parameter rows";
+        }
+      }
+    }
 
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
@@ -284,11 +296,21 @@ export default function AddPathologyTest({ open, onClose }) {
                 onChange={handleChange}
                 error={errors.method}
               />
+              <FormField
+                label="Report Days"
+                name="report_days"
+                type="number"
+                value={formData.report_days}
+                onChange={handleChange}
+                error={errors.report_days}
+                required
+              />
 
               <SelectField
                 label="Charge Category"
                 name="charge_category"
                 value={formData.charge_category}
+                error={errors.charge_category}
                 onChange={(e) => {
                   const selectedCategory = e.target.value;
 
@@ -322,6 +344,7 @@ export default function AddPathologyTest({ open, onClose }) {
                 label="Charge Name"
                 name="charges"
                 value={formData.charges}
+                error={errors.charges}
                 onChange={(e) => {
                   const chargeId = e.target.value;
 
@@ -393,6 +416,7 @@ export default function AddPathologyTest({ open, onClose }) {
                 <div className="col-span-4">Reference Range<span className="text-red-600">*</span></div>
                 <div className="col-span-3">Unit<span className="text-red-600">*</span></div>
               </div>
+              {errors.parameters && <p className="text-red-500 text-sm mt-1">{errors.parameters}</p>}
 
               {/* PARAMETER ROWS */}
               {parameters.map((row, index) => (
@@ -509,15 +533,17 @@ function FormField({ label, name, type = "text", value, onChange, error, require
   );
 }
 
-function SelectField({ label, name, value, onChange, options, children }) {
+function SelectField({ label, name, value, onChange, options, children, error, required }) {
   return (
     <div>
-      <label className="block font-medium text-gray-700 mb-2">{label}</label>
+      <label className="block font-medium text-gray-700 mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
       <select
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
+        className={`w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${error ? "border-red-500" : "border-gray-300"}`}
       >
         {options && options.length > 0 ? (
           options.map((opt) => (
@@ -529,6 +555,7 @@ function SelectField({ label, name, value, onChange, options, children }) {
           children
         )}
       </select>
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 }
