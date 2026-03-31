@@ -162,14 +162,21 @@ class PathologyTestDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, pk):
-        pathology_test = get_object_or_404(PathologyTest, pk=pk)
-
-        pathology_test.delete()
-
-        return Response(
-            {"message": "Pathology test deleted successfully"},
-            status=status.HTTP_200_OK
-        )
+        try:
+            pathology_test = get_object_or_404(PathologyTest, pk=pk)
+            pathology_test.delete()
+            return Response(
+                {"success": True, "message": "Pathology test deleted successfully"},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            from django.db.models import ProtectedError
+            if isinstance(e, ProtectedError):
+                return Response({
+                    "success": False, 
+                    "error": "This test cannot be deleted because it is already used in one or more bills."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 class PathologyTestUpdateAPIView(APIView):
@@ -214,8 +221,7 @@ class GeneratePathologyBillAPIView(APIView):
             if serializer.is_valid():
                 bill = serializer.save()
                 return success_response({
-                    "bill_id": bill.id,
-                    "bill_no": bill.bill_no,
+                    "id": bill.id,
                     "total": bill.total_amount,
                     "balance": bill.balance,
                 }, message="Bill generated successfully", status_code=status.HTTP_201_CREATED)
@@ -245,7 +251,7 @@ class PathologyBillListAPIView(APIView):
 
         if search:
             queryset = queryset.filter(
-                Q(bill_no__icontains=search) |
+                Q(id__icontains=search) |
                 Q(patient__first_name__icontains=search) |
                 Q(patient__last_name__icontains=search) |
                 Q(patient__phone__icontains=search)

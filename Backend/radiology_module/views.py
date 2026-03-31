@@ -104,9 +104,18 @@ class RadiologyTestDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, pk):
-        test = get_object_or_404(RadiologyTest, pk=pk)
-        test.delete()
-        return Response({"message": "Radiology test deleted successfully"})
+        try:
+            test = get_object_or_404(RadiologyTest, pk=pk)
+            test.delete()
+            return Response({"success": True, "message": "Radiology test deleted successfully"})
+        except Exception as e:
+            from django.db.models import ProtectedError
+            if isinstance(e, ProtectedError):
+                return Response({
+                    "success": False, 
+                    "error": "This test cannot be deleted because it is already used in one or more bills."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated

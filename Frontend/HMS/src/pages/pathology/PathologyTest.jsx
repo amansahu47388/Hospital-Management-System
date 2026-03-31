@@ -69,7 +69,12 @@ export default function PathologyTest() {
       notify("success", "Pathology test deleted");
       fetchTests(); // reload list
     } catch (err) {
-      notify("error", "Failed to delete pathology test");
+      console.error("DELETE PATHOLOGY TEST ERROR:", err.response?.data || err);
+      const errorMsg =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        "Failed to delete pathology test";
+      notify("error", errorMsg);
     }
   };
 
@@ -192,7 +197,10 @@ export default function PathologyTest() {
           </table>
           <AddPathologyTest
             open={openAdd}
-            onClose={() => setOpenAdd(false)}
+            onClose={() => {
+              setOpenAdd(false);
+              fetchTests();
+            }}
           />
 
           <PathologyTestDetails

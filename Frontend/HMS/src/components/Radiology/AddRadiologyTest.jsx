@@ -152,7 +152,9 @@ export default function AddRadiologyTest({ open, onClose }) {
       validationErrors.standard_charge = "Charge must be greater than 0";
     if (!formData.amount || Number(formData.amount) <= 0)
       validationErrors.amount = "Amount must be greater than 0";
-    if (!formData.parameters.length) validationErrors.parameters = "Parameters are required";
+    if (!parameters.some(p => p.parameter_id)) {
+      validationErrors.parameters = "At least one parameter is required";
+    }
 
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
@@ -346,7 +348,7 @@ export default function AddRadiologyTest({ open, onClose }) {
               </SelectField>
 
               <FormField
-                label="Tax(%)"
+                label="Tax (%)"
                 name="tax"
                 type="number"
                 value={formData.tax}
@@ -355,7 +357,7 @@ export default function AddRadiologyTest({ open, onClose }) {
                 required
               />
               <FormField
-                label="standard Charge($)"
+                label="Standard Charge ($)"
                 name="standard_charge"
                 type="number"
                 value={formData.standard_charge}
@@ -364,13 +366,22 @@ export default function AddRadiologyTest({ open, onClose }) {
                 required
               />
               <FormField
-                label="Amount($)"
+                label="Amount ($)"
                 name="amount"
                 type="number"
                 value={formData.amount}
                 onChange={handleChange}
                 error={errors.amount}
                 disabled
+                required
+              />
+              <FormField
+                label="Report Days"
+                name="report_days"
+                type="number"
+                value={formData.report_days}
+                onChange={handleChange}
+                error={errors.report_days}
                 required
               />
             </div>
@@ -471,7 +482,7 @@ export default function AddRadiologyTest({ open, onClose }) {
               disabled={loading}
               className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-6 py-2 rounded font-medium disabled:opacity-60 hover:shadow-lg transition"
             >
-              {loading ? "Adding..." : "Add Pathology Test"}
+              {loading ? "Adding..." : "Add Radiology Test"}
             </button>
           </div>
         </form>
@@ -499,7 +510,7 @@ function FormField({ label, name, type = "text", value, onChange, error, require
   );
 }
 
-function SelectField({ label, name, value, onChange, options, children, required = false }) {
+function SelectField({ label, name, value, onChange, options, children, required = false, error }) {
   return (
     <div>
       <label className="block font-medium text-gray-700 mb-2">{label}
@@ -509,7 +520,7 @@ function SelectField({ label, name, value, onChange, options, children, required
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none"
+        className={`w-full border border-gray-300 px-3 py-1 rounded focus:ring-1 focus:ring-[#6046B5] outline-none ${error ? "border-red-500" : ""}`}
       >
         {options && options.length > 0 ? (
           options.map((opt) => (
@@ -521,6 +532,7 @@ function SelectField({ label, name, value, onChange, options, children, required
           children
         )}
       </select>
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 }

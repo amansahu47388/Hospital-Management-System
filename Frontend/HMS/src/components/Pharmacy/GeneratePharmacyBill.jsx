@@ -325,26 +325,6 @@ export default function GeneratePharmacyBill({ open, onClose, onSuccess }) {
       notify("error", "Please select a patient");
       return;
     }
-    if (!medicineId) {
-      notify("error", "Please select a medicine");
-      return;
-    }
-    if (!batchId) {
-      notify("error", "Please select a batch");
-      return;
-    }
-    if (!stockId) {
-      notify("error", "Please select a stock");
-      return;
-    }
-    if (!quantity) {
-      notify("error", "Please enter a quantity");
-      return;
-    }
-    if (!amount) {
-      notify("error", "Please enter an amount");
-      return;
-    }
 
 
     // Filter valid rows (must have medicine, batch, and quantity > 0)

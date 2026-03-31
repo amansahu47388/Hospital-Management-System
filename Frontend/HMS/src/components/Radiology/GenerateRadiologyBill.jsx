@@ -223,18 +223,18 @@ export default function GenerateRadiologyBill({ open, onClose }) {
       return;
     }
 
-    if (!paidAmount) {
+    if (paidAmount === "" || paidAmount === null) {
       notify("warning", "Paid amount is required");
+      return;
+    }
+
+    if (netAmount <= 0) {
+      notify("warning", "Net amount must be greater than 0");
       return;
     }
 
     if (Number(paidAmount) > netAmount) {
       notify("warning", "Paid amount cannot be greater than net amount");
-      return;
-    }
-
-    if (Number(paidAmount) < 0) {
-      notify("warning", "Paid amount cannot be negative");
       return;
     }
 
@@ -245,8 +245,8 @@ export default function GenerateRadiologyBill({ open, onClose }) {
 
     const payload = {
       patient_id: selectedPatient.id,
-      doctor_id: selectedDoctor ? Number(selectedDoctor) : null,
-      case_id: selectedCase || null,
+      doctor_id: selectedDoctor && selectedDoctor !== "" ? Number(selectedDoctor) : null,
+      case_id: selectedCase && selectedCase !== "" ? selectedCase : null,
       prescription_id: selectedPrescription?.id || null,
       note: note || "",
       previous_report_value: previousReportValue,
@@ -259,7 +259,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
     };
 
     if (!payload.tests.length) {
-      notify("warning", "Please select at least one test");
+      notify("warning", "Please select at least one test from the list");
       return;
     }
 
@@ -267,7 +267,7 @@ export default function GenerateRadiologyBill({ open, onClose }) {
       setLoading(true);
       const res = await createRadiologyBill(payload);
       const data = res?.data || res;
-      notify("success", `Bill created successfully (Bill No: ${data.bill_id})`);
+      notify("success", `Bill created successfully (Bill ID: ${data.bill_id})`);
       // Reset form
       setSelectedPatient(null);
       setSelectedPrescription(null);
@@ -279,14 +279,16 @@ export default function GenerateRadiologyBill({ open, onClose }) {
       setNote("");
       setPreviousReportValue(false);
       setPaymentMode("cash");
-      onClose();
+      if (onClose) onClose();
     } catch (err) {
+      console.error("CREATE RADIOLOGY BILL ERROR:", err.response?.data || err);
       const errorMsg =
         err?.response?.data?.errors
           ? Object.values(err.response.data.errors).flat().join(", ")
           : err?.response?.data?.error
-          || err?.message
-          || "Failed to create radiology bill";
+            || err?.response?.data?.message
+            || err?.message
+            || "Failed to create radiology bill";
 
       notify("error", errorMsg);
     }
