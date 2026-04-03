@@ -1,33 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-function Hero() {
+function Hero({ height = "100vh", width = "100%" }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const slides = [
     {
-      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200",
+      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80",
       title: "Revolutionizing Healthcare",
       subtitle: "Advanced Medical Technology & Compassionate Care"
     },
     {
-      image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=1200",
+      image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80",
       title: "Expert Medical Team",
       subtitle: "Dedicated Professionals Committed to Your Health"
     },
     {
-      image: "https://images.unsplash.com/photo-1504439468489-c8920d796a29?w=1200",
+      image: "https://images.unsplash.com/photo-1504439468489-c8920d796a29?auto=format&fit=crop&q=80",
       title: "24/7 Emergency Services",
       subtitle: "Always Here When You Need Us Most"
     }
-  ];
-
-  const news = [
-    { date: "03", month: "December", title: "International Day of Persons with Disabilities" },
-    { date: "10", month: "November", title: "World Neuroendocrine Cancer Day" },
-    { date: "21", month: "October", title: "Global Handwashing Day" },
-    { date: "15", month: "September", title: "World Patient Safety Day" },
   ];
 
   useEffect(() => {
@@ -41,7 +34,7 @@ function Hero() {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-      setTimeout(() => setIsAnimating(false), 500);
+      setTimeout(() => setIsAnimating(false), 700);
     }
   };
 
@@ -49,168 +42,114 @@ function Hero() {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-      setTimeout(() => setIsAnimating(false), 500);
+      setTimeout(() => setIsAnimating(false), 700);
     }
   };
 
   return (
-    <section id="hero" className="w-full pt-20 pb-8">
-      <div className="w-full grid md:grid-cols-3 gap-6 px-4 md:px-6">
+    <section 
+      id="hero" 
+      className="relative overflow-hidden transition-all duration-500 ease-in-out"
+      style={{ height, width }}
+    >
+      {/* Slides */}
+      <div className="absolute inset-0 w-full h-full">
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentSlide ? "opacity-100 scale-100" : "opacity-0 scale-105"
+            }`}
+          >
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover transition-transform duration-[2000ms] ease-out"
+              style={{ transform: index === currentSlide ? "scale(1)" : "scale(1.1)" }}
+            />
+            {/* Dynamic Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60 md:bg-gradient-to-r md:from-black/70 md:via-black/20 md:to-transparent" />
+          </div>
+        ))}
+      </div>
 
-        {/* LEFT BANNER - Image Slider */}
-        <div className="md:col-span-2 relative rounded-2xl overflow-hidden h-[400px] md:h-[500px] shadow-2xl group">
-          {/* Slides */}
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 transition-all duration-700 ease-in-out ${index === currentSlide
-                  ? "opacity-100 scale-100"
-                  : "opacity-0 scale-105"
-                }`}
-            >
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
-            </div>
-          ))}
-
-          {/* Content Overlay */}
-          <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-12 z-10">
-            <div className="transform transition-all duration-700 ease-out">
-              <h1 className="text-white text-3xl md:text-5xl font-bold mb-4 animate-fade-in-up">
-                {slides[currentSlide].title}
-              </h1>
-              <p className="text-white/90 text-lg md:text-xl mb-6 animate-fade-in-up animation-delay-200">
-                {slides[currentSlide].subtitle}
-              </p>
-              <button className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 animate-fade-in-up animation-delay-400">
-                Learn More
+      {/* Content Overlay */}
+      <div className="absolute inset-0 flex items-center justify-center md:justify-start px-6 md:px-20 z-10">
+        <div className="max-w-3xl transform transition-all duration-1000 ease-out">
+          <div className={`transition-all duration-700 delay-300 ${isAnimating ? "opacity-0 translate-y-10" : "opacity-100 translate-y-0"}`}>
+            <span className="inline-block px-4 py-1.5 mb-4 text-sm font-semibold tracking-wider text-white uppercase bg-[#6046B5]/80 backdrop-blur-md rounded-full border border-white/20">
+              Welcome to our Medical Center
+            </span>
+            <h1 className="text-white text-4xl md:text-7xl font-extrabold mb-6 leading-tight drop-shadow-2xl">
+              {slides[currentSlide].title.split(" ").map((word, i) => (
+                <span key={i} className={i === 1 ? "text-purple-400" : ""}>{word} </span>
+              ))}
+            </h1>
+            <p className="text-white/90 text-lg md:text-2xl mb-10 max-w-xl leading-relaxed drop-shadow-lg">
+              {slides[currentSlide].subtitle}
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <button className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-[0_10px_20px_rgba(96,70,181,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 group">
+                Book Appointment
+                <ChevronRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-300">
+                View Services
               </button>
             </div>
           </div>
-
-          {/* Navigation Arrows */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20"
-            disabled={isAnimating}
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20"
-            disabled={isAnimating}
-          >
-            <ChevronRight size={24} />
-          </button>
-
-          {/* Slide Indicators */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  if (!isAnimating) {
-                    setIsAnimating(true);
-                    setCurrentSlide(index);
-                    setTimeout(() => setIsAnimating(false), 500);
-                  }
-                }}
-                className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
-                    ? "w-8 bg-white"
-                    : "w-2 bg-white/50 hover:bg-white/75"
-                  }`}
-              />
-            ))}
-          </div>
         </div>
+      </div>
 
-        {/* RIGHT NEWS SECTION */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-[400px] md:h-[500px]">
-          <div className="bg-gradient-to-r from-[#6046B5] to-[#8A63D2] text-white px-6 py-4 flex items-center gap-3">
-            <Calendar size={24} />
-            <h2 className="text-xl font-bold">Latest News & Events</h2>
-          </div>
+      {/* Navigation Arrows */}
+      <div className="hidden md:block">
+        <button
+          onClick={prevSlide}
+          className="absolute left-8 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-md text-white p-4 rounded-full border border-white/20 hover:bg-[#6046B5] hover:border-[#6046B5] transition-all duration-300 z-20 group"
+          disabled={isAnimating}
+        >
+          <ChevronLeft size={28} className="group-hover:-translate-x-1 transition-transform" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-8 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-md text-white p-4 rounded-full border border-white/20 hover:bg-[#6046B5] hover:border-[#6046B5] transition-all duration-300 z-20 group"
+          disabled={isAnimating}
+        >
+          <ChevronRight size={28} className="group-hover:translate-x-1 transition-transform" />
+        </button>
+      </div>
 
-          <div className="p-6 h-[calc(100%-64px)] overflow-hidden">
-            <div className="space-y-4 animate-scroll-vertical">
-              {[...news, ...news].map((item, index) => (
-                <NewsItem
-                  key={index}
-                  date={item.date}
-                  month={item.month}
-                  title={item.title}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+      {/* Slide Indicators */}
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex gap-4 z-20">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              if (!isAnimating && index !== currentSlide) {
+                setIsAnimating(true);
+                setCurrentSlide(index);
+                setTimeout(() => setIsAnimating(false), 700);
+              }
+            }}
+            className="group relative py-2"
+          >
+            <div className={`h-1 rounded-full transition-all duration-500 ${
+              index === currentSlide ? "w-12 bg-white" : "w-6 bg-white/40 group-hover:bg-white/60"
+            }`} />
+          </button>
+        ))}
       </div>
 
       <style>{`
         @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes scroll-vertical {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(-50%);
-          }
-        }
-
         .animate-fade-in-up {
           animation: fade-in-up 0.6s ease-out forwards;
         }
-
-        .animation-delay-200 {
-          animation-delay: 0.2s;
-          opacity: 0;
-        }
-
-        .animation-delay-400 {
-          animation-delay: 0.4s;
-          opacity: 0;
-        }
-
-        .animate-scroll-vertical {
-          animation: scroll-vertical 20s linear infinite;
-        }
-
-        .animate-scroll-vertical:hover {
-          animation-play-state: paused;
-        }
       `}</style>
     </section>
-  );
-}
-
-function NewsItem({ date, month, title }) {
-  return (
-    <div className="flex gap-4 border-b border-gray-100 pb-4 hover:bg-purple-50 p-3 rounded-lg transition-all duration-300 cursor-pointer group">
-      <div className="bg-gradient-to-br from-[#6046B5] to-[#8A63D2] text-white text-center px-4 py-3 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-        <p className="text-2xl font-bold">{date}</p>
-        <p className="text-xs uppercase">{month}</p>
-      </div>
-      <div className="flex-1">
-        <p className="text-sm text-gray-700 font-medium group-hover:text-[#6046B5] transition-colors duration-300">
-          {title}
-        </p>
-      </div>
-    </div>
   );
 }
 
