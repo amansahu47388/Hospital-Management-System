@@ -8,12 +8,13 @@ import {
     FlaskConical, Ambulance, Loader2
 } from "lucide-react";
 import { getMedicalCases, getPatientCharges, getPatientPayments, createPatientPayment } from "../../api/patientApi";
-import { getPathologyBills } from "../../api/pathologyApi";
-import { getRadiologyBills } from "../../api/radiologyApi";
-import { getPharmacyBills } from "../../api/pharmacyApi";
-import { getAmbulanceBills } from "../../api/ambulanceApi";
-import { getOpdPatientList } from "../../api/opdApi";
-import { getIpdPatientList } from "../../api/ipdApi";
+import { postCaseBillingPayment } from "../../api/billingApi";
+import { getPathologyBills, updatePathologyBill } from "../../api/pathologyApi";
+import { getRadiologyBills, updateRadiologyBill } from "../../api/radiologyApi";
+import { getPharmacyBills, updatePharmacyBill } from "../../api/pharmacyApi";
+import { getAmbulanceBills, updateAmbulanceBill } from "../../api/ambulanceApi";
+import { getOpdPatientList, updateOpdPatient } from "../../api/opdApi";
+import { getIpdPatientList, updateIpdPatient } from "../../api/ipdApi";
 import { getHeaders } from "../../api/setupApi";
 import { printReport } from "../../utils/printUtils";
 import { useNotify } from "../../context/NotificationContext";
@@ -23,7 +24,7 @@ function BillingDetails() {
     const location = useLocation();
     const navigate = useNavigate();
     const query = new URLSearchParams(location.search);
-    const activeTab = query.get("tab") || "OPD";
+    const activeTab = query.get("tab") || "All";
 
     const notify = useNotify();
     const [patientData, setPatientData] = useState(null);
@@ -37,8 +38,8 @@ function BillingDetails() {
     const [radiologyBills, setRadiologyBills] = useState([]);
     const [pharmacyBills, setPharmacyBills] = useState([]);
     const [ambulanceBills, setAmbulanceBills] = useState([]);
-    const [opdVisits, setOpdVisits] = useState([]);
-    const [ipdAdmissions, setIpdAdmissions] = useState([]);
+    const [opdRows, setOpdRows] = useState([]);
+    const [ipdRows, setIpdRows] = useState([]);
     const [headerData, setHeaderData] = useState(null);
 
     const [showSingleModuleBilling, setShowSingleModuleBilling] = useState(false);
@@ -58,6 +59,24 @@ function BillingDetails() {
         selectedBill: null, // Track which bill to pay
         selectedBillType: null // Track bill type (pathology_bill, pharmacy_bill, etc.)
     });
+
+    const formatVisitRows = (rows = [], kind = "opd") => {
+        return rows.map((r) => {
+            const net = Number(r.net_amount ?? r.total_amount ?? 0);
+            const paid = Number(r.paid_amount || 0);
+            const pk = kind === "ipd" ? r.ipd_id : r.opd_id;
+            return {
+                ...r,
+                id: r.id ?? pk,
+                opd_id: r.opd_id ?? (kind === "opd" ? pk : undefined),
+                ipd_id: r.ipd_id ?? (kind === "ipd" ? pk : undefined),
+                net,
+                net_amount: net,
+                paid,
+                balance: net - paid,
+            };
+        });
+    };
 
     const fetchDetails = async (caseIdValue) => {
         try {
@@ -98,10 +117,10 @@ function BillingDetails() {
                 setPayments(paymentsRes.data || []);
                 setPathologyBills(pathoRes.data || []);
                 setRadiologyBills(radioRes.data || []);
-                setOpdVisits(opdRes.data || []);
-                setIpdAdmissions(ipdRes.data || []);
                 setPharmacyBills(pharmRes.data || []);
                 setAmbulanceBills(ambuRes.data || []);
+                setOpdRows(formatVisitRows(opdRes.data || [], "opd"));
+                setIpdRows(formatVisitRows(ipdRes.data || [], "ipd"));
             } else {
                 notify("error", "No Case found with this ID");
                 setPatientData(null);
@@ -121,50 +140,132 @@ function BillingDetails() {
         fetchDetails(searchCaseId);
     };
 
+    const calculateTotalBalance = () => {
+        const pathBalance = pathologyBills.reduce((sum, b) => sum + parseFloat(b.balance || 0), 0);
+        const radBalance = radiologyBills.reduce((sum, b) => sum + parseFloat(b.balance || 0), 0);
+        const pharmBalance = pharmacyBills.reduce((sum, b) => sum + parseFloat(b.balance_amount || 0), 0);
+        const ambBalance = ambulanceBills.reduce((sum, b) => sum + parseFloat(b.balance || 0), 0);
+        const opdBalance = opdRows.reduce((sum, r) => sum + parseFloat(r.balance || 0), 0);
+        const ipdBalance = ipdRows.reduce((sum, r) => sum + parseFloat(r.balance || 0), 0);
+
+        return pathBalance + radBalance + pharmBalance + ambBalance + opdBalance + ipdBalance;
+    };
+
     const handleAddPayment = async () => {
-        if (!paymentData.amount) return notify("warning", "Amount is required");
-        if (!patientData) return notify("error", "No patient selected");
+        if (!paymentData.amount || parseFloat(paymentData.amount) <= 0) {
+            notify("error", "Please enter a valid amount");
+            return;
+        }
 
         try {
-            const payload = {
-                paid_amount: paymentData.amount,
-                payment_mode: paymentData.mode,
-                note: paymentData.note,
-                payment_date: paymentData.date.split('T')[0],
-                case: patientData.case_id_internal,
-                service_type: activeTab
-            };
+            const payAmt = parseFloat(paymentData.amount);
+            const totalBalance = calculateTotalBalance();
+            const fullSettlement =
+                activeTab === "All" && totalBalance > 0 && payAmt + 0.01 >= totalBalance;
 
-            // Add bill reference based on selected bill
-            if (paymentData.selectedBill && paymentData.selectedBillType && paymentData.selectedBill !== "") {
-                // Convert to integer since select returns string
-                const billId = parseInt(paymentData.selectedBill);
-                if (!isNaN(billId)) {
-                    payload[paymentData.selectedBillType] = billId;
+            if (fullSettlement) {
+                await postCaseBillingPayment({
+                    patient_id: patientData.id,
+                    case_id: patientData.caseId,
+                    paid_amount: payAmt.toFixed(2),
+                    payment_mode: paymentData.mode,
+                    note: paymentData.note || "Full case settlement — all modules",
+                    payment_date: paymentData.date.slice(0, 10),
+                    settle_all: true,
+                });
+            } else if (activeTab === "All") {
+                const payload = {
+                    payment_date: paymentData.date.slice(0, 10),
+                    paid_amount: payAmt.toFixed(2),
+                    payment_mode: paymentData.mode,
+                    note: paymentData.note || "Partial / on-account payment",
+                    case: patientData.case_id_internal,
+                    service_type: "General",
+                };
+                await createPatientPayment(patientData.id, payload);
+            } else if (paymentData.selectedBill) {
+                const payload = {
+                    payment_date: paymentData.date.slice(0, 10),
+                    paid_amount: payAmt.toFixed(2),
+                    payment_mode: paymentData.mode,
+                    note: paymentData.note || `${activeTab} payment`,
+                    case: patientData.case_id_internal,
+                    service_type: activeTab,
+                };
+                await createPatientPayment(patientData.id, payload);
+                // If a specific bill was selected in a module tab, update that bill directly
+                const amount = parseFloat(paymentData.amount);
+                if (activeTab === "Pathology") {
+                    const bill = pathologyBills.find(b => b.id === parseInt(paymentData.selectedBill));
+                    if (bill) await updatePathologyBill(bill.id, { paid_amount: (parseFloat(bill.paid_amount || 0) + amount).toString() });
                 }
+                else if (activeTab === "Radiology") {
+                    const bill = radiologyBills.find(b => b.id === parseInt(paymentData.selectedBill));
+                    if (bill) await updateRadiologyBill(bill.id, { paid_amount: (parseFloat(bill.paid_amount || 0) + amount).toString() });
+                }
+                else if (activeTab === "Pharmacy") {
+                    const bill = pharmacyBills.find(b => b.id === parseInt(paymentData.selectedBill));
+                    if (bill) await updatePharmacyBill(bill.id, { paid_amount: (parseFloat(bill.paid_amount || 0) + amount).toString() });
+                }
+                else if (activeTab === "Ambulance") {
+                    const bill = ambulanceBills.find(b => b.id === parseInt(paymentData.selectedBill));
+                    if (bill) await updateAmbulanceBill(bill.id, { paid_amount: (parseFloat(bill.paid_amount || 0) + amount).toString() });
+                }
+                else if (activeTab === "OPD") {
+                    const visit = opdRows.find(
+                        (r) =>
+                            String(r.opd_id) === String(paymentData.selectedBill) ||
+                            String(r.id) === String(paymentData.selectedBill)
+                    );
+                    if (visit) {
+                        const newPaid = parseFloat(visit.paid_amount || 0) + amount;
+                        await updateOpdPatient(visit.id || visit.opd_id, {
+                            paid_amount: newPaid.toFixed(2),
+                        });
+                    }
+                }
+                else if (activeTab === "IPD") {
+                    const adm = ipdRows.find(
+                        (r) =>
+                            String(r.ipd_id) === String(paymentData.selectedBill) ||
+                            String(r.id) === String(paymentData.selectedBill)
+                    );
+                    if (adm) {
+                        const newPaid = parseFloat(adm.paid_amount || 0) + amount;
+                        await updateIpdPatient(adm.id || adm.ipd_id, {
+                            paid_amount: newPaid.toFixed(2),
+                        });
+                    }
+                }
+            } else if (activeTab !== "All") {
+                await createPatientPayment(patientData.id, {
+                    payment_date: paymentData.date.slice(0, 10),
+                    paid_amount: payAmt.toFixed(2),
+                    payment_mode: paymentData.mode,
+                    note: paymentData.note || `${activeTab} — on account`,
+                    case: patientData.case_id_internal,
+                    service_type: activeTab,
+                });
             }
 
-            await createPatientPayment(patientData.id, payload);
-            notify("success", `Payment added successfully for ${activeTab}`);
+            notify("success", "Payment added successfully");
             setShowAddPayment(false);
-
-            // Refresh payments and bills
-            const paymentsRes = await getPatientPayments(patientData.id, patientData.caseId);
-            setPayments(paymentsRes.data || []);
-
-            // Refresh the specific module data
-            fetchDetails(patientData.caseId);
-
             setPaymentData({
+                date: new Date().toISOString().slice(0, 16),
                 amount: "",
                 mode: "Cash",
                 note: "",
-                date: new Date().toISOString().slice(0, 16),
                 selectedBill: null,
                 selectedBillType: null
             });
-        } catch (error) {
-            notify("error", "Failed to add payment");
+            fetchDetails(patientData.caseId);
+        } catch (err) {
+            console.error("Error adding payment:", err);
+            const d = err.response?.data;
+            let msg = "Failed to add payment";
+            if (typeof d === "string") msg = d;
+            else if (d?.detail) msg = typeof d.detail === "string" ? d.detail : JSON.stringify(d.detail);
+            notify("error", msg);
         }
     };
 
@@ -269,21 +370,8 @@ function BillingDetails() {
         });
     };
 
-    const formatVisitRows = (rows = []) => {
-        return rows.map(r => {
-            const net = Number(r.net_amount || r.total_amount || 0);
-            const paid = Number(r.paid_amount || 0);
-            return {
-                ...r,
-                net,
-                paid,
-                balance: net - paid
-            };
-        });
-    };
 
-    const opdRows = formatVisitRows(opdVisits);
-    const ipdRows = formatVisitRows(ipdAdmissions);
+
 
     const calculateTotals = (rows) => {
         return rows.reduce((acc, r) => {
@@ -302,8 +390,8 @@ function BillingDetails() {
             <div className="p-4 bg-gray-50 min-h-screen">
                 <div className="bg-white rounded shadow-sm overflow-hidden mb-6 border-t-2 border-gray-200">
                     {/* TOP HEADER */}
-                    <div className="px-4 py-2 border-b border-gray-200 flex justify-between items-center bg-white relative z-50">
-                        <h2 className="text-gray-700 font-semibold">OPD/IPD Billing Through Case Id</h2>
+                    <div className="px-4 py-2 border-b border-gray-200 flex justify-between items-center bg-white">
+                        <h2 className="text-gray-700 font-semibold">Billing Through Case Id</h2>
                         {/* Floating Module Billing Icon */}
                         <div>
                             <button
@@ -462,19 +550,158 @@ function BillingDetails() {
                             >
                                 <Eye size={16} /> View Payments
                             </button>
-                            <div className="flex items-center">
+                            {/* <div className="flex items-center">
                                 <button
                                     onClick={() => setShowGenerateBill(true)}
                                     className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white px-3 py-2 text-sm rounded-l flex items-center gap-1 shadow"
                                 >
                                     <FileText size={16} /> Generate Bill
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
-                    {/* TABS & TABLES */}
-                    <div className="p-1">
+                    {/* Main Content Area */}
+                    <div className="p-6">
+                        {activeTab === "All" && (
+                            <div className="space-y-6">
+                                {/* Summary Cards */}
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                                    <div className="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
+                                        <p className="text-gray-500 text-xs font-semibold uppercase">Total Charges</p>
+                                        <p className="text-2xl font-bold">${(calculateTotalBalance() + payments.reduce((s, p) => s + parseFloat(p.paid_amount || 0), 0)).toFixed(2)}</p>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-lg shadow border-l-4 border-green-500">
+                                        <p className="text-gray-500 text-xs font-semibold uppercase">Total Paid</p>
+                                        <p className="text-2xl font-bold">${payments.reduce((s, p) => s + parseFloat(p.paid_amount || 0), 0).toFixed(2)}</p>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-lg shadow border-l-4 border-red-500">
+                                        <p className="text-gray-500 text-xs font-semibold uppercase">Total Balance</p>
+                                        <div className="flex justify-between items-end">
+                                            <p className="text-2xl font-bold text-red-600">${calculateTotalBalance().toFixed(2)}</p>
+                                            {calculateTotalBalance() > 0 && (
+                                                <button
+                                                    onClick={() => {
+                                                        setPaymentData({
+                                                            ...paymentData,
+                                                            amount: calculateTotalBalance().toFixed(2),
+                                                            note: "Full settlement for all services"
+                                                        });
+                                                        setShowAddPayment(true);
+                                                    }}
+                                                    className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 transition-colors"
+                                                >
+                                                    Pay All
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-lg shadow border-l-4 border-purple-500">
+                                        <p className="text-gray-500 text-xs font-semibold uppercase">Services Summary</p>
+                                        <p className="text-sm font-medium">Items: {pathologyBills.length + radiologyBills.length + pharmacyBills.length + ambulanceBills.length + opdRows.length + ipdRows.length}</p>
+                                    </div>
+                                </div>
+
+                                {/* Consolidated Bills Table */}
+                                <div className="bg-white rounded-lg shadow overflow-hidden">
+                                    <div className="px-4 py-3 bg-gray-50 border-b flex justify-between items-center">
+                                        <h3 className="font-semibold text-gray-700">Consolidated Billing Breakdown</h3>
+                                        <button
+                                            onClick={() => setShowSummary(true)}
+                                            className="flex items-center text-sm text-[#6046B5] hover:underline"
+                                        >
+                                            <Printer size={16} className="mr-1" /> Full Summary Report
+                                        </button>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-gray-100 border-b uppercase text-xs font-bold text-gray-600">
+                                                <tr>
+                                                    <th className="px-4 py-3 text-center">#</th>
+                                                    <th className="px-4 py-3">Service Module</th>
+                                                    <th className="px-4 py-3">Bill/Visit ID</th>
+                                                    <th className="px-4 py-3 text-right">Net Amount</th>
+                                                    <th className="px-4 py-3 text-right">Paid</th>
+                                                    <th className="px-4 py-3 text-right">Balance</th>
+                                                    <th className="px-4 py-3">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {[
+                                                    ...pathologyBills.map(b => ({ ...b, module: "Pathology", displayId: `BILL#${b.id}` })),
+                                                    ...radiologyBills.map(b => ({ ...b, module: "Radiology", displayId: `BILL#${b.id}` })),
+                                                    ...pharmacyBills.map(b => ({ ...b, module: "Pharmacy", displayId: `BILL#${b.id}`, amount: b.net_amount, balance: b.balance_amount })),
+                                                    ...ambulanceBills.map(b => ({ ...b, module: "Ambulance", displayId: `BILL#${b.id}`, amount: b.net_amount, balance: b.balance })),
+                                                    ...opdRows.map(r => ({ ...r, module: "OPD", displayId: `VISIT#${r.opd_id}`, amount: r.net_amount || r.total_amount, balance: r.balance })),
+                                                    ...ipdRows.map(r => ({ ...r, module: "IPD", displayId: `ADM#${r.ipd_id}`, amount: r.net_amount || r.total_amount, balance: r.balance }))
+                                                ].map((item, idx) => (
+                                                    <tr key={`consolidated-${item.module}-${item.id || idx}`} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="px-4 py-3 text-center text-gray-400">{idx + 1}</td>
+                                                        <td className="px-4 py-3 font-medium">{item.module}</td>
+                                                        <td className="px-4 py-3">{item.displayId}</td>
+                                                        <td className="px-4 py-3 text-right">${parseFloat(item.amount || 0).toFixed(2)}</td>
+                                                        <td className="px-4 py-3 text-right text-green-600">${parseFloat(item.paid_amount || 0).toFixed(2)}</td>
+                                                        <td className="px-4 py-3 text-right font-semibold text-red-600">${parseFloat(item.balance || 0).toFixed(2)}</td>
+                                                        <td className="px-4 py-3">
+                                                            {parseFloat(item.balance || 0) <= 0 ? (
+                                                                <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Paid</span>
+                                                            ) : (
+                                                                <span className="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Pending</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {pathologyBills.length + radiologyBills.length + pharmacyBills.length + ambulanceBills.length + opdRows.length + ipdRows.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan="7" className="px-4 py-10 text-center text-gray-400">No billing records found for this case.</td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                            <tfoot className="bg-gray-50 font-bold border-t">
+                                                <tr>
+                                                    <td colSpan="5" className="px-4 py-3 text-right uppercase text-xs">Grand Total Balance:</td>
+                                                    <td className="px-4 py-3 text-right text-lg text-red-600">${calculateTotalBalance().toFixed(2)}</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {/* Recent Transactions Section */}
+                                <div className="bg-white rounded-lg shadow overflow-hidden">
+                                    <div className="px-4 py-3 bg-gray-50 border-b flex justify-between items-center">
+                                        <h3 className="font-semibold text-gray-700">Recent Transactions</h3>
+                                        <button onClick={() => setShowViewPayments(true)} className="text-xs text-[#6046B5] hover:underline">View All</button>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-gray-100 border-b text-gray-600">
+                                                <tr>
+                                                    <th className="px-4 py-3">Date</th>
+                                                    <th className="px-4 py-3">Mode</th>
+                                                    <th className="px-4 py-3">Type</th>
+                                                    <th className="px-4 py-3 text-right">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {payments.slice(0, 5).map((p) => (
+                                                    <tr key={p.id}>
+                                                        <td className="px-4 py-2">{p.payment_date}</td>
+                                                        <td className="px-4 py-2">{p.payment_mode}</td>
+                                                        <td className="px-4 py-2 text-xs">
+                                                            <span className="bg-purple-50 text-purple-600 px-2 py-0.5 rounded">{p.service_type || "General"}</span>
+                                                        </td>
+                                                        <td className="px-4 py-2 text-right font-medium">${parseFloat(p.paid_amount || 0).toFixed(2)}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {activeTab === "OPD" && (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full text-left text-[13px] whitespace-nowrap">
@@ -492,8 +719,8 @@ function BillingDetails() {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 border-b border-gray-300">
-                                        {opdRows.length > 0 ? opdRows.map((row) => (
-                                            <tr key={row.id} className="hover:bg-gray-50">
+                                        {opdRows.length > 0 ? opdRows.map((row, idx) => (
+                                            <tr key={`opd-${row.id || idx}`} className="hover:bg-gray-50">
                                                 <td className="px-3 py-2 text-gray-600 font-medium whitespace-nowrap">
                                                     {new Date(row.appointment_date || row.created_at).toLocaleDateString()}
                                                 </td>
@@ -548,8 +775,8 @@ function BillingDetails() {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 border-b border-gray-300">
-                                        {ipdRows.length > 0 ? ipdRows.map((row) => (
-                                            <tr key={row.id} className="hover:bg-gray-50 border-b border-gray-300">
+                                        {ipdRows.length > 0 ? ipdRows.map((row, idx) => (
+                                            <tr key={`ipd-${row.id || idx}`} className="hover:bg-gray-50 border-b border-gray-300">
                                                 <td className="px-3 py-2 text-gray-600 font-medium whitespace-nowrap">
                                                     {new Date(row.admission_date || row.created_at).toLocaleDateString()}
                                                 </td>
@@ -608,7 +835,7 @@ function BillingDetails() {
                                             pharmacyBills.map((bill) => (
                                                 <tr key={bill.id} className="hover:bg-gray-50 border-b border-gray-300 cursor-pointer">
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.id}</td>
-                                                    <td className="px-3 py-3 text-gray-600 font-medium">{bill.date || new Date(bill.created_at).toLocaleDateString()}</td>
+                                                    <td className="px-3 py-3 text-gray-600 font-medium">{new Date(bill.bill_date).toLocaleDateString()}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{bill.doctor_name || "N/A"}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{Number(bill.total_amount || 0).toFixed(2)}</td>
                                                     <td className="px-3 py-3 text-gray-600 font-medium">{Number(bill.discount || 0).toFixed(2)}</td>
@@ -919,12 +1146,20 @@ function BillingDetails() {
             {/* 2. View Payments Modal */}
             {showViewPayments && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl animate-zoom-in">
-                        <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
-                            <h3 className="font-semibold text-lg">Payments</h3>
-                            <X className="cursor-pointer hover:opacity-80" onClick={() => setShowViewPayments(false)} />
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl max-h-[85vh] flex flex-col animate-zoom-in">
+                        <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg sticky top-0 z-10 shrink-0">
+                            <h3 className="font-bold text-xl flex items-center gap-2">
+                                <IndianRupee size={22} />
+                                Payment History
+                            </h3>
+                            <button
+                                onClick={() => setShowViewPayments(false)}
+                                className="hover:bg-white/20 p-1.5 rounded-full transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
                         </div>
-                        <div className="p-6">
+                        <div className="p-6 overflow-y-auto custom-scrollbar flex-grow">
                             <div className="overflow-x-auto thin-scrollbar">
                                 <table className="w-full text-left text-sm whitespace-nowrap">
                                     <thead className="bg-gray-50 border-b border-gray-200">
@@ -979,18 +1214,30 @@ function BillingDetails() {
             {/* 3. Generate Bill Modal (Receipt Type) */}
             {showGenerateBill && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto animate-zoom-in">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col animate-zoom-in">
                         {/* Header with Print/Close */}
-                        <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg">
-                            <h3 className="font-semibold text-lg">Bill</h3>
-                            <div className="flex items-center gap-3">
-                                <Printer className="cursor-pointer hover:opacity-80" onClick={handlePrintBill} />
-                                <X className="cursor-pointer hover:opacity-80" onClick={() => setShowGenerateBill(false)} />
+                        <div className="flex justify-between items-center px-6 py-4 bg-gradient-to-b from-[#6046B5] to-[#8A63D2] text-white rounded-t-lg sticky top-0 z-10 shrink-0">
+                            <h3 className="font-bold text-xl flex items-center gap-2">
+                                <FileText size={22} />
+                                Consolidated Bill
+                            </h3>
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={handlePrintBill}
+                                    className="hover:bg-white/20 p-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-semibold border border-white/30"
+                                >
+                                    <Printer size={18} /> Print
+                                </button>
+                                <button
+                                    onClick={() => setShowGenerateBill(false)}
+                                    className="hover:bg-white/20 p-1.5 rounded-full transition-colors"
+                                >
+                                    <X size={24} />
+                                </button>
                             </div>
                         </div>
 
-                        {/* Receipt Content */}
-                        <div className="p-8 font-sans text-gray-800">
+                        <div className="overflow-y-auto custom-scrollbar p-8">
                             {/* Patient / Case Info */}
                             <div className="grid grid-cols-2 gap-4 text-sm mb-6">
                                 <div>
@@ -1074,6 +1321,12 @@ function BillingDetails() {
                 onClose={() => setShowSummary(false)}
                 charges={charges}
                 payments={payments}
+                pathologyBills={pathologyBills}
+                radiologyBills={radiologyBills}
+                pharmacyBills={pharmacyBills}
+                ambulanceBills={ambulanceBills}
+                opdRows={opdRows}
+                ipdRows={ipdRows}
             />
 
         </AdminLayout>

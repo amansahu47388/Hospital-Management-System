@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 function BillingNavbar() {
     const location = useLocation();
     const tabs = [
+        { name: "All", path: "?tab=All" },
         { name: "OPD", path: "?tab=OPD" },
         { name: "IPD", path: "?tab=IPD" },
         { name: "Pharmacy", path: "?tab=Pharmacy" },
@@ -14,7 +15,7 @@ function BillingNavbar() {
 
     // Helper to check active state based on query param or default
     const query = new URLSearchParams(location.search);
-    const currentTab = query.get("tab") || "OPD";
+    const currentTab = query.get("tab") || "All";
 
     return (
         <div className="mb-4 overflow-x-auto">

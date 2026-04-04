@@ -793,10 +793,7 @@ const InputRow = ({ label, value, onChange, readOnly, bold }) => (
     <input
       type="number"
       step="0.01"
-      className={`border border-gray-300  focus:outline-none
-                            focus:border-[#6046B5]
-                             transition-all duration-200  w-full px-1 py-1 text-xs sm:text-sm rounded px-2 py-1 w-24 sm:w-28 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""
-        } ${readOnly ? "bg-gray-50" : ""}`}
+      className={`border border-gray-300 focus:outline-none focus:border-[#6046B5] transition-all duration-200 w-full px-2 py-1 rounded text-xs sm:text-sm ${bold ? "font-semibold" : ""} ${readOnly ? "bg-gray-50" : ""}`}
       value={value}
       readOnly={readOnly}
       onChange={onChange ? (e) => onChange(e.target.value) : undefined}
