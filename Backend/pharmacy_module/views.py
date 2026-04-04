@@ -7,6 +7,7 @@ from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from decimal import Decimal
 from .models import *
 from .serializers import *
 from utils.mixins import StandardResponseMixin
@@ -490,6 +491,24 @@ class PharmacyBillUpdateAPIView(APIView):
 
     def patch(self, request, pk):
         bill = get_object_or_404(PharmacyBill, pk=pk)
+
+        # Billing desk: update paid / balance only without resubmitting line items
+        if request.data is not None:
+            keys = set(request.data.keys())
+            if keys and keys <= {"paid_amount", "balance_amount"}:
+                try:
+                    paid_dec = Decimal(str(request.data.get("paid_amount", bill.paid_amount)))
+                except Exception:
+                    return Response(
+                        {"paid_amount": ["Invalid amount"]},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                bill.paid_amount = paid_dec
+                bill.balance_amount = bill.net_amount - paid_dec
+                if bill.balance_amount < 0:
+                    bill.balance_amount = Decimal("0")
+                bill.save(update_fields=["paid_amount", "balance_amount"])
+                return Response(PharmacyBillSerializer(bill).data)
 
         serializer = PharmacyBillCreateSerializer(
             bill,

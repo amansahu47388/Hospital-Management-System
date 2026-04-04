@@ -232,8 +232,6 @@ class PrescriptionSerializer(serializers.ModelSerializer):
 
 # OPD Patient Serializers
 class OpdPatientSerializer(serializers.ModelSerializer):
-    charge_id = serializers.IntegerField(source="charge.id", read_only=True)
-    charge_category = serializers.CharField(source="charge.charge_category", read_only=True)
     patient_detail = PatientSerializer(source='patient', read_only=True)
     doctor_detail = UserSerializer(source='doctor', read_only=True)
     created_by = UserSerializer(read_only=True)
@@ -243,8 +241,8 @@ class OpdPatientSerializer(serializers.ModelSerializer):
         model = OpdPatient
         fields = [
             'opd_id', 'patient', 'patient_detail', 'appointment_date', 'doctor', 'doctor_detail',
-            'symptom', 'discount', 'total_amount', 'paid_amount', 'payment_mode','allergies',
-            'checkup_id', 'case', 'case_id', 'old_patient', 'casualty', 'charge_id', 'charge_category',
+            'symptom', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'allergies',
+            'checkup_id', 'case', 'case_id', 'old_patient', 'casualty',
             'reference', 'previous_medical_issue', 'created_by', 'created_at', 'updated_at'
         ]
         read_only_fields = ['opd_id', 'checkup_id',  'created_by', 'created_at', 'updated_at']
@@ -273,23 +271,41 @@ class OpdPatientCreateSerializer(serializers.ModelSerializer):
 
 
 class OpdPatientListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="opd_id", read_only=True)
     patient_detail = PatientSerializer(source="patient", read_only=True)
     doctor_detail = UserSerializer(source="doctor", read_only=True)
-    symptom_name = serializers.CharField(source="symptom.symptom_title", read_only=True)
-    symptom_details = SymptomSerializer(source="symptom", read_only=True)
-    created_by = UserSerializer(read_only=True)
-    case_id = serializers.CharField(source='case.case_id', read_only=True)
+    symptom_name = serializers.SerializerMethodField()
+    symptom_details = serializers.SerializerMethodField()
+    created_by = UserSerializer(read_only=True, allow_null=True)
+    case_id = serializers.SerializerMethodField()
     doctor_name = serializers.SerializerMethodField()
     patient_name = serializers.SerializerMethodField()
+    charge_name = serializers.SerializerMethodField()
+    charge_category = serializers.SerializerMethodField()
+    amount = serializers.SerializerMethodField()
+    tax = serializers.SerializerMethodField()
+    net_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = OpdPatient
         fields = [
-            "opd_id", "patient_detail", "patient_name", "case", "case_id", "checkup_id", 'allergies', 
-            "appointment_date", "created_by", "doctor_detail", "doctor_name", "reference", 
+            "id", "opd_id", "patient_detail", "patient_name", "case", "case_id", "checkup_id", 'allergies',
+            "appointment_date", "created_by", "doctor_detail", "doctor_name", "reference",
             "symptom_name", "symptom_details", "old_patient", "previous_medical_issue",
-            "discount", "total_amount", "paid_amount", "payment_mode", "casualty"
+            "discount", "total_amount", "paid_amount", "payment_mode", "casualty",
+            "charge_name", "charge_category", "amount", "tax", "net_amount",
         ]
+
+    def get_case_id(self, obj):
+        return obj.case.case_id if obj.case else None
+
+    def get_symptom_name(self, obj):
+        return obj.symptom.symptom_title if obj.symptom else ""
+
+    def get_symptom_details(self, obj):
+        if not obj.symptom:
+            return None
+        return SymptomSerializer(obj.symptom, context=self.context).data
 
     def get_doctor_name(self, obj):
         return obj.doctor.full_name if obj.doctor else "-"
@@ -297,14 +313,28 @@ class OpdPatientListSerializer(serializers.ModelSerializer):
     def get_patient_name(self, obj):
         return obj.patient.full_name if obj.patient else "-"
 
+    def get_charge_name(self, obj):
+        return "OPD consultation"
+
+    def get_charge_category(self, obj):
+        return "OPD"
+
+    def get_amount(self, obj):
+        return float(obj.total_amount or 0) + float(obj.discount or 0)
+
+    def get_tax(self, obj):
+        return 0
+
+    def get_net_amount(self, obj):
+        return float(obj.total_amount or 0)
+
 
 class OpdPatientUpdateSerializer(serializers.ModelSerializer):
-    charge_id = serializers.IntegerField(source="charge.id", read_only=True)
     class Meta:
         model = OpdPatient
         fields = [
-            'appointment_date', 'charge_id', 'doctor','allergies','symptom','discount','total_amount','paid_amount',
-            'payment_mode','old_patient','casualty','reference','previous_medical_issue',
+            'appointment_date', 'doctor', 'allergies', 'symptom', 'discount', 'total_amount', 'paid_amount',
+            'payment_mode', 'old_patient', 'casualty', 'reference', 'previous_medical_issue',
         ]
 
 
@@ -365,25 +395,65 @@ class IpdPatientCreateSerializer(serializers.ModelSerializer):
         return instance
 
 
+_IPD_SENTINEL = object()
+
+
+def _ipd_row_decimal(obj, annotated_attr, model_attr):
+    """Support list rows when DB has no billing columns (annotations) or full model fields."""
+    v = getattr(obj, annotated_attr, _IPD_SENTINEL)
+    if v is not _IPD_SENTINEL:
+        try:
+            return float(v or 0)
+        except (TypeError, ValueError):
+            return 0.0
+    try:
+        return float(getattr(obj, model_attr, 0) or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 class IpdPatientListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="ipd_id", read_only=True)
     patient_detail = PatientSerializer(source="patient", read_only=True)
     doctor_detail = UserSerializer(source="doctor", read_only=True)
-    created_by = UserSerializer(read_only=True)
-    bed = BedSerializer(read_only=True)
-    symptom_name = serializers.CharField(source="symptom.symptom_title", read_only=True)
-    symptom_details = SymptomSerializer(source="symptom", read_only=True)
-    case_id = serializers.CharField(source='case.case_id', read_only=True)
+    created_by = UserSerializer(read_only=True, allow_null=True)
+    bed = BedSerializer(read_only=True, allow_null=True)
+    symptom_name = serializers.SerializerMethodField()
+    symptom_details = serializers.SerializerMethodField()
+    case_id = serializers.SerializerMethodField()
     doctor_name = serializers.SerializerMethodField()
     patient_name = serializers.SerializerMethodField()
+    discount = serializers.SerializerMethodField()
+    total_amount = serializers.SerializerMethodField()
+    paid_amount = serializers.SerializerMethodField()
+    payment_mode = serializers.SerializerMethodField()
+    charge_name = serializers.SerializerMethodField()
+    charge_category = serializers.SerializerMethodField()
+    amount = serializers.SerializerMethodField()
+    tax = serializers.SerializerMethodField()
+    net_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = IpdPatient
         fields = [
-            "ipd_id", "case", "case_id", "patient_detail", "patient_name", "admission_date", 
+            "id", "ipd_id", "case", "case_id", "patient_detail", "patient_name", "admission_date",
             "doctor_detail", "doctor_name", "bed", "symptom_name", "symptom_details",
             "previous_medical_issue", "credit_limit", "created_by", "created_at",
-            "old_patient", "casualty", "reference", "allergies"
+            "old_patient", "casualty", "reference", "allergies",
+            "discount", "total_amount", "paid_amount", "payment_mode",
+            "charge_name", "charge_category", "amount", "tax", "net_amount",
         ]
+
+    def get_case_id(self, obj):
+        return obj.case.case_id if obj.case else None
+
+    def get_symptom_name(self, obj):
+        return obj.symptom.symptom_title if obj.symptom else ""
+
+    def get_symptom_details(self, obj):
+        if not obj.symptom:
+            return None
+        return SymptomSerializer(obj.symptom, context=self.context).data
 
     def get_doctor_name(self, obj):
         return obj.doctor.full_name if obj.doctor else "-"
@@ -391,14 +461,43 @@ class IpdPatientListSerializer(serializers.ModelSerializer):
     def get_patient_name(self, obj):
         return obj.patient.full_name if obj.patient else "-"
 
+    def get_charge_name(self, obj):
+        return "IPD admission"
+
+    def get_charge_category(self, obj):
+        return "IPD"
+
+    def get_discount(self, obj):
+        return _ipd_row_decimal(obj, "_bill_discount", "discount")
+
+    def get_total_amount(self, obj):
+        return _ipd_row_decimal(obj, "_bill_total_amount", "total_amount")
+
+    def get_paid_amount(self, obj):
+        return _ipd_row_decimal(obj, "_bill_paid_amount", "paid_amount")
+
+    def get_payment_mode(self, obj):
+        v = getattr(obj, "_bill_payment_mode", _IPD_SENTINEL)
+        if v is not _IPD_SENTINEL:
+            return v or "cash"
+        return getattr(obj, "payment_mode", None) or "cash"
+
+    def get_amount(self, obj):
+        return self.get_total_amount(obj) + self.get_discount(obj)
+
+    def get_tax(self, obj):
+        return 0
+
+    def get_net_amount(self, obj):
+        return self.get_total_amount(obj)
 
 
 class IpdPatientUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpdPatient
         fields = [
-            'admission_date', 'doctor','allergies','symptom', 'bed','old_patient','casualty','reference','previous_medical_issue',
-            "credit_limit","created_by","created_at",
+            'admission_date', 'doctor', 'allergies', 'symptom', 'bed', 'old_patient', 'casualty', 'reference', 'previous_medical_issue',
+            "credit_limit", "discount", "total_amount", "paid_amount", "payment_mode",
         ]
 
     @transaction.atomic

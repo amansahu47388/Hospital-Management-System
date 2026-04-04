@@ -1,10 +1,13 @@
+from decimal import Decimal
+
+from django.db import connection
+from django.db.models import CharField, DecimalField, ProtectedError, Value
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
 from .models import OpdPatient , IpdPatient, IpdDischarge, Prescription
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.db.models import ProtectedError
 from .serializers import *
 from django.utils.timezone import now
 from .serializers import *
@@ -167,6 +170,21 @@ class ConvertOpdToIpdAPIView(StandardResponseMixin, APIView):
 
 
 
+def _ipd_table_has_billing_columns():
+    """True if migration 0004 columns exist (avoids 500 when DB is behind model)."""
+    try:
+        table = IpdPatient._meta.db_table
+        with connection.cursor() as cursor:
+            desc = connection.introspection.get_table_description(cursor, table)
+        names = {d.name for d in desc}
+        return all(
+            n in names
+            for n in ("discount", "total_amount", "paid_amount", "payment_mode")
+        )
+    except Exception:
+        return False
+
+
 class IpdPatientListAPIView(generics.ListAPIView):
     serializer_class = IpdPatientListSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -175,7 +193,7 @@ class IpdPatientListAPIView(generics.ListAPIView):
         patient_id = self.request.query_params.get("patient_id")
         case_id = self.request.query_params.get("case_id")
         tab = self.request.query_params.get("tab")
-        
+
         qs = IpdPatient.objects.select_related(
             "patient", "doctor", "created_by", "symptom", "bed"
         ).order_by("-created_at")
@@ -185,11 +203,47 @@ class IpdPatientListAPIView(generics.ListAPIView):
 
         if case_id:
             qs = qs.filter(case__case_id=case_id)
-            
+
         if tab == "discharged":
-            return qs.filter(is_discharged=True)
-            
-        return qs.filter(is_discharged=False)
+            qs = qs.filter(is_discharged=True)
+        else:
+            qs = qs.filter(is_discharged=False)
+
+        if not _ipd_table_has_billing_columns():
+            qs = qs.only(
+                "ipd_id",
+                "patient",
+                "admission_date",
+                "doctor",
+                "symptom",
+                "bed",
+                "case",
+                "checkup_id",
+                "old_patient",
+                "casualty",
+                "allergies",
+                "credit_limit",
+                "is_discharged",
+                "discharge_date",
+                "reference",
+                "previous_medical_issue",
+                "created_by",
+                "created_at",
+                "updated_at",
+            ).annotate(
+                _bill_discount=Value(
+                    Decimal("0"), output_field=DecimalField(max_digits=10, decimal_places=2)
+                ),
+                _bill_total_amount=Value(
+                    Decimal("0"), output_field=DecimalField(max_digits=10, decimal_places=2)
+                ),
+                _bill_paid_amount=Value(
+                    Decimal("0"), output_field=DecimalField(max_digits=10, decimal_places=2)
+                ),
+                _bill_payment_mode=Value("cash", output_field=CharField(max_length=50)),
+            )
+
+        return qs
 
 
 

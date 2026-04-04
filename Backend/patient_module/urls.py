@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .billing_views import CaseBillingLedgerView, CaseBillingPaymentView
 
 app_name = 'patient_module'
 
@@ -41,4 +42,8 @@ urlpatterns = [
 
     # Dashboard URL
     path('patients/<int:patient_id>/dashboard/', PatientDashboardView.as_view(), name='patient-dashboard'),
+
+    # Consolidated hospital billing (case ledger + full settlement)
+    path('billing/case-ledger/', CaseBillingLedgerView.as_view(), name='billing-case-ledger'),
+    path('billing/case-payment/', CaseBillingPaymentView.as_view(), name='billing-case-payment'),
 ]

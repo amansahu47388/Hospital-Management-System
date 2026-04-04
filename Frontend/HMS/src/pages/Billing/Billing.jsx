@@ -9,14 +9,24 @@ import {
   Menu,
   Search,
   Pill,
-  Siren
+  Siren,
+  User
 } from "lucide-react";
+import { searchPatient, getMedicalCases } from "../../api/patientApi";
+import { useNotify } from "../../context/NotificationContext";
 
 
 function Billing() {
     const [caseId, setCaseId] = useState("");
+    const [patientName, setPatientName] = useState("");
+    const [patients, setPatients] = useState([]);
+    const [selectedPatientId, setSelectedPatientId] = useState("");
+    const [cases, setCases] = useState([]);
     const [showMenu, setShowMenu] = useState(false);
+    const [loadingPatients, setLoadingPatients] = useState(false);
+    const [loadingCases, setLoadingCases] = useState(false);
     const navigate = useNavigate();
+    const notify = useNotify();
 
     const modules = [
         {
@@ -59,10 +69,52 @@ function Billing() {
         { id: 6, title: 'Ambulance', link: '/admin/ambulance', icon: <Siren className="mr-2" /> },
     ];
 
+    const handlePatientSearch = async () => {
+        if (!patientName.trim()) {
+            notify("warning", "Please enter a patient name");
+            return;
+        }
+        try {
+            setLoadingPatients(true);
+            const res = await searchPatient(patientName);
+            const data = res.data || [];
+            setPatients(data);
+            if (data.length === 0) {
+                notify("info", "No patients found");
+            }
+        } catch (error) {
+            console.error("Patient search error:", error);
+            notify("error", "Failed to search patients");
+        } finally {
+            setLoadingPatients(false);
+        }
+    };
+
+    const handlePatientSelect = async (patientId) => {
+        setSelectedPatientId(patientId);
+        setCaseId("");
+        if (!patientId) {
+            setCases([]);
+            return;
+        }
+        try {
+            setLoadingCases(true);
+            const res = await getMedicalCases(patientId);
+            setCases(res.data || []);
+        } catch (error) {
+            console.error("Fetch cases error:", error);
+            notify("error", "Failed to fetch medical cases");
+        } finally {
+            setLoadingCases(false);
+        }
+    };
+
     const handleSearch = () => {
         if (caseId.trim()) {
             // Navigate to the details page
             navigate("/admin/billing/details", { state: { caseId } });
+        } else {
+            notify("warning", "Please select or enter a Case ID");
         }
     };
 
@@ -91,11 +143,11 @@ function Billing() {
                         </div>
                     </div>
 
-                    {/* Right Side: OPD/IPD Billing Through Case Id */}
+                    {/* Right Side: Billing Through Case Id */}
                     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 h-fit relative">
                         <div className="flex justify-between items-center mb-6 border-b border-gray-300 pb-2">
                             <h2 className="text-xl font-semibold text-gray-700">
-                                OPD/IPD Billing Through Case Id
+                                Billing Through Case Id
                             </h2>
                             <div className="relative">
                                 <button
@@ -128,36 +180,85 @@ function Billing() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                            <div className="w-full sm:w-auto flex-grow">
-                                <label htmlFor="caseId" className="block text-sm font-medium text-gray-700 mb-1 sm:hidden">
-                                    Case ID <span className="text-red-500">*</span>
+                        <div className="space-y-6">
+                            {/* Patient Search */}
+                            <div className="w-full">
+                                <label htmlFor="patientName" className="block text-sm font-semibold text-gray-700 mb-1">
+                                    Search Patient <span className="text-red-500">*</span>
                                 </label>
                                 <div className="flex items-center">
-                                    <span className="hidden sm:inline-block text-sm font-semibold text-gray-700 mr-2 whitespace-nowrap">
-                                        Case ID <span className="text-red-500">*</span>
-                                    </span>
-                                    <input
-                                        type="text"
+                                    <div className="relative flex-grow">
+                                        <input
+                                            type="text"
+                                            id="patientName"
+                                            value={patientName}
+                                            onChange={(e) => setPatientName(e.target.value)}
+                                            placeholder="Enter Patient Name..."
+                                            className="w-full border border-gray-300 rounded-l-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5] focus:border-[#6046B5]"
+                                            onKeyPress={(e) => e.key === 'Enter' && handlePatientSearch()}
+                                        />
+                                        {loadingPatients && (
+                                            <div className="absolute right-3 top-2.5">
+                                                <div className="animate-spin h-4 w-4 border-2 border-[#6046B5] border-t-transparent rounded-full"></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={handlePatientSearch}
+                                        disabled={loadingPatients}
+                                        className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-4 py-2 rounded-r-md text-sm font-medium transition-colors flex items-center disabled:opacity-50"
+                                    >
+                                        <Search size={16} className="mr-1" /> Search
+                                    </button>
+                                </div>
+                                
+                                {patients.length > 0 && (
+                                    <div className="mt-2">
+                                        <select
+                                            value={selectedPatientId}
+                                            onChange={(e) => handlePatientSelect(e.target.value)}
+                                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5]"
+                                        >
+                                            <option value="">Select Patient</option>
+                                            {patients.map(p => (
+                                                <option key={p.id} value={p.id}>
+                                                    {p.first_name} {p.last_name} ({p.id})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Case ID Selection */}
+                            <div className="w-full">
+                                <label htmlFor="caseId" className="block text-sm font-semibold text-gray-700 mb-1">
+                                    Select Case ID <span className="text-red-500">*</span>
+                                </label>
+                                <div className="flex items-center">
+                                    <select
                                         id="caseId"
                                         value={caseId}
                                         onChange={(e) => setCaseId(e.target.value)}
-                                        placeholder="Enter Case ID"
-                                        className="w-full border border-gray-300 rounded-l-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5] focus:border-[#6046B5]"
-                                    />
+                                        disabled={loadingCases}
+                                        className="flex-grow border border-gray-300 rounded-l-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#6046B5] focus:border-[#6046B5] disabled:bg-gray-50"
+                                    >
+                                        <option value="">{loadingCases ? "Loading cases..." : "Select Case ID"}</option>
+                                        {cases.map(c => (
+                                            <option key={c.id} value={c.case_id}>
+                                                {c.case_id}
+                                            </option>
+                                        ))}
+                                    </select>
                                     <button
                                         onClick={handleSearch}
-                                        className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:bg-[#0b65c2] text-white px-4 py-2 rounded-r-md text-sm font-medium transition-colors flex items-center"
+                                        disabled={!caseId}
+                                        className="bg-gradient-to-b from-[#6046B5] to-[#8A63D2] hover:opacity-90 text-white px-6 py-2 rounded-r-md text-sm font-medium transition-colors flex items-center disabled:opacity-50"
                                     >
-                                        <span className="mr-1"><Search /></span> Search
+                                        Proceed
                                     </button>
                                 </div>
-
                             </div>
-                        </div>
-                        {/* Placeholder for results or additional content can go here */}
-                        <div className="mt-8 min-h-[100px] text-center text-gray-300">
-                            <p>Enter Case ID to proceed to billing details</p>
                         </div>
                     </div>
                 </div>

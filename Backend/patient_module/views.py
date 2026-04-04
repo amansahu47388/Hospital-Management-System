@@ -741,7 +741,19 @@ class PatientPaymentView(APIView):
 
     def post(self, request, patient_id):
         data = request.data.copy()
-        data['patient'] = patient_id
+        data["patient"] = patient_id
+
+        # Accept human-readable case_id string (e.g. "00005") in addition to case PK
+        case_ref = data.pop("case_id", None)
+        if case_ref is not None and not data.get("case"):
+            from .models import MedicalCase
+
+            mc = MedicalCase.objects.filter(
+                case_id=str(case_ref).strip(),
+                patient_id=int(patient_id),
+            ).first()
+            if mc:
+                data["case"] = mc.id
 
         serializer = PatientPaymentSerializer(data=data)
         if serializer.is_valid():
